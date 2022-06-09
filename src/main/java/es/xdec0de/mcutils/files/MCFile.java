@@ -25,15 +25,19 @@ import es.xdec0de.mcutils.MCUtils;
 
 public class MCFile {
 
-	private final JavaPlugin plugin;
-	final String path;
+	/**
+	 * The plugin that initialized this MCFile
+	 */
+	protected final JavaPlugin plugin;
+	private final String path;
 
-	final File file;
-	FileConfiguration cfg;
+	private final File file;
+	private FileConfiguration cfg;
 
 	MCFile(JavaPlugin plugin, String path, String pathIfInvalid) {
 		if (!JavaPlugin.getPlugin(MCUtils.class).strings().hasContent(path))
 			path = pathIfInvalid;
+		path += ".yml";
 		this.plugin = plugin;
 		this.path = path;
 		if(!plugin.getDataFolder().exists())
@@ -46,6 +50,18 @@ public class MCFile {
 
 	protected MCFile(JavaPlugin plugin, String path) {
 		this(plugin, path, "default");
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public FileConfiguration getFileConfig() {
+		return cfg;
 	}
 
 	public void reload(boolean update) {
