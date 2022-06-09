@@ -50,4 +50,10 @@ public class MCStrings {
 		}
 		return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
 	}
+
+	public boolean hasContent(String str) {
+		if (str == null)
+			return false;
+		return !(str.isBlank() || str.isEmpty());
+	}
 }
