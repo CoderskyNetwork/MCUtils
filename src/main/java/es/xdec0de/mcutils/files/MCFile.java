@@ -21,6 +21,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
+import es.xdec0de.mcutils.MCUtils;
+
 public class MCFile {
 
 	private final JavaPlugin plugin;
@@ -29,7 +31,9 @@ public class MCFile {
 	final File file;
 	FileConfiguration cfg;
 
-	MCFile(JavaPlugin plugin, String path) {
+	MCFile(JavaPlugin plugin, String path, String pathIfInvalid) {
+		if (!JavaPlugin.getPlugin(MCUtils.class).strings().hasContent(path))
+			path = pathIfInvalid;
 		this.plugin = plugin;
 		this.path = path;
 		if(!plugin.getDataFolder().exists())
@@ -38,6 +42,10 @@ public class MCFile {
 			plugin.saveResource(path, false);
 		reload(false);
 		update(false);
+	}
+
+	protected MCFile(JavaPlugin plugin, String path) {
+		this(plugin, path, "default");
 	}
 
 	public void reload(boolean update) {
