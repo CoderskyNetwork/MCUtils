@@ -1,5 +1,0 @@
-name: ${project.name}
-main: es.xdec0de.mcutils.MCUtils
-author: xDec0de_
-version: ${project.version}
-description: ${project.description}
