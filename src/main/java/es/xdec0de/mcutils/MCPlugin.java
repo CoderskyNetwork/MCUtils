@@ -1,9 +1,14 @@
 package es.xdec0de.mcutils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,5 +47,16 @@ public class MCPlugin extends JavaPlugin {
 			if(bukkitVer.contains(version.getFormatName()))
 				return version;
 		return MCVersion.UNKNOWN;
+	}
+
+	public void getLatestVersion(int resourceId, Consumer<String> consumer) {
+		Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+			try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId).openStream(); Scanner scanner = new Scanner(inputStream)) {
+				if (scanner.hasNext())
+					consumer.accept(scanner.next());
+			} catch (IOException ex) {
+				consumer.accept(null);
+			}
+		});
 	}
 }
