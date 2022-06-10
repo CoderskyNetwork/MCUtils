@@ -1,10 +1,8 @@
 package es.xdec0de.mcutils;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import es.xdec0de.mcutils.general.MCStrings;
 
-public class MCUtils extends JavaPlugin {
+public class MCUtils extends MCPlugin {
 
 	private final MCStrings strings = new MCStrings();
 

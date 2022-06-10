@@ -16,26 +16,26 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
+import es.xdec0de.mcutils.MCPlugin;
 import es.xdec0de.mcutils.MCUtils;
 
 public class MCFile {
 
 	/**
-	 * The plugin that initialized this MCFile
+	 * The {@link MCPlugin} that initialized this MCFile
 	 */
-	protected final JavaPlugin plugin;
+	protected final MCPlugin plugin;
 	private final String path;
 
 	private final File file;
 	private FileConfiguration cfg;
 
-	MCFile(JavaPlugin plugin, String path, String pathIfInvalid) {
-		if (!JavaPlugin.getPlugin(MCUtils.class).strings().hasContent(path))
+	MCFile(MCPlugin plugin, String path, String pathIfInvalid) {
+		if (!MCPlugin.getMCPlugin(MCUtils.class).strings().hasContent(path))
 			path = pathIfInvalid;
 		path += ".yml";
 		this.plugin = plugin;
@@ -48,7 +48,7 @@ public class MCFile {
 		update(false);
 	}
 
-	protected MCFile(JavaPlugin plugin, String path) {
+	protected MCFile(MCPlugin plugin, String path) {
 		this(plugin, path, "default");
 	}
 
