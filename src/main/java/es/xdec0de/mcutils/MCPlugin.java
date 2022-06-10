@@ -20,13 +20,21 @@ import es.xdec0de.mcutils.files.YmlFile;
 import es.xdec0de.mcutils.general.MCStrings;
 import es.xdec0de.mcutils.server.MCVersion;
 
+/**
+ * Represents a {@link JavaPlugin} using
+ * the {@link MCUtils} API.
+ * 
+ * @since MCUtils 1.0.0
+ * 
+ * @author xDec0de_
+ * 
+ * @see #getMCPlugin(Class)
+ * @see #registerFile(String, Class)
+ * @see #reload(List)
+ */
 public class MCPlugin extends JavaPlugin {
 
 	private final List<YmlFile> files = new ArrayList<>();
-
-	public static <T extends MCPlugin> T getMCPlugin(Class<T> plugin) {
-		return JavaPlugin.getPlugin(plugin);
-	}
 
 	/**
 	 * 
@@ -55,6 +63,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @return The registered file, null if any error occurred.
 	 * 
 	 * @see {@link YmlFile}
+	 * @see {@link PluginFile}
 	 * @see {@link MessagesFile}
 	 */
 	public <T extends YmlFile> T registerFile(String path, Class<T> type) {
@@ -93,8 +102,8 @@ public class MCPlugin extends JavaPlugin {
 	 * calling {@link PluginFile#reload(List)} on them.
 	 * Which makes the file updater ignore the paths present
 	 * on <b>ignoredUpdatePaths</b>, this is specially useful
-	 * if you want administrators to create their own config
-	 * paths without them being removed, for example, on a GUI plugin.
+	 * if you want administrators to create their own paths
+	 * without them being removed, for example, on a GUI plugin.
 	 * 
 	 * @param ignoredUpdatePaths a list with the paths to
 	 * be ignored by the file updater, update is assumed

@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import es.xdec0de.mcutils.MCPlugin;
 import es.xdec0de.mcutils.MCUtils;
@@ -20,7 +21,8 @@ public class YmlFile {
 	private FileConfiguration cfg;
 
 	YmlFile(MCPlugin plugin, String path, String pathIfInvalid) {
-		if (!MCPlugin.getMCPlugin(MCUtils.class).strings().hasContent(path))
+		MCUtils mcUtils = JavaPlugin.getPlugin(MCUtils.class);
+		if (!mcUtils.strings().hasContent(path))
 			path = pathIfInvalid;
 		path += ".yml";
 		this.plugin = plugin;
