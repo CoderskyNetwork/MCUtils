@@ -44,6 +44,8 @@ public class MCPlugin extends JavaPlugin {
 	 * {@link YmlFile#create()} will be called, if the file is a {@link PluginFile}, then {@link PluginFile#create()}
 	 * gets called and so on.
 	 * 
+	 * @since MCUtils 1.0.0
+	 * 
 	 * @return The registered file, the <b>file</b> parameter.
 	 */
 	public <T extends YmlFile> T registerFile(T file) {
@@ -61,6 +63,8 @@ public class MCPlugin extends JavaPlugin {
 	 * @param type the type of {@link YmlFile} to create.
 	 * 
 	 * @return The registered file, null if any error occurred.
+	 * 
+	 * @since MCUtils 1.0.0
 	 * 
 	 * @see {@link YmlFile}
 	 * @see {@link PluginFile}
@@ -88,6 +92,8 @@ public class MCPlugin extends JavaPlugin {
 	 * want some paths to be ignored by the updater, use
 	 * {@link #reload(List)}.
 	 * 
+	 * @since MCUtils 1.0.0
+	 * 
 	 * @see #reload(List)
 	 */
 	public void reload(boolean update) {
@@ -110,6 +116,8 @@ public class MCPlugin extends JavaPlugin {
 	 * to be true with this method, if you want to reload
 	 * without updating use {@link #reload(boolean)} with
 	 * <b>update</b> as false.
+	 * 
+	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #reload(boolean)
 	 */
