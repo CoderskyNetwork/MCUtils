@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -35,6 +39,21 @@ import es.xdec0de.mcutils.server.MCVersion;
 public class MCPlugin extends JavaPlugin {
 
 	private final List<YmlFile> files = new ArrayList<>();
+	private final MCUtils utils;
+
+	public MCPlugin() {
+		this.utils = JavaPlugin.getPlugin(MCUtils.class);
+	}
+
+	/**
+	 * Gets an instance of {@link MCUtils}
+	 * 
+	 * @return An instance of {@link MCUtils}
+	 */
+	@Nonnull
+	public MCUtils getMCUtils() {
+		return utils;
+	}
 
 	/**
 	 * 
@@ -48,7 +67,10 @@ public class MCPlugin extends JavaPlugin {
 	 * 
 	 * @return The registered file, the <b>file</b> parameter.
 	 */
-	public <T extends YmlFile> T registerFile(T file) {
+	@Nullable
+	public <T extends YmlFile> T registerFile(@Nonnull T file) {
+		if (file == null)
+			return null;
 		file.create();
 		files.add(file);
 		return file;
@@ -70,7 +92,10 @@ public class MCPlugin extends JavaPlugin {
 	 * @see {@link PluginFile}
 	 * @see {@link MessagesFile}
 	 */
-	public <T extends YmlFile> T registerFile(String path, Class<T> type) {
+	@Nullable
+	public <T extends YmlFile> T registerFile(@Nonnull String path, @Nonnull Class<T> type) {
+		if (!utils.strings().hasContent(path))
+			return null;
 		try {
 			Constructor<T> constructor = type.getDeclaredConstructor(JavaPlugin.class, String.class, String.class);
 			T file = constructor.newInstance(this, path, "file");
@@ -121,11 +146,12 @@ public class MCPlugin extends JavaPlugin {
 	 * 
 	 * @see #reload(boolean)
 	 */
-	public void reload(List<String> ignoredUpdatePaths) {
-		files.forEach(file -> {
+	public void reload(@Nullable List<String> ignoredUpdatePaths) {
+		if (ignoredUpdatePaths == null)
+			ignoredUpdatePaths = new ArrayList<>(0);
+		for (YmlFile file : files)
 			if (file instanceof PluginFile)
 				((PluginFile)file).reload(ignoredUpdatePaths);
-		});
 	}
 
 	/**
@@ -135,6 +161,7 @@ public class MCPlugin extends JavaPlugin {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
+	@Nonnull
 	public MCVersion getServerVersion() {
 		String bukkitVer = Bukkit.getVersion();
 		for(MCVersion version : MCVersion.values())
@@ -159,12 +186,16 @@ public class MCPlugin extends JavaPlugin {
 	 * @param consumer the consumer that will accept the version string, note that this string can be null if
 	 * any error occurred while retrieving the latest version.
 	 * 
+	 * @throws IllegalArgumentException if consumer is null.
+	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see Bukkit#getScheduler()
 	 * @see BukkitScheduler#runTaskAsynchronously(org.bukkit.plugin.Plugin, Consumer)
 	 */
-	public void getLatestVersion(int resourceId, Consumer<String> consumer) {
+	public void getLatestVersion(@Nonnegative int resourceId, @Nonnull Consumer<String> consumer) {
+		if (consumer == null)
+			throw new IllegalArgumentException("Consumer cannot be null");
 		try {
 			InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId).openStream();
 			Scanner scanner = new Scanner(inputStream);
