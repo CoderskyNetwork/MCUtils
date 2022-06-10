@@ -1,7 +1,32 @@
 package es.xdec0de.mcutils;
 
+import javax.annotation.Nonnull;
+
 import es.xdec0de.mcutils.general.MCStrings;
 
+/**
+ * The main class of the MCUtils API, used
+ * to access the majority of the features of
+ * said API.
+ * <p>
+ * <b>Getting an instance on a class extending {@link MCPlugin}:</b>
+ * <p>
+ * <code>MCUtils mcUtils = this.getMCUtils();
+ * <p>
+ * MCStrings strings = mcUtils.strings();
+ * </code>
+ * <p>
+ * <b>Getting an instance on any class <i>(Not recommended, use constructor parameters):</i></b>
+ * <p>
+ * <code>MCUtils mcUtils = JavaPlugin.getPlugin(MCUtils.class);
+ * <p>
+ * MCStrings strings = mcUtils.strings();
+ * </code>
+ * 
+ * @since MCUtils 1.0.0
+ * 
+ * @author xDec0de_
+ */
 public class MCUtils extends MCPlugin {
 
 	private final MCStrings strings = new MCStrings();
@@ -16,6 +41,14 @@ public class MCUtils extends MCPlugin {
 		
 	}
 
+	/**
+	 * Gets an instance of {@link MCStrings}
+	 * 
+	 * @return An instance of {@link MCStrings}
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
 	public MCStrings strings() {
 		return strings;
 	}
