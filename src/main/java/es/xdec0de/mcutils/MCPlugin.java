@@ -5,9 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import es.xdec0de.mcutils.files.MCFile;
+import es.xdec0de.mcutils.server.MCVersion;
 
 public class MCPlugin extends JavaPlugin {
 
@@ -32,5 +34,13 @@ public class MCPlugin extends JavaPlugin {
 
 	public void reload() {
 		files.forEach(file -> file.reload(true));
+	}
+
+	public MCVersion getServerVersion() {
+		String bukkitVer = Bukkit.getVersion();
+		for(MCVersion version : MCVersion.values())
+			if(bukkitVer.contains(version.getFormatName()))
+				return version;
+		return MCVersion.UNKNOWN;
 	}
 }
