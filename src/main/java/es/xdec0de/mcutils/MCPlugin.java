@@ -38,10 +38,49 @@ public class MCPlugin extends JavaPlugin {
 		}
 	}
 
-	public void reload() {
+	/**
+	 * Reloads all files registered to the plugin by
+	 * calling {@link MCFile#reload(boolean)} on them.
+	 * 
+	 * @param update whether to update the files or not.
+	 * This is recommended to be true to prevent any
+	 * missing path after a file modification, if you
+	 * want some paths to be ignored by the updater, use
+	 * {@link #reload(List)}.
+	 * 
+	 * @see #reload(List)
+	 */
+	public void reload(boolean update) {
 		files.forEach(file -> file.reload(true));
 	}
 
+	/**
+	 * Reloads all files registered to the plugin by
+	 * calling {@link MCFile#reload(List)} on them.
+	 * Which makes the file updater ignore the paths present
+	 * on <b>ignoredUpdatePaths</b>, this is specially useful
+	 * if you want administrators to create their own config
+	 * paths without them being removed, for example, on a GUI plugin.
+	 * 
+	 * @param ignoredUpdatePaths a list with the paths to
+	 * be ignored by the file updater, update is assumed
+	 * to be true with this method, if you want to reload
+	 * without updating use {@link #reload(boolean)} with
+	 * <b>update</b> as false.
+	 * 
+	 * @see #reload(boolean)
+	 */
+	public void reload(List<String> ignoredUpdatePaths) {
+		files.forEach(file -> file.reload(ignoredUpdatePaths));
+	}
+
+	/**
+	 * Gets the current server version as an {@link MCVersion}
+	 * 
+	 * @return the current server version.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
 	public MCVersion getServerVersion() {
 		String bukkitVer = Bukkit.getVersion();
 		for(MCVersion version : MCVersion.values())

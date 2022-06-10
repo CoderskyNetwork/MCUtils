@@ -9,7 +9,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,7 +48,7 @@ public class MCFile {
 		if(!(file = new File(plugin.getDataFolder(), path)).exists())
 			plugin.saveResource(path, false);
 		reload(false);
-		update(false);
+		update(false, new ArrayList<>(0));
 	}
 
 	protected MCFile(MCPlugin plugin, String path) {
@@ -64,9 +67,39 @@ public class MCFile {
 		return cfg;
 	}
 
+	/**
+	 * Reloads this file.
+	 * 
+	 * @param update whether to update the files or not.
+	 * This is recommended to be true to prevent any
+	 * missing path after a file modification, if you
+	 * want some paths to be ignored by the updater, use
+	 * {@link #reload(List)}.
+	 * 
+	 * @see #reload(List)
+	 */
 	public void reload(boolean update) {
 		if (update)
-			update(true);
+			update(true, new ArrayList<>(0));
+		cfg = YamlConfiguration.loadConfiguration(file);
+	}
+
+	/**
+	 * Reloads this file. The file updater ignores the paths present
+	 * on <b>ignoredUpdatePaths</b>, this is specially useful
+	 * if you want administrators to create their own config
+	 * paths without them being removed, for example, on a GUI plugin.
+	 * 
+	 * @param ignoredUpdatePaths a list with the paths to
+	 * be ignored by the file updater, update is assumed
+	 * to be true with this method, if you want to reload
+	 * without updating use {@link #reload(boolean)} with
+	 * <b>update</b> as false.
+	 * 
+	 * @see #reload(boolean)
+	 */
+	public void reload(List<String> ignoredUpdatePaths) {
+		update(true, ignoredUpdatePaths);
 		cfg = YamlConfiguration.loadConfiguration(file);
 	}
 
@@ -84,7 +117,7 @@ public class MCFile {
 		}
 	}
 
-	private boolean update(boolean reload) {
+	private boolean update(boolean reload, List<String> ign) {
 		String pluginName = plugin.getName();
 		try {
 			int changes = 0;
@@ -95,8 +128,8 @@ public class MCFile {
 				log("&8[&4"+pluginName+"&8] > &cCould not update &6"+path);
 				return false;
 			}
-			Set<String> oldKeys = cfg.getKeys(true);
-			Set<String> updKeys = updated.getKeys(true);
+			Set<String> oldKeys = ign.isEmpty() ? cfg.getKeys(true) : cfg.getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
+			Set<String> updKeys = ign.isEmpty() ? updated.getKeys(true) : updated.getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
 			for(String str : oldKeys)
 				if(!updKeys.contains(str)) {
 					cfg.set(str, null);
