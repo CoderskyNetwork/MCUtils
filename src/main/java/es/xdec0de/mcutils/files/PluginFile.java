@@ -24,47 +24,48 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import es.xdec0de.mcutils.MCPlugin;
-import es.xdec0de.mcutils.MCUtils;
 
-public class MCFile {
+public class PluginFile extends YmlFile {
 
-	/**
-	 * The {@link MCPlugin} that initialized this MCFile
-	 */
-	protected final MCPlugin plugin;
-	private final String path;
-
-	private final File file;
+	private File file;
 	private FileConfiguration cfg;
 
-	MCFile(MCPlugin plugin, String path, String pathIfInvalid) {
-		if (!MCPlugin.getMCPlugin(MCUtils.class).strings().hasContent(path))
-			path = pathIfInvalid;
-		path += ".yml";
-		this.plugin = plugin;
-		this.path = path;
+	PluginFile(MCPlugin plugin, String path, String pathIfInvalid) {
+		super(plugin, path, pathIfInvalid);
+	}
+
+	protected PluginFile(MCPlugin plugin, String path) {
+		this(plugin, path, "default");
+	}
+
+	/**
+	 * Creates this file, the file MUST be present
+	 * on the plugin's jar file as a resource.
+	 * This is required in order to copy the file from
+	 * the plugin source and updating it. If you don't need
+	 * this functionality and want an empty file instead, use
+	 * {@link YmlFile}<p>
+	 * This method is not required when calling
+	 * {@link MCPlugin#registerFile(String, Class)}
+	 * as it does this automatically.
+	 */
+	@Override
+	public void create() {
 		if(!plugin.getDataFolder().exists())
 			plugin.getDataFolder().mkdir();
-		if(!(file = new File(plugin.getDataFolder(), path)).exists())
-			plugin.saveResource(path, false);
+		if(!(file = new File(plugin.getDataFolder(), getPath())).exists())
+			plugin.saveResource(getPath(), false);
 		reload(false);
 		update(false, new ArrayList<>(0));
 	}
 
-	protected MCFile(MCPlugin plugin, String path) {
-		this(plugin, path, "default");
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public File getFile() {
-		return file;
-	}
-
-	public FileConfiguration getFileConfig() {
-		return cfg;
+	/**
+	 * Reloads this file without updating,
+	 * use {@link #reload(boolean)} to update.
+	 */
+	@Override
+	public void reload() {
+		cfg = YamlConfiguration.loadConfiguration(file);
 	}
 
 	/**
@@ -122,10 +123,10 @@ public class MCFile {
 		try {
 			int changes = 0;
 			Utf8YamlConfiguration updated = new Utf8YamlConfiguration();
-			if(plugin.getResource(path) != null)
-				updated.load(copyInputStreamToFile(plugin.getDataFolder()+ "/"+path, plugin.getResource(path)));
+			if(plugin.getResource(getPath()) != null)
+				updated.load(copyInputStreamToFile(plugin.getDataFolder()+ "/"+getPath(), plugin.getResource(getPath())));
 			else {
-				log("&8[&4"+pluginName+"&8] > &cCould not update &6"+path);
+				log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath());
 				return false;
 			}
 			Set<String> oldKeys = ign.isEmpty() ? cfg.getKeys(true) : cfg.getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
@@ -140,18 +141,18 @@ public class MCFile {
 					cfg.set(str, updated.get(str));
 					changes++;
 				}
-			cfg.save(plugin.getDataFolder() + "/"+path);
+			cfg.save(plugin.getDataFolder() + "/"+getPath());
 			if(changes != 0) {
 				log(" ");
 				if(reload)
-					log("&8[&6"+pluginName+"&8] > &6"+path+" &7has been reloaded with &b"+changes+" &7changes.");
+					log("&8[&6"+pluginName+"&8] > &6"+getPath()+" &7has been reloaded with &b"+changes+" &7changes.");
 				else
-					log("&8[&6"+pluginName+"&8] > &6"+path+" &7has been updated to &ev"+plugin.getDescription().getVersion()+"&7 with &b"+changes+" &7changes.");
+					log("&8[&6"+pluginName+"&8] > &6"+getPath()+" &7has been updated to &ev"+plugin.getDescription().getVersion()+"&7 with &b"+changes+" &7changes.");
 				return true;
 			}
 			return false;
 		} catch(InvalidConfigurationException | IOException ex) {
-			log("&8[&4"+pluginName+"&8] > &cCould not update &6"+path);
+			log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath());
 			return false;
 		}
 	}

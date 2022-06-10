@@ -22,7 +22,7 @@ import es.xdec0de.mcutils.general.Replacer;
  * 
  * @author xDec0de_
  */
-public class MCMessages extends MCFile {
+public class MessagesFile extends PluginFile {
 
 	final MCStrings strings = JavaPlugin.getPlugin(MCUtils.class).strings();
 	private Replacer defReplacer;
@@ -45,10 +45,10 @@ public class MCMessages extends MCFile {
 	 * the .yml extension is automatically added, if the path is null, empty or blank, "messages" will
 	 * be used.
 	 * 
-	 * @see MCPlugin#registerFile(MCFile)
+	 * @see MCPlugin#registerFile(PluginFile)
 	 * @see MCPlugin#registerFile(String, Class)
 	 */
-	protected MCMessages(@Nonnull MCPlugin plugin, @Nullable String path) {
+	protected MessagesFile(@Nonnull MCPlugin plugin, @Nullable String path) {
 		super(plugin, path, "messages");
 		this.defReplacer = new Replacer("%prefix%", "Prefix");
 	}
@@ -61,10 +61,10 @@ public class MCMessages extends MCFile {
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
 	 * @param path the path of the file to create, two examples are "messages.yml" and "lang/messages.yml"
 	 * 
-	 * @see MCPlugin#registerFile(MCFile)
+	 * @see MCPlugin#registerFile(PluginFile)
 	 * @see MCPlugin#registerFile(String, Class)
 	 */
-	protected MCMessages(@Nonnull MCPlugin plugin, @Nullable String path, @Nullable Replacer defReplacer) {
+	protected MessagesFile(@Nonnull MCPlugin plugin, @Nullable String path, @Nullable Replacer defReplacer) {
 		super(plugin, path);
 		this.defReplacer = defReplacer != null ? defReplacer : new Replacer("%prefix%", "Prefix");
 	}

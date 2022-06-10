@@ -14,25 +14,56 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import es.xdec0de.mcutils.files.MCFile;
+import es.xdec0de.mcutils.files.MessagesFile;
+import es.xdec0de.mcutils.files.PluginFile;
+import es.xdec0de.mcutils.files.YmlFile;
+import es.xdec0de.mcutils.general.MCStrings;
 import es.xdec0de.mcutils.server.MCVersion;
 
 public class MCPlugin extends JavaPlugin {
 
-	private final List<MCFile> files = new ArrayList<>();
+	private final List<YmlFile> files = new ArrayList<>();
 
 	public static <T extends MCPlugin> T getMCPlugin(Class<T> plugin) {
 		return JavaPlugin.getPlugin(plugin);
 	}
 
-	public <T extends MCFile> boolean registerFile(T file) {
-		return files.add(file);
+	/**
+	 * 
+	 * @param <T> must extend {@link YmlFile}
+	 * @param file the file to be registered, {@link T#create()} will be called to ensure that the file exists,
+	 * the actual method being called depends on the type of file, for example, if the file is a {@link YmlFile},
+	 * {@link YmlFile#create()} will be called, if the file is a {@link PluginFile}, then {@link PluginFile#create()}
+	 * gets called and so on.
+	 * 
+	 * @return The registered file, the <b>file</b> parameter.
+	 */
+	public <T extends YmlFile> T registerFile(T file) {
+		file.create();
+		files.add(file);
+		return file;
 	}
 
-	public <T extends MCFile> T registerFile(String path, Class<T> type) {
+	/**
+	 * Registers a file to this plugin, if the file doesn't exist it will be created.
+	 * 
+	 * @param <T> must extend {@link YmlFile}
+	 * @param path the path of the file to register, if {@link MCStrings#hasContent(String)} returns false, "file" will be used.
+	 * File extension is automatically added and will be .yml.
+	 * @param type the type of {@link YmlFile} to create.
+	 * 
+	 * @return The registered file, null if any error occurred.
+	 * 
+	 * @see {@link YmlFile}
+	 * @see {@link MessagesFile}
+	 */
+	public <T extends YmlFile> T registerFile(String path, Class<T> type) {
 		try {
 			Constructor<T> constructor = type.getDeclaredConstructor(JavaPlugin.class, String.class, String.class);
-			return constructor.newInstance(this, path, "default");
+			T file = constructor.newInstance(this, path, "file");
+			file.create();
+			files.add(file);
+			return file;
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			return null;
 		}
@@ -40,7 +71,7 @@ public class MCPlugin extends JavaPlugin {
 
 	/**
 	 * Reloads all files registered to the plugin by
-	 * calling {@link MCFile#reload(boolean)} on them.
+	 * calling {@link PluginFile#reload(boolean)} on them.
 	 * 
 	 * @param update whether to update the files or not.
 	 * This is recommended to be true to prevent any
@@ -51,12 +82,15 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #reload(List)
 	 */
 	public void reload(boolean update) {
-		files.forEach(file -> file.reload(true));
+		files.forEach(file -> {
+			if (file instanceof PluginFile)
+				((PluginFile)file).reload(true);
+		});
 	}
 
 	/**
 	 * Reloads all files registered to the plugin by
-	 * calling {@link MCFile#reload(List)} on them.
+	 * calling {@link PluginFile#reload(List)} on them.
 	 * Which makes the file updater ignore the paths present
 	 * on <b>ignoredUpdatePaths</b>, this is specially useful
 	 * if you want administrators to create their own config
@@ -71,7 +105,10 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #reload(boolean)
 	 */
 	public void reload(List<String> ignoredUpdatePaths) {
-		files.forEach(file -> file.reload(ignoredUpdatePaths));
+		files.forEach(file -> {
+			if (file instanceof PluginFile)
+				((PluginFile)file).reload(ignoredUpdatePaths);
+		});
 	}
 
 	/**
