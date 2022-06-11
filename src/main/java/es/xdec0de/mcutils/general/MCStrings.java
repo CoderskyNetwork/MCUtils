@@ -37,8 +37,8 @@ public class MCStrings {
 	 */
 	public String applyColor(String string) {
 		if(string == null)
-			return "null";
-		final char COLOR_CHAR = '\u00A7';
+			return null;
+		final char COLOR_CHAR = 0x00A7;
 		final Matcher matcher = hexPattern.matcher(string);
 		final StringBuffer buffer = new StringBuffer(string.length() + 4 * 8);
 		while (matcher.find()) {
