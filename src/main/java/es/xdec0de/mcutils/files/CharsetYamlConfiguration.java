@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 /**
@@ -31,17 +32,14 @@ public class CharsetYamlConfiguration extends YamlConfiguration {
 
 	/**
 	 * Creates a new {@link YamlConfiguration} with {@link Charset} support.
+	 * If <b>charset</b> is null {@link Charsets#UTF_8} will be used.
 	 * 
 	 * @param charset the charset to use.
-	 * 
-	 * @throws IllegalArgumentException if <b>charset</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	public CharsetYamlConfiguration(@Nonnull Charset charset) {
-		if (charset == null)
-			throw new IllegalArgumentException("charset cannot be null.");
-		this.charset = charset;
+		this.charset = charset == null ? Charsets.UTF_8 : charset;
 	}
 
 	/**
