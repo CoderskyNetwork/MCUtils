@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * Represents a replacer to replace parts of a string with other strings, if you want to use the same replacements for multiple strings, you should 
  * create a replacer variable and apply it to as many strings as you want to <b>avoid creating multiple instances of the same replacements</b>, also, 
  * make sure that the amount of strings added to the replacer are <b>even</b>, otherwise, an {@link IllegalArgumentException} will be thrown.
+ * 
+ * @since MCUtils 1.0.0
  * 
  * @author xDec0de_
  * 
@@ -26,7 +29,10 @@ public class Replacer {
 	 * 
 	 * @param replacements the strings to be replaced, the format is <i>"%placeholder1%", "replacement1", "%placeholder2%", "replacement2"...</i>
 	 * 
-	 * @throws IllegalArgumentException if the amount of strings is not even, more technically, if replacements size % 2 is not equal to 0.
+	 * @throws IllegalArgumentException if <b>replacements</b> is null or the amount of strings is not even, more technically, if replacements
+	 * size % 2 is not equal to 0.
+	 * 
+	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #add(Replacer)
 	 * @see #add(String...)
@@ -34,6 +40,8 @@ public class Replacer {
 	 * @see #replaceAt(List)
 	 */
 	public Replacer(String... replacements) {
+		if (replacements == null)
+			throw new IllegalArgumentException("Replacements cannot be null.");
 		replaceList.addAll(Arrays.asList(replacements));
 		if(replaceList.size() % 2 != 0)
 			throw new IllegalArgumentException(replaceList.get(replaceList.size() - 1) + "does not have a replacer! Add one more element to the replacer.");
@@ -42,7 +50,8 @@ public class Replacer {
 	/**
 	 * Adds new strings to an existing replacer, the amount of strings must also be even, note that existing replacements
 	 * will be added to the list but the new replacer won't overwrite them. Because of the way replacements work, only the first
-	 * replacement added for a placeholder will take effect if there is another replacement added to said placeholder later on.<br><br>
+	 * replacement added for a placeholder will take effect if there is another replacement added to said placeholder later on.
+	 * If <b>replacements</b> is null, nothing will be done.<br><br>
 	 * 
 	 * Example: text is <i>"Replace %placeholder%"</i>, we add <i>"%placeholder%", "Hello"</i> and <i>"%placeholder%", "World"</i>. The
 	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%placeholder%</i> will take effect.
@@ -53,10 +62,15 @@ public class Replacer {
 	 * 
 	 * @throws IllegalArgumentException if the amount of strings is not even, more technically, if replacements size % 2 is not equal to 0.
 	 * 
+	 * @since MCUtils 1.0.0
+	 * 
 	 * @see #replaceAt(String)
 	 * @see #replaceAt(List)
 	 */
-	public Replacer add(String... replacements) {
+	@Nonnull
+	public Replacer add(@Nullable String... replacements) {
+		if (replacements == null)
+			return this;
 		if(replacements.length % 2 != 0)
 			throw new IllegalArgumentException(replacements[replacements.length -1] + "does not have a replacer! Add one more element to the replacer.");
 		replaceList.addAll(Arrays.asList(replacements));
@@ -70,15 +84,18 @@ public class Replacer {
 	 * If <b>replacer</b> is null, nothing will be done.<br><br>
 	 * 
 	 * Example: text is <i>"Replace %placeholder%"</i>, we add <i>"%placeholder%", "Hello"</i> and <i>"%placeholder%", "World"</i>. The
-	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%placeholder%<i> will take effect.
+	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%placeholder%</i> will take effect.
 	 * 
 	 * @param replacer the {@link Replacer} to join to the existing {@link Replacer}.
 	 * 
 	 * @return The old {@link Replacer} with the replacements of <b>replacer</b> added to it.
 	 * 
+	 * @since MCUtils 1.0.0
+	 * 
 	 * @see #replaceAt(String)
 	 * @see #replaceAt(List)
 	 */
+	@Nonnull
 	public Replacer add(@Nullable Replacer replacer) {
 		if (replacer != null)
 			replaceList.addAll(replacer.replaceList);
@@ -92,10 +109,13 @@ public class Replacer {
 	 * 
 	 * @return A new string with the replacements applied to it.
 	 * 
+	 * @since MCUtils 1.0.0
+	 * 
 	 * @see #add(Replacer)
 	 * @see #add(String...)
 	 */
-	public String replaceAt(String str) {
+	@Nullable
+	public String replaceAt(@Nullable String str) {
 		if(str == null)
 			return null;
 		String res = str;
@@ -111,10 +131,13 @@ public class Replacer {
 	 * 
 	 * @return A new string list with the replacements applied to it.
 	 * 
+	 * @since MCUtils 1.0.0
+	 * 
 	 * @see #add(Replacer)
 	 * @see #add(String...)
 	 */
-	public List<String> replaceAt(List<String> list) {
+	@Nullable
+	public List<String> replaceAt(@Nullable List<String> list) {
 		if(list == null)
 			return null;
 		List<String> res = new ArrayList<>();
