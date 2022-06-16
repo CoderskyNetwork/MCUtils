@@ -43,7 +43,7 @@ public class Replacer {
 	 * replacement added for a placeholder will take effect if there is another replacement added to said placeholder later on.<br><br>
 	 * 
 	 * Example: text is <i>"Replace %placeholder%"</i>, we add <i>"%placeholder%", "Hello"</i> and <i>"%placeholder%", "World"</i>. The
-	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%placeholder%<i> will take effect.
+	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%placeholder%</i> will take effect.
 	 * 
 	 * @param replacements the new strings to be replaced, the format is <i>"%placeholder1%", "replacement1", "%placeholder2%", "replacement2"...</i>
 	 * 
@@ -82,7 +82,7 @@ public class Replacer {
 	}
 
 	/**
-	 * Applies this {@link Replacer} to the specified string, it the string is null, "null" will be returned.
+	 * Applies this {@link Replacer} to the specified string, it the string is null, null will be returned.
 	 * 
 	 * @param str the string to apply the replacements to.
 	 * 
@@ -93,7 +93,7 @@ public class Replacer {
 	 */
 	public String replaceAt(String str) {
 		if(str == null)
-			return "null";
+			return null;
 		String res = str;
 		for(int i = 0; i <= replaceList.size() - 1; i += 2)
 			res = res.replace(replaceList.get(i), replaceList.get(i + 1));
