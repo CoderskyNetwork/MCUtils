@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 /**
  * Represents a replacer to replace parts of a string with other strings, if you want to use the same replacements for multiple strings, you should 
  * create a replacer variable and apply it to as many strings as you want to <b>avoid creating multiple instances of the same replacements</b>, also, 
@@ -64,7 +66,8 @@ public class Replacer {
 	/**
 	 * Adds the replacements of the specified <b>replacer</b> to this {@link Replacer}, joining them, note that existing replacements
 	 * will be added to the list but the new replacer won't overwrite them. Because of the way replacements work, only the first
-	 * replacement added for a placeholder will take effect if there is another replacement added to said placeholder later on.<br><br>
+	 * replacement added for a placeholder will take effect if there is another replacement added to said placeholder later on.
+	 * If <b>replacer</b> is null, nothing will be done.<br><br>
 	 * 
 	 * Example: text is <i>"Replace %placeholder%"</i>, we add <i>"%placeholder%", "Hello"</i> and <i>"%placeholder%", "World"</i>. The
 	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%placeholder%<i> will take effect.
@@ -76,8 +79,9 @@ public class Replacer {
 	 * @see #replaceAt(String)
 	 * @see #replaceAt(List)
 	 */
-	public Replacer add(Replacer replacer) {
-		replaceList.addAll(replacer.replaceList);
+	public Replacer add(@Nullable Replacer replacer) {
+		if (replacer != null)
+			replaceList.addAll(replacer.replaceList);
 		return this;
 	}
 
