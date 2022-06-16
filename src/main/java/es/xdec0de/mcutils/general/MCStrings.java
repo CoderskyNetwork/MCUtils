@@ -3,6 +3,8 @@ package es.xdec0de.mcutils.general;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,6 +36,8 @@ public class MCStrings {
 	 * 
 	 * @param string the string to apply colors.
 	 * @return The string, colored.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public String applyColor(String string) {
 		if(string == null)
@@ -51,9 +55,18 @@ public class MCStrings {
 		return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
 	}
 
-	public boolean hasContent(String str) {
-		if (str == null)
-			return false;
-		return !(str.isBlank() || str.isEmpty());
+	/**
+	 * Checks if a string has any content on it. If
+	 * {@link String#isBlank()} returns true or the
+	 * string is null, false will be returned.
+	 * 
+	 * @param str the string to check.
+	 * 
+	 * @return true if the string has content, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public boolean hasContent(@Nullable String str) {
+		return str == null ? false : (!str.isBlank());
 	}
 }
