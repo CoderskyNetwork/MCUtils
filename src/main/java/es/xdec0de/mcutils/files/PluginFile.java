@@ -1,41 +1,62 @@
 package es.xdec0de.mcutils.files;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 
 import es.xdec0de.mcutils.MCPlugin;
+import es.xdec0de.mcutils.general.Replacer;
 
 public class PluginFile extends YmlFile {
 
 	private File file;
-	private FileConfiguration cfg;
 
-	PluginFile(MCPlugin plugin, String path, String pathIfInvalid) {
-		super(plugin, path, pathIfInvalid);
+	PluginFile(JavaPlugin plugin, String path, String pathIfInvalid, Charset charset) {
+		super(plugin, path, pathIfInvalid, charset);
 	}
 
-	protected PluginFile(MCPlugin plugin, String path) {
-		this(plugin, path, "default");
+	/**
+	 * Creates a message file for the specified plugin and path,
+	 * usually the path is just "messages", but you can choose whatever you want.
+	 * This constructor doesn't specify a default {@link Replacer},
+	 * meaning that the default replacer will be "%prefix%", "Prefix",
+	 * with "Prefix" being the string under the path "Prefix" of <b>path</b>.yml
+	 * <p><p>
+	 * Take this example messages.yml file:
+	 * <p>
+	 * Prefix: "MCUtils: "
+	 * <p><p>
+	 * The replacer for %prefix% on every message would be "MCUtils: "
+	 * 
+	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
+	 * @param path the path of the file to create, two examples are "messages" and "lang/messages",
+	 * the .yml extension is automatically added, if the path is null, empty or blank, "config" will
+	 * be used.
+	 * 
+	 * @see MCPlugin#registerFile(PluginFile)
+	 * @see MCPlugin#registerFile(String, Class)
+	 */
+	protected PluginFile(JavaPlugin plugin, String path) {
+		this(plugin, path, "config", Charsets.UTF_8);
+	}
+
+	protected PluginFile(JavaPlugin plugin, String path, Charset charset) {
+		this(plugin, path, "config", charset);
 	}
 
 	/**
@@ -48,6 +69,10 @@ public class PluginFile extends YmlFile {
 	 * This method is not required when calling
 	 * {@link MCPlugin#registerFile(String, Class)}
 	 * as it does this automatically.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getFileConfig()
 	 */
 	@Override
 	public void create() {
@@ -62,10 +87,18 @@ public class PluginFile extends YmlFile {
 	/**
 	 * Reloads this file without updating,
 	 * use {@link #reload(boolean)} to update.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #reload(boolean)
 	 */
 	@Override
 	public void reload() {
-		cfg = YamlConfiguration.loadConfiguration(file);
+		try {
+			cfg.load(file);
+		} catch (IOException | InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -77,19 +110,25 @@ public class PluginFile extends YmlFile {
 	 * want some paths to be ignored by the updater, use
 	 * {@link #reload(List)}.
 	 * 
+	 * @since MCUtils 1.0.0
+	 * 
 	 * @see #reload(List)
 	 */
 	public void reload(boolean update) {
 		if (update)
 			update(true, new ArrayList<>(0));
-		cfg = YamlConfiguration.loadConfiguration(file);
+		try {
+			cfg.load(file);
+		} catch (IOException | InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * Reloads this file. The file updater ignores the paths present
 	 * on <b>ignoredUpdatePaths</b>, this is specially useful
-	 * if you want administrators to create their own config
-	 * paths without them being removed, for example, on a GUI plugin.
+	 * if you want administrators to create their own paths
+	 * without them being removed, for example, on a GUI plugin.
 	 * 
 	 * @param ignoredUpdatePaths a list with the paths to
 	 * be ignored by the file updater, update is assumed
@@ -97,11 +136,21 @@ public class PluginFile extends YmlFile {
 	 * without updating use {@link #reload(boolean)} with
 	 * <b>update</b> as false.
 	 * 
+	 * @since MCUtils 1.0.0
+	 * 
 	 * @see #reload(boolean)
 	 */
-	public void reload(List<String> ignoredUpdatePaths) {
-		update(true, ignoredUpdatePaths);
-		cfg = YamlConfiguration.loadConfiguration(file);
+	public void reload(@Nullable List<String> ignoredUpdatePaths) {
+		if (ignoredUpdatePaths == null)
+			reload(false);
+		else
+			update(true, ignoredUpdatePaths);
+		CharsetYamlConfiguration chYaml = new CharsetYamlConfiguration(Charsets.UTF_8);
+		try {
+			chYaml.load(file);
+		} catch (IOException | InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private File copyInputStreamToFile(String path, InputStream inputStream) {
@@ -122,7 +171,7 @@ public class PluginFile extends YmlFile {
 		String pluginName = plugin.getName();
 		try {
 			int changes = 0;
-			Utf8YamlConfiguration updated = new Utf8YamlConfiguration();
+			CharsetYamlConfiguration updated = new CharsetYamlConfiguration(Charsets.UTF_8);
 			if(plugin.getResource(getPath()) != null)
 				updated.load(copyInputStreamToFile(plugin.getDataFolder()+ "/"+getPath(), plugin.getResource(getPath())));
 			else {
@@ -159,29 +208,5 @@ public class PluginFile extends YmlFile {
 
 	private void log(String str) {
 		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', str));
-	}
-
-	class Utf8YamlConfiguration extends YamlConfiguration {
-
-		@Override
-		public void save(File file) throws IOException {
-			if (file == null)
-				return;
-			Files.createParentDirs(file);
-			String data = this.saveToString();
-			Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);
-			try {
-				writer.write(data);
-			} finally {
-				writer.close();
-			}
-		}
-
-		@Override
-		public void load(File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
-			if (file == null)
-				throw new FileNotFoundException("File is null");
-			this.load(new InputStreamReader(new FileInputStream(file), Charsets.UTF_8));
-		}
 	}
 }

@@ -1,5 +1,6 @@
 package es.xdec0de.mcutils.files;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.google.common.base.Charsets;
 
 import es.xdec0de.mcutils.MCPlugin;
 import es.xdec0de.mcutils.MCUtils;
@@ -18,39 +22,19 @@ import es.xdec0de.mcutils.general.Replacer;
  * A class intended to be used to create
  * and use a messages file.
  * 
- * @since 1.0.0
+ * @since MCUtils 1.0.0
  * 
  * @author xDec0de_
  */
 public class MessagesFile extends PluginFile {
 
+	/** An instance of {@link MCStrings} used for the messages methods */
 	final MCStrings strings = JavaPlugin.getPlugin(MCUtils.class).strings();
-	private Replacer defReplacer;
+	private final Replacer defReplacer;
 
-	/**
-	 * Creates a message file for the specified plugin and path,
-	 * usually the path is just "messages", but you can choose whatever you want.
-	 * This constructor doesn't specify a default {@link Replacer},
-	 * meaning that the default replacer will be "%prefix%", "Prefix",
-	 * with "Prefix" being the string under the path "Prefix" of <b>path</b>.yml
-	 * <p><p>
-	 * Take this example messages.yml file:
-	 * <p>
-	 * Prefix: "MCUtils: "
-	 * <p><p>
-	 * The replacer for %prefix% on every message would be "MCUtils: "
-	 * 
-	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
-	 * @param path the path of the file to create, two examples are "messages" and "lang/messages",
-	 * the .yml extension is automatically added, if the path is null, empty or blank, "messages" will
-	 * be used.
-	 * 
-	 * @see MCPlugin#registerFile(PluginFile)
-	 * @see MCPlugin#registerFile(String, Class)
-	 */
-	protected MessagesFile(@Nonnull MCPlugin plugin, @Nullable String path) {
-		super(plugin, path, "messages");
-		this.defReplacer = new Replacer("%prefix%", "Prefix");
+	protected MessagesFile(@Nonnull MCPlugin plugin, @Nullable String path, @Nullable Charset charset, @Nullable Replacer defReplacer) {
+		super(plugin, path, charset);
+		this.defReplacer = defReplacer != null ? defReplacer : new Replacer("%prefix%", "Prefix");
 	}
 
 	/**
@@ -61,58 +45,76 @@ public class MessagesFile extends PluginFile {
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
 	 * @param path the path of the file to create, two examples are "messages.yml" and "lang/messages.yml"
 	 * 
+	 * @since MCUtils 1.0.0
+	 * 
 	 * @see MCPlugin#registerFile(PluginFile)
 	 * @see MCPlugin#registerFile(String, Class)
 	 */
 	protected MessagesFile(@Nonnull MCPlugin plugin, @Nullable String path, @Nullable Replacer defReplacer) {
-		super(plugin, path);
-		this.defReplacer = defReplacer != null ? defReplacer : new Replacer("%prefix%", "Prefix");
+		this(plugin, path, Charsets.UTF_8, defReplacer);
 	}
 
 	/**
 	 * Gets the default {@link Replacer} being used by this file.
 	 * 
 	 * @return The default replacer, cannot be null.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
+	@Nonnull
 	public Replacer getDefaultReplacer() {
 		return defReplacer;
 	}
 
 	/**
-	 * Gets the requested String by path with {@link MCStrings#applyColor(String)}
-	 * and {@link #getDefaultReplacer()} applied to it.
+	 * Gets the requested String by path using {@link FileConfiguration#getString(String)}
+	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()} to it.
+	 * If the path is null or no value exists for it, null will be returned.
 	 * 
 	 * @param path the path at {@link #getPath()}.yml
 	 * 
-	 * @return The requested string, "null" if the path doesn't exist.
+	 * @return The requested string, null if no value for the path exists or the path is null.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
-	public String get(String path) {
+	@Nullable
+	public String get(@Nullable String path) {
 		return strings.applyColor(getDefaultReplacer().replaceAt(getFileConfig().getString(path)));
 	}
 
 	/**
-	 * Gets the requested String by path with {@link MCStrings#applyColor(String)}
-	 * and {@link #getDefaultReplacer()} joined with <b>replacer</b> applied to it.
+	 * Gets the requested String by path using {@link FileConfiguration#getString(String)}
+	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()}
+	 * to it with <b>replaced</b> being added to {@link #getDefaultReplacer()}.
+	 * If the path is null or no value exists for it, null will be returned.
 	 * 
 	 * @param path the path at {@link #getPath()}.yml
-	 * @param replacer the replacer to add to the default replacer.
 	 * 
-	 * @return The requested string, "null" if the path doesn't exist.
+	 * @return The requested string, null if no value for the path exists or the path is null.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public String get(String path, Replacer replacer) {
 		return strings.applyColor(getDefaultReplacer().add(replacer).replaceAt(getFileConfig().getString(path)));
 	}
 
 	/**
-	 * Gets the requested String by path with {@link MCStrings#applyColor(String)}
-	 * and {@link #getDefaultReplacer()} with added <b>replacements</b> applied to it.
+	 * Gets the requested String by path using {@link FileConfiguration#getString(String)}
+	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()}
+	 * to it with the <b>replacements</b> being added to {@link #getDefaultReplacer()}.
+	 * If the path is null or no value exists for it, null will be returned.
+	 * <p>
+	 * The <b>replacements</b> must not be null or empty and the count must be even as specified on {@link Replacer#add(String...)}
 	 * 
 	 * @param path the path at {@link #getPath()}.yml
-	 * @param replacements the replacements to add to the default replacer.
 	 * 
-	 * @return The requested string, "null" if the path doesn't exist.
+	 * @return The requested string, null if no value for the path exists or the path is null.
+	 * 
+	 * @throws IllegalArgumentException if <b>replacents</b> is null, empty or it's size % 2 is not equal to 0.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
-	public String get(String path, String... replacements) {
+	public String get(@Nullable String path, @Nonnull String... replacements) {
 		return strings.applyColor(getDefaultReplacer().add(replacements).replaceAt(getFileConfig().getString(path)));
 	}
 
