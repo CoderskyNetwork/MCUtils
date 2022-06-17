@@ -32,6 +32,21 @@ public class MessagesFile extends PluginFile {
 	final MCStrings strings = JavaPlugin.getPlugin(MCUtils.class).strings();
 	private final Replacer defReplacer;
 
+	/**
+	 * Creates a message file for the specified plugin
+	 * with the specified path, usually the path is just
+	 * "messages", but you can choose whatever you want.
+	 * 
+	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
+	 * @param path the path of the file to create, two examples are "messages.yml" and "lang/messages.yml"
+	 * @param charset the {@link Charset} to use, if null, {@link Charsets#UTF_8} will be used. 
+	 * @param defReplacer the default {@link Replacer} to use on every message.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see MCPlugin#registerFile(PluginFile)
+	 * @see MCPlugin#registerFile(String, Class)
+	 */
 	protected MessagesFile(@Nonnull MCPlugin plugin, @Nullable String path, @Nullable Charset charset, @Nullable Replacer defReplacer) {
 		super(plugin, path, charset);
 		this.defReplacer = defReplacer != null ? defReplacer : new Replacer("%prefix%", "Prefix");
@@ -40,10 +55,12 @@ public class MessagesFile extends PluginFile {
 	/**
 	 * Creates a message file for the specified plugin
 	 * with the specified path, usually the path is just
-	 * "messages.yml", but you can choose whatever you want.
+	 * "messages", but you can choose whatever you want.
+	 * {@link Charsets#UTF_8} will be used.
 	 * 
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
 	 * @param path the path of the file to create, two examples are "messages.yml" and "lang/messages.yml"
+	 * @param defReplacer the default {@link Replacer} to use on every message.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
