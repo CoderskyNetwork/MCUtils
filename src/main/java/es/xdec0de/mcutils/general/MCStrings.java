@@ -1,5 +1,6 @@
 package es.xdec0de.mcutils.general;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,5 +69,41 @@ public class MCStrings {
 	 */
 	public boolean hasContent(@Nullable String str) {
 		return str == null ? false : (!str.isBlank());
+	}
+
+	/**
+	 * Gets a string list as a string with all elements separated by
+	 * the specified <b>separator</b>, null elements will be ignored.
+	 * If <b>lst</b> is null, null will be returned, if <b>separator</b>
+	 * is null, "null" will be used as a separator.
+	 * <p>
+	 * This method doesn't treat strings without content as elements, meaning
+	 * no separator will be added to them (See {@link #hasContent(String)})
+	 * <p>
+	 * Example:
+	 * <p>
+	 * Array: [" ", "a", null, "b", "c"]<br>
+	 * Separator: ", "<br>
+	 * Returns: " a, b, c"
+	 * 
+	 * @param lst the list to use.
+	 * @param separator the separator to use.
+	 * 
+	 * @return A string list as a string with all elements separated by
+	 * the specified <b>separator</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public String asString(@Nullable List<String> lst, @Nullable String separator) {
+		String res = "";
+		if (lst == null)
+			return null;
+		for (String str : lst) {
+			if (str == null)
+				continue;
+			res += hasContent(res) ? separator+str : str;
+		}
+		return res;
 	}
 }
