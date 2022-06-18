@@ -201,4 +201,26 @@ public class MCPlugin extends JavaPlugin {
 			consumer.accept(null);
 		}
 	}
+
+	/**
+	 * Sends <b>str</b> to the console.
+	 * 
+	 * @param str the string to send.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void log(@Nullable String str) {
+		Bukkit.getConsoleSender().sendMessage(str);
+	}
+
+	/**
+	 * Sends <b>str</b> to the console with applied colors using {@link MCStrings#applyColor(String)}
+	 * 
+	 * @param str the string to send.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void logCol(@Nullable String str) {
+		Bukkit.getConsoleSender().sendMessage(getMCUtils().strings().applyColor(str));
+	}
 }
