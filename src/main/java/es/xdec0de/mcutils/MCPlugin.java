@@ -39,11 +39,6 @@ import es.xdec0de.mcutils.server.MCVersion;
 public class MCPlugin extends JavaPlugin {
 
 	private final List<YmlFile> files = new ArrayList<>();
-	private final MCUtils utils;
-
-	public MCPlugin() {
-		this.utils = JavaPlugin.getPlugin(MCUtils.class);
-	}
 
 	/**
 	 * Gets an instance of {@link MCUtils}
@@ -52,7 +47,7 @@ public class MCPlugin extends JavaPlugin {
 	 */
 	@Nonnull
 	public MCUtils getMCUtils() {
-		return utils;
+		return JavaPlugin.getPlugin(MCUtils.class);
 	}
 
 	/**
@@ -94,7 +89,7 @@ public class MCPlugin extends JavaPlugin {
 	 */
 	@Nullable
 	public <T extends YmlFile> T registerFile(@Nonnull String path, @Nonnull Class<T> type) {
-		if (!utils.strings().hasContent(path))
+		if (!getMCUtils().strings().hasContent(path))
 			return null;
 		try {
 			Constructor<T> constructor = type.getDeclaredConstructor(JavaPlugin.class, String.class, String.class);

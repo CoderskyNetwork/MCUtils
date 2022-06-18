@@ -2,6 +2,8 @@ package es.xdec0de.mcutils;
 
 import javax.annotation.Nonnull;
 
+import org.bukkit.Bukkit;
+
 import es.xdec0de.mcutils.general.MCStrings;
 import es.xdec0de.mcutils.general.PlayerUtils;
 
@@ -30,16 +32,20 @@ import es.xdec0de.mcutils.general.PlayerUtils;
  */
 public class MCUtils extends MCPlugin {
 
-	private final MCStrings strings = new MCStrings();
+	private final MCStrings strings = new MCStrings(this);
 
 	@Override
 	public void onEnable() {
-		
+		Bukkit.getConsoleSender().sendMessage(
+			strings.applyColor("&8[&6MCUtils&8] &aPlugin enabled &8| &bv"+
+			getDescription().getVersion()+" &8| &bMC "+getServerVersion().getFormatName()));
 	}
 
 	@Override
 	public void onDisable() {
-		
+		Bukkit.getConsoleSender().sendMessage(
+				strings.applyColor("&8[&6MCUtils&8] &cPlugin disabled &8| &bv"+
+				getDescription().getVersion()+" &8| &bMC "+getServerVersion().getFormatName()));
 	}
 
 	/**

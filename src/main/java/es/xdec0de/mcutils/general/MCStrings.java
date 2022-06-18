@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import es.xdec0de.mcutils.MCUtils;
 
@@ -25,8 +24,8 @@ public class MCStrings {
 
 	private final Pattern hexPattern;
 
-	public MCStrings() {
-		if (JavaPlugin.getPlugin(MCUtils.class).strings() != null)
+	public MCStrings(MCUtils plugin) {
+		if (plugin.strings() != null)
 			throw new SecurityException("Illegal constructor call, access this class using MCUtils#strings()");
 		hexPattern = Pattern.compile("#([A-Fa-f0-9]{6})");
 	}
