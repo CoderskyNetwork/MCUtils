@@ -3,6 +3,7 @@ package es.xdec0de.mcutils;
 import javax.annotation.Nonnull;
 
 import es.xdec0de.mcutils.general.MCStrings;
+import es.xdec0de.mcutils.general.PlayerUtils;
 
 /**
  * The main class of the MCUtils API, used
@@ -42,14 +43,27 @@ public class MCUtils extends MCPlugin {
 	}
 
 	/**
-	 * Gets an instance of {@link MCStrings}
+	 * Gets an instance of {@link MCStrings}.
 	 * 
-	 * @return An instance of {@link MCStrings}
+	 * @return An instance of {@link MCStrings}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
 	public MCStrings strings() {
 		return strings;
+	}
+
+	/**
+	 * Gets an instance of {@link PlayerUtils}, this
+	 * method exists purely for accessibility, you
+	 * can just call {@link PlayerUtils}'s constructor.
+	 * 
+	 * @return An instance of {@link PlayerUtils}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public PlayerUtils players() {
+		return new PlayerUtils();
 	}
 }
