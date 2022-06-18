@@ -15,6 +15,8 @@ import es.xdec0de.mcutils.MCUtils;
  * A string utility class, also contains
  * methods for string lists.
  * 
+ * @since MCUtils 1.0.0
+ * 
  * @author xDec0de_
  * 
  * @see #applyColor(String)
