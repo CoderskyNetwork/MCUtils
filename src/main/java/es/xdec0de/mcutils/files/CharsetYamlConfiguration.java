@@ -99,6 +99,8 @@ public class CharsetYamlConfiguration extends YamlConfiguration {
 	 * @throws FileNotFoundException Thrown when the given file cannot be opened or <b>file</b> is null.
 	 * @throws IOException Thrown when the given file cannot be read.
 	 * @throws InvalidConfigurationException Thrown when the given file is not a valid Configuration
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Override
 	public void load(@Nonnull File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
