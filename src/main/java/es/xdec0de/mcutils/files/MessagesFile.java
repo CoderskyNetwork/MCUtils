@@ -96,7 +96,7 @@ public class MessagesFile extends PluginFile {
 	 */
 	@Nullable
 	public String get(@Nullable String path) {
-		return strings.applyColor(getDefaultReplacer().replaceAt(getFileConfig().getString(path)));
+		return path == null ? null : strings.applyColor(getDefaultReplacer().replaceAt(getFileConfig().getString(path)));
 	}
 
 	/**
@@ -111,8 +111,9 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public String get(String path, Replacer replacer) {
-		return strings.applyColor(getDefaultReplacer().add(replacer).replaceAt(getFileConfig().getString(path)));
+	@Nullable
+	public String get(@Nullable String path, @Nullable Replacer replacer) {
+		return path == null ? null : strings.applyColor(getDefaultReplacer().add(replacer).replaceAt(getFileConfig().getString(path)));
 	}
 
 	/**
@@ -131,8 +132,9 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
+	@Nullable
 	public String get(@Nullable String path, @Nonnull String... replacements) {
-		return strings.applyColor(getDefaultReplacer().add(replacements).replaceAt(getFileConfig().getString(path)));
+		return path == null ? null : strings.applyColor(getDefaultReplacer().add(replacements).replaceAt(getFileConfig().getString(path)));
 	}
 
 	/**
@@ -142,8 +144,13 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path at {@link #getPath()}.yml
 	 * 
 	 * @return The requested list of strings, an empty list if the path doesn't exist or the list itself is empty.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
-	public List<String> getList(String path) {
+	@Nullable
+	public List<String> getList(@Nullable String path) {
+		if (path == null)
+			return null;
 		List<String> atCfg = getFileConfig().getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
@@ -162,9 +169,15 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path at {@link #getPath()}.yml
 	 * @param replacer the replacer to add to the default replacer.
 	 * 
-	 * @return The requested list of strings, an empty list if the path doesn't exist or the list itself is empty.
+	 * @return The requested colored list of strings, an empty list if the path doesn't
+	 * exist or the list itself is empty, null if <b>path</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
-	public List<String> getList(String path, Replacer replacer) {
+	@Nullable
+	public List<String> getList(@Nullable String path, @Nullable Replacer replacer) {
+		if (path == null)
+			return null;
 		List<String> atCfg = getFileConfig().getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
@@ -184,8 +197,13 @@ public class MessagesFile extends PluginFile {
 	 * @param replacements the replacements to add to the default replacer.
 	 * 
 	 * @return The requested list of strings, an empty list if the path doesn't exist or the list itself is empty.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
-	public List<String> getList(String path, String... replacements) {
+	@Nullable
+	public List<String> getList(@Nullable String path, @Nullable String... replacements) {
+		if (path == null)
+			return null;
 		List<String> atCfg = getFileConfig().getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
@@ -202,8 +220,12 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @param path the path at {@link #getPath()}.yml
 	 * @param target the receiver.
+	 * 
+	 * @throws NullPointerException if <b>target</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
-	public void send(String path, CommandSender target) {
+	public void send(@Nullable String path, @Nonnull CommandSender target) {
 		target.sendMessage(get(path));
 	}
 
@@ -214,8 +236,12 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path at {@link #getPath()}.yml
 	 * @param target the receiver.
 	 * @param replacer the replacer to add to the default replacer.
+	 * 
+	 * @throws NullPointerException if <b>target</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
-	public void send(String path, CommandSender target, Replacer replacer) {
+	public void send(@Nullable String path, @Nonnull CommandSender target, @Nullable Replacer replacer) {
 		target.sendMessage(get(path, replacer));
 	}
 
@@ -226,8 +252,12 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path at {@link #getPath()}.yml
 	 * @param target the receiver.
 	 * @param replacements the replacements to add to the default replacer.
+	 * 
+	 * @throws NullPointerException if <b>target</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
-	public void send(String path, CommandSender target, String... replacements) {
+	public void send(@Nullable String path, @Nonnull CommandSender target, @Nullable String... replacements) {
 		target.sendMessage(get(path, replacements));
 	}
 }
