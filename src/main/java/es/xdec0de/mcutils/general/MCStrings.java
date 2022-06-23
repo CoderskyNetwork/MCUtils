@@ -1,5 +1,6 @@
 package es.xdec0de.mcutils.general;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +56,28 @@ public class MCStrings {
 					+ COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5));
 		}
 		return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
+	}
+
+	/**
+	 * Applies colors to every string of <b>lst</b>
+	 * using {@link #applyColor(String)}. If <b>lst</b>
+	 * is null, null elements on the list will be kept
+	 * as null.
+	 * 
+	 * @param lst the list to apply colors.
+	 * 
+	 * @return The list, colored.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public List<String> applyColor(@Nullable List<String> lst) {
+		if (lst == null)
+			return null;
+		List<String> res = new ArrayList<>(lst.size());
+		for (String str : lst)
+			res.add(applyColor(str));
+		return res;
 	}
 
 	/**
