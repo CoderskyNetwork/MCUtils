@@ -15,6 +15,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -222,5 +226,52 @@ public class MCPlugin extends JavaPlugin {
 	 */
 	public void logCol(@Nullable String str) {
 		Bukkit.getConsoleSender().sendMessage(getMCUtils().strings().applyColor(str));
+	}
+
+	/**
+	 * A shortcut to register the specified executor to the given event class.
+	 * If any of the parameters is null, nothing will be done.
+	 * 
+	 * @param event the {@link Event} type to register.
+	 * @param listener the {@link Listener} to register.
+	 * @param priority the {@link EventPriority} to register this event at.
+	 * @param executor the {@link EventExecutor} to register
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void registerEvent(@Nonnull Class<? extends Event> event, @Nonnull Listener listener, @Nonnull EventPriority priority, @Nonnull EventExecutor executor) {
+		if (event == null || listener == null || priority == null || executor == null)
+			return;
+		Bukkit.getPluginManager().registerEvent(event, listener, priority, executor, this);
+	}
+
+	/**
+	 * A shortcut to register all the events of a {@link Listener}.
+	 * If <b>listener</b> is null, nothing will be done.
+	 * 
+	 * @param listener the listener to register.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void registerEvents(@Nonnull Listener listener) {
+		if (listener == null)
+			return;
+		Bukkit.getPluginManager().registerEvents(listener, this);
+	}
+
+	/**
+	 * A shortcut to register multiple {@link Listener}s. If
+	 * <b>listeners</b> is null, nothing will be done, any null
+	 * listener will be ignored.
+	 * 
+	 * @param listeners the listeners to register.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void registerEvents(@Nullable Listener... listeners) {
+		if (listeners == null)
+			return;
+		for(Listener listener : listeners)
+			registerEvents(listener);
 	}
 }
