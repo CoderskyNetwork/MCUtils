@@ -144,4 +144,21 @@ public class Replacer {
 		list.forEach(str -> res.add(replaceAt(str)));
 		return res;
 	}
+
+	/**
+	 * Clones this {@link Replacer} creating a new one with the same replacements.
+	 * 
+	 * @return A copy of this {@link Replacer}
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #Replacer(String...)
+	 */
+	@Override
+	@Nonnull
+	public Replacer clone() {
+		Replacer copy = new Replacer();
+		copy.replaceList.addAll(replaceList);
+		return copy;
+	}
 }
