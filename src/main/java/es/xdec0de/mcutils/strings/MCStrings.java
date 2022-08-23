@@ -53,6 +53,28 @@ public class MCStrings {
 	}
 
 	/**
+	 * Applies colors to every string of <b>lst</b>
+	 * using {@link #applyColor(String)}. If <b>lst</b>
+	 * is null, null elements on the list will be kept
+	 * as null.
+	 * 
+	 * @param lst the list to apply colors.
+	 * 
+	 * @return The list, colored.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public List<String> applyColor(@Nullable List<String> lst) {
+		if (lst == null)
+			return null;
+		List<String> res = new ArrayList<>(lst.size());
+		for (String str : lst)
+			res.add(applyColor(str));
+		return res;
+	}
+
+	/**
 	 * Applies the {@link Gradient} pattern to this string.
 	 * 
 	 * @param string the string to apply {@link Gradient}s
@@ -74,28 +96,6 @@ public class MCStrings {
 	 */
 	public String applyHex(String string) {
 		return hexPattern.process(string);
-	}
-
-	/**
-	 * Applies colors to every string of <b>lst</b>
-	 * using {@link #applyColor(String)}. If <b>lst</b>
-	 * is null, null elements on the list will be kept
-	 * as null.
-	 * 
-	 * @param lst the list to apply colors.
-	 * 
-	 * @return The list, colored.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	public List<String> applyColor(@Nullable List<String> lst) {
-		if (lst == null)
-			return null;
-		List<String> res = new ArrayList<>(lst.size());
-		for (String str : lst)
-			res.add(applyColor(str));
-		return res;
 	}
 
 	/**
