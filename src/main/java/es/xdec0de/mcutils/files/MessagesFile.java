@@ -15,8 +15,8 @@ import com.google.common.base.Charsets;
 
 import es.xdec0de.mcutils.MCPlugin;
 import es.xdec0de.mcutils.MCUtils;
-import es.xdec0de.mcutils.general.MCStrings;
 import es.xdec0de.mcutils.general.Replacer;
+import es.xdec0de.mcutils.strings.MCStrings;
 
 /**
  * A class intended to be used to create
