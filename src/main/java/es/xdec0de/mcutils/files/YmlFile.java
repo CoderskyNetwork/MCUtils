@@ -38,6 +38,7 @@ public class YmlFile {
 		if (!mcUtils.strings().hasContent(path))
 			path = pathIfInvalid;
 		path += ".yml";
+		this.file = new File(plugin.getDataFolder(), path);
 		this.plugin = plugin;
 		this.path = path;
 	}
@@ -59,14 +60,13 @@ public class YmlFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public void create() {
-		this.file = new File(plugin.getDataFolder(), path);
-		file.mkdirs();
+		file.getParentFile().mkdirs();
 		try {
-			cfg.load(new File(plugin.getDataFolder(), path));
-			reload();
-		} catch (IOException | InvalidConfigurationException e) {
+			file.createNewFile();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		reload();
 	}
 
 	/**
