@@ -96,8 +96,9 @@ public class MCPlugin extends JavaPlugin {
 		if (!getMCUtils().strings().hasContent(path))
 			return null;
 		try {
-			Constructor<T> constructor = type.getDeclaredConstructor(JavaPlugin.class, String.class, String.class);
-			T file = constructor.newInstance(this, path, "file");
+			Constructor<T> constructor = type.getDeclaredConstructor(JavaPlugin.class, String.class);
+			constructor.setAccessible(true);
+			T file = constructor.newInstance(this, path);
 			file.create();
 			files.add(file);
 			return file;
