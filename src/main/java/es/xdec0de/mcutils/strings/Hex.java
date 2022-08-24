@@ -65,25 +65,21 @@ public class Hex implements ColorPattern {
 		if(string == null)
 			return null;
 		String res = string;
-		final Matcher fullMatcher = pattern.matcher(res), simpleMatcher = simplePattern.matcher(res);
-		final StringBuffer buffer = new StringBuffer(res.length() + 4 * 8);
-		while (fullMatcher.find()) {
-			final String group = fullMatcher.group(1);
-			fullMatcher.appendReplacement(buffer, 0x00A7 + "x"
-					+ 0x00A7 + group.charAt(0) + 0x00A7 + group.charAt(1)
-					+ 0x00A7 + group.charAt(2) + 0x00A7 + group.charAt(3)
-					+ 0x00A7 + group.charAt(4) + 0x00A7 + group.charAt(5));
-		}
-		if (!simple)
-			return res;
-		while (simpleMatcher.find()) {
-			final String group = simpleMatcher.group(1);
-			simpleMatcher.appendReplacement(buffer, 0x00A7 + "x"
-					+ 0x00A7 + group.charAt(0) + 0x00A7 + group.charAt(0)
-					+ 0x00A7 + group.charAt(1) + 0x00A7 + group.charAt(1)
-					+ 0x00A7 + group.charAt(2) + 0x00A7 + group.charAt(2));
+		final char col = 0x00A7; // Vanilla Minecraft color character
+		for (int i = simple ? 2 : 1; i > 0; i--) { // i will be 1 for pattern, 2 for simplePattern.
+			System.out.println("Processing index "+i);
+			final Matcher matcher = i == 2 ? simplePattern.matcher(res) : pattern.matcher(res);
+			final StringBuffer buffer = new StringBuffer(res.length() + 4 * 8);
+			int[] positions = i == 2 ? new int[]{0, 0, 1, 1, 2, 2} : new int[]{0, 1, 2, 3, 4, 5};
+			while (matcher.find()) {
+				final String group = matcher.group(1);
+				matcher.appendReplacement(buffer, col + "x"
+						+ col + group.charAt(positions[0]) + col + group.charAt(positions[1])
+						+ col + group.charAt(positions[2]) + col + group.charAt(positions[3])
+						+ col + group.charAt(positions[4]) + col + group.charAt(positions[5]));
+			}
+			res = matcher.appendTail(buffer).toString();
 		}
 		return res;
 	}
-
 }
