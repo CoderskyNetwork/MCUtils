@@ -31,6 +31,8 @@ public class YmlFile {
 	protected final CharsetYamlConfiguration cfg;
 
 	YmlFile(JavaPlugin plugin, String path, String pathIfInvalid, Charset charset) {
+		if (plugin == null)
+			throw new NullPointerException("Plugin cannot be null.");
 		MCUtils mcUtils = JavaPlugin.getPlugin(MCUtils.class);
 		cfg = new CharsetYamlConfiguration(charset);
 		if (!mcUtils.strings().hasContent(path))
@@ -90,17 +92,21 @@ public class YmlFile {
 	}
 
 	/**
-	 * Reloads this file.
-	 * <p>
-	 * Any errors loading the Configuration will be logged and then ignored.If the specified input is not a valid config, a blank config will bereturned. 
-	 * <p>
-	 * The encoding used may follow the system dependent default.
+	 * Reloads this file. Any non saved value contained within this configuration will be removed
+	 * and the new values will be loaded from the given file. If there is any error reloading the file,
+	 * the errors will be logged and false will be returned.
+	 * 
+	 * @return true if no errors occurred while reloading, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
-	public void reload() {
+	public boolean reload() {
 		try {
 			cfg.load(file);
+			return true;
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 }
