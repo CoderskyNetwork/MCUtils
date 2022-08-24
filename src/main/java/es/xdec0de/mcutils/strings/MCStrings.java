@@ -30,6 +30,13 @@ public class MCStrings {
 		addPattern(new Gradient());
 	}
 
+	public <T extends ColorPattern> ColorPattern getPattern(Class<T> pattern) {
+		for (ColorPattern implPattern : patterns)
+			if (implPattern.getClass().equals(pattern))
+				return implPattern;
+		return null;
+	}
+
 	public <T extends ColorPattern> void addPatternBefore(ColorPattern pattern, Class<T> before) {
 		final LinkedList<ColorPattern> tempPatterns = new LinkedList<>();
 		boolean added = false;
