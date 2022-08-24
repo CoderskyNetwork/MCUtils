@@ -30,7 +30,7 @@ public class MessagesFile extends PluginFile {
 
 	/** An instance of {@link MCStrings} used for the messages methods */
 	final MCStrings strings = JavaPlugin.getPlugin(MCUtils.class).strings();
-	private final Replacer defReplacer;
+	private Replacer defReplacer;
 
 	/**
 	 * Creates a message file for the specified plugin
@@ -47,9 +47,8 @@ public class MessagesFile extends PluginFile {
 	 * @see MCPlugin#registerFile(PluginFile)
 	 * @see MCPlugin#registerFile(String, Class)
 	 */
-	protected MessagesFile(@Nonnull MCPlugin plugin, @Nullable String path, @Nullable Charset charset, @Nullable Replacer defReplacer) {
+	protected MessagesFile(@Nonnull MCPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(plugin, path, charset);
-		this.defReplacer = defReplacer != null ? defReplacer : new Replacer("%prefix%", "Prefix");
 	}
 
 	/**
@@ -67,8 +66,12 @@ public class MessagesFile extends PluginFile {
 	 * @see MCPlugin#registerFile(PluginFile)
 	 * @see MCPlugin#registerFile(String, Class)
 	 */
-	protected MessagesFile(@Nonnull MCPlugin plugin, @Nullable String path, @Nullable Replacer defReplacer) {
-		this(plugin, path, Charsets.UTF_8, defReplacer);
+	protected MessagesFile(@Nonnull MCPlugin plugin, @Nullable String path) {
+		this(plugin, path, Charsets.UTF_8);
+	}
+
+	public void setDefaultReplacer(Replacer replacer) {
+		this.defReplacer = replacer;
 	}
 
 	/**
@@ -78,7 +81,7 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@Nullable
 	public Replacer getDefaultReplacer() {
 		return defReplacer;
 	}
@@ -96,7 +99,10 @@ public class MessagesFile extends PluginFile {
 	 */
 	@Nullable
 	public String get(@Nullable String path) {
-		return path == null ? null : strings.applyColor(getDefaultReplacer().replaceAt(getFileConfig().getString(path)));
+		if (path == null)
+			return null;
+		String str = getFileConfig().getString(path);
+		return getDefaultReplacer() == null ? strings.applyColor(str) : strings.applyColor(getDefaultReplacer().replaceAt(str));
 	}
 
 	/**
@@ -113,7 +119,11 @@ public class MessagesFile extends PluginFile {
 	 */
 	@Nullable
 	public String get(@Nullable String path, @Nullable Replacer replacer) {
-		return path == null ? null : strings.applyColor(getDefaultReplacer().add(replacer).replaceAt(getFileConfig().getString(path)));
+		if (path == null)
+			return null;
+		String str = getFileConfig().getString(path);
+		Replacer def = getDefaultReplacer();
+		return def == null ? strings.applyColor(replacer.replaceAt(str)) : strings.applyColor(def.add(replacer).replaceAt(str));
 	}
 
 	/**
@@ -134,7 +144,11 @@ public class MessagesFile extends PluginFile {
 	 */
 	@Nullable
 	public String get(@Nullable String path, @Nonnull String... replacements) {
-		return path == null ? null : strings.applyColor(getDefaultReplacer().add(replacements).replaceAt(getFileConfig().getString(path)));
+		if (path == null)
+			return null;
+		String str = getFileConfig().getString(path);
+		Replacer def = getDefaultReplacer();
+		return def == null ? strings.applyColor(new Replacer(replacements).replaceAt(str)) : strings.applyColor(def.replaceAt(str));
 	}
 
 	/**
@@ -156,8 +170,12 @@ public class MessagesFile extends PluginFile {
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
 		Replacer rep = getDefaultReplacer();
-		for (String str : atCfg)
-			res.add(strings.applyColor(rep.replaceAt(str)));
+		if (rep != null)
+			for (String str : atCfg)
+				res.add(strings.applyColor(rep.replaceAt(str)));
+		else
+			for (String str : atCfg)
+				res.add(strings.applyColor(str));
 		return res;
 	}
 
@@ -182,7 +200,7 @@ public class MessagesFile extends PluginFile {
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
-		Replacer rep = getDefaultReplacer().add(replacer);
+		Replacer rep = getDefaultReplacer() != null ? getDefaultReplacer().add(replacer) : replacer;
 		for (String str : atCfg)
 			res.add(strings.applyColor(rep.replaceAt(str)));
 		return res;
@@ -208,7 +226,7 @@ public class MessagesFile extends PluginFile {
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
-		Replacer rep = getDefaultReplacer().add(replacements);
+		Replacer rep = getDefaultReplacer() != null ? getDefaultReplacer().add(replacements) : new Replacer(replacements);
 		for (String str : atCfg)
 			res.add(strings.applyColor(rep.replaceAt(str)));
 		return res;
