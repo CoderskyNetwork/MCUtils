@@ -21,15 +21,17 @@ import net.md_5.bungee.api.ChatColor;
 public class MCStrings {
 
 	private final Hex hexPattern;
+	private final SimpleHex simpleHex;
 	private final Gradient gradient;
 
 	public MCStrings(MCUtils plugin) {
 		if (plugin.strings() != null)
 			throw new SecurityException("Illegal constructor call, access this class using MCUtils#strings()");
 		hexPattern = new Hex();
+		simpleHex = new SimpleHex();
 		gradient = new Gradient();
 	}
-	
+
 	/**
 	 * Applies all registered patterns to a <b>string</b> with hexadecimal
 	 * color support, then, applies "traditional" colors with char '&' using
@@ -49,6 +51,7 @@ public class MCStrings {
 			return null;
 		String res = applyGradients(string);
 		res = applyHex(res);
+		res = applySimpleHex(res);
 		return ChatColor.translateAlternateColorCodes('&', res);
 	}
 
@@ -96,6 +99,18 @@ public class MCStrings {
 	 */
 	public String applyHex(String string) {
 		return hexPattern.process(string);
+	}
+
+	/**
+	 * Applies the {@link SimpleHex} pattern to this string.
+	 * 
+	 * @param string the string to apply {@link SimpleHex}adecimal colors
+	 * @return The string, colored.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public String applySimpleHex(String string) {
+		return simpleHex.process(string);
 	}
 
 	/**
