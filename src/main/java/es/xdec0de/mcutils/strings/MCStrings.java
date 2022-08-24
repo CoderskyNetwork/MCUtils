@@ -126,7 +126,7 @@ public class MCStrings {
 	 */
 	@Nullable
 	public String applyColor(@Nullable String string) {
-		if(string == null)
+		if (string == null)
 			return null;
 		String res = string;
 		for (ColorPattern pattern : patterns)

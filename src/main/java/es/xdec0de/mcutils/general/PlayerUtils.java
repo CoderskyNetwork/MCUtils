@@ -8,6 +8,8 @@ import javax.annotation.Nullable;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import es.xdec0de.mcutils.strings.MCStrings;
+
 /**
  * A class containing player utilities.
  * This class uses the default constructor,

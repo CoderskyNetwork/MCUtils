@@ -25,8 +25,8 @@ import org.bukkit.scheduler.BukkitScheduler;
 import es.xdec0de.mcutils.files.MessagesFile;
 import es.xdec0de.mcutils.files.PluginFile;
 import es.xdec0de.mcutils.files.YmlFile;
-import es.xdec0de.mcutils.general.MCStrings;
 import es.xdec0de.mcutils.server.MCVersion;
+import es.xdec0de.mcutils.strings.MCStrings;
 
 /**
  * Represents a {@link JavaPlugin} using

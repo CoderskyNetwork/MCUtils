@@ -2,8 +2,8 @@ package es.xdec0de.mcutils;
 
 import javax.annotation.Nonnull;
 
-import es.xdec0de.mcutils.general.MCStrings;
 import es.xdec0de.mcutils.general.PlayerUtils;
+import es.xdec0de.mcutils.strings.MCStrings;
 
 /**
  * The main class of the MCUtils API, used
