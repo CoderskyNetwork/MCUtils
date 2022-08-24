@@ -103,6 +103,7 @@ public class MCPlugin extends JavaPlugin {
 			files.add(file);
 			return file;
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			logException(e, "&8[&4MCUtils&8] &cAn error occured while registering &e"+path+".yml &cfrom &6"+getName()+"&8:");
 			return null;
 		}
 	}
@@ -227,6 +228,27 @@ public class MCPlugin extends JavaPlugin {
 	 */
 	public void logCol(@Nullable String str) {
 		Bukkit.getConsoleSender().sendMessage(getMCUtils().strings().applyColor(str));
+	}
+
+	public void logException(Throwable throwable, String header) {
+		if (throwable == null)
+			return;
+		log(" ");
+		if (header != null)
+			logCol(header);
+		logCol("&4"+throwable.getClass().getSimpleName()+"&8: &c" + throwable.getMessage());
+		for(StackTraceElement element : throwable.getStackTrace()) {
+			String error = element.toString().trim();
+			if (error.contains(".jar")) {
+				error = error.substring(error.lastIndexOf(".jar")+6);
+				String path = error.substring(0, error.lastIndexOf('('));
+				int lastPoint = path.lastIndexOf('.');
+				path = "&cAt&8: &c"+path.substring(0, lastPoint) + "&6#&e" + path.substring(lastPoint + 1);
+				final String line = error.substring(error.lastIndexOf(':')+1, error.length()-1);
+				logCol(path+"&8 - &bline "+line);
+			}
+		}
+		log(" ");
 	}
 
 	/**
