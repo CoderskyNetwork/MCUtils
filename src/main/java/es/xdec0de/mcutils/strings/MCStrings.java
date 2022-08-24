@@ -21,13 +21,26 @@ import net.md_5.bungee.api.ChatColor;
  */
 public class MCStrings {
 
-	private final LinkedList<ColorPattern> patterns = new LinkedList<>();
+	private LinkedList<ColorPattern> patterns = new LinkedList<>();
 
 	public MCStrings(MCUtils plugin) {
 		if (plugin.strings() != null)
 			throw new SecurityException("Illegal constructor call, access this class using MCUtils#strings()");
 		addPattern(new Hex());
 		addPattern(new Gradient());
+	}
+
+	public <T extends ColorPattern> void addPatternBefore(ColorPattern pattern, Class<T> before) {
+		final LinkedList<ColorPattern> tempPatterns = new LinkedList<>();
+		boolean added = false;
+		for (ColorPattern implPattern : patterns) {
+			if (implPattern.getClass().equals(before))
+				added = tempPatterns.add(pattern); // Always true as the Collection changes.
+			tempPatterns.add(implPattern);
+		}
+		if (!added)
+			tempPatterns.add(pattern);
+		patterns = tempPatterns;
 	}
 
 	public void addPattern(ColorPattern pattern) {
