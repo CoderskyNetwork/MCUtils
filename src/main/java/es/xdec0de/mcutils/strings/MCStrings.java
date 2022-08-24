@@ -1,6 +1,7 @@
 package es.xdec0de.mcutils.strings;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -20,14 +21,19 @@ import net.md_5.bungee.api.ChatColor;
  */
 public class MCStrings {
 
-	private final Hex hex;
-	private final Gradient gradient;
+	private final LinkedList<ColorPattern> patterns = new LinkedList<>();
 
 	public MCStrings(MCUtils plugin) {
 		if (plugin.strings() != null)
 			throw new SecurityException("Illegal constructor call, access this class using MCUtils#strings()");
-		hex = new Hex();
-		gradient = new Gradient();
+		addPattern(new Hex());
+		addPattern(new Gradient());
+	}
+
+	public void addPattern(ColorPattern pattern) {
+		if (pattern == null)
+			throw new NullPointerException("Pattern cannot be null");
+		patterns.add(pattern);
 	}
 
 	/**
@@ -39,16 +45,14 @@ public class MCStrings {
 	 * @return The string, colored.
 	 * 
 	 * @since MCUtils 1.0.0
-	 * 
-	 * @see Gradient
-	 * @see Hex
 	 */
 	@Nullable
 	public String applyColor(@Nullable String string) {
 		if(string == null)
 			return null;
-		String res = applyGradients(string);
-		res = applyHex(res);
+		String res = string;
+		for (ColorPattern pattern : patterns)
+			res = pattern.process(res);
 		return ChatColor.translateAlternateColorCodes('&', res);
 	}
 
@@ -72,30 +76,6 @@ public class MCStrings {
 		for (String str : lst)
 			res.add(applyColor(str));
 		return res;
-	}
-
-	/**
-	 * Applies the {@link Gradient} pattern to this string.
-	 * 
-	 * @param string the string to apply {@link Gradient}s
-	 * @return The string, colored.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public String applyGradients(String string) {
-		return gradient.process(string);
-	}
-
-	/**
-	 * Applies the {@link Hex} pattern to this string.
-	 * 
-	 * @param string the string to apply {@link Hex}adecimal colors
-	 * @return The string, colored.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public String applyHex(String string) {
-		return hex.process(string);
 	}
 
 	/**
