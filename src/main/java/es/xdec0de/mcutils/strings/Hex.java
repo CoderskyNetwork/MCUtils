@@ -30,13 +30,38 @@ public class Hex implements ColorPattern {
 	 * Applies hexadecimal colors to the provided <b>string</b>.
 	 * Output might me the same as the input if this pattern is not present.
 	 * If the <b>string</b> is null, null will be returned.
+	 * <p>
+	 * The hexadecimal color pattern supports a "simple" mode, that also applies
+	 * a three-character pattern (#([A-Fa-f0-9]{3})), useful when string length matters.
+	 * This method enables it by default, use {@link #process(String, boolean)} if you want
+	 * to disable it.
 	 *
 	 * @param string the string to which gradients should be applied to.
 	 * 
 	 * @return The new string with applied gradient.
+	 * 
+	 * @see #process(String, boolean)
+	 */
+	@Override
+	public String process(String string) {
+		return process(string, true);
+	}
+
+	/**
+	 * Applies hexadecimal colors to the provided <b>string</b>.
+	 * Output might me the same as the input if this pattern is not present.
+	 * If the <b>string</b> is null, null will be returned.
+	 * <p>
+	 * The hexadecimal color pattern supports a "simple" mode, that also applies
+	 * a three-character pattern (#([A-Fa-f0-9]{3})), useful when string length matters.
+	 *
+	 * @param string the string to which gradients should be applied to.
+	 * @param simple whether to apply the simple pattern or not.
+	 * 
+	 * @return The new string with applied gradient.
 	 */
 	@Nullable
-	public String process(@Nullable String string) {
+	public String process(@Nullable String string, boolean simple) {
 		if(string == null)
 			return null;
 		String res = string;
@@ -49,6 +74,8 @@ public class Hex implements ColorPattern {
 					+ 0x00A7 + group.charAt(2) + 0x00A7 + group.charAt(3)
 					+ 0x00A7 + group.charAt(4) + 0x00A7 + group.charAt(5));
 		}
+		if (!simple)
+			return res;
 		while (simpleMatcher.find()) {
 			final String group = simpleMatcher.group(1);
 			simpleMatcher.appendReplacement(buffer, 0x00A7 + "x"
@@ -58,4 +85,5 @@ public class Hex implements ColorPattern {
 		}
 		return res;
 	}
+
 }
