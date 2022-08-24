@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import es.xdec0de.mcutils.MCUtils;
@@ -26,18 +27,48 @@ public class MCStrings {
 	public MCStrings(MCUtils plugin) {
 		if (plugin.strings() != null)
 			throw new SecurityException("Illegal constructor call, access this class using MCUtils#strings()");
-		addPattern(new Hex());
 		addPattern(new Gradient());
+		addPattern(new Hex());
 	}
 
-	public <T extends ColorPattern> ColorPattern getPattern(Class<T> pattern) {
+	/**
+	 * Gets a <b>previously registered</b> {@link ColorPattern} by class, that is,
+	 * a {@link ColorPattern} that has been added using either {@link #addPattern(ColorPattern)}
+	 * or {@link #addPatternBefore(ColorPattern, Class)}, if no {@link ColorPattern} matching
+	 * <b>pattern</b> has been added, null will be returned.
+	 * 
+	 * @param <T> must implement {@link ColorPattern}.
+	 * @param pattern the class of the {@link ColorPattern} to return.
+	 * 
+	 * @return an instance of <b>pattern</b> if registered, null otherwise.
+	 */
+	public <T extends ColorPattern> ColorPattern getPattern(@Nonnull Class<T> pattern) {
 		for (ColorPattern implPattern : patterns)
 			if (implPattern.getClass().equals(pattern))
 				return implPattern;
 		return null;
 	}
 
-	public <T extends ColorPattern> void addPatternBefore(ColorPattern pattern, Class<T> before) {
+	/**
+	 * Adds a new {@link ColorPattern} to be used on {@link #applyColor(String)}
+	 * and {@link #applyColor(List)} before the specified <b>pattern</b>, it's
+	 * important to take into account pattern order as patterns might conflict with
+	 * one another. For example the {@link Hex} pattern directly conflicts with the
+	 * {@link Gradient} pattern overwriting it because {@link Gradient} uses
+	 * hexadecimal colors, so {@link Gradient} needs to be added before {@link Hex}.
+	 * <p>
+	 * Normally, this method won't be needed unless you are adding a pattern that uses
+	 * hexadecimal colors on it's syntax as {@link Gradient} does. If that's not the case,
+	 * you can just use {@link #addPattern(ColorPattern)} to improve performance a bit.
+	 * 
+	 * @param <T> must implement {@link ColorPattern}
+	 * @param pattern the {@link ColorPattern} to add.
+	 * @param before the {@link Class} of the {@link ColorPattern} that will
+	 * go after <b>pattern</b>, putting <b>pattern</b> before it.
+	 * 
+	 * @see #addPattern(ColorPattern)
+	 */
+	public <T extends ColorPattern> void addPatternBefore(@Nonnull ColorPattern pattern, @Nonnull Class<T> before) {
 		final LinkedList<ColorPattern> tempPatterns = new LinkedList<>();
 		boolean added = false;
 		for (ColorPattern implPattern : patterns) {
@@ -50,7 +81,24 @@ public class MCStrings {
 		patterns = tempPatterns;
 	}
 
-	public void addPattern(ColorPattern pattern) {
+	/**
+	 * Adds a new {@link ColorPattern} to be used on {@link #applyColor(String)}
+	 * and {@link #applyColor(List)}, it's important to take into account pattern
+	 * order as patterns might conflict with one another. For example the {@link Hex}
+	 * pattern directly conflicts with the {@link Gradient} pattern overwriting it 
+	 * because {@link Gradient} uses hexadecimal colors, so {@link Gradient} needs to
+	 * be added first as it doesn't overwrite {@link Hex}.
+	 * <p>
+	 * Want to add a {@link ColorPattern} that would be overwritten by a MCUtils
+	 * {@link ColorPattern} like {@link Hex}? Use {@link #addPatternBefore(ColorPattern, Class)}
+	 * 
+	 * @param pattern the {@link ColorPattern} to add.
+	 * 
+	 * @throws NullPointerException If <b>pattern</b> is null.
+	 * 
+	 * @see #addPatternBefore(ColorPattern, Class)
+	 */
+	public void addPattern(@Nonnull ColorPattern pattern) {
 		if (pattern == null)
 			throw new NullPointerException("Pattern cannot be null");
 		patterns.add(pattern);
