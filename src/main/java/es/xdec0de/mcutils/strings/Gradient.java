@@ -41,7 +41,7 @@ public class Gradient implements ColorPattern {
 	public String process(@Nullable String string) {
 		if (string == null)
 			return null;
-		String res = null;
+		String res = string;
 		Matcher matcher = pattern.matcher(string);
 		while (matcher.find()) {
 			String start = matcher.group(1);
