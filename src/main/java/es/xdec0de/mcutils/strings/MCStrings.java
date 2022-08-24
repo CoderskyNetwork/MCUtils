@@ -40,9 +40,13 @@ public class MCStrings {
 	 * @param <T> must implement {@link ColorPattern}.
 	 * @param pattern the class of the {@link ColorPattern} to return.
 	 * 
+	 * @throws NullPointerException If <b>pattern</b> is null.
+	 * 
 	 * @return an instance of <b>pattern</b> if registered, null otherwise.
 	 */
 	public <T extends ColorPattern> ColorPattern getPattern(@Nonnull Class<T> pattern) {
+		if (pattern == null)
+			throw new NullPointerException("Pattern cannot be null");
 		for (ColorPattern implPattern : patterns)
 			if (implPattern.getClass().equals(pattern))
 				return implPattern;
@@ -66,9 +70,15 @@ public class MCStrings {
 	 * @param before the {@link Class} of the {@link ColorPattern} that will
 	 * go after <b>pattern</b>, putting <b>pattern</b> before it.
 	 * 
+	 * @throws NullPointerException If <b>pattern</b> or <b>before</b> are null.
+	 * 
 	 * @see #addPattern(ColorPattern)
 	 */
 	public <T extends ColorPattern> void addPatternBefore(@Nonnull ColorPattern pattern, @Nonnull Class<T> before) {
+		if (pattern == null)
+			throw new NullPointerException("Added pattern cannot be null");
+		if (before == null)
+			throw new NullPointerException("Before pattern class cannot be null");
 		final LinkedList<ColorPattern> tempPatterns = new LinkedList<>();
 		boolean added = false;
 		for (ColorPattern implPattern : patterns) {
