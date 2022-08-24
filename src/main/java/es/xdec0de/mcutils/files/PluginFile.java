@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
@@ -20,8 +21,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.base.Charsets;
 
 import es.xdec0de.mcutils.MCPlugin;
-import es.xdec0de.mcutils.general.Replacer;
 
+/**
+ * 
+ * @since MCUtils 1.0.0
+ * 
+ * @author xDec0de_
+ */
 public class PluginFile extends YmlFile {
 
 	private File file;
@@ -31,31 +37,50 @@ public class PluginFile extends YmlFile {
 	}
 
 	/**
-	 * Creates a message file for the specified plugin and path,
-	 * usually the path is just "messages", but you can choose whatever you want.
-	 * This constructor doesn't specify a default {@link Replacer},
-	 * meaning that the default replacer will be "%prefix%", "Prefix",
-	 * with "Prefix" being the string under the path "Prefix" of <b>path</b>.yml
-	 * <p><p>
-	 * Take this example messages.yml file:
-	 * <p>
-	 * Prefix: "MCUtils: "
-	 * <p><p>
-	 * The replacer for %prefix% on every message would be "MCUtils: "
+	 * Creates an instance, <b>NOT</b> a file, of a plugin file for the specified plugin and path.
+	 * Plugin files must be present on the plugin's jar file as a resource.
+	 * Plugin files are basically {@link YamlFile}s that are set to have predefined
+	 * values and can be updated to newer versions of the plugin using the file at the plugin's jar source.
+	 * A good example of a plugin file is a config.yml file.
+	 * As this constructor doesn't define a charset, {@link Charsets#UTF_8} will be used.
 	 * 
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
-	 * @param path the path of the file to create, two examples are "messages" and "lang/messages",
-	 * the .yml extension is automatically added, if the path is null, empty or blank, "config" will
-	 * be used.
+	 * @param path the path of the file to create, the .yml extension is automatically added,
+	 * if the path is null, empty or blank, "config" will be used.
+	 * 
+	 * @throws NullPointerException if <b>plugin</b> is null.
 	 * 
 	 * @see MCPlugin#registerFile(PluginFile)
 	 * @see MCPlugin#registerFile(String, Class)
+	 * @see #create()
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
-	protected PluginFile(JavaPlugin plugin, String path) {
+	protected PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
 		this(plugin, path, "config", Charsets.UTF_8);
 	}
 
-	protected PluginFile(JavaPlugin plugin, String path, Charset charset) {
+	/**
+	 * Creates an instance, <b>NOT</b> a file, of a plugin file for the specified plugin and path.
+	 * Plugin files must be present on the plugin's jar file as a resource.
+	 * Plugin files are basically {@link YamlFile}s that are set to have predefined
+	 * values and can be updated to newer versions of the plugin using the file at the plugin's jar source.
+	 * A good example of a plugin file is a config.yml file.
+	 * 
+	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
+	 * @param path the path of the file to create, the .yml extension is automatically added,
+	 * if the path is null, empty or blank, "config" will be used.
+	 * @param charset the charset to use, if null, {@link Charsets#UTF_8} will be used.
+	 * 
+	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * 
+	 * @see MCPlugin#registerFile(PluginFile)
+	 * @see MCPlugin#registerFile(String, Class)
+	 * @see #create()
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	protected PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		this(plugin, path, "config", charset);
 	}
 
@@ -85,24 +110,33 @@ public class PluginFile extends YmlFile {
 	}
 
 	/**
-	 * Reloads this file without updating,
-	 * use {@link #reload(boolean)} to update.
+	 * Reloads this file without updating. Any non saved value contained within this configuration will be removed
+	 * and the new values will be loaded from the given file. If there is any error reloading the file,
+	 * the errors will be logged and false will be returned. Use {@link #reload(boolean)} to update.
+	 * 
+	 * @return True if no errors occurred while reloading, false otherwise.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #reload(boolean)
+	 * @see #reload(List)
 	 */
+	@Nonnull
 	@Override
-	public void reload() {
+	public boolean reload() {
 		try {
 			cfg.load(file);
+			return true;
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 
 	/**
-	 * Reloads this file.
+	 * Reloads this file. Any non saved value contained within this configuration will be removed
+	 * and the new values will be loaded from the given file. If there are any errors reloading or
+	 * updating the file, the errors will be logged and false will be returned.
 	 * 
 	 * @param update whether to update the files or not.
 	 * This is recommended to be true to prevent any
@@ -110,17 +144,24 @@ public class PluginFile extends YmlFile {
 	 * want some paths to be ignored by the updater, use
 	 * {@link #reload(List)}.
 	 * 
+	 * @return true if no errors occurred while reloading and updating, false otherwise.
+	 * 
 	 * @since MCUtils 1.0.0
 	 * 
+	 * @see #reload()
 	 * @see #reload(List)
 	 */
-	public void reload(boolean update) {
+	@Nonnull
+	public boolean reload(boolean update) {
 		if (update)
-			update(true, new ArrayList<>(0));
+			if (!update(true, new ArrayList<>(0)))
+				return false;
 		try {
 			cfg.load(file);
+			return true;
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -129,27 +170,35 @@ public class PluginFile extends YmlFile {
 	 * on <b>ignoredUpdatePaths</b>, this is specially useful
 	 * if you want administrators to create their own paths
 	 * without them being removed, for example, on a GUI plugin.
+	 * If there are any errors reloading or updating the file,
+	 * they will be logged and false will be returned.
+	 * <p>
+	 * Update is assumed to be true with this method unless
+	 * <b>ignoredUpdatePaths</b> is null, if you want to reload without
+	 * updating use {@link #reload(boolean)} with <b>update</b> as false.
 	 * 
 	 * @param ignoredUpdatePaths a list with the paths to
-	 * be ignored by the file updater, update is assumed
-	 * to be true with this method, if you want to reload
-	 * without updating use {@link #reload(boolean)} with
-	 * <b>update</b> as false.
+	 * be ignored by the file updater.
+	 * 
+	 * @return true if no errors occurred while reloading and updating, false otherwise.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
+	 * @see #reload()
 	 * @see #reload(boolean)
 	 */
-	public void reload(@Nullable List<String> ignoredUpdatePaths) {
+	@Nonnull
+	public boolean reload(@Nullable List<String> ignoredUpdatePaths) {
 		if (ignoredUpdatePaths == null)
 			reload(false);
-		else
-			update(true, ignoredUpdatePaths);
-		CharsetYamlConfiguration chYaml = new CharsetYamlConfiguration(Charsets.UTF_8);
+		else if (!update(true, ignoredUpdatePaths))
+			return false;
 		try {
-			chYaml.load(file);
+			cfg.load(file);
+			return true;
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -175,7 +224,7 @@ public class PluginFile extends YmlFile {
 			if(plugin.getResource(getPath()) != null)
 				updated.load(copyInputStreamToFile(plugin.getDataFolder()+ "/"+getPath(), plugin.getResource(getPath())));
 			else {
-				log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath());
+				log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4File not found");
 				return false;
 			}
 			Set<String> oldKeys = ign.isEmpty() ? cfg.getKeys(true) : cfg.getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
@@ -201,7 +250,7 @@ public class PluginFile extends YmlFile {
 			}
 			return false;
 		} catch(InvalidConfigurationException | IOException ex) {
-			log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath());
+			log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4"+ex.getMessage());
 			return false;
 		}
 	}
