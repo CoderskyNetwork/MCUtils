@@ -92,6 +92,24 @@ public class YmlFile {
 	}
 
 	/**
+	 * Saves this file. If there is any error saving the file,
+	 * the errors will be logged and false will be returned.
+	 * 
+	 * @return true if no errors occurred while saving, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public boolean save() {
+		try {
+			cfg.save(file);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
 	 * Reloads this file. Any non saved value contained within this configuration will be removed
 	 * and the new values will be loaded from the given file. If there is any error reloading the file,
 	 * the errors will be logged and false will be returned.
