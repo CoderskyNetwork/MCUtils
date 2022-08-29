@@ -83,7 +83,7 @@ public class MessagesFile extends PluginFile {
 	 */
 	@Nullable
 	public Replacer getDefaultReplacer() {
-		return defReplacer;
+		return defReplacer == null ? null : defReplacer.clone();
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class MessagesFile extends PluginFile {
 			return null;
 		String str = getFileConfig().getString(path);
 		Replacer def = getDefaultReplacer();
-		return def == null ? strings.applyColor(new Replacer(replacements).replaceAt(str)) : strings.applyColor(def.replaceAt(str));
+		return def == null ? strings.applyColor(new Replacer(replacements).replaceAt(str)) : strings.applyColor(def.add(replacements).replaceAt(str));
 	}
 
 	/**
