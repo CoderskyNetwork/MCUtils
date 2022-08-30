@@ -1,5 +1,7 @@
 package es.xdec0de.mcutils.regions;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -222,5 +224,10 @@ public class Region3D extends Region2D {
 				", maxX:" + maxX +
 				", maxY:" + maxY +
 				", maxZ:" + maxZ + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(world, minX, minY, minZ, maxX, maxY, maxZ);
 	}
 }

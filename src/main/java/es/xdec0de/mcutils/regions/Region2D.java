@@ -1,5 +1,7 @@
 package es.xdec0de.mcutils.regions;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 import org.bukkit.Location;
@@ -251,5 +253,10 @@ public class Region2D {
 				", minZ:" + minZ +
 				", maxX:" + maxX +
 				", maxZ:" + maxZ + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(world, minX, minZ, maxX, maxZ);
 	}
 }
