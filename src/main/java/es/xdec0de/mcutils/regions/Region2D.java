@@ -155,6 +155,26 @@ public class Region2D {
 	}
 
 	/**
+	 * Checks if <b>region</b> is inside of this {@link Region2D}.
+	 * 
+	 * @param region the {@link Region2D} to check.
+	 * 
+	 * @return True only if <b>region</b> is <b>totally</b>
+	 * inside of this {@link Region2D}, if <b>region</b> is null, false will be returned.
+	 * 
+	 * @since MCUtils v1.0.0
+	 * 
+	 * @see #overlaps(Region2D)
+	 * @see #contains(Location)
+	 * @see #contains(int, int)
+	 */
+	public boolean contains(Region3D region) {
+		return region.getWorld().equals(world) &&
+				region.getMinX() >= minX && region.getMaxX() <= maxX &&
+				region.getMinZ() >= minZ && region.getMaxZ() <= maxZ;
+	}
+
+	/**
 	 * Checks if this {@link Region2D} contains the specified <b>location</b>.
 	 * 
 	 * @param location the {@link Location} to check.
