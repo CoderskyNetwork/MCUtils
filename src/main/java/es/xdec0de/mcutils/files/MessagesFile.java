@@ -77,7 +77,7 @@ public class MessagesFile extends PluginFile {
 	/**
 	 * Gets the default {@link Replacer} being used by this file.
 	 * 
-	 * @return The default replacer, cannot be null.
+	 * @return The default replacer.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -91,17 +91,17 @@ public class MessagesFile extends PluginFile {
 	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()} to it.
 	 * If the path is null or no value exists for it, null will be returned.
 	 * 
-	 * @param path the path at {@link #getPath()}.yml
+	 * @param path the path at {@link #getPath()}
 	 * 
 	 * @return The requested string, null if no value for the path exists or the path is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String get(@Nullable String path) {
+	public String getColoredString(@Nullable String path) {
 		if (path == null)
 			return null;
-		String str = getFileConfig().getString(path);
+		String str = getString(path);
 		return getDefaultReplacer() == null ? strings.applyColor(str) : strings.applyColor(getDefaultReplacer().replaceAt(str));
 	}
 
@@ -111,17 +111,17 @@ public class MessagesFile extends PluginFile {
 	 * to it with <b>replaced</b> being added to {@link #getDefaultReplacer()}.
 	 * If the path is null or no value exists for it, null will be returned.
 	 * 
-	 * @param path the path at {@link #getPath()}.yml
+	 * @param path the path at {@link #getPath()}
 	 * 
 	 * @return The requested string, null if no value for the path exists or the path is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String get(@Nullable String path, @Nullable Replacer replacer) {
+	public String getColoredString(@Nullable String path, @Nullable Replacer replacer) {
 		if (path == null)
 			return null;
-		String str = getFileConfig().getString(path);
+		String str = getString(path);
 		Replacer def = getDefaultReplacer();
 		return def == null ? strings.applyColor(replacer.replaceAt(str)) : strings.applyColor(def.add(replacer).replaceAt(str));
 	}
@@ -134,7 +134,7 @@ public class MessagesFile extends PluginFile {
 	 * <p>
 	 * The <b>replacements</b> must not be null or empty and the count must be even as specified on {@link Replacer#add(String...)}
 	 * 
-	 * @param path the path at {@link #getPath()}.yml
+	 * @param path the path at {@link #getPath()}
 	 * 
 	 * @return The requested string, null if no value for the path exists or the path is null.
 	 * 
@@ -143,10 +143,10 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String get(@Nullable String path, @Nonnull String... replacements) {
+	public String getColoredString(@Nullable String path, @Nonnull String... replacements) {
 		if (path == null)
 			return null;
-		String str = getFileConfig().getString(path);
+		String str = getString(path);
 		Replacer def = getDefaultReplacer();
 		return def == null ? strings.applyColor(new Replacer(replacements).replaceAt(str)) : strings.applyColor(def.add(replacements).replaceAt(str));
 	}
@@ -155,17 +155,17 @@ public class MessagesFile extends PluginFile {
 	 * Gets the requested list of strings with {@link MCStrings#applyColor(String)}
 	 * and {@link #getDefaultReplacer()} applied to every string on the list.
 	 * 
-	 * @param path the path at {@link #getPath()}.yml
+	 * @param path the path at {@link #getPath()}
 	 * 
 	 * @return The requested list of strings, an empty list if the path doesn't exist or the list itself is empty.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getList(@Nullable String path) {
+	public List<String> getColoredList(@Nullable String path) {
 		if (path == null)
 			return null;
-		List<String> atCfg = getFileConfig().getStringList(path);
+		List<String> atCfg = getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
@@ -184,7 +184,7 @@ public class MessagesFile extends PluginFile {
 	 * and {@link #getDefaultReplacer()} joined with <b>replacer</b> applied to every
 	 * string on the list.
 	 * 
-	 * @param path the path at {@link #getPath()}.yml
+	 * @param path the path at {@link #getPath()}
 	 * @param replacer the replacer to add to the default replacer.
 	 * 
 	 * @return The requested colored list of strings, an empty list if the path doesn't
@@ -193,10 +193,10 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getList(@Nullable String path, @Nullable Replacer replacer) {
+	public List<String> getColoredList(@Nullable String path, @Nullable Replacer replacer) {
 		if (path == null)
 			return null;
-		List<String> atCfg = getFileConfig().getStringList(path);
+		List<String> atCfg = getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
@@ -211,7 +211,7 @@ public class MessagesFile extends PluginFile {
 	 * and {@link #getDefaultReplacer()} with added <b>replacements</b> applied to every
 	 * string on the list.
 	 * 
-	 * @param path the path at {@link #getPath()}.yml
+	 * @param path the path at {@link #getPath()}
 	 * @param replacements the replacements to add to the default replacer.
 	 * 
 	 * @return The requested list of strings, an empty list if the path doesn't exist or the list itself is empty.
@@ -219,10 +219,10 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getList(@Nullable String path, @Nullable String... replacements) {
+	public List<String> getColoredList(@Nullable String path, @Nullable String... replacements) {
 		if (path == null)
 			return null;
-		List<String> atCfg = getFileConfig().getStringList(path);
+		List<String> atCfg = getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
@@ -233,10 +233,10 @@ public class MessagesFile extends PluginFile {
 	}
 
 	/**
-	 * Uses {@link #get(String)} and then sends the returning
+	 * Uses {@link #getColoredString(String)} and then sends the returning
 	 * string to the specified <b>target</b>
 	 * 
-	 * @param path the path at {@link #getPath()}.yml
+	 * @param path the path at {@link #getPath()}
 	 * @param target the receiver.
 	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
@@ -244,14 +244,14 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public void send(@Nullable String path, @Nonnull CommandSender target) {
-		target.sendMessage(get(path));
+		target.sendMessage(getColoredString(path));
 	}
 
 	/**
-	 * Uses {@link #get(String, Replacer)} and then sends the returning
+	 * Uses {@link #getColoredString(String, Replacer)} and then sends the returning
 	 * string to the specified <b>target</b>
 	 * 
-	 * @param path the path at {@link #getPath()}.yml
+	 * @param path the path at {@link #getPath()}
 	 * @param target the receiver.
 	 * @param replacer the replacer to add to the default replacer.
 	 * 
@@ -260,14 +260,14 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public void send(@Nullable String path, @Nonnull CommandSender target, @Nullable Replacer replacer) {
-		target.sendMessage(get(path, replacer));
+		target.sendMessage(getColoredString(path, replacer));
 	}
 
 	/**
-	 * Uses {@link #get(String, String...)} and then sends the returning
+	 * Uses {@link #getColoredString(String, String...)} and then sends the returning
 	 * string to the specified <b>target</b>
 	 * 
-	 * @param path the path at {@link #getPath()}.yml
+	 * @param path the path at {@link #getPath()}
 	 * @param target the receiver.
 	 * @param replacements the replacements to add to the default replacer.
 	 * 
@@ -276,6 +276,6 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public void send(@Nullable String path, @Nonnull CommandSender target, @Nullable String... replacements) {
-		target.sendMessage(get(path, replacements));
+		target.sendMessage(getColoredString(path, replacements));
 	}
 }

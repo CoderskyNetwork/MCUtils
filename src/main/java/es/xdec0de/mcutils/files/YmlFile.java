@@ -21,20 +21,19 @@ import es.xdec0de.mcutils.MCUtils;
  * 
  * @author xDec0de_
  */
-public class YmlFile {
+public class YmlFile extends CharsetYamlConfiguration {
 
 	/** The {@link JavaPlugin} that initialized this MCFile */
 	protected final JavaPlugin plugin;
 	private final String path;
 
 	private File file;
-	protected final CharsetYamlConfiguration cfg;
 
 	YmlFile(JavaPlugin plugin, String path, String pathIfInvalid, Charset charset) {
+		super(charset);
 		if (plugin == null)
 			throw new NullPointerException("Plugin cannot be null.");
 		MCUtils mcUtils = JavaPlugin.getPlugin(MCUtils.class);
-		cfg = new CharsetYamlConfiguration(charset);
 		if (!mcUtils.strings().hasContent(path))
 			path = pathIfInvalid;
 		path += ".yml";
@@ -87,10 +86,6 @@ public class YmlFile {
 		return file;
 	}
 
-	public CharsetYamlConfiguration getFileConfig() {
-		return cfg;
-	}
-
 	/**
 	 * Saves this file. If there is any error saving the file,
 	 * the errors will be logged and false will be returned.
@@ -101,7 +96,7 @@ public class YmlFile {
 	 */
 	public boolean save() {
 		try {
-			cfg.save(file);
+			save(file);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -120,7 +115,7 @@ public class YmlFile {
 	 */
 	public boolean reload() {
 		try {
-			cfg.load(file);
+			load(file);
 			return true;
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();

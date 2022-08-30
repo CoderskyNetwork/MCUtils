@@ -125,7 +125,7 @@ public class PluginFile extends YmlFile {
 	@Override
 	public boolean reload() {
 		try {
-			cfg.load(file);
+			load(file);
 			return true;
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
@@ -157,7 +157,7 @@ public class PluginFile extends YmlFile {
 			if (!update(true, new ArrayList<>(0)))
 				return false;
 		try {
-			cfg.load(file);
+			load(file);
 			return true;
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
@@ -194,7 +194,7 @@ public class PluginFile extends YmlFile {
 		else if (!update(true, ignoredUpdatePaths))
 			return false;
 		try {
-			cfg.load(file);
+			load(file);
 			return true;
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
@@ -227,19 +227,19 @@ public class PluginFile extends YmlFile {
 				log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4File not found");
 				return false;
 			}
-			Set<String> oldKeys = ign.isEmpty() ? cfg.getKeys(true) : cfg.getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
+			Set<String> oldKeys = ign.isEmpty() ? getKeys(true) : getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
 			Set<String> updKeys = ign.isEmpty() ? updated.getKeys(true) : updated.getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
 			for(String str : oldKeys)
 				if(!updKeys.contains(str)) {
-					cfg.set(str, null);
+					set(str, null);
 					changes++;
 				}
 			for(String str : updKeys)
 				if(!oldKeys.contains(str)) {
-					cfg.set(str, updated.get(str));
+					set(str, updated.get(str));
 					changes++;
 				}
-			cfg.save(plugin.getDataFolder() + "/"+getPath());
+			save(plugin.getDataFolder() + "/"+getPath());
 			if(changes != 0) {
 				log(" ");
 				if(reload)
