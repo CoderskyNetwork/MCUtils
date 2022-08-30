@@ -306,14 +306,14 @@ public class MessagesFile extends PluginFile {
 	 * Uses {@link #getColoredString(String)} and then sends the returning
 	 * string to the specified <b>target</b>
 	 * 
-	 * @param path the path at {@link #getPath()}
 	 * @param target the receiver.
+	 * @param path the path at {@link #getPath()}
 	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void send(@Nullable String path, @Nonnull CommandSender target) {
+	public void send(@Nonnull CommandSender target, @Nullable String path) {
 		target.sendMessage(getColoredString(path));
 	}
 
@@ -321,15 +321,15 @@ public class MessagesFile extends PluginFile {
 	 * Uses {@link #getColoredString(String, Replacer)} and then sends the returning
 	 * string to the specified <b>target</b>
 	 * 
-	 * @param path the path at {@link #getPath()}
 	 * @param target the receiver.
+	 * @param path the path at {@link #getPath()}
 	 * @param replacer the replacer to add to the default replacer.
 	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void send(@Nullable String path, @Nonnull CommandSender target, @Nullable Replacer replacer) {
+	public void send(@Nonnull CommandSender target, @Nullable String path, @Nullable Replacer replacer) {
 		target.sendMessage(getColoredString(path, replacer));
 	}
 
@@ -337,15 +337,15 @@ public class MessagesFile extends PluginFile {
 	 * Uses {@link #getColoredString(String, String...)} and then sends the returning
 	 * string to the specified <b>target</b>
 	 * 
-	 * @param path the path at {@link #getPath()}
 	 * @param target the receiver.
+	 * @param path the path at {@link #getPath()}
 	 * @param replacements the replacements to add to the default replacer.
 	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void send(@Nullable String path, @Nonnull CommandSender target, @Nullable String... replacements) {
+	public void send(@Nonnull CommandSender target, @Nullable String path, @Nullable String... replacements) {
 		target.sendMessage(getColoredString(path, replacements));
 	}
 }
