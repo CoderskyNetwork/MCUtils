@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.base.Charsets;
@@ -144,7 +143,7 @@ public class MessagesFile extends PluginFile {
 	 * if no value exists for it and no default value was specified null will also be returned.
 	 * 
 	 * @param path the path of the String to get from {@link #getPath()}.
-	 * @param replacer the replacements to apply.
+	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
 	 * @return The requested string, null if no value for the path exists or the path is null.
 	 * 
@@ -158,7 +157,7 @@ public class MessagesFile extends PluginFile {
 	}
 
 	/**
-	 * Gets the requested String by path using {@link FileConfiguration#getString(String)}
+	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
 	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()} to it.
 	 * If the path is null or no value exists for it, null will be returned.
 	 * 
@@ -177,7 +176,7 @@ public class MessagesFile extends PluginFile {
 	}
 
 	/**
-	 * Gets the requested String by path using {@link FileConfiguration#getString(String)}
+	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
 	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()}
 	 * to it with <b>replaced</b> being added to {@link #getDefaultReplacer()}.
 	 * If the path is null or no value exists for it, null will be returned.
@@ -198,7 +197,7 @@ public class MessagesFile extends PluginFile {
 	}
 
 	/**
-	 * Gets the requested String by path using {@link FileConfiguration#getString(String)}
+	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
 	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()}
 	 * to it with the <b>replacements</b> being added to {@link #getDefaultReplacer()}.
 	 * If the path is null or no value exists for it, null will be returned.
