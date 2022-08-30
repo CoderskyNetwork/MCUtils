@@ -237,6 +237,7 @@ public class Region3D {
 	 * 
 	 * @since MCUtils v1.0.0
 	 * 
+	 * @see #overlaps(Region2D)
 	 * @see #contains(Region3D)
 	 */
 	public boolean overlaps(@Nullable Region3D region) {
@@ -245,6 +246,27 @@ public class Region3D {
 		return region.getWorld().equals(world) &&
 				!(region.getMinX() > maxX || region.getMinY() > maxY || region.getMinZ() > maxZ ||
 						minZ > region.getMaxX() || minY > region.getMaxY() || minZ > region.getMaxZ());
+	}
+
+	/**
+	 * Checks if this {@link Region3D} overlaps with <b>region</b>
+	 * 
+	 * @param region the {@link Region3D} to check.
+	 * 
+	 * @return True if this {@link Region3D} overlaps with <b>region</b>, false
+	 * otherwise or if <b>region</b> is null.
+	 * 
+	 * @since MCUtils v1.0.0
+	 * 
+	 * @see #overlaps(Region3D)
+	 * @see #contains(Region3D)
+	 */
+	public boolean overlaps(@Nullable Region2D region) {
+		if (region == null)
+			return false;
+		return region.getWorld().equals(world) &&
+				!(region.getMinX() > maxX || region.getMinZ() > maxZ ||
+						minZ > region.getMaxX() || minZ > region.getMaxZ());
 	}
 
 	@Override
