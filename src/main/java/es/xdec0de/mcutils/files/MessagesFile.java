@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.base.Charsets;
@@ -17,6 +18,8 @@ import es.xdec0de.mcutils.MCPlugin;
 import es.xdec0de.mcutils.MCUtils;
 import es.xdec0de.mcutils.general.Replacer;
 import es.xdec0de.mcutils.strings.MCStrings;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * A class intended to be used to create
@@ -302,11 +305,17 @@ public class MessagesFile extends PluginFile {
 		return res;
 	}
 
-	// Message sending //
+	/*
+	 *
+	 * Message sending
+	 * 
+	 */
+
+	// Chat //
 
 	/**
 	 * Uses {@link #getString(String)} and then sends the returning
-	 * string to the specified <b>target</b>
+	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
 	 * @param path the path at {@link #getPath()}
@@ -321,7 +330,7 @@ public class MessagesFile extends PluginFile {
 
 	/**
 	 * Uses {@link #getString(String, Replacer)} and then sends the returning
-	 * string to the specified <b>target</b>
+	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
 	 * @param path the path at {@link #getPath()}
@@ -337,7 +346,7 @@ public class MessagesFile extends PluginFile {
 
 	/**
 	 * Uses {@link #getString(String, String...)} and then sends the returning
-	 * string to the specified <b>target</b>
+	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
 	 * @param path the path at {@link #getPath()}
@@ -353,7 +362,7 @@ public class MessagesFile extends PluginFile {
 
 	/**
 	 * Uses {@link #getColoredString(String)} and then sends the returning
-	 * string to the specified <b>target</b>
+	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
 	 * @param path the path at {@link #getPath()}
@@ -368,7 +377,7 @@ public class MessagesFile extends PluginFile {
 
 	/**
 	 * Uses {@link #getColoredString(String, Replacer)} and then sends the returning
-	 * string to the specified <b>target</b>
+	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
 	 * @param path the path at {@link #getPath()}
@@ -384,7 +393,7 @@ public class MessagesFile extends PluginFile {
 
 	/**
 	 * Uses {@link #getColoredString(String, String...)} and then sends the returning
-	 * string to the specified <b>target</b>
+	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
 	 * @param path the path at {@link #getPath()}
@@ -396,5 +405,119 @@ public class MessagesFile extends PluginFile {
 	 */
 	public void sendColored(@Nonnull CommandSender target, @Nullable String path, @Nullable String... replacements) {
 		target.sendMessage(getColoredString(path, replacements));
+	}
+
+	// ActionBar //
+
+	/**
+	 * Uses {@link #getString(String)} and then sends the returning
+	 * string to the specified <b>target</b> as an action bar message. If the string is
+	 * null or empty, no message will be sent.
+	 * 
+	 * @param target the receiver.
+	 * @param path the path at {@link #getPath()}
+	 * 
+	 * @throws NullPointerException if <b>target</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void sendActionBar(@Nonnull Player target, @Nullable String path) {
+		String str = getString(path);
+		if (str != null && str.isEmpty())
+			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+	}
+
+	/**
+	 * Uses {@link #getString(String, Replacer)} and then sends the returning
+	 * string to the specified <b>target</b> as an action bar message. If the string is
+	 * null or empty, no message will be sent.
+	 * 
+	 * @param target the receiver.
+	 * @param path the path at {@link #getPath()}
+	 * @param replacer the replacer to add to the default replacer.
+	 * 
+	 * @throws NullPointerException if <b>target</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void sendActionBar(@Nonnull Player target, @Nullable String path, @Nullable Replacer replacer) {
+		String str = getString(path, replacer);
+		if (str != null && str.isEmpty())
+			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+	}
+
+	/**
+	 * Uses {@link #getString(String, String...)} and then sends the returning
+	 * string to the specified <b>target</b> as an action bar message. If the string is
+	 * null or empty, no message will be sent.
+	 * 
+	 * @param target the receiver.
+	 * @param path the path at {@link #getPath()}
+	 * @param replacements the replacements to add to the default replacer.
+	 * 
+	 * @throws NullPointerException if <b>target</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void sendActionBar(@Nonnull Player target, @Nullable String path, @Nullable String... replacements) {
+		String str = getString(path, replacements);
+		if (str != null && str.isEmpty())
+			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+	}
+
+	/**
+	 * Uses {@link #getColoredString(String)} and then sends the returning
+	 * string to the specified <b>target</b> as an action bar message. If the string is
+	 * null or empty, no message will be sent.
+	 * 
+	 * @param target the receiver.
+	 * @param path the path at {@link #getPath()}
+	 * 
+	 * @throws NullPointerException if <b>target</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void sendColoredActionBar(@Nonnull Player target, @Nullable String path) {
+		String str = getColoredString(path);
+		if (str != null && str.isEmpty())
+			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+	}
+
+	/**
+	 * Uses {@link #getColoredString(String, Replacer)} and then sends the returning
+	 * string to the specified <b>target</b> as an action bar message. If the string is
+	 * null or empty, no message will be sent.
+	 * 
+	 * @param target the receiver.
+	 * @param path the path at {@link #getPath()}
+	 * @param replacer the replacer to add to the default replacer.
+	 * 
+	 * @throws NullPointerException if <b>target</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void sendColoredActionBar(@Nonnull Player target, @Nullable String path, @Nullable Replacer replacer) {
+		String str = getColoredString(path, replacer);
+		if (str != null && str.isEmpty())
+			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+	}
+
+	/**
+	 * Uses {@link #getColoredString(String, String...)} and then sends the returning
+	 * string to the specified <b>target</b> as an action bar message. If the string is
+	 * null or empty, no message will be sent.
+	 * 
+	 * @param target the receiver.
+	 * @param path the path at {@link #getPath()}
+	 * @param replacements the replacements to add to the default replacer.
+	 * 
+	 * @throws NullPointerException if <b>target</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void sendColoredActionBar(@Nonnull Player target, @Nullable String path, @Nullable String... replacements) {
+		String str = getColoredString(path, replacements);
+		if (str != null && str.isEmpty())
+			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
 	}
 }
