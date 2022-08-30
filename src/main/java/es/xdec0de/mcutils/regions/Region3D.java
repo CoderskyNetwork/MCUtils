@@ -18,10 +18,9 @@ import org.bukkit.World;
  * @author <a href=https://www.spigotmc.org/members/billygalbreath.29442/>BillyGalbreath</a>
  * @author xDec0de_
  */
-public class Region3D {
+public class Region3D extends Region2D {
 
-	private final World world;
-	private final int minX, maxX, minY, maxY, minZ, maxZ;
+	final int minY, maxY;
 
 	/**
 	 * Creates a 3D region from two locations.
@@ -38,21 +37,9 @@ public class Region3D {
 	 * @see #Region3D(World, int, int, int, int, int, int)
 	 */
 	public Region3D(@Nonnull Location loc1, @Nonnull Location loc2) {
-		if (loc1 == null || loc2 == null)
-			throw new NullPointerException("Cuboid locations cannot be null.");
-		if (loc1.getWorld() == null || loc2.getWorld() == null)
-			throw new NullPointerException("Location worlds cannot be null.");
-		if (!loc1.isWorldLoaded() || !loc2.isWorldLoaded())
-			throw new IllegalStateException("Location worlds must be loaded.");
-		if (!loc1.getWorld().equals(loc2.getWorld()))
-			throw new IllegalArgumentException("Cuboid locations must be on the same world.");
-		this.world = loc1.getWorld();
-		this.minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
+		super(loc1, loc2);
 		this.minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
-		this.minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
-		this.maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
 		this.maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
-		this.maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
 	}
 
 	/**
@@ -73,45 +60,15 @@ public class Region3D {
 	 * @see #Region3D(Location, Location)
 	 */
 	public Region3D(@Nonnull World world, int x1, int y1, int z1, int x2, int y2, int z2) {
-		if (world == null)
-			throw new NullPointerException("Cuboid world cannot be null.");
-		this.world = world;
-
-		minX = Math.min(x1, x2);
+		super(world, x1, z1, x2, z2);
 		minY = Math.min(y1, y2);
-		minZ = Math.min(z1, z2);
-		maxX = Math.max(x1, x2);
 		maxY = Math.max(y1, y2);
-		maxZ = Math.max(z1, z2);
 	}
 
 	/**
-	 * Gets the {@link World} this {@link Region3D} is in.
+	 * Gets the minimum y coordinate of this region.
 	 * 
-	 * @return The {@link World} this {@link Region3D} is in.
-	 * 
-	 * @since MCUtils v1.0.0
-	 */
-	@Nonnull
-	public World getWorld() {
-		return world;
-	}
-
-	/**
-	 * Gets the minimum x coordinate of this {@link Region3D}.
-	 * 
-	 * @return The minimum x coordinate of this {@link Region3D}.
-	 * 
-	 * @since MCUtils v1.0.0
-	 */
-	public int getMinX() {
-		return minX;
-	}
-
-	/**
-	 * Gets the minimum y coordinate of this {@link Region3D}.
-	 * 
-	 * @return The minimum y coordinate of this {@link Region3D}.
+	 * @return The minimum y coordinate of this region.
 	 * 
 	 * @since MCUtils v1.0.0
 	 */
@@ -120,31 +77,9 @@ public class Region3D {
 	}
 
 	/**
-	 * Gets the minimum z coordinate of this {@link Region3D}.
+	 * Gets the maximum y coordinate of this region.
 	 * 
-	 * @return The minimum z coordinate of this {@link Region3D}.
-	 * 
-	 * @since MCUtils v1.0.0
-	 */
-	public int getMinZ() {
-		return minZ;
-	}
-
-	/**
-	 * Gets the maximum x coordinate of this {@link Region3D}.
-	 * 
-	 * @return The maximum x coordinate of this {@link Region3D}.
-	 * 
-	 * @since MCUtils v1.0.0
-	 */
-	public int getMaxX() {
-		return maxX;
-	}
-
-	/**
-	 * Gets the maximum y coordinate of this {@link Region3D}.
-	 * 
-	 * @return The maximum y coordinate of this {@link Region3D}.
+	 * @return The maximum y coordinate of this region.
 	 * 
 	 * @since MCUtils v1.0.0
 	 */
@@ -153,36 +88,35 @@ public class Region3D {
 	}
 
 	/**
-	 * Gets the maximum z coordinate of this {@link Region3D}.
+	 * Checks if <b>region</b> is inside of this {@link Region3D}. If <b>region</b>
+	 * is a {@link Region2D}, {@link World#getMinHeight()} will be used as {@link #getMinY()}
+	 * and {@link World#getMaxHeight()} as {@link #getMaxX()}.
 	 * 
-	 * @return The maximum z coordinate of this {@link Region3D}.
-	 * 
-	 * @since MCUtils v1.0.0
-	 */
-	public int getMaxZ() {
-		return maxZ;
-	}
-
-	/**
-	 * Checks if <b>region</b> is inside of this {@link Region3D}.
-	 * 
-	 * @param region the {@link Region3D} to check.
+	 * @param region the region to check.
 	 * 
 	 * @return True only if <b>region</b> is <b>totally</b>
 	 * inside of this {@link Region3D}, if <b>region</b> is null, false will be returned.
 	 * 
 	 * @since MCUtils v1.0.0
 	 * 
+	 * @see #overlaps(Region2D)
 	 * @see #overlaps(Region3D)
 	 * @see #contains(Location)
 	 * @see #contains(int, int, int)
 	 */
-	public boolean contains(@Nullable Region3D region) {
+	@Override
+	public <T extends Region2D> boolean contains(T region) {
 		if (region == null)
 			return false;
+		int otherMinY = world.getMinHeight(), otherMaxY = world.getMaxHeight();
+		if (region instanceof Region3D) {
+			Region3D other = (Region3D)region;
+			otherMinY = other.getMinY();
+			otherMaxY = other.getMaxY();
+		}
 		return region.getWorld().equals(world) &&
 				region.getMinX() >= minX && region.getMaxX() <= maxX &&
-				region.getMinY() >= minY && region.getMaxY() <= maxY &&
+				otherMinY >= minY && otherMaxY <= maxY &&
 				region.getMinZ() >= minZ && region.getMaxZ() <= maxZ;
 	}
 
@@ -201,6 +135,7 @@ public class Region3D {
 	 * @see #contains(Region3D)
 	 * @see #contains(int, int, int)
 	 */
+	@Override
 	public boolean contains(@Nullable Location location) {
 		if (location == null || !location.getWorld().equals(world))
 			return false;
@@ -237,36 +172,22 @@ public class Region3D {
 	 * 
 	 * @since MCUtils v1.0.0
 	 * 
-	 * @see #overlaps(Region2D)
+	 * @see #contains(Region2D)
 	 * @see #contains(Region3D)
 	 */
-	public boolean overlaps(@Nullable Region3D region) {
+	@Override
+	public <T extends Region2D> boolean overlaps(T region) {
 		if (region == null)
 			return false;
+		int otherMinY = world.getMinHeight(), otherMaxY = world.getMaxHeight();
+		if (region instanceof Region3D) {
+			Region3D other = (Region3D)region;
+			otherMinY = other.getMinY();
+			otherMaxY = other.getMaxY();
+		}
 		return region.getWorld().equals(world) &&
-				!(region.getMinX() > maxX || region.getMinY() > maxY || region.getMinZ() > maxZ ||
-						minZ > region.getMaxX() || minY > region.getMaxY() || minZ > region.getMaxZ());
-	}
-
-	/**
-	 * Checks if this {@link Region3D} overlaps with <b>region</b>
-	 * 
-	 * @param region the {@link Region3D} to check.
-	 * 
-	 * @return True if this {@link Region3D} overlaps with <b>region</b>, false
-	 * otherwise or if <b>region</b> is null.
-	 * 
-	 * @since MCUtils v1.0.0
-	 * 
-	 * @see #overlaps(Region3D)
-	 * @see #contains(Region3D)
-	 */
-	public boolean overlaps(@Nullable Region2D region) {
-		if (region == null)
-			return false;
-		return region.getWorld().equals(world) &&
-				!(region.getMinX() > maxX || region.getMinZ() > maxZ ||
-						minZ > region.getMaxX() || minZ > region.getMaxZ());
+				!(region.getMinX() > maxX || otherMinY > maxY || region.getMinZ() > maxZ ||
+						minZ > region.getMaxX() || minY > otherMaxY || minZ > region.getMaxZ());
 	}
 
 	@Override

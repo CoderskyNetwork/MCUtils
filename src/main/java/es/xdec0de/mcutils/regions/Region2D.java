@@ -19,8 +19,8 @@ import org.bukkit.World;
  */
 public class Region2D {
 
-	private final World world;
-	private final int minX, maxX, minZ, maxZ;
+	final World world;
+	final int minX, maxX, minZ, maxZ;
 
 	/**
 	 * Creates a 2D region from two locations.
@@ -38,13 +38,13 @@ public class Region2D {
 	 */
 	public Region2D(@Nonnull Location loc1, @Nonnull Location loc2) {
 		if (loc1 == null || loc2 == null)
-			throw new NullPointerException("Cuboid locations cannot be null.");
+			throw new NullPointerException("Region locations cannot be null.");
 		if (loc1.getWorld() == null || loc2.getWorld() == null)
 			throw new NullPointerException("Location worlds cannot be null.");
 		if (!loc1.isWorldLoaded() || !loc2.isWorldLoaded())
 			throw new IllegalStateException("Location worlds must be loaded.");
 		if (!loc1.getWorld().equals(loc2.getWorld()))
-			throw new IllegalArgumentException("Cuboid locations must be on the same world.");
+			throw new IllegalArgumentException("Region locations must be on the same world.");
 		this.world = loc1.getWorld();
 		this.minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
 		this.minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
@@ -69,7 +69,7 @@ public class Region2D {
 	 */
 	public Region2D(@Nonnull World world, int x1, int z1, int x2, int z2) {
 		if (world == null)
-			throw new NullPointerException("Cuboid world cannot be null.");
+			throw new NullPointerException("Region world cannot be null.");
 		this.world = world;
 
 		minX = Math.min(x1, x2);
@@ -79,9 +79,9 @@ public class Region2D {
 	}
 
 	/**
-	 * Gets the {@link World} this {@link Region2D} is in.
+	 * Gets the {@link World} this region is in.
 	 * 
-	 * @return The {@link World} this {@link Region2D} is in.
+	 * @return The {@link World} this region is in.
 	 * 
 	 * @since MCUtils v1.0.0
 	 */
@@ -91,9 +91,9 @@ public class Region2D {
 	}
 
 	/**
-	 * Gets the minimum x coordinate of this {@link Region2D}.
+	 * Gets the minimum x coordinate of this region.
 	 * 
-	 * @return The minimum x coordinate of this {@link Region2D}.
+	 * @return The minimum x coordinate of this region.
 	 * 
 	 * @since MCUtils v1.0.0
 	 */
@@ -102,9 +102,9 @@ public class Region2D {
 	}
 
 	/**
-	 * Gets the minimum z coordinate of this {@link Region2D}.
+	 * Gets the minimum z coordinate of this region.
 	 * 
-	 * @return The minimum z coordinate of this {@link Region2D}.
+	 * @return The minimum z coordinate of this region.
 	 * 
 	 * @since MCUtils v1.0.0
 	 */
@@ -113,9 +113,9 @@ public class Region2D {
 	}
 
 	/**
-	 * Gets the maximum x coordinate of this {@link Region2D}.
+	 * Gets the maximum x coordinate of this region.
 	 * 
-	 * @return The maximum x coordinate of this {@link Region2D}.
+	 * @return The maximum x coordinate of this region.
 	 * 
 	 * @since MCUtils v1.0.0
 	 */
@@ -124,9 +124,9 @@ public class Region2D {
 	}
 
 	/**
-	 * Gets the maximum z coordinate of this {@link Region2D}.
+	 * Gets the maximum z coordinate of this region.
 	 * 
-	 * @return The maximum z coordinate of this {@link Region2D}.
+	 * @return The maximum z coordinate of this region.
 	 * 
 	 * @since MCUtils v1.0.0
 	 */
@@ -137,7 +137,8 @@ public class Region2D {
 	/**
 	 * Checks if <b>region</b> is inside of this {@link Region2D}.
 	 * 
-	 * @param region the {@link Region2D} to check.
+	 * @param <T> must extend {@link Region2D}
+	 * @param region the region to check.
 	 * 
 	 * @return True only if <b>region</b> is <b>totally</b>
 	 * inside of this {@link Region2D}, if <b>region</b> is null, false will be returned.
@@ -145,30 +146,13 @@ public class Region2D {
 	 * @since MCUtils v1.0.0
 	 * 
 	 * @see #overlaps(Region2D)
+	 * @see #overlaps(Region3D)
 	 * @see #contains(Location)
 	 * @see #contains(int, int)
 	 */
-	public boolean contains(Region2D region) {
-		return region.getWorld().equals(world) &&
-				region.getMinX() >= minX && region.getMaxX() <= maxX &&
-				region.getMinZ() >= minZ && region.getMaxZ() <= maxZ;
-	}
-
-	/**
-	 * Checks if <b>region</b> is inside of this {@link Region2D}.
-	 * 
-	 * @param region the {@link Region2D} to check.
-	 * 
-	 * @return True only if <b>region</b> is <b>totally</b>
-	 * inside of this {@link Region2D}, if <b>region</b> is null, false will be returned.
-	 * 
-	 * @since MCUtils v1.0.0
-	 * 
-	 * @see #overlaps(Region2D)
-	 * @see #contains(Location)
-	 * @see #contains(int, int)
-	 */
-	public boolean contains(Region3D region) {
+	public <T extends Region2D> boolean contains(T region) {
+		if (region == null)
+			return false;
 		return region.getWorld().equals(world) &&
 				region.getMinX() >= minX && region.getMaxX() <= maxX &&
 				region.getMinZ() >= minZ && region.getMaxZ() <= maxZ;
@@ -187,23 +171,31 @@ public class Region2D {
 	 * @since MCUtils v1.0.0
 	 * 
 	 * @see #contains(Region2D)
+	 * @see #contains(Region3D)
 	 * @see #contains(int, int)
 	 */
 	public boolean contains(Location location) {
+		if (location == null || !location.getWorld().equals(world))
+			return false;
 		return contains(location.getBlockX(), location.getBlockZ());
 	}
 
 	/**
-	 * Checks if this {@link Region2D} contains the specified coordinates.
+	 * Checks if this region contains the specified coordinates.
+	 * <p>
+	 * <b>Note:</b> As this method doesn't specify the <b>y</b> coordinate, a {@link Region3D}
+	 * will still return true if it contains both <b>x</b> and <b>z</b> coordinates, behaving
+	 * as a {@link Region2D}.
 	 * 
 	 * @param x the x coordinate to check.
 	 * @param z the z coordinate to check.
 	 * 
-	 * @return True if this {@link Region2D} contains the specified coordinates, false otherwise.
+	 * @return True if this region contains the specified coordinates, false otherwise.
 	 * 
 	 * @since MCUtils v1.0.0
 	 * 
 	 * @see #contains(Region2D)
+	 * @see #contains(Region3D)
 	 * @see #contains(Location)
 	 */
 	public boolean contains(int x, int z) {
@@ -211,7 +203,21 @@ public class Region2D {
 				z >= minZ && z <= maxZ;
 	}
 
-	public boolean overlaps(Region2D region) {
+	/**
+	 * Checks if this region overlaps with <b>region</b>
+	 * 
+	 * @param <T> must extend {@link Region2D}
+	 * @param region the region to check.
+	 * 
+	 * @return True if this region overlaps with <b>region</b>, false
+	 * otherwise or if <b>region</b> is null.
+	 * 
+	 * @since MCUtils v1.0.0
+	 * 
+	 * @see #contains(Region2D)
+	 * @see #contains(Region3D)
+	 */
+	public <T extends Region2D> boolean overlaps(T region) {
 		return region.getWorld().equals(world) &&
 				!(region.getMinX() > maxX || region.getMinZ() > maxZ ||
 						minZ > region.getMaxX() || minZ > region.getMaxZ());
@@ -219,12 +225,10 @@ public class Region2D {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null || !(obj instanceof Region2D)) {
+		if (obj == null || !(obj instanceof Region2D))
 			return false;
-		}
 		final Region2D other = (Region2D) obj;
 		return world.equals(other.world)
 				&& minX == other.minX
