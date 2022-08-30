@@ -248,7 +248,7 @@ public class Region2D {
 	 */
 	@Override
 	public String toString() {
-		return "Region[world:" + world.getName() +
+		return "Region2D[world:" + world.getName() +
 				", minX:" + minX +
 				", minZ:" + minZ +
 				", maxX:" + maxX +
