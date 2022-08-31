@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import es.xdec0de.mcutils.MCPlugin;
 import es.xdec0de.mcutils.MCUtils;
 
 /**
@@ -35,7 +36,8 @@ public class YmlFile extends CharsetYamlConfiguration {
 		MCUtils mcUtils = JavaPlugin.getPlugin(MCUtils.class);
 		if (!mcUtils.strings().hasContent(path))
 			path = "file";
-		path += ".yml";
+		if (!path.endsWith(".yml"))
+			path += ".yml";
 		this.file = new File(plugin.getDataFolder(), path);
 		this.plugin = plugin;
 		this.path = path;
