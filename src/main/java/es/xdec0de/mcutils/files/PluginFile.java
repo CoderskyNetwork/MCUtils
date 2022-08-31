@@ -215,12 +215,20 @@ public class PluginFile extends YmlFile {
 		}
 	}
 
+	/**
+	 * Updates this file.
+	 * 
+	 * @param reload if this method is getting called by a reload.
+	 * @param ign a list of paths to ignore on update.
+	 * 
+	 * @return True if no errors occurred, false otherwise.
+	 */
 	private boolean update(boolean reload, List<String> ign) {
 		String pluginName = plugin.getName();
 		try {
 			int changes = 0;
 			CharsetYamlConfiguration updated = new CharsetYamlConfiguration(getCharset());
-			if(plugin.getResource(getPath()) != null)
+			if (plugin.getResource(getPath()) != null)
 				updated.load(copyInputStreamToFile(plugin.getDataFolder()+ "/"+getPath(), plugin.getResource(getPath())));
 			else
 				return log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4File not found", false);
@@ -241,7 +249,7 @@ public class PluginFile extends YmlFile {
 				return reload ?
 					log("&8[&6"+pluginName+"&8] > &6"+getPath()+" &7has been reloaded with &b"+changes+" &7changes.", true) :
 					log("&8[&6"+pluginName+"&8] > &6"+getPath()+" &7has been updated to &ev"+plugin.getDescription().getVersion()+"&7 with &b"+changes+" &7changes.", true);
-			return false;
+			return true;
 		} catch(InvalidConfigurationException | IOException ex) {
 			return log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4"+ex.getMessage(), false);
 		}
