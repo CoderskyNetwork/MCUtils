@@ -75,21 +75,28 @@ public class MessagesFile extends PluginFile {
 
 	/**
 	 * Sets the default {@link Replacer} to be used on this {@link MessagesFile}.
+	 * If the default {@link Replacer} is null, no default {@link Replacer} will be used on any
+	 * message, the default {@link Replacer} is null by default.
 	 * 
 	 * @param replacer the default {@link Replacer} to be used on this {@link MessagesFile}.
 	 * 
 	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getDefaultReplacer()
 	 */
-	public void setDefaultReplacer(Replacer replacer) {
+	public void setDefaultReplacer(@Nullable Replacer replacer) {
 		this.defReplacer = replacer;
 	}
 
 	/**
 	 * Gets the default {@link Replacer} being used by this file.
 	 * 
-	 * @return The default replacer.
+	 * @return The default {@link Replacer}, null if no {@link Replacer} has been
+	 * specified or if it has been explicitly set to null.
 	 * 
 	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #setDefaultReplacer(Replacer)
 	 */
 	@Nullable
 	public Replacer getDefaultReplacer() {
@@ -105,7 +112,8 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @param path the path of the String to get from {@link #getPath()}.
 	 * 
-	 * @return The requested string, null if no value for the path exists or the path is null.
+	 * @return The requested string, null if no value for the path exists and no
+	 * default value was specified or the path is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -114,12 +122,12 @@ public class MessagesFile extends PluginFile {
 		if (path == null)
 			return null;
 		String str = super.getString(path);
-		return getDefaultReplacer() == null ? str : getDefaultReplacer().replaceAt(str);
+		return defReplacer == null ? str : defReplacer.replaceAt(str);
 	}
 
 	/**
 	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)},
-	 * then applies {@link #getDefaultReplacer()} and <b>replacer</b> to it.
+	 * then applies {@link #getDefaultReplacer()} to it with <b>replacer</b> being added to {@link #getDefaultReplacer()}.
 	 * <p>
 	 * If the path is null, null will always be returned,
 	 * if no value exists for it and no default value was specified null will also be returned.
@@ -127,34 +135,47 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path of the String to get from {@link #getPath()}.
 	 * @param replacer the {@link Replacer} to apply.
 	 * 
-	 * @return The requested string, null if no value for the path exists or the path is null.
+	 * @return The requested string, null if no value for the path exists and no
+	 * default value was specified or the path is null.
+	 * 
+	 * @throws NullPointerException if <b>replacer</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public String getString(@Nullable String path, Replacer replacer) {
+	public String getString(@Nullable String path, @Nonnull Replacer replacer) {
 		if (path == null)
 			return null;
+		if (replacer == null)
+			throw new NullPointerException("Replacer cannot be null.");
 		String str = super.getString(path);
-		return getDefaultReplacer() == null ? replacer.replaceAt(str) : getDefaultReplacer().add(replacer).replaceAt(str);
+		return defReplacer == null ? replacer.replaceAt(str) : defReplacer.add(replacer).replaceAt(str);
 	}
 
 	/**
 	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)},
-	 * then applies {@link #getDefaultReplacer()} and <b>replacements</b> to it.
+	 * then applies {@link #getDefaultReplacer()} to it with <b>replacements</b> being added to {@link #getDefaultReplacer()}.
 	 * <p>
 	 * If the path is null, null will always be returned,
 	 * if no value exists for it and no default value was specified null will also be returned.
+	 * <p>
+	 * <b>replacements</b> must not be null and it's size must be even as specified on {@link Replacer#add(String...)}
 	 * 
 	 * @param path the path of the String to get from {@link #getPath()}.
 	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
-	 * @return The requested string, null if no value for the path exists or the path is null.
+	 * @return The requested string, null if no value for the path exists and no
+	 * default value was specified or the path is null.
+	 * 
+	 * @throws NullPointerException if <b>replacements</b> is null.
+	 * @throws IllegalArgumentException if <b>replacements</b> is null or it's size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public String getString(@Nullable String path, String... replacements) {
+	public String getString(@Nullable String path, @Nonnull String... replacements) {
 		if (path == null)
 			return null;
+		if (replacements == null)
+			throw new NullPointerException("Replacements cannot be null.");
 		String str = super.getString(path);
 		return defReplacer == null ? new Replacer(replacements).replaceAt(str) : defReplacer.add(replacements).replaceAt(str);
 	}
@@ -162,11 +183,14 @@ public class MessagesFile extends PluginFile {
 	/**
 	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
 	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()} to it.
-	 * If the path is null or no value exists for it, null will be returned.
+	 * <p>
+	 * If the path is null, null will always be returned,
+	 * if no value exists for it and no default value was specified null will also be returned.
 	 * 
 	 * @param path the path of the String to get from {@link #getPath()}.
 	 * 
-	 * @return The requested string, null if no value for the path exists or the path is null.
+	 * @return The requested colored string, null if no value for the path exists and no
+	 * default value was specified or the path is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -181,20 +205,27 @@ public class MessagesFile extends PluginFile {
 	/**
 	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
 	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()}
-	 * to it with <b>replaced</b> being added to {@link #getDefaultReplacer()}.
-	 * If the path is null or no value exists for it, null will be returned.
+	 * to it with <b>replacer</b> being added to {@link #getDefaultReplacer()}.
+	 * <p>
+	 * If the path is null, null will always be returned,
+	 * if no value exists for it and no default value was specified null will also be returned.
 	 * 
 	 * @param path the path of the String to get from {@link #getPath()}.
 	 * @param replacer the {@link Replacer} to apply.
 	 * 
-	 * @return The requested string, null if no value for the path exists or the path is null.
+	 * @return The requested colored string, null if no value for the path exists and no
+	 * default value was specified or the path is null.
+	 * 
+	 * @throws NullPointerException if <b>replacer</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String getColoredString(@Nullable String path, @Nullable Replacer replacer) {
+	public String getColoredString(@Nullable String path, @Nonnull Replacer replacer) {
 		if (path == null)
 			return null;
+		if (replacer == null)
+			throw new NullPointerException("Replacer cannot be null.");
 		String str = super.getString(path);
 		return defReplacer == null ? strings.applyColor(replacer.replaceAt(str)) : strings.applyColor(defReplacer.add(replacer).replaceAt(str));
 	}
@@ -203,16 +234,19 @@ public class MessagesFile extends PluginFile {
 	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
 	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()}
 	 * to it with the <b>replacements</b> being added to {@link #getDefaultReplacer()}.
-	 * If the path is null or no value exists for it, null will be returned.
 	 * <p>
-	 * The <b>replacements</b> must not be null or empty and the count must be even as specified on {@link Replacer#add(String...)}
+	 * If the path is null, null will always be returned,
+	 * if no value exists for it and no default value was specified null will also be returned.
+	 * <p>
+	 * The <b>replacements</b> must not be null and it's size must be even as specified on {@link Replacer#add(String...)}
 	 * 
 	 * @param path the path of the String to get from {@link #getPath()}.
 	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
-	 * @return The requested string, null if no value for the path exists or the path is null.
+	 * @return The requested colored string, null if no value for the path exists and no
+	 * default value was specified or the path is null.
 	 * 
-	 * @throws IllegalArgumentException if <b>replacents</b> is null, empty or it's size % 2 is not equal to 0.
+	 * @throws IllegalArgumentException if <b>replacements</b> is null or it's size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -220,6 +254,8 @@ public class MessagesFile extends PluginFile {
 	public String getColoredString(@Nullable String path, @Nonnull String... replacements) {
 		if (path == null)
 			return null;
+		if (replacements == null)
+			throw new NullPointerException("Replacements cannot be null.");
 		String str = super.getString(path);
 		return defReplacer == null ? strings.applyColor(new Replacer(replacements).replaceAt(str)) : strings.applyColor(defReplacer.add(replacements).replaceAt(str));
 	}
@@ -238,11 +274,11 @@ public class MessagesFile extends PluginFile {
 	public List<String> getColoredList(@Nullable String path) {
 		if (path == null)
 			return null;
-		List<String> atCfg = getStringList(path);
+		List<String> atCfg = super.getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
-		Replacer rep = getDefaultReplacer();
+		Replacer rep = defReplacer;
 		if (rep != null)
 			for (String str : atCfg)
 				res.add(strings.applyColor(rep.replaceAt(str)));
@@ -269,11 +305,11 @@ public class MessagesFile extends PluginFile {
 	public List<String> getColoredList(@Nullable String path, @Nullable Replacer replacer) {
 		if (path == null)
 			return null;
-		List<String> atCfg = getStringList(path);
+		List<String> atCfg = super.getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
-		Replacer rep = getDefaultReplacer() != null ? getDefaultReplacer().add(replacer) : replacer;
+		Replacer rep = defReplacer != null ? defReplacer.add(replacer) : replacer;
 		for (String str : atCfg)
 			res.add(strings.applyColor(rep.replaceAt(str)));
 		return res;
@@ -295,11 +331,11 @@ public class MessagesFile extends PluginFile {
 	public List<String> getColoredList(@Nullable String path, @Nullable String... replacements) {
 		if (path == null)
 			return null;
-		List<String> atCfg = getStringList(path);
+		List<String> atCfg = super.getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
-		Replacer rep = getDefaultReplacer() != null ? getDefaultReplacer().add(replacements) : new Replacer(replacements);
+		Replacer rep = defReplacer != null ? defReplacer.add(replacements) : new Replacer(replacements);
 		for (String str : atCfg)
 			res.add(strings.applyColor(rep.replaceAt(str)));
 		return res;
@@ -455,11 +491,11 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path at {@link #getPath()}
 	 * @param replacements the replacements to add to the default replacer.
 	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
+	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendActionBar(@Nonnull Player target, @Nullable String path, @Nullable String... replacements) {
+	public void sendActionBar(@Nonnull Player target, @Nullable String path, @Nonnull String... replacements) {
 		String str = getString(path, replacements);
 		if (str != null && str.isEmpty())
 			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
