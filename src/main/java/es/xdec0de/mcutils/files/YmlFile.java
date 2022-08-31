@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,7 +30,28 @@ public class YmlFile extends CharsetYamlConfiguration {
 
 	private File file;
 
-	public YmlFile(JavaPlugin plugin, String path, Charset charset) {
+	/**
+	 * Creates an instance, <b>NOT</b> a file, of a {@link YmlFile} for the specified plugin and path.
+	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
+	 * <p>
+	 * {@link YmlFile}s aren't required to be on <b>plugin</b>'s jar file as a resource. For this
+	 * exact reason they can't copy any default file from <b>plugin</b>'s source. This files can
+	 * be used, for example, as storage files for players, where you don't need a "template" file to copy.
+	 * 
+	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
+	 * @param path the path of the file to create, the ".yml" extension is automatically added if missing,
+	 * if the path is null, empty or blank, "file" will be used.
+	 * @param charset the charset to use, if null, {@link StandardCharsets#UTF_8} will be used.
+	 * 
+	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see MCPlugin#registerFile(YmlFile)
+	 * @see MCPlugin#registerFile(String, Class)
+	 * @see #create()
+	 */
+	public YmlFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(charset);
 		if (plugin == null)
 			throw new NullPointerException("Plugin cannot be null.");
@@ -43,7 +65,29 @@ public class YmlFile extends CharsetYamlConfiguration {
 		this.path = path;
 	}
 
-	public YmlFile(JavaPlugin plugin, String path) {
+	/**
+	 * Creates an instance, <b>NOT</b> a file, of a {@link YmlFile} for the specified plugin and path.
+	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
+	 * <p>
+	 * {@link YmlFile}s aren't required to be on <b>plugin</b>'s jar file as a resource. For this
+	 * exact reason they can't copy any default file from <b>plugin</b>'s source. This files can
+	 * be used, for example, as storage files for players, where you don't need a "template" file to copy.
+	 * <p>
+	 * This constructor uses {@link StandardCharsets#UTF_8}, to specify use {@link #YmlFile(JavaPlugin, String, Charset)}
+	 * 
+	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
+	 * @param path the path of the file to create, the ".yml" extension is automatically added if missing,
+	 * if the path is null, empty or blank, "file" will be used.
+	 * 
+	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see MCPlugin#registerFile(YmlFile)
+	 * @see MCPlugin#registerFile(String, Class)
+	 * @see #create()
+	 */
+	public YmlFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
 		this(plugin, path, StandardCharsets.UTF_8);
 	}
 
