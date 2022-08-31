@@ -73,6 +73,12 @@ public class MessagesFile extends PluginFile {
 		this(plugin, path, Charsets.UTF_8);
 	}
 
+	/*
+	 * 
+	 * Replacer handling
+	 * 
+	 */
+
 	/**
 	 * Sets the default {@link Replacer} to be used on this {@link MessagesFile}.
 	 * If the default {@link Replacer} is null, no default {@link Replacer} will be used on any
@@ -102,6 +108,14 @@ public class MessagesFile extends PluginFile {
 	public Replacer getDefaultReplacer() {
 		return defReplacer == null ? null : defReplacer.clone();
 	}
+
+	/*
+	 * 
+	 * Message getters
+	 * 
+	 */
+
+	// Strings //
 
 	/**
 	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)},
@@ -167,7 +181,7 @@ public class MessagesFile extends PluginFile {
 	 * default value was specified or the path is null.
 	 * 
 	 * @throws NullPointerException if <b>replacements</b> is null.
-	 * @throws IllegalArgumentException if <b>replacements</b> is null or it's size % 2 is not equal to 0.
+	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -179,6 +193,8 @@ public class MessagesFile extends PluginFile {
 		String str = super.getString(path);
 		return defReplacer == null ? new Replacer(replacements).replaceAt(str) : defReplacer.add(replacements).replaceAt(str);
 	}
+
+	// Colored strings //
 
 	/**
 	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
@@ -246,7 +262,8 @@ public class MessagesFile extends PluginFile {
 	 * @return The requested colored string, null if no value for the path exists and no
 	 * default value was specified or the path is null.
 	 * 
-	 * @throws IllegalArgumentException if <b>replacements</b> is null or it's size % 2 is not equal to 0.
+	 * @throws NullPointerException if <b>replacements</b> is null.
+	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -260,13 +277,18 @@ public class MessagesFile extends PluginFile {
 		return defReplacer == null ? strings.applyColor(new Replacer(replacements).replaceAt(str)) : strings.applyColor(defReplacer.add(replacements).replaceAt(str));
 	}
 
+	// Lists //
+
+	// Colored Lists //
+
 	/**
 	 * Gets the requested list of strings with {@link MCStrings#applyColor(String)}
 	 * and {@link #getDefaultReplacer()} applied to every string on the list.
 	 * 
-	 * @param path the path at {@link #getPath()}
+	 * @param path the path of the List to get from {@link #getPath()}.
 	 * 
-	 * @return The requested list of strings, an empty list if the path doesn't exist or the list itself is empty.
+	 * @return The requested colored list of strings, an empty list if the path doesn't
+	 * exist or the list itself is empty, null if <b>path</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -293,8 +315,8 @@ public class MessagesFile extends PluginFile {
 	 * and {@link #getDefaultReplacer()} joined with <b>replacer</b> applied to every
 	 * string on the list.
 	 * 
-	 * @param path the path at {@link #getPath()}
-	 * @param replacer the replacer to add to the default replacer.
+	 * @param path the path of the List to get from {@link #getPath()}.
+	 * @param replacer the {@link Replacer} to apply.
 	 * 
 	 * @return The requested colored list of strings, an empty list if the path doesn't
 	 * exist or the list itself is empty, null if <b>path</b> is null.
@@ -305,6 +327,8 @@ public class MessagesFile extends PluginFile {
 	public List<String> getColoredList(@Nullable String path, @Nullable Replacer replacer) {
 		if (path == null)
 			return null;
+		if (replacer == null)
+			throw new NullPointerException("Replacer cannot be null.");
 		List<String> atCfg = super.getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
@@ -320,10 +344,14 @@ public class MessagesFile extends PluginFile {
 	 * and {@link #getDefaultReplacer()} with added <b>replacements</b> applied to every
 	 * string on the list.
 	 * 
-	 * @param path the path at {@link #getPath()}
-	 * @param replacements the replacements to add to the default replacer.
+	 * @param path the path of the List to get from {@link #getPath()}.
+	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
-	 * @return The requested list of strings, an empty list if the path doesn't exist or the list itself is empty.
+	 * @return The requested colored list of strings, an empty list if the path doesn't
+	 * exist or the list itself is empty, null if <b>path</b> is null.
+	 * 
+	 * @throws NullPointerException if <b>replacements</b> is null.
+	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -331,6 +359,8 @@ public class MessagesFile extends PluginFile {
 	public List<String> getColoredList(@Nullable String path, @Nullable String... replacements) {
 		if (path == null)
 			return null;
+		if (replacements == null)
+			throw new NullPointerException("Replacements cannot be null.");
 		List<String> atCfg = super.getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
@@ -354,7 +384,7 @@ public class MessagesFile extends PluginFile {
 	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
+	 * @param path the path of the message to get from {@link #getPath()}.
 	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
@@ -369,14 +399,14 @@ public class MessagesFile extends PluginFile {
 	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
-	 * @param replacer the replacer to add to the default replacer.
+	 * @param path the path of the message to get from {@link #getPath()}.
+	 * @param replacer the {@link Replacer} to apply.
 	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
+	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void send(@Nonnull CommandSender target, @Nullable String path, @Nullable Replacer replacer) {
+	public void send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
 		target.sendMessage(getString(path, replacer));
 	}
 
@@ -385,14 +415,15 @@ public class MessagesFile extends PluginFile {
 	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
-	 * @param replacements the replacements to add to the default replacer.
+	 * @param path the path of the message to get from {@link #getPath()}.
+	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
+	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
+	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void send(@Nonnull CommandSender target, @Nullable String path, @Nullable String... replacements) {
+	public void send(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
 		target.sendMessage(getString(path, replacements));
 	}
 
@@ -401,7 +432,7 @@ public class MessagesFile extends PluginFile {
 	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
+	 * @param path the path of the message to get from {@link #getPath()}.
 	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
@@ -416,14 +447,14 @@ public class MessagesFile extends PluginFile {
 	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
-	 * @param replacer the replacer to add to the default replacer.
+	 * @param path the path of the message to get from {@link #getPath()}.
+	 * @param replacer the {@link Replacer} to apply.
 	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
+	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendColored(@Nonnull CommandSender target, @Nullable String path, @Nullable Replacer replacer) {
+	public void sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
 		target.sendMessage(getColoredString(path, replacer));
 	}
 
@@ -432,14 +463,15 @@ public class MessagesFile extends PluginFile {
 	 * string to the specified <b>target</b>.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
-	 * @param replacements the replacements to add to the default replacer.
+	 * @param path the path of the message to get from {@link #getPath()}.
+	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
+	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
+	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendColored(@Nonnull CommandSender target, @Nullable String path, @Nullable String... replacements) {
+	public void sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
 		target.sendMessage(getColoredString(path, replacements));
 	}
 
@@ -451,7 +483,7 @@ public class MessagesFile extends PluginFile {
 	 * null or empty, no message will be sent.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
+	 * @param path the path of the message to get from {@link #getPath()}.
 	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
@@ -469,14 +501,14 @@ public class MessagesFile extends PluginFile {
 	 * null or empty, no message will be sent.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
-	 * @param replacer the replacer to add to the default replacer.
+	 * @param path the path of the message to get from {@link #getPath()}.
+	 * @param replacer the {@link Replacer} to apply.
 	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
+	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendActionBar(@Nonnull Player target, @Nullable String path, @Nullable Replacer replacer) {
+	public void sendActionBar(@Nonnull Player target, @Nullable String path, @Nonnull Replacer replacer) {
 		String str = getString(path, replacer);
 		if (str != null && str.isEmpty())
 			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
@@ -488,10 +520,11 @@ public class MessagesFile extends PluginFile {
 	 * null or empty, no message will be sent.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
-	 * @param replacements the replacements to add to the default replacer.
+	 * @param path the path of the message to get from {@link #getPath()}.
+	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
 	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
+	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -507,7 +540,7 @@ public class MessagesFile extends PluginFile {
 	 * null or empty, no message will be sent.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
+	 * @param path the path of the message to get from {@link #getPath()}.
 	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
@@ -525,10 +558,10 @@ public class MessagesFile extends PluginFile {
 	 * null or empty, no message will be sent.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
-	 * @param replacer the replacer to add to the default replacer.
+	 * @param path the path of the message to get from {@link #getPath()}.
+	 * @param replacer the {@link Replacer} to apply.
 	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
+	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -544,14 +577,15 @@ public class MessagesFile extends PluginFile {
 	 * null or empty, no message will be sent.
 	 * 
 	 * @param target the receiver.
-	 * @param path the path at {@link #getPath()}
-	 * @param replacements the replacements to add to the default replacer.
+	 * @param path the path of the message to get from {@link #getPath()}.
+	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
+	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
+	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendColoredActionBar(@Nonnull Player target, @Nullable String path, @Nullable String... replacements) {
+	public void sendColoredActionBar(@Nonnull Player target, @Nullable String path, @Nonnull String... replacements) {
 		String str = getColoredString(path, replacements);
 		if (str != null && str.isEmpty())
 			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
