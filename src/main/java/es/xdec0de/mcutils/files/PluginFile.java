@@ -31,8 +31,28 @@ public class PluginFile extends YmlFile {
 
 	private File file;
 
-	PluginFile(JavaPlugin plugin, String path, String pathIfInvalid, Charset charset) {
-		super(plugin, path, pathIfInvalid, charset);
+	/**
+	 * Creates an instance, <b>NOT</b> a file, of a plugin file for the specified plugin and path.
+	 * Plugin files must be present on the plugin's jar file as a resource.
+	 * Plugin files are basically {@link YamlFile}s that are set to have predefined
+	 * values and can be updated to newer versions of the plugin using the file at the plugin's jar source.
+	 * A good example of a plugin file is a config.yml file.
+	 * 
+	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
+	 * @param path the path of the file to create, the .yml extension is automatically added,
+	 * if the path is null, empty or blank, "config" will be used.
+	 * @param charset the charset to use, if null, {@link StandardCharsets#UTF_8} will be used.
+	 * 
+	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * 
+	 * @see MCPlugin#registerFile(PluginFile)
+	 * @see MCPlugin#registerFile(String, Class)
+	 * @see #create()
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
+		super(plugin, path, charset);
 	}
 
 	/**
@@ -55,32 +75,8 @@ public class PluginFile extends YmlFile {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	protected PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
-		this(plugin, path, "config", StandardCharsets.UTF_8);
-	}
-
-	/**
-	 * Creates an instance, <b>NOT</b> a file, of a plugin file for the specified plugin and path.
-	 * Plugin files must be present on the plugin's jar file as a resource.
-	 * Plugin files are basically {@link YamlFile}s that are set to have predefined
-	 * values and can be updated to newer versions of the plugin using the file at the plugin's jar source.
-	 * A good example of a plugin file is a config.yml file.
-	 * 
-	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
-	 * @param path the path of the file to create, the .yml extension is automatically added,
-	 * if the path is null, empty or blank, "config" will be used.
-	 * @param charset the charset to use, if null, {@link StandardCharsets#UTF_8} will be used.
-	 * 
-	 * @throws NullPointerException if <b>plugin</b> is null.
-	 * 
-	 * @see MCPlugin#registerFile(PluginFile)
-	 * @see MCPlugin#registerFile(String, Class)
-	 * @see #create()
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	protected PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
-		this(plugin, path, "config", charset);
+	public PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
+		super(plugin, path, StandardCharsets.UTF_8);
 	}
 
 	/**

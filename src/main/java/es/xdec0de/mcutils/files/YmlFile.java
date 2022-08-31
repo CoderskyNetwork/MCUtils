@@ -28,25 +28,21 @@ public class YmlFile extends CharsetYamlConfiguration {
 
 	private File file;
 
-	YmlFile(JavaPlugin plugin, String path, String pathIfInvalid, Charset charset) {
+	public YmlFile(JavaPlugin plugin, String path, Charset charset) {
 		super(charset);
 		if (plugin == null)
 			throw new NullPointerException("Plugin cannot be null.");
 		MCUtils mcUtils = JavaPlugin.getPlugin(MCUtils.class);
 		if (!mcUtils.strings().hasContent(path))
-			path = pathIfInvalid;
+			path = "file";
 		path += ".yml";
 		this.file = new File(plugin.getDataFolder(), path);
 		this.plugin = plugin;
 		this.path = path;
 	}
 
-	protected YmlFile(JavaPlugin plugin, String path) {
-		this(plugin, path, "default", StandardCharsets.UTF_8);
-	}
-
-	protected YmlFile(JavaPlugin plugin, String path, Charset charset) {
-		this(plugin, path, "default", charset);
+	public YmlFile(JavaPlugin plugin, String path) {
+		this(plugin, path, StandardCharsets.UTF_8);
 	}
 
 	/**

@@ -49,7 +49,7 @@ public class MessagesFile extends PluginFile {
 	 * @see MCPlugin#registerFile(PluginFile)
 	 * @see MCPlugin#registerFile(String, Class)
 	 */
-	protected MessagesFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
+	public MessagesFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(plugin, path, charset);
 	}
 
@@ -68,7 +68,7 @@ public class MessagesFile extends PluginFile {
 	 * @see MCPlugin#registerFile(PluginFile)
 	 * @see MCPlugin#registerFile(String, Class)
 	 */
-	protected MessagesFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
+	public MessagesFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
 		this(plugin, path, StandardCharsets.UTF_8);
 	}
 
