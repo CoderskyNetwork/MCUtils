@@ -29,51 +29,54 @@ import es.xdec0de.mcutils.MCPlugin;
  */
 public class PluginFile extends YmlFile {
 
-	private File file;
-
 	/**
-	 * Creates an instance, <b>NOT</b> a file, of a plugin file for the specified plugin and path.
-	 * Plugin files must be present on the plugin's jar file as a resource.
-	 * Plugin files are basically {@link YamlFile}s that are set to have predefined
-	 * values and can be updated to newer versions of the plugin using the file at the plugin's jar source.
-	 * A good example of a plugin file is a config.yml file.
+	 * Creates an instance, <b>NOT</b> a file, of a {@link PluginFile} for the specified <b>plugin</b> and path.
+	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
+	 * <p>
+	 * {@link PluginFile}s are required to be on <b>plugin</b>'s jar file as a resource. For this
+	 * exact reason they can be easily updated to newer versions. This files can be used, for example,
+	 * as configuration files that require certain content to be present on them and are likely to be
+	 * updated on future versions.
 	 * 
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
-	 * @param path the path of the file to create, the .yml extension is automatically added,
-	 * if the path is null, empty or blank, "config" will be used.
+	 * @param path the path of the file to create, the ".yml" extension is automatically added if missing,
+	 * if the path is null, empty or blank, "file" will be used.
 	 * @param charset the charset to use, if null, {@link StandardCharsets#UTF_8} will be used.
 	 * 
 	 * @throws NullPointerException if <b>plugin</b> is null.
 	 * 
+	 * @since MCUtils 1.0.0
+	 * 
 	 * @see MCPlugin#registerFile(PluginFile)
 	 * @see MCPlugin#registerFile(String, Class)
 	 * @see #create()
-	 * 
-	 * @since MCUtils 1.0.0
 	 */
 	public PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(plugin, path, charset);
 	}
 
 	/**
-	 * Creates an instance, <b>NOT</b> a file, of a plugin file for the specified plugin and path.
-	 * Plugin files must be present on the plugin's jar file as a resource.
-	 * Plugin files are basically {@link YamlFile}s that are set to have predefined
-	 * values and can be updated to newer versions of the plugin using the file at the plugin's jar source.
-	 * A good example of a plugin file is a config.yml file.
-	 * As this constructor doesn't define a charset, {@link StandardCharsets#UTF_8} will be used.
+	 * Creates an instance, <b>NOT</b> a file, of a {@link PluginFile} for the specified <b>plugin</b> and path.
+	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
+	 * <p>
+	 * {@link PluginFile}s are required to be on <b>plugin</b>'s jar file as a resource. For this
+	 * exact reason they can be easily updated to newer versions. This files can be used, for example,
+	 * as configuration files that require certain content to be present on them and are likely to be
+	 * updated on future versions.
+	 * <p>
+	 * This constructor uses {@link StandardCharsets#UTF_8}, to specify use {@link #PluginFile(JavaPlugin, String, Charset)}
 	 * 
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
-	 * @param path the path of the file to create, the .yml extension is automatically added,
-	 * if the path is null, empty or blank, "config" will be used.
+	 * @param path the path of the file to create, the ".yml" extension is automatically added if missing,
+	 * if the path is null, empty or blank, "file" will be used.
 	 * 
 	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
 	 * 
 	 * @see MCPlugin#registerFile(PluginFile)
 	 * @see MCPlugin#registerFile(String, Class)
 	 * @see #create()
-	 * 
-	 * @since MCUtils 1.0.0
 	 */
 	public PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
 		super(plugin, path, StandardCharsets.UTF_8);
@@ -98,7 +101,7 @@ public class PluginFile extends YmlFile {
 	public void create() {
 		if(!plugin.getDataFolder().exists())
 			plugin.getDataFolder().mkdir();
-		if(!(file = new File(plugin.getDataFolder(), getPath())).exists())
+		if(!file.exists())
 			plugin.saveResource(getPath(), false);
 		reload(false);
 		update(false, new ArrayList<>(0));
