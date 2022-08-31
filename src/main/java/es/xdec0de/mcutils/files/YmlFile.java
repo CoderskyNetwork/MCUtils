@@ -24,14 +24,14 @@ import es.xdec0de.mcutils.MCUtils;
  */
 public class YmlFile extends CharsetYamlConfiguration {
 
-	/** The {@link JavaPlugin} that initialized this MCFile */
-	protected final JavaPlugin plugin;
-	private final String path;
+	/** The {@link JavaPlugin} that initialized this file */
+	final JavaPlugin plugin;
 
-	private File file;
+	private final String path;
+	final File file;
 
 	/**
-	 * Creates an instance, <b>NOT</b> a file, of a {@link YmlFile} for the specified plugin and path.
+	 * Creates an instance, <b>NOT</b> a file, of a {@link YmlFile} for the specified <b>plugin</b> and path.
 	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
 	 * <p>
 	 * {@link YmlFile}s aren't required to be on <b>plugin</b>'s jar file as a resource. For this
@@ -66,7 +66,7 @@ public class YmlFile extends CharsetYamlConfiguration {
 	}
 
 	/**
-	 * Creates an instance, <b>NOT</b> a file, of a {@link YmlFile} for the specified plugin and path.
+	 * Creates an instance, <b>NOT</b> a file, of a {@link YmlFile} for the specified <b>plugin</b> and path.
 	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
 	 * <p>
 	 * {@link YmlFile}s aren't required to be on <b>plugin</b>'s jar file as a resource. For this
