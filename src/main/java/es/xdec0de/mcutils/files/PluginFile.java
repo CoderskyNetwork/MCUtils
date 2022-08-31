@@ -219,7 +219,7 @@ public class PluginFile extends YmlFile {
 		String pluginName = plugin.getName();
 		try {
 			int changes = 0;
-			CharsetYamlConfiguration updated = new CharsetYamlConfiguration(StandardCharsets.UTF_8);
+			CharsetYamlConfiguration updated = new CharsetYamlConfiguration(charset);
 			if(plugin.getResource(getPath()) != null)
 				updated.load(copyInputStreamToFile(plugin.getDataFolder()+ "/"+getPath(), plugin.getResource(getPath())));
 			else {
