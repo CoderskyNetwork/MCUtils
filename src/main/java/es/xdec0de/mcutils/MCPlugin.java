@@ -126,6 +126,8 @@ public class MCPlugin extends JavaPlugin {
 		files.forEach(file -> {
 			if (file instanceof PluginFile)
 				((PluginFile)file).reload(true);
+			else
+				file.reload();
 		});
 	}
 
@@ -148,11 +150,12 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #reload(boolean)
 	 */
 	public void reload(@Nullable List<String> ignoredUpdatePaths) {
-		if (ignoredUpdatePaths == null)
-			ignoredUpdatePaths = new ArrayList<>(0);
-		for (YmlFile file : files)
+		files.forEach(file -> {
 			if (file instanceof PluginFile)
 				((PluginFile)file).reload(ignoredUpdatePaths);
+			else
+				file.reload();
+		});
 	}
 
 	/**
