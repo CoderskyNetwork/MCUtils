@@ -28,7 +28,7 @@ import com.google.common.io.Files;
  */
 public class CharsetYamlConfiguration extends YamlConfiguration {
 
-	private final Charset charset;
+	final Charset charset;
 
 	/**
 	 * Creates a new {@link YamlConfiguration} with {@link Charset} support.
