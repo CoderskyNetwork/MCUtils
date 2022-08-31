@@ -3,13 +3,12 @@ package es.xdec0de.mcutils.files;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Nonnull;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.google.common.base.Charsets;
 
 import es.xdec0de.mcutils.MCUtils;
 
@@ -43,7 +42,7 @@ public class YmlFile extends CharsetYamlConfiguration {
 	}
 
 	protected YmlFile(JavaPlugin plugin, String path) {
-		this(plugin, path, "default", Charsets.UTF_8);
+		this(plugin, path, "default", StandardCharsets.UTF_8);
 	}
 
 	protected YmlFile(JavaPlugin plugin, String path, Charset charset) {

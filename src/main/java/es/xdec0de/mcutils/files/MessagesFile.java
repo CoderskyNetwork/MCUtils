@@ -1,6 +1,7 @@
 package es.xdec0de.mcutils.files;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +12,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.google.common.base.Charsets;
 
 import es.xdec0de.mcutils.MCPlugin;
 import es.xdec0de.mcutils.MCUtils;
@@ -42,7 +41,7 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
 	 * @param path the path of the file to create, two examples are "messages.yml" and "lang/messages.yml"
-	 * @param charset the {@link Charset} to use, if null, {@link Charsets#UTF_8} will be used. 
+	 * @param charset the {@link Charset} to use, if null, {@link StandardCharsets#UTF_8} will be used. 
 	 * @param defReplacer the default {@link Replacer} to use on every message.
 	 * 
 	 * @since MCUtils 1.0.0
@@ -58,7 +57,7 @@ public class MessagesFile extends PluginFile {
 	 * Creates a message file for the specified plugin
 	 * with the specified path, usually the path is just
 	 * "messages", but you can choose whatever you want.
-	 * {@link Charsets#UTF_8} will be used.
+	 * {@link StandardCharsets#UTF_8} will be used.
 	 * 
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
 	 * @param path the path of the file to create, two examples are "messages.yml" and "lang/messages.yml"
@@ -70,7 +69,7 @@ public class MessagesFile extends PluginFile {
 	 * @see MCPlugin#registerFile(String, Class)
 	 */
 	protected MessagesFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
-		this(plugin, path, Charsets.UTF_8);
+		this(plugin, path, StandardCharsets.UTF_8);
 	}
 
 	/*

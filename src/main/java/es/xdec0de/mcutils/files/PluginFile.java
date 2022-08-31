@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.google.common.base.Charsets;
 
 import es.xdec0de.mcutils.MCPlugin;
 
@@ -42,7 +41,7 @@ public class PluginFile extends YmlFile {
 	 * Plugin files are basically {@link YamlFile}s that are set to have predefined
 	 * values and can be updated to newer versions of the plugin using the file at the plugin's jar source.
 	 * A good example of a plugin file is a config.yml file.
-	 * As this constructor doesn't define a charset, {@link Charsets#UTF_8} will be used.
+	 * As this constructor doesn't define a charset, {@link StandardCharsets#UTF_8} will be used.
 	 * 
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
 	 * @param path the path of the file to create, the .yml extension is automatically added,
@@ -57,7 +56,7 @@ public class PluginFile extends YmlFile {
 	 * @since MCUtils 1.0.0
 	 */
 	protected PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
-		this(plugin, path, "config", Charsets.UTF_8);
+		this(plugin, path, "config", StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -70,7 +69,7 @@ public class PluginFile extends YmlFile {
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
 	 * @param path the path of the file to create, the .yml extension is automatically added,
 	 * if the path is null, empty or blank, "config" will be used.
-	 * @param charset the charset to use, if null, {@link Charsets#UTF_8} will be used.
+	 * @param charset the charset to use, if null, {@link StandardCharsets#UTF_8} will be used.
 	 * 
 	 * @throws NullPointerException if <b>plugin</b> is null.
 	 * 
@@ -220,7 +219,7 @@ public class PluginFile extends YmlFile {
 		String pluginName = plugin.getName();
 		try {
 			int changes = 0;
-			CharsetYamlConfiguration updated = new CharsetYamlConfiguration(Charsets.UTF_8);
+			CharsetYamlConfiguration updated = new CharsetYamlConfiguration(StandardCharsets.UTF_8);
 			if(plugin.getResource(getPath()) != null)
 				updated.load(copyInputStreamToFile(plugin.getDataFolder()+ "/"+getPath(), plugin.getResource(getPath())));
 			else {
