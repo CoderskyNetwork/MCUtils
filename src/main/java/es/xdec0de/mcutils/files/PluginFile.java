@@ -86,25 +86,22 @@ public class PluginFile extends YmlFile {
 	 * Creates this file, the file MUST be present
 	 * on the plugin's jar file as a resource.
 	 * This is required in order to copy the file from
-	 * the plugin source and updating it. If you don't need
+	 * the plugin source and to update it. If you don't need
 	 * this functionality and want an empty file instead, use
-	 * {@link YmlFile}<p>
+	 * {@link YmlFile}
+	 * <p>
 	 * This method is not required when calling
 	 * {@link MCPlugin#registerFile(String, Class)}
 	 * as it does this automatically.
 	 * 
 	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #getFileConfig()
 	 */
 	@Override
 	public void create() {
-		if(!plugin.getDataFolder().exists())
-			plugin.getDataFolder().mkdir();
+		file.getParentFile().mkdirs();
 		if(!file.exists())
 			plugin.saveResource(getPath(), false);
 		reload(false);
-		update(false, new ArrayList<>(0));
 	}
 
 	/**
@@ -122,13 +119,7 @@ public class PluginFile extends YmlFile {
 	@Nonnull
 	@Override
 	public boolean reload() {
-		try {
-			load(file);
-			return true;
-		} catch (IOException | InvalidConfigurationException e) {
-			e.printStackTrace();
-			return false;
-		}
+		return reload(false);
 	}
 
 	/**
@@ -151,16 +142,10 @@ public class PluginFile extends YmlFile {
 	 */
 	@Nonnull
 	public boolean reload(boolean update) {
+		final boolean reload = super.reload();
 		if (update)
-			if (!update(true, new ArrayList<>(0)))
-				return false;
-		try {
-			load(file);
-			return true;
-		} catch (IOException | InvalidConfigurationException e) {
-			e.printStackTrace();
-			return false;
-		}
+			return update(true, new ArrayList<>(0));
+		return reload;
 	}
 
 	/**
@@ -187,17 +172,8 @@ public class PluginFile extends YmlFile {
 	 */
 	@Nonnull
 	public boolean reload(@Nullable List<String> ignoredUpdatePaths) {
-		if (ignoredUpdatePaths == null)
-			reload(false);
-		else if (!update(true, ignoredUpdatePaths))
-			return false;
-		try {
-			load(file);
-			return true;
-		} catch (IOException | InvalidConfigurationException e) {
-			e.printStackTrace();
-			return false;
-		}
+		super.reload();
+		return update(true, (ignoredUpdatePaths == null ? new ArrayList<>(0) : ignoredUpdatePaths));
 	}
 
 	private File copyInputStreamToFile(String path, InputStream inputStream) {
