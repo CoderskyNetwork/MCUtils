@@ -35,38 +35,53 @@ public class MessagesFile extends PluginFile {
 	private Replacer defReplacer;
 
 	/**
-	 * Creates a message file for the specified plugin
-	 * with the specified path, usually the path is just
-	 * "messages", but you can choose whatever you want.
+	 * Creates an instance, <b>NOT</b> a file, of a {@link MessagesFile} for the specified <b>plugin</b> and <b>path</b>.
+	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
+	 * <p>
+	 * {@link MessagesFile}s are required to be on <b>plugin</b>'s jar file as a resource. For this
+	 * exact reason they can be easily updated to newer versions. This files are intended to be used as
+	 * as message files that require certain content to be present on them and are likely to be
+	 * updated on future versions, as an extension of {@link PluginFile}.
 	 * 
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
-	 * @param path the path of the file to create, two examples are "messages.yml" and "lang/messages.yml"
-	 * @param charset the {@link Charset} to use, if null, {@link StandardCharsets#UTF_8} will be used. 
-	 * @param defReplacer the default {@link Replacer} to use on every message.
+	 * @param path the path of the file to create, the ".yml" extension is automatically added if missing,
+	 * if the path is null, empty or blank, "file" will be used.
+	 * @param charset the charset to use, if null, {@link StandardCharsets#UTF_8} will be used.
+	 * 
+	 * @throws NullPointerException if <b>plugin</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see MCPlugin#registerFile(PluginFile)
+	 * @see MCPlugin#registerFile(MessagesFile)
 	 * @see MCPlugin#registerFile(String, Class)
+	 * @see #create()
 	 */
 	public MessagesFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(plugin, path, charset);
 	}
 
 	/**
-	 * Creates a message file for the specified plugin
-	 * with the specified path, usually the path is just
-	 * "messages", but you can choose whatever you want.
-	 * {@link StandardCharsets#UTF_8} will be used.
+	 * Creates an instance, <b>NOT</b> a file, of a {@link MessagesFile} for the specified <b>plugin</b> and <b>path</b>.
+	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
+	 * <p>
+	 * {@link MessagesFile}s are required to be on <b>plugin</b>'s jar file as a resource. For this
+	 * exact reason they can be easily updated to newer versions. This files are intended to be used as
+	 * as message files that require certain content to be present on them and are likely to be
+	 * updated on future versions, as an extension of {@link PluginFile}.
+	 * <p>
+	 * This constructor uses {@link StandardCharsets#UTF_8}, to specify use {@link #PluginFile(JavaPlugin, String, Charset)}
 	 * 
 	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
-	 * @param path the path of the file to create, two examples are "messages.yml" and "lang/messages.yml"
-	 * @param defReplacer the default {@link Replacer} to use on every message.
+	 * @param path the path of the file to create, the ".yml" extension is automatically added if missing,
+	 * if the path is null, empty or blank, "file" will be used.
+	 * 
+	 * @throws NullPointerException if <b>plugin</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see MCPlugin#registerFile(PluginFile)
+	 * @see MCPlugin#registerFile(MessagesFile)
 	 * @see MCPlugin#registerFile(String, Class)
+	 * @see #create()
 	 */
 	public MessagesFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
 		this(plugin, path, StandardCharsets.UTF_8);

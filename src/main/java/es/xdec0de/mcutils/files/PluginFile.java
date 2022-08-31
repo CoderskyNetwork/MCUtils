@@ -30,7 +30,7 @@ import es.xdec0de.mcutils.MCPlugin;
 public class PluginFile extends YmlFile {
 
 	/**
-	 * Creates an instance, <b>NOT</b> a file, of a {@link PluginFile} for the specified <b>plugin</b> and path.
+	 * Creates an instance, <b>NOT</b> a file, of a {@link PluginFile} for the specified <b>plugin</b> and <b>path</b>.
 	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
 	 * <p>
 	 * {@link PluginFile}s are required to be on <b>plugin</b>'s jar file as a resource. For this
@@ -56,7 +56,7 @@ public class PluginFile extends YmlFile {
 	}
 
 	/**
-	 * Creates an instance, <b>NOT</b> a file, of a {@link PluginFile} for the specified <b>plugin</b> and path.
+	 * Creates an instance, <b>NOT</b> a file, of a {@link PluginFile} for the specified <b>plugin</b> and <b>path</b>.
 	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
 	 * <p>
 	 * {@link PluginFile}s are required to be on <b>plugin</b>'s jar file as a resource. For this

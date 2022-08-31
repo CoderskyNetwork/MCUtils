@@ -31,7 +31,7 @@ public class YmlFile extends CharsetYamlConfiguration {
 	final File file;
 
 	/**
-	 * Creates an instance, <b>NOT</b> a file, of a {@link YmlFile} for the specified <b>plugin</b> and path.
+	 * Creates an instance, <b>NOT</b> a file, of a {@link YmlFile} for the specified <b>plugin</b> and <b>path</b>.
 	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
 	 * <p>
 	 * {@link YmlFile}s aren't required to be on <b>plugin</b>'s jar file as a resource. For this
@@ -66,7 +66,7 @@ public class YmlFile extends CharsetYamlConfiguration {
 	}
 
 	/**
-	 * Creates an instance, <b>NOT</b> a file, of a {@link YmlFile} for the specified <b>plugin</b> and path.
+	 * Creates an instance, <b>NOT</b> a file, of a {@link YmlFile} for the specified <b>plugin</b> and <b>path</b>.
 	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
 	 * <p>
 	 * {@link YmlFile}s aren't required to be on <b>plugin</b>'s jar file as a resource. For this
