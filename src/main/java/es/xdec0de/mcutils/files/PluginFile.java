@@ -222,39 +222,33 @@ public class PluginFile extends YmlFile {
 			CharsetYamlConfiguration updated = new CharsetYamlConfiguration(getCharset());
 			if(plugin.getResource(getPath()) != null)
 				updated.load(copyInputStreamToFile(plugin.getDataFolder()+ "/"+getPath(), plugin.getResource(getPath())));
-			else {
-				log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4File not found");
-				return false;
-			}
+			else
+				return log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4File not found", false);
 			Set<String> oldKeys = ign.isEmpty() ? getKeys(true) : getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
 			Set<String> updKeys = ign.isEmpty() ? updated.getKeys(true) : updated.getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
-			for(String str : oldKeys)
+			for (String str : oldKeys)
 				if(!updKeys.contains(str)) {
 					set(str, null);
 					changes++;
 				}
-			for(String str : updKeys)
+			for (String str : updKeys)
 				if(!oldKeys.contains(str)) {
 					set(str, updated.get(str));
 					changes++;
 				}
 			save(plugin.getDataFolder() + "/"+getPath());
-			if(changes != 0) {
-				log(" ");
-				if(reload)
-					log("&8[&6"+pluginName+"&8] > &6"+getPath()+" &7has been reloaded with &b"+changes+" &7changes.");
-				else
-					log("&8[&6"+pluginName+"&8] > &6"+getPath()+" &7has been updated to &ev"+plugin.getDescription().getVersion()+"&7 with &b"+changes+" &7changes.");
-				return true;
-			}
+			if (changes != 0)
+				return reload ?
+					log("&8[&6"+pluginName+"&8] > &6"+getPath()+" &7has been reloaded with &b"+changes+" &7changes.", true) :
+					log("&8[&6"+pluginName+"&8] > &6"+getPath()+" &7has been updated to &ev"+plugin.getDescription().getVersion()+"&7 with &b"+changes+" &7changes.", true);
 			return false;
 		} catch(InvalidConfigurationException | IOException ex) {
-			log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4"+ex.getMessage());
-			return false;
+			return log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4"+ex.getMessage(), false);
 		}
 	}
 
-	private void log(String str) {
+	private boolean log(String str, boolean ret) {
 		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', str));
+		return ret;
 	}
 }
