@@ -8,9 +8,6 @@ import javax.annotation.Nullable;
 /**
  * Represents a hexadecimal color pattern which can be applied to a String.
  * <p>
- * This is an adaptation to MCUtils from the
- * <a href="https://github.com/Iridium-Development/IridiumColorAPI">IridiumColorAPI</a>
- * <p>
  * Patterns used are: #([A-Fa-f0-9]{6}) and #([A-Fa-f0-9]{3})
  * <p>
  * Example: "#FFFFFFTest string" or "#FFFTest string"

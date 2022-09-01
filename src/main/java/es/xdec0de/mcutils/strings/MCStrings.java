@@ -206,4 +206,29 @@ public class MCStrings {
 		}
 		return res;
 	}
+
+	/**
+	 * Check if <b>str</b> is numeric, meaning that it should
+	 * only contain numeric characters between '0' and '9', the
+	 * first character of the string can be a sign ('+' or '-').
+	 * If {@link #hasContent(String)} returns false, this method
+	 * will also return false.
+	 * 
+	 * @param str the string to check.
+	 * 
+	 * @return True if <b>str</b> is numeric, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public boolean isNumeric(String str) {
+		if (!hasContent(str))
+			return false;
+		final char sign = str.charAt(0);
+		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < str.length(); i++) {
+			final char ch = str.charAt(i);
+			if (ch < '0' || ch > '9')
+				return false;
+		}
+		return true;
+	}
 }
