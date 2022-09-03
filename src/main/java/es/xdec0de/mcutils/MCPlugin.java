@@ -15,6 +15,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -25,6 +27,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import es.xdec0de.mcutils.files.MessagesFile;
 import es.xdec0de.mcutils.files.PluginFile;
 import es.xdec0de.mcutils.files.YmlFile;
+import es.xdec0de.mcutils.general.MCCommand;
 import es.xdec0de.mcutils.server.MCVersion;
 import es.xdec0de.mcutils.strings.MCStrings;
 
@@ -299,5 +302,19 @@ public class MCPlugin extends JavaPlugin {
 			return;
 		for(Listener listener : listeners)
 			registerEvents(listener);
+	}
+
+	/**
+	 * Creates and registers a new {@link PluginCommand} to be further modified at runtime.
+	 * 
+	 * @param label name or alias of the command
+	 * @param executor the {@link CommandExecutor} for this command.
+	 * 
+	 * @throws NullPointerException if <b>label</b> or <b>executor</b> are null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public MCCommand registerCommand(@Nonnull String label, @Nonnull CommandExecutor executor) {
+		return new MCCommand(this, label, executor);
 	}
 }
