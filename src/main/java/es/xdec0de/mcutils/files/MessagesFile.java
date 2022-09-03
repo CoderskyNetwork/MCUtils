@@ -150,7 +150,7 @@ public class MessagesFile extends PluginFile {
 		if (path == null)
 			return null;
 		String str = super.getString(path);
-		return defReplacer == null ? str : defReplacer.replaceAt(str);
+		return getDefaultReplacer() == null ? str : getDefaultReplacer().replaceAt(str);
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class MessagesFile extends PluginFile {
 		if (replacer == null)
 			throw new NullPointerException("Replacer cannot be null.");
 		String str = super.getString(path);
-		return defReplacer == null ? replacer.replaceAt(str) : defReplacer.add(replacer).replaceAt(str);
+		return getDefaultReplacer() == null ? replacer.replaceAt(str) : getDefaultReplacer().add(replacer).replaceAt(str);
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class MessagesFile extends PluginFile {
 		if (replacements == null)
 			throw new NullPointerException("Replacements cannot be null.");
 		String str = super.getString(path);
-		return defReplacer == null ? new Replacer(replacements).replaceAt(str) : defReplacer.add(replacements).replaceAt(str);
+		return getDefaultReplacer() == null ? new Replacer(replacements).replaceAt(str) : getDefaultReplacer().add(replacements).replaceAt(str);
 	}
 
 	// Colored strings //
@@ -229,7 +229,7 @@ public class MessagesFile extends PluginFile {
 		if (path == null)
 			return null;
 		String str = super.getString(path);
-		return defReplacer == null ? strings.applyColor(str) : strings.applyColor(defReplacer.replaceAt(str));
+		return getDefaultReplacer() == null ? strings.applyColor(str) : strings.applyColor(getDefaultReplacer().replaceAt(str));
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class MessagesFile extends PluginFile {
 		if (replacer == null)
 			throw new NullPointerException("Replacer cannot be null.");
 		String str = super.getString(path);
-		return defReplacer == null ? strings.applyColor(replacer.replaceAt(str)) : strings.applyColor(defReplacer.add(replacer).replaceAt(str));
+		return getDefaultReplacer() == null ? strings.applyColor(replacer.replaceAt(str)) : strings.applyColor(getDefaultReplacer().add(replacer).replaceAt(str));
 	}
 
 	/**
@@ -288,7 +288,8 @@ public class MessagesFile extends PluginFile {
 		if (replacements == null)
 			throw new NullPointerException("Replacements cannot be null.");
 		String str = super.getString(path);
-		return defReplacer == null ? strings.applyColor(new Replacer(replacements).replaceAt(str)) : strings.applyColor(defReplacer.add(replacements).replaceAt(str));
+		return getDefaultReplacer() == null ?
+				strings.applyColor(new Replacer(replacements).replaceAt(str)) : strings.applyColor(getDefaultReplacer().add(replacements).replaceAt(str));
 	}
 
 	// Lists //
@@ -314,7 +315,7 @@ public class MessagesFile extends PluginFile {
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
-		Replacer rep = defReplacer;
+		Replacer rep = getDefaultReplacer();
 		if (rep != null)
 			for (String str : atCfg)
 				res.add(strings.applyColor(rep.replaceAt(str)));
@@ -347,7 +348,7 @@ public class MessagesFile extends PluginFile {
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
-		Replacer rep = defReplacer != null ? defReplacer.add(replacer) : replacer;
+		Replacer rep = getDefaultReplacer() != null ? getDefaultReplacer().add(replacer) : replacer;
 		for (String str : atCfg)
 			res.add(strings.applyColor(rep.replaceAt(str)));
 		return res;
@@ -379,7 +380,7 @@ public class MessagesFile extends PluginFile {
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
-		Replacer rep = defReplacer != null ? defReplacer.add(replacements) : new Replacer(replacements);
+		Replacer rep = getDefaultReplacer() != null ? getDefaultReplacer().add(replacements) : new Replacer(replacements);
 		for (String str : atCfg)
 			res.add(strings.applyColor(rep.replaceAt(str)));
 		return res;
