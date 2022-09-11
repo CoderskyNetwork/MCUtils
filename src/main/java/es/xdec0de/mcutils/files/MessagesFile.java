@@ -401,12 +401,17 @@ public class MessagesFile extends PluginFile {
 	 * @param target the receiver.
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void send(@Nonnull CommandSender target, @Nullable String path) {
+	public boolean send(@Nonnull CommandSender target, @Nullable String path) {
 		target.sendMessage(getString(path));
+		return true;
 	}
 
 	/**
@@ -417,12 +422,17 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * @param replacer the {@link Replacer} to apply.
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
+	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
 		target.sendMessage(getString(path, replacer));
+		return true;
 	}
 
 	/**
@@ -433,13 +443,18 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
 	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void send(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
+	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
 		target.sendMessage(getString(path, replacements));
+		return true;
 	}
 
 	/**
@@ -449,12 +464,17 @@ public class MessagesFile extends PluginFile {
 	 * @param target the receiver.
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendColored(@Nonnull CommandSender target, @Nullable String path) {
+	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path) {
 		target.sendMessage(getColoredString(path));
+		return true;
 	}
 
 	/**
@@ -465,12 +485,17 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * @param replacer the {@link Replacer} to apply.
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
+	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
 		target.sendMessage(getColoredString(path, replacer));
+		return true;
 	}
 
 	/**
@@ -481,13 +506,18 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
 	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
+	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
 		target.sendMessage(getColoredString(path, replacements));
+		return true;
 	}
 
 	// ActionBar //
@@ -500,14 +530,19 @@ public class MessagesFile extends PluginFile {
 	 * @param target the receiver.
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendActionBar(@Nonnull Player target, @Nullable String path) {
+	public boolean sendActionBar(@Nonnull Player target, @Nullable String path) {
 		String str = getString(path);
 		if (str != null && str.isEmpty())
 			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+		return true;
 	}
 
 	/**
@@ -519,14 +554,19 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * @param replacer the {@link Replacer} to apply.
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendActionBar(@Nonnull Player target, @Nullable String path, @Nonnull Replacer replacer) {
+	public boolean sendActionBar(@Nonnull Player target, @Nullable String path, @Nonnull Replacer replacer) {
 		String str = getString(path, replacer);
 		if (str != null && str.isEmpty())
 			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+		return true;
 	}
 
 	/**
@@ -538,15 +578,20 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
 	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendActionBar(@Nonnull Player target, @Nullable String path, @Nonnull String... replacements) {
+	public boolean sendActionBar(@Nonnull Player target, @Nullable String path, @Nonnull String... replacements) {
 		String str = getString(path, replacements);
 		if (str != null && str.isEmpty())
 			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+		return true;
 	}
 
 	/**
@@ -557,14 +602,19 @@ public class MessagesFile extends PluginFile {
 	 * @param target the receiver.
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendColoredActionBar(@Nonnull Player target, @Nullable String path) {
+	public boolean sendColoredActionBar(@Nonnull Player target, @Nullable String path) {
 		String str = getColoredString(path);
 		if (str != null && str.isEmpty())
 			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+		return true;
 	}
 
 	/**
@@ -576,14 +626,19 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * @param replacer the {@link Replacer} to apply.
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendColoredActionBar(@Nonnull Player target, @Nullable String path, @Nullable Replacer replacer) {
+	public boolean sendColoredActionBar(@Nonnull Player target, @Nullable String path, @Nullable Replacer replacer) {
 		String str = getColoredString(path, replacer);
 		if (str != null && str.isEmpty())
 			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+		return true;
 	}
 
 	/**
@@ -595,14 +650,19 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path of the message to get from {@link #getPath()}.
 	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
+	 * @return Always true, to make sending messages on commands easier. If you want to check if
+	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
+	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
+	 * 
 	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
 	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void sendColoredActionBar(@Nonnull Player target, @Nullable String path, @Nonnull String... replacements) {
+	public boolean sendColoredActionBar(@Nonnull Player target, @Nullable String path, @Nonnull String... replacements) {
 		String str = getColoredString(path, replacements);
 		if (str != null && str.isEmpty())
 			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
+		return true;
 	}
 }
