@@ -280,12 +280,16 @@ public class MCPlugin extends JavaPlugin {
 	 * 
 	 * @param listener the listener to register.
 	 * 
+	 * @return The registered <b>listener</b>, null if <b>listener</b> is null.
+	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void registerEvents(@Nonnull Listener listener) {
+	@Nullable
+	public Listener registerEvents(@Nullable Listener listener) {
 		if (listener == null)
-			return;
+			return null;
 		Bukkit.getPluginManager().registerEvents(listener, this);
+		return listener;
 	}
 
 	/**
