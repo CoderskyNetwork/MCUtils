@@ -278,6 +278,7 @@ public class MCPlugin extends JavaPlugin {
 	 * A shortcut to register all the events of a {@link Listener}.
 	 * If <b>listener</b> is null, nothing will be done.
 	 * 
+	 * @param <T> must implement {@link Listener}
 	 * @param listener the listener to register.
 	 * 
 	 * @return The registered <b>listener</b>, null if <b>listener</b> is null.
@@ -285,7 +286,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Listener registerEvents(@Nullable Listener listener) {
+	public <T extends Listener> T registerEvents(@Nullable T listener) {
 		if (listener == null)
 			return null;
 		Bukkit.getPluginManager().registerEvents(listener, this);
