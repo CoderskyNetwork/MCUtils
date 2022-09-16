@@ -87,6 +87,16 @@ public class MessagesFile extends PluginFile {
 		this(plugin, path, StandardCharsets.UTF_8);
 	}
 
+	/**
+	 * This method toggles a feature from the {@link Replacer} class, and it is essentially
+	 * a shortcut to {@link Replacer#setNumSupport(boolean)} on {@link #getDefaultReplacer()}
+	 * 
+	 * @param support true to enable, false to disable.
+	 */
+	public void setNumSupport(boolean support) {
+		this.defReplacer.setNumSupport(support);
+	}
+
 	/*
 	 * 
 	 * Replacer handling
@@ -99,13 +109,17 @@ public class MessagesFile extends PluginFile {
 	 * message, the default {@link Replacer} is null by default.
 	 * 
 	 * @param replacer the default {@link Replacer} to be used on this {@link MessagesFile}.
+	 * @param numSupport whether to use numeric support or not (See {@link #setNumSupport(boolean)}).
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #getDefaultReplacer()
+	 * @see #setNumSupport(boolean)
+	 * @see Replacer#setNumSupport(boolean)
 	 */
-	public void setDefaultReplacer(@Nullable Replacer replacer) {
-		this.defReplacer = replacer;
+	public void setDefaultReplacer(@Nullable Replacer replacer, boolean numSupport) {
+		(this.defReplacer = replacer).setNumSupport(numSupport);
+		
 	}
 
 	/**
