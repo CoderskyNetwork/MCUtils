@@ -3,6 +3,8 @@ package es.xdec0de.mcutils.general;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,6 +23,7 @@ import javax.annotation.Nullable;
 public class Replacer {
 
 	private final ArrayList<String> replaceList = new ArrayList<>();
+	private Pattern numPattern = null;
 
 	/**
 	 * Creates a replacer to replace parts of a string with other strings, if you want to use the same replacements for multiple strings, you should 
@@ -121,6 +124,15 @@ public class Replacer {
 		String res = str;
 		for(int i = 0; i <= replaceList.size() - 1; i += 2)
 			res = res.replace(replaceList.get(i), replaceList.get(i + 1));
+		if (this.numPattern != null) {
+			Matcher matcher = numPattern.matcher(res);
+			while (matcher.find()) {
+				// 1 = value, 2 = singular, 3 = plural. 
+				final int value = Integer.valueOf(matcher.group(1));
+				final String replacement = value == 1 ? matcher.group(2) : matcher.group(3);
+				res = res.replace(matcher.group(), replacement);
+			}
+		}
 		return res;
 	}
 
@@ -160,5 +172,25 @@ public class Replacer {
 		Replacer copy = new Replacer();
 		copy.replaceList.addAll(replaceList);
 		return copy;
+	}
+
+	/**
+	 * This feature adds the possibility to apply different replacements
+	 * depending on numeric values, here is a common example:
+	 * <p>
+	 * Assuming you already have a replacement for the string "%points%" that replaces
+	 * it with a numeric string, you would be able to replace at the following string:
+	 * <p>
+	 * "<b>You have %points% <%points%:point:points></b>"
+	 * <p>
+	 * With this feature, the returning string will either be "<b>You have 1 point</b>" or "<b>You have 2 points</b>",
+	 * same happens with signed numbers (+1 or -1).
+	 * <p>
+	 * You don't need to worry about non-numeric replacements here, for example <b>"&#60;string:singular:plural>"</b>, it
+	 * won't match the regex and nothing will be done.
+	 * @param support
+	 */
+	public void setNumSupport(boolean support) {
+		this.numPattern = support ? Pattern.compile("<([+-]?[0-9]{1,}):(.{1,}):(.{1,})>") : null;
 	}
 }
