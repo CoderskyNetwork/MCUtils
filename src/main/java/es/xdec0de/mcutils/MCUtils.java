@@ -1,8 +1,14 @@
 package es.xdec0de.mcutils;
 
+import java.util.HashMap;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.bukkit.plugin.java.JavaPlugin;
 
 import es.xdec0de.mcutils.general.PlayerUtils;
+import es.xdec0de.mcutils.guis.GUIHandler;
 import es.xdec0de.mcutils.strings.MCStrings;
 
 /**
@@ -31,6 +37,7 @@ import es.xdec0de.mcutils.strings.MCStrings;
 public class MCUtils extends MCPlugin {
 
 	private final MCStrings strings = new MCStrings(this);
+	final HashMap<JavaPlugin, GUIHandler> guiHandlers = new HashMap<>();
 
 	@Override
 	public void onEnable() {
@@ -65,5 +72,25 @@ public class MCUtils extends MCPlugin {
 	 */
 	public PlayerUtils players() {
 		return new PlayerUtils();
+	}
+
+	/**
+	 * Gets the {@link GUIHandler} used by <b>plugin</b>,
+	 * if no {@link GUIHandler} exists, one will be created.
+	 * 
+	 * @param plugin the plugin to get the {@link GUIHandler} from,
+	 * if null, null will be returned.
+	 * 
+	 * @return The {@link GUIHandler} used by <b>plugin</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public GUIHandler getGUIHandler(@Nullable JavaPlugin plugin) {
+		if (plugin == null)
+			return null;
+		if (!guiHandlers.containsKey(plugin))
+			guiHandlers.put(plugin, registerEvents(new GUIHandler()));
+		return guiHandlers.get(plugin);
 	}
 }

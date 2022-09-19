@@ -28,6 +28,7 @@ import es.xdec0de.mcutils.files.MessagesFile;
 import es.xdec0de.mcutils.files.PluginFile;
 import es.xdec0de.mcutils.files.YmlFile;
 import es.xdec0de.mcutils.general.MCCommand;
+import es.xdec0de.mcutils.guis.GUI;
 import es.xdec0de.mcutils.server.MCVersion;
 import es.xdec0de.mcutils.strings.MCStrings;
 
@@ -321,5 +322,38 @@ public class MCPlugin extends JavaPlugin {
 	 */
 	public MCCommand registerCommand(@Nonnull String label, @Nonnull CommandExecutor executor) {
 		return new MCCommand(this, label, executor);
+	}
+
+	/**
+	 * Registers the specified {@link GUI} to be handled, if
+	 * <b>gui</b> is null or already registered, false will
+	 * be returned.
+	 * 
+	 * @param gui the {@link GUI} to register.
+	 * 
+	 * @return True if the <b>gui</b> was successfully registered,
+	 * false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #registerGUIs(GUI...)
+	 */
+	public boolean registerGUI(GUI gui) {
+		return getMCUtils().getGUIHandler(this).registerGUI(gui);
+	}
+
+	/**
+	 * Register any number of {@link GUI}s easily, at the cost
+	 * of not returning a boolean as {@link #registerGUI(GUI)} does.
+	 * 
+	 * @param guis the {@link GUI}s to be registered, if null, nothing
+	 * will be done.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #registerGUI(GUI)
+	 */
+	public void registerGUIs(GUI... guis) {
+		getMCUtils().getGUIHandler(this).registerGUIs(guis);
 	}
 }
