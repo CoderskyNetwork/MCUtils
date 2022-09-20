@@ -268,10 +268,13 @@ public class MCPlugin extends JavaPlugin {
 	 * 
 	 * @param stings the strings to send.
 	 * 
+	 * @return Always true, to make sending messages on commands easier.
+	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void log(@Nullable String... stings) {
+	public boolean log(@Nullable String... stings) {
 		Bukkit.getConsoleSender().sendMessage(stings);
+		return true;
 	}
 
 	/**
@@ -279,15 +282,18 @@ public class MCPlugin extends JavaPlugin {
 	 * 
 	 * @param strings the strings to send.
 	 * 
+	 * @return Always true, to make sending messages on commands easier.
+	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void logCol(@Nullable String... strings) {
+	public boolean logCol(@Nullable String... strings) {
 		MCStrings mcStrings = getMCUtils().strings();
 		for (String str : strings)
 			Bukkit.getConsoleSender().sendMessage(mcStrings.applyColor(str));
+		return true;
 	}
 
-	public void logException(Throwable throwable, String header) {
+	public void logException(@Nullable Throwable throwable, @Nullable String header) {
 		if (throwable == null)
 			return;
 		log(" ");
