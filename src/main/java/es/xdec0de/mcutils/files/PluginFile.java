@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -95,13 +94,18 @@ public class PluginFile extends YmlFile {
 	 * as it does this automatically.
 	 * 
 	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #reload()
+	 * @see #reload(List)
+	 * @see #update()
+	 * @see #update(List)
 	 */
 	@Override
 	public void create() {
 		file.getParentFile().mkdirs();
 		if(!file.exists())
 			plugin.saveResource(getPath(), false);
-		reload(false);
+		reload();
 	}
 
 	/**
@@ -113,67 +117,43 @@ public class PluginFile extends YmlFile {
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #reload(boolean)
 	 * @see #reload(List)
+	 * @see #update()
+	 * @see #update(List)
 	 */
 	@Nonnull
 	@Override
 	public boolean reload() {
-		return reload(false);
-	}
-
-	/**
-	 * Reloads this file. Any non saved value contained within this configuration will be removed
-	 * and the new values will be loaded from the given file. If there are any errors reloading or
-	 * updating the file, the errors will be logged and false will be returned.
-	 * 
-	 * @param update whether to update the files or not.
-	 * This is recommended to be true to prevent any
-	 * missing path after a file modification, if you
-	 * want some paths to be ignored by the updater, use
-	 * {@link #reload(List)}.
-	 * 
-	 * @return true if no errors occurred while reloading and updating, false otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #reload()
-	 * @see #reload(List)
-	 */
-	@Nonnull
-	public boolean reload(boolean update) {
-		final boolean reload = super.reload();
-		if (update)
-			return update(true, new ArrayList<>(0));
-		return reload;
+		return super.reload();
 	}
 
 	/**
 	 * Reloads this file. The file updater ignores the paths present
-	 * on <b>ignoredUpdatePaths</b>, this is specially useful
+	 * on <b>updateIgnored</b>, this is specially useful
 	 * if you want administrators to create their own paths
 	 * without them being removed, for example, on a GUI plugin.
 	 * If there are any errors reloading or updating the file,
 	 * they will be logged and false will be returned.
 	 * <p>
-	 * Update is assumed to be true with this method unless
-	 * <b>ignoredUpdatePaths</b> is null, if you want to reload without
-	 * updating use {@link #reload(boolean)} with <b>update</b> as false.
+	 * Update is assumed to be true with this method, if you want
+	 * to reload without updating use {@link #reload()}.
 	 * 
-	 * @param ignoredUpdatePaths a list with the paths to
-	 * be ignored by the file updater.
+	 * @param updateIgnored a list with the paths to
+	 * be ignored by the file updater, if null
+	 * or empty, no paths will be ignored.
 	 * 
 	 * @return true if no errors occurred while reloading and updating, false otherwise.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #reload()
-	 * @see #reload(boolean)
+	 * @see #update()
+	 * @see #update(List)
 	 */
 	@Nonnull
-	public boolean reload(@Nullable List<String> ignoredUpdatePaths) {
+	public boolean reload(@Nullable List<String> updateIgnored) {
 		super.reload();
-		return update(true, (ignoredUpdatePaths == null ? new ArrayList<>(0) : ignoredUpdatePaths));
+		return update(updateIgnored);
 	}
 
 	private File copyInputStreamToFile(String path, InputStream inputStream) {
@@ -191,14 +171,37 @@ public class PluginFile extends YmlFile {
 	}
 
 	/**
-	 * Updates this file.
-	 * 
-	 * @param reload if this method is getting called by a reload.
-	 * @param ign a list of paths to ignore on update.
+	 * Updates this file, adding any missing path from the plugin
+	 * source file to the local file stored on the server.
 	 * 
 	 * @return True if no errors occurred, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #reload()
+	 * @see #reload(List)
+	 * @see #update(List)
 	 */
-	private boolean update(boolean reload, List<String> ign) {
+	public boolean update() {
+		return update(null);
+	}
+
+	/**
+	 * Updates this file, adding any missing path from the plugin
+	 * source file to the local file stored on the server.
+	 * 
+	 * @param ignored a list of paths to ignore on update, if null
+	 * or empty, no paths will be ignored.
+	 * 
+	 * @return True if no errors occurred, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #reload()
+	 * @see #reload(List)
+	 * @see #update()
+	 */
+	public boolean update(@Nullable List<String> ignored) {
 		String pluginName = plugin.getName();
 		try {
 			int changes = 0;
@@ -207,8 +210,9 @@ public class PluginFile extends YmlFile {
 				updated.load(copyInputStreamToFile(plugin.getDataFolder()+ "/"+getPath(), plugin.getResource(getPath())));
 			else
 				return log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4File not found", false);
-			Set<String> oldKeys = ign.isEmpty() ? getKeys(true) : getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
-			Set<String> updKeys = ign.isEmpty() ? updated.getKeys(true) : updated.getKeys(true).stream().filter(str -> !ign.contains(str)).collect(Collectors.toSet());
+			final boolean ignores = ignored == null || ignored.isEmpty();
+			Set<String> oldKeys = ignores ? getKeys(true) : getKeys(true).stream().filter(str -> !ignored.contains(str)).collect(Collectors.toSet());
+			Set<String> updKeys = ignores ? updated.getKeys(true) : updated.getKeys(true).stream().filter(str -> !ignored.contains(str)).collect(Collectors.toSet());
 			for (String str : oldKeys)
 				if(!updKeys.contains(str)) {
 					set(str, null);
@@ -221,9 +225,7 @@ public class PluginFile extends YmlFile {
 				}
 			save(plugin.getDataFolder() + "/"+getPath());
 			if (changes != 0)
-				return reload ?
-					log("&8[&6"+pluginName+"&8] > &6"+getPath()+" &7has been reloaded with &b"+changes+" &7changes.", true) :
-					log("&8[&6"+pluginName+"&8] > &6"+getPath()+" &7has been updated to &ev"+plugin.getDescription().getVersion()+"&7 with &b"+changes+" &7changes.", true);
+				return log("&8[&6"+pluginName+"&8] &6"+getPath()+" &7has been updated to &ev"+plugin.getDescription().getVersion()+"&7 with &b"+changes+" &7changes.", true);
 			return true;
 		} catch(InvalidConfigurationException | IOException ex) {
 			return log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4"+ex.getMessage(), false);

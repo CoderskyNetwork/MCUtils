@@ -114,51 +114,87 @@ public class MCPlugin extends JavaPlugin {
 
 	/**
 	 * Reloads all files registered to the plugin by
-	 * calling {@link PluginFile#reload(boolean)} on them.
-	 * 
-	 * @param update whether to update the files or not.
-	 * This is recommended to be true to prevent any
-	 * missing path after a file modification, if you
-	 * want some paths to be ignored by the updater, use
-	 * {@link #reload(List)}.
+	 * calling {@link YmlFile#reload()} on them.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #reload(List)
+	 * @see #update()
+	 * @see #update(List)
 	 */
-	public void reload(boolean update) {
-		files.forEach(file -> {
-			if (file instanceof PluginFile)
-				((PluginFile)file).reload(true);
-			else
-				file.reload();
-		});
+	public void reload() {
+		files.forEach(file -> file.reload());
 	}
 
 	/**
 	 * Reloads all files registered to the plugin by
 	 * calling {@link PluginFile#reload(List)} on them.
 	 * Which makes the file updater ignore the paths present
-	 * on <b>ignoredUpdatePaths</b>, this is specially useful
+	 * on <b>updateIgnored</b>, this is specially useful
 	 * if you want administrators to create their own paths
-	 * without them being removed, for example, on a GUI plugin.
+	 * without them being removed, for example, on a {@link GUI} plugin.
 	 * 
-	 * @param ignoredUpdatePaths a list with the paths to
+	 * @param updateIgnored a list with the paths to
 	 * be ignored by the file updater, update is assumed
 	 * to be true with this method, if you want to reload
-	 * without updating use {@link #reload(boolean)} with
-	 * <b>update</b> as false.
+	 * without updating use {@link #reload()}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #reload(boolean)
+	 * @see #reload()
+	 * @see #update()
+	 * @see #update(List)
 	 */
-	public void reload(@Nullable List<String> ignoredUpdatePaths) {
+	public void reload(@Nullable List<String> updateIgnored) {
 		files.forEach(file -> {
 			if (file instanceof PluginFile)
-				((PluginFile)file).reload(ignoredUpdatePaths);
+				((PluginFile)file).reload(updateIgnored);
 			else
 				file.reload();
+		});
+	}
+
+	/**
+	 * Updates all files registered to the plugin by calling
+	 * {@link PluginFile#update()} on them, 
+	 * {@link YmlFile}s will be ignored by this method.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #reload()
+	 * @see #reload(List)
+	 * @see #update(List)
+	 */
+	public void update() {
+		files.forEach(file -> {
+			if (file instanceof PluginFile)
+				((PluginFile)file).update();
+		});
+	}
+
+	/**
+	 * Updates all files registered to the plugin by
+	 * calling {@link PluginFile#update(List)} on them.
+	 * Which makes the file updater ignore the paths present
+	 * on <b>updateIgnored</b>, this is specially useful
+	 * if you want administrators to create their own paths
+	 * without them being removed, for example, on a {@link GUI} plugin.
+	 * <p>
+	 * {@link YmlFile}s will be ignored by this method.
+	 * 
+	 * @param updateIgnored a list with the paths to
+	 * be ignored by the file updater.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #reload()
+	 * @see #reload(List)
+	 * @see #update()
+	 */
+	public void update(@Nullable List<String> updateIgnored) {
+		files.forEach(file -> {
+			if (file instanceof PluginFile)
+				((PluginFile)file).update(updateIgnored);
 		});
 	}
 
