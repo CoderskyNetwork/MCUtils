@@ -59,6 +59,18 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
+	 * Gets an instance of {@link MCStrings}.
+	 * 
+	 * @return An instance of {@link MCStrings}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public MCStrings strings() {
+		return getMCUtils().strings();
+	}
+
+	/**
 	 * 
 	 * @param <T> must extend {@link YmlFile}
 	 * @param file the file to be registered, {@link T#create()} will be called to ensure that the file exists,
