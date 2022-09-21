@@ -424,7 +424,9 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path) {
-		target.sendMessage(getString(path));
+		final String toSend = getString(path);
+		if (toSend != null && !toSend.isEmpty())
+			target.sendMessage(toSend);
 		return true;
 	}
 
@@ -445,7 +447,9 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		target.sendMessage(getString(path, replacer));
+		final String toSend = getString(path, replacer);
+		if (toSend != null && !toSend.isEmpty())
+			target.sendMessage(toSend);
 		return true;
 	}
 
@@ -467,7 +471,9 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
-		target.sendMessage(getString(path, replacements));
+		final String toSend = getString(path, replacements);
+		if (toSend != null && !toSend.isEmpty())
+			target.sendMessage(toSend);
 		return true;
 	}
 
@@ -487,7 +493,9 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path) {
-		target.sendMessage(getColoredString(path));
+		final String toSend = getColoredString(path);
+		if (toSend != null && !toSend.isEmpty())
+			target.sendMessage(toSend);
 		return true;
 	}
 
@@ -508,7 +516,9 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		target.sendMessage(getColoredString(path, replacer));
+		final String toSend = getColoredString(path, replacer);
+		if (toSend != null && !toSend.isEmpty())
+			target.sendMessage(toSend);
 		return true;
 	}
 
@@ -530,7 +540,9 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
-		target.sendMessage(getColoredString(path, replacements));
+		final String toSend = getColoredString(path, replacements);
+		if (toSend != null && !toSend.isEmpty())
+			target.sendMessage(toSend);
 		return true;
 	}
 
