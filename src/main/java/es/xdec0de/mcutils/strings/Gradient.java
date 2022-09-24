@@ -59,12 +59,13 @@ public class Gradient implements ColorPattern {
 		final char[] characters = source.toCharArray();
 		int outIndex = 0;
 		for (int i = 0; i < characters.length; i++) {
-			if (characters[i] == '&' || characters[i] == COLOR_CHAR && i + 1 < characters.length) {
-				if (characters[i + 1] == 'r')
+			final char current = characters[i];
+			if (current == '&' || current == COLOR_CHAR && i + 1 < characters.length) {
+				final char next = characters[++i];
+				if (next == 'r')
 					specialColors.setLength(0);
 				else
-					specialColors.append(characters[i] + characters[i + 1]);
-				i++;
+					specialColors.append(current + next);
 			} else
 				stringBuilder.append(colors[outIndex++]).append(specialColors).append(characters[i]);
 		}
@@ -88,6 +89,10 @@ public class Gradient implements ColorPattern {
 	@Nonnull
 	private ChatColor[] createGradient(@Nonnull Color start, @Nonnull Color end, int step) {
 		ChatColor[] colors = new ChatColor[step];
+		if (step == 1) {
+			colors[0] = ChatColor.of(start);
+			return colors;
+		}
 		int stepR = Math.abs(start.getRed() - end.getRed()) / (step - 1);
 		int stepG = Math.abs(start.getGreen() - end.getGreen()) / (step - 1);
 		int stepB = Math.abs(start.getBlue() - end.getBlue()) / (step - 1);
