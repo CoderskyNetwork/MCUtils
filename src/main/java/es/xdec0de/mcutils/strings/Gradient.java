@@ -56,17 +56,15 @@ public class Gradient implements ColorPattern {
 	private String apply(@Nonnull String source, ChatColor[] colors) {
 		StringBuilder specialColors = new StringBuilder();
 		StringBuilder stringBuilder = new StringBuilder();
-		String[] characters = source.split("");
+		final char[] characters = source.toCharArray();
 		int outIndex = 0;
 		for (int i = 0; i < characters.length; i++) {
-			if (characters[i].equals("&") || characters[i].equals(""+COLOR_CHAR)) {
+			if (characters[i] == '&' || characters[i] == COLOR_CHAR) {
 				if (i + 1 < characters.length) {
-					if (characters[i + 1].equals("r"))
+					if (characters[i + 1] == 'r')
 						specialColors.setLength(0);
-					else {
-						specialColors.append(characters[i]);
-						specialColors.append(characters[i + 1]);
-					}
+					else
+						specialColors.append(characters[i] + characters[i + 1]);
 					i++;
 				} else
 					stringBuilder.append(colors[outIndex++]).append(specialColors).append(characters[i]);
