@@ -59,15 +59,12 @@ public class Gradient implements ColorPattern {
 		final char[] characters = source.toCharArray();
 		int outIndex = 0;
 		for (int i = 0; i < characters.length; i++) {
-			if (characters[i] == '&' || characters[i] == COLOR_CHAR) {
-				if (i + 1 < characters.length) {
-					if (characters[i + 1] == 'r')
-						specialColors.setLength(0);
-					else
-						specialColors.append(characters[i] + characters[i + 1]);
-					i++;
-				} else
-					stringBuilder.append(colors[outIndex++]).append(specialColors).append(characters[i]);
+			if (characters[i] == '&' || characters[i] == COLOR_CHAR && i + 1 < characters.length) {
+				if (characters[i + 1] == 'r')
+					specialColors.setLength(0);
+				else
+					specialColors.append(characters[i] + characters[i + 1]);
+				i++;
 			} else
 				stringBuilder.append(colors[outIndex++]).append(specialColors).append(characters[i]);
 		}
