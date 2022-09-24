@@ -1,13 +1,18 @@
 package es.xdec0de.mcutils.strings;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.md_5.bungee.api.ChatColor;
 
 /**
  * Represents a color pattern which can be applied to a String.
  * 
  * @since MCUtils 1.0.0
  */
-public interface ColorPattern {
+public abstract class ColorPattern {
+
+	final char COLOR_CHAR = 0x00A7;
 
 	/**
 	 * Applies this pattern to the provided <b>string</b>.
@@ -19,7 +24,7 @@ public interface ColorPattern {
 	 * @return The new string with applied pattern.
 	 */
 	@Nullable
-	String process(@Nullable String string);
+	abstract String process(@Nullable String string);
 
 	/**
 	 * Applies this pattern to the provided <b>string</b> with an optional simple mode.
@@ -37,7 +42,36 @@ public interface ColorPattern {
 	 * @return The new string with applied pattern.
 	 */
 	@Nullable
-	default String process(@Nullable String string, boolean simple) {
+	String process(@Nullable String string, boolean simple) {
 		return process(string);
+	}
+
+	/**
+	 * Applies the specified list of <b>colors</b> to <b>source</b>,
+	 * this method is designed for patterns like {@link Gradient}.
+	 * 
+	 * @param source the string to apply colors.
+	 * @param colors the colors to apply.
+	 * 
+	 * @return <b>Source</b> with <b>colors</b> applied to it.
+	 */
+	@Nonnull
+	String apply(@Nonnull String source, @Nonnull ChatColor[] colors) {
+		StringBuilder specialColors = new StringBuilder();
+		StringBuilder stringBuilder = new StringBuilder();
+		final char[] characters = source.toCharArray();
+		int outIndex = 0;
+		for (int i = 0; i < characters.length; i++) {
+			final char current = characters[i];
+			if (current == '&' || current == COLOR_CHAR && i + 1 < characters.length) {
+				final char next = characters[++i];
+				if (next == 'r')
+					specialColors.setLength(0);
+				else
+					specialColors.append(current + next);
+			} else
+				stringBuilder.append(colors[outIndex++]).append(specialColors).append(characters[i]);
+		}
+		return stringBuilder.toString();
 	}
 }

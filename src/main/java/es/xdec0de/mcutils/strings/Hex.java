@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
  * 
  * @since MCUtils 1.0.0
  */
-public class Hex implements ColorPattern {
+public class Hex extends ColorPattern {
 
 	private final Pattern pattern, simplePattern;
 
@@ -62,17 +62,16 @@ public class Hex implements ColorPattern {
 		if(string == null)
 			return null;
 		String res = string;
-		final char col = 0x00A7; // Vanilla Minecraft color character
 		for (int i = simple ? 2 : 1; i > 0; i--) { // i will be 1 for simplePattern, 2 for pattern.
 			final Matcher matcher = i == 1 ? simplePattern.matcher(res) : pattern.matcher(res);
 			final StringBuffer buffer = new StringBuffer(res.length() + 4 * 8);
 			int[] positions = i == 1 ? new int[]{0, 0, 1, 1, 2, 2} : new int[]{0, 1, 2, 3, 4, 5};
 			while (matcher.find()) {
 				final String group = matcher.group(1);
-				matcher.appendReplacement(buffer, col + "x"
-						+ col + group.charAt(positions[0]) + col + group.charAt(positions[1])
-						+ col + group.charAt(positions[2]) + col + group.charAt(positions[3])
-						+ col + group.charAt(positions[4]) + col + group.charAt(positions[5]));
+				matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+						+ COLOR_CHAR + group.charAt(positions[0]) + COLOR_CHAR + group.charAt(positions[1])
+						+ COLOR_CHAR + group.charAt(positions[2]) + COLOR_CHAR + group.charAt(positions[3])
+						+ COLOR_CHAR + group.charAt(positions[4]) + COLOR_CHAR + group.charAt(positions[5]));
 			}
 			res = matcher.appendTail(buffer).toString();
 		}

@@ -21,10 +21,9 @@ import net.md_5.bungee.api.ChatColor;
  * 
  * @since MCUtils 1.0.0
  */
-public class Gradient implements ColorPattern {
+public class Gradient extends ColorPattern {
 
 	private final Pattern pattern = Pattern.compile("<#([0-9A-Fa-f]{6})(.*?)#([0-9A-Fa-f]{6})>");
-	private final char COLOR_CHAR = 0x00A7;
 
 	protected Gradient() {}
 
@@ -50,26 +49,6 @@ public class Gradient implements ColorPattern {
 			res = string.replace(matcher.group(), applyGradient(content, new Color(Integer.parseInt(start, 16)), new Color(Integer.parseInt(end, 16))));
 		}
 		return res;
-	}
-
-	@Nonnull
-	private String apply(@Nonnull String source, ChatColor[] colors) {
-		StringBuilder specialColors = new StringBuilder();
-		StringBuilder stringBuilder = new StringBuilder();
-		final char[] characters = source.toCharArray();
-		int outIndex = 0;
-		for (int i = 0; i < characters.length; i++) {
-			final char current = characters[i];
-			if (current == '&' || current == COLOR_CHAR && i + 1 < characters.length) {
-				final char next = characters[++i];
-				if (next == 'r')
-					specialColors.setLength(0);
-				else
-					specialColors.append(current + next);
-			} else
-				stringBuilder.append(colors[outIndex++]).append(specialColors).append(characters[i]);
-		}
-		return stringBuilder.toString();
 	}
 
 	private String applyGradient(@Nullable String str, @Nonnull Color start, @Nonnull Color end) {
