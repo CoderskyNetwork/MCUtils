@@ -15,15 +15,16 @@ import net.md_5.bungee.api.ChatColor;
  * This is an adaptation to MCUtils from the
  * <a href="https://github.com/Iridium-Development/IridiumColorAPI">IridiumColorAPI</a>
  * <p>
- * Pattern used is: <#([0-9A-Fa-f]{6})(.*?)#([0-9A-Fa-f]{6})>
+ * Patterns used are: <#([0-9A-Fa-f]{6})(.*?)#([0-9A-Fa-f]{6})> and <#([0-9A-Fa-f]{3})(.*?)#([0-9A-Fa-f]{3})>
  * <p>
- * Example: <#FFFFFFTest string#000000>
+ * Example: <#FFFFFFTest string#000000> or <#FFFTest string#000>
  * 
  * @since MCUtils 1.0.0
  */
 public class Gradient extends ColorPattern {
 
 	private final Pattern pattern = Pattern.compile("<#([0-9A-Fa-f]{6})(.*?)#([0-9A-Fa-f]{6})>");
+	private final Pattern simplePattern = Pattern.compile("<#([0-9A-Fa-f]{3})(.*?)#([0-9A-Fa-f]{3})>");
 
 	protected Gradient() {}
 
@@ -31,30 +32,61 @@ public class Gradient extends ColorPattern {
 	 * Applies gradients to the provided <b>string</b>.
 	 * Output might me the same as the input if this pattern is not present.
 	 * If the <b>string</b> is null, null will be returned.
+	 * <p>
+	 * The gradient color pattern supports a "simple" mode, that also applies
+	 * a three-character pattern <i>(See {@link Gradient})</i> useful when string length matters.
+	 * This method enables it by default, use {@link #process(String, boolean)} if you want
+	 * to disable it.
 	 *
 	 * @param string the string to which gradients should be applied to.
 	 * 
 	 * @return The new string with applied gradient.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
 	public String process(@Nullable String string) {
+		return process(string, true);
+	}
+
+	/**
+	 * Applies gradients to the provided <b>string</b>.
+	 * Output might me the same as the input if this pattern is not present.
+	 * If the <b>string</b> is null, null will be returned.
+	 * <p>
+	 * The gradient color pattern supports a "simple" mode, that also applies
+	 * a three-character pattern <i>(See {@link Gradient})</i> useful when string length matters..
+	 *
+	 * @param string the string to which gradients should be applied to.
+	 * @param simple whether to apply the simple pattern or not.
+	 * 
+	 * @return The new string with applied gradient.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public String process(@Nullable String string, boolean simple) {
 		if (string == null)
 			return null;
 		String res = string;
-		Matcher matcher = pattern.matcher(string);
-		while (matcher.find()) {
-			String start = matcher.group(1);
-			String end = matcher.group(3);
-			String content = matcher.group(2);
-			res = matcher.replaceFirst(applyGradient(content, new Color(Integer.parseInt(start, 16)), new Color(Integer.parseInt(end, 16))));
-			matcher.reset(res);
+		for (int i = simple ? 2 : 1; i > 0; i--) { // i will be 1 for simplePattern, 2 for pattern.
+			final Matcher matcher = i == 1 ? simplePattern.matcher(res) : pattern.matcher(res);
+			while (matcher.find()) {
+				final Color start = i == 1 ? getSimpleColor(matcher.group(1)) : new Color(Integer.parseInt(matcher.group(1), 16));
+				final Color end = i == 1 ? getSimpleColor(matcher.group(3)) : new Color(Integer.parseInt(matcher.group(3), 16));
+				res = matcher.replaceFirst(apply(matcher.group(2), createGradient(start, end, matcher.group(2).length())));
+				matcher.reset(res);
+			}
 		}
 		return res;
 	}
 
-	private String applyGradient(@Nullable String str, @Nonnull Color start, @Nonnull Color end) {
-		ChatColor[] colors = createGradient(start, end, str.length());
-		return apply(str, colors);
+	private Color getSimpleColor(String group) {
+		final int[] positions = new int[]{0, 0, 1, 1, 2, 2};
+		StringBuffer buff = new StringBuffer(22); // 22 is the capacity of a 6 character string buffer.
+		for (int i = 0; i < 6; i++)
+			buff.append(group.charAt(positions[i]));
+		return new Color(Integer.parseInt(buff.toString(), 16));
 	}
 
 	/**
