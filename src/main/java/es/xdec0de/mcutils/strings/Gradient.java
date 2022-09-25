@@ -46,7 +46,8 @@ public class Gradient extends ColorPattern {
 			String start = matcher.group(1);
 			String end = matcher.group(3);
 			String content = matcher.group(2);
-			res = string.replace(matcher.group(), applyGradient(content, new Color(Integer.parseInt(start, 16)), new Color(Integer.parseInt(end, 16))));
+			res = matcher.replaceFirst(applyGradient(content, new Color(Integer.parseInt(start, 16)), new Color(Integer.parseInt(end, 16))));
+			matcher.reset(res);
 		}
 		return res;
 	}
