@@ -1,0 +1,13 @@
+name: Build MCUtils
+on: [push, pull_request]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Setup Maven Action
+            uses: s4u/setup-maven-action@v1.5.0
+            with:
+                java-version: 17
+            - name: Run Maven Install
+              run: mvn install
