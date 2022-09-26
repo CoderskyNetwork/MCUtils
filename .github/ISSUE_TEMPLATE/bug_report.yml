@@ -2,6 +2,19 @@ name: Bug report
 description: Something is not working as expected?
 labels: [ "Status: Unverified", "Type: Bug" ]
 body:
+  - type: checkboxes
+    id: 
+    attributes:
+      label: Prerequisites
+      description: This steps are required in order tu submit a bug report
+      options:
+        - label: I have checked that this bug report doesn't already exist
+          required: true
+        - label: I am using the latest MCUtils version
+          required: true
+        - label: I am using the latest build of my server software
+          required: true
+
   - type: input
     id: software
     attributes:
