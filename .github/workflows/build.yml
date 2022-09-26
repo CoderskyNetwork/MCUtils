@@ -1,13 +1,19 @@
 name: Build MCUtils
-on: [push, pull_request]
+
+on:
+    push:
+      branches: [ "master" ]
+    pull_request:
+      branches: [ "master" ]
 
 jobs:
     build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Setup Maven Action
-            uses: s4u/setup-maven-action@v1.5.0
-            with:
-                java-version: 17
-            - name: Run Maven Install
-              run: mvn install
+      runs-on: ubuntu-latest
+      if: "!contains(github.event.head_commit.message, '[build-skip]')"
+      steps:
+        - name: Setup Maven Action
+          uses: s4u/setup-maven-action@v1.5.0
+          with:
+              java-version: 17
+        - name: Run Maven Install
+          run: mvn install
