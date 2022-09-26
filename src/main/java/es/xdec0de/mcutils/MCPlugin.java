@@ -47,6 +47,7 @@ import es.xdec0de.mcutils.strings.MCStrings;
 public class MCPlugin extends JavaPlugin {
 
 	private final List<YmlFile> files = new ArrayList<>();
+	private PluginFile config;
 
 	/**
 	 * Gets an instance of {@link MCUtils}
@@ -88,6 +89,8 @@ public class MCPlugin extends JavaPlugin {
 			return null;
 		file.create();
 		files.add(file);
+		if (file instanceof PluginFile && file.getName().equals("config.yml"))
+			this.config = (PluginFile) file;
 		return file;
 	}
 
@@ -114,14 +117,27 @@ public class MCPlugin extends JavaPlugin {
 		try {
 			Constructor<T> constructor = type.getDeclaredConstructor(JavaPlugin.class, String.class);
 			constructor.setAccessible(true);
-			T file = constructor.newInstance(this, path);
-			file.create();
-			files.add(file);
-			return file;
+			return registerFile(constructor.newInstance(this, path));
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			logException(e, "&8[&4MCUtils&8] &cAn error occured while registering &e"+path+".yml &cfrom &6"+getName()+"&8:");
 			return null;
 		}
+	}
+
+	/**
+	 * Gets the configuration file of this {@link MCPlugin} only if
+	 * a file with the name <b>"config.yml"</b> that extends {@link PluginFile}
+	 * has been registered. {@link MCPlugin MCPlugins} may override this
+	 * method to return their config file if it uses another name.
+	 * 
+	 * @return The <b>config.yml</b> file being used by this {@link MCPlugin} as a {@link PluginFile}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	@Override
+	public PluginFile getConfig() {
+		return config;
 	}
 
 	/**
