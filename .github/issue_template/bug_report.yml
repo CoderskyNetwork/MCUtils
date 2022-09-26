@@ -1,0 +1,54 @@
+name: Bug report
+description: Something is not working as expected?
+labels: [ "Status: Unverified", "Type: Bug" ]
+body:
+  - type: input
+    id: software
+    attributes:
+      label: Server software
+      description: What server software are you using?
+      placeholder: ex. Spigot
+    validations:
+      required: false
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: Minecraft version
+      description: What Minecraft version are you using?
+      options:
+        - 1.19
+        - 1.18
+        - 1.17
+        - 1.16
+        - 1.15
+        - 1.14
+        - 1.13
+        - 1.12
+        - 1.11
+        - 1.10
+        - 1.9
+        - 1.8
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: What you expected to see.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Observed/Actual behavior
+      description: What you actually saw.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: This may include a video, screenshots, or detailed instructions to help reconstruct the issue.
+    validations:
+      required: true
