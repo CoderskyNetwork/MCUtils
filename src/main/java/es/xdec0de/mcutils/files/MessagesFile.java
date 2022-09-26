@@ -10,19 +10,29 @@ import javax.annotation.Nullable;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import es.xdec0de.mcutils.MCPlugin;
 import es.xdec0de.mcutils.MCUtils;
 import es.xdec0de.mcutils.general.Replacer;
 import es.xdec0de.mcutils.strings.MCStrings;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * A class intended to be used to create
- * and use a messages file.
+ * and use a messages file. The most notorious features
+ * of this file type include:
+ * <p>
+ * <b>Default replacements</b>: Defining a "%prefix%" replacement on every message
+ * is tedious, that's why you can define a default {@link Replacer} by using
+ * {@link #setDefaultReplacer(Replacer, boolean)}, this replacer will be applied on every message.
+ * <p>
+ * <b>Numeric support</b>: Disabled by default, can
+ * be toggled by calling {@link #setNumSupport(boolean)}.
+ * An explanation of this feature is provided at {@link Replacer#setNumSupport(boolean)}
+ * <p>
+ * <b>Formatted messages</b>: This feature is always enabled and you
+ * don't need to do anything for it to work, all messages will be sent using
+ * {@link MCStrings#sendFormattedMessage(CommandSender, String)}.
  * 
  * @since MCUtils 1.0.0
  * 
@@ -89,7 +99,8 @@ public class MessagesFile extends PluginFile {
 
 	/**
 	 * This method toggles a feature from the {@link Replacer} class, and it is essentially
-	 * a shortcut to {@link Replacer#setNumSupport(boolean)} on {@link #getDefaultReplacer()}
+	 * a shortcut to {@link Replacer#setNumSupport(boolean)} on {@link #getDefaultReplacer()},
+	 * you can see a detailed explanation on said method.
 	 * 
 	 * @param support true to enable, false to disable.
 	 */
@@ -406,11 +417,11 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 */
 
-	// Chat //
-
 	/**
 	 * Uses {@link #getString(String)} and then sends the returning
 	 * string to the specified <b>target</b>.
+	 * <p>
+	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
 	 * 
 	 * @param target the receiver.
 	 * @param path the path of the message to get from {@link #getPath()}.
@@ -424,15 +435,14 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path) {
-		final String toSend = getString(path);
-		if (toSend != null && !toSend.isEmpty())
-			target.sendMessage(toSend);
-		return true;
+		return strings.sendFormattedMessage(target, getString(path));
 	}
 
 	/**
 	 * Uses {@link #getString(String, Replacer)} and then sends the returning
 	 * string to the specified <b>target</b>.
+	 * <p>
+	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
 	 * 
 	 * @param target the receiver.
 	 * @param path the path of the message to get from {@link #getPath()}.
@@ -447,15 +457,14 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		final String toSend = getString(path, replacer);
-		if (toSend != null && !toSend.isEmpty())
-			target.sendMessage(toSend);
-		return true;
+		return strings.sendFormattedMessage(target, getString(path, replacer));
 	}
 
 	/**
 	 * Uses {@link #getString(String, String...)} and then sends the returning
 	 * string to the specified <b>target</b>.
+	 * <p>
+	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
 	 * 
 	 * @param target the receiver.
 	 * @param path the path of the message to get from {@link #getPath()}.
@@ -471,15 +480,14 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
-		final String toSend = getString(path, replacements);
-		if (toSend != null && !toSend.isEmpty())
-			target.sendMessage(toSend);
-		return true;
+		return strings.sendFormattedMessage(target, getString(path, replacements));
 	}
 
 	/**
 	 * Uses {@link #getColoredString(String)} and then sends the returning
 	 * string to the specified <b>target</b>.
+	 * <p>
+	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
 	 * 
 	 * @param target the receiver.
 	 * @param path the path of the message to get from {@link #getPath()}.
@@ -493,15 +501,14 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path) {
-		final String toSend = getColoredString(path);
-		if (toSend != null && !toSend.isEmpty())
-			target.sendMessage(toSend);
-		return true;
+		return strings.sendFormattedMessage(target, getColoredString(path));
 	}
 
 	/**
 	 * Uses {@link #getColoredString(String, Replacer)} and then sends the returning
 	 * string to the specified <b>target</b>.
+	 * <p>
+	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
 	 * 
 	 * @param target the receiver.
 	 * @param path the path of the message to get from {@link #getPath()}.
@@ -516,15 +523,14 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		final String toSend = getColoredString(path, replacer);
-		if (toSend != null && !toSend.isEmpty())
-			target.sendMessage(toSend);
-		return true;
+		return strings.sendFormattedMessage(target, getColoredString(path, replacer));
 	}
 
 	/**
 	 * Uses {@link #getColoredString(String, String...)} and then sends the returning
 	 * string to the specified <b>target</b>.
+	 * <p>
+	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
 	 * 
 	 * @param target the receiver.
 	 * @param path the path of the message to get from {@link #getPath()}.
@@ -540,155 +546,6 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
-		final String toSend = getColoredString(path, replacements);
-		if (toSend != null && !toSend.isEmpty())
-			target.sendMessage(toSend);
-		return true;
-	}
-
-	// ActionBar //
-
-	/**
-	 * Uses {@link #getString(String)} and then sends the returning
-	 * string to the specified <b>target</b> as an action bar message. If the string is
-	 * null or empty, no message will be sent.
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean sendActionBar(@Nonnull Player target, @Nullable String path) {
-		String str = getString(path);
-		if (str != null && str.isEmpty())
-			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
-		return true;
-	}
-
-	/**
-	 * Uses {@link #getString(String, Replacer)} and then sends the returning
-	 * string to the specified <b>target</b> as an action bar message. If the string is
-	 * null or empty, no message will be sent.
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * @param replacer the {@link Replacer} to apply.
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean sendActionBar(@Nonnull Player target, @Nullable String path, @Nonnull Replacer replacer) {
-		String str = getString(path, replacer);
-		if (str != null && str.isEmpty())
-			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
-		return true;
-	}
-
-	/**
-	 * Uses {@link #getString(String, String...)} and then sends the returning
-	 * string to the specified <b>target</b> as an action bar message. If the string is
-	 * null or empty, no message will be sent.
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
-	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean sendActionBar(@Nonnull Player target, @Nullable String path, @Nonnull String... replacements) {
-		String str = getString(path, replacements);
-		if (str != null && str.isEmpty())
-			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
-		return true;
-	}
-
-	/**
-	 * Uses {@link #getColoredString(String)} and then sends the returning
-	 * string to the specified <b>target</b> as an action bar message. If the string is
-	 * null or empty, no message will be sent.
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean sendColoredActionBar(@Nonnull Player target, @Nullable String path) {
-		String str = getColoredString(path);
-		if (str != null && str.isEmpty())
-			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
-		return true;
-	}
-
-	/**
-	 * Uses {@link #getColoredString(String, Replacer)} and then sends the returning
-	 * string to the specified <b>target</b> as an action bar message. If the string is
-	 * null or empty, no message will be sent.
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * @param replacer the {@link Replacer} to apply.
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean sendColoredActionBar(@Nonnull Player target, @Nullable String path, @Nullable Replacer replacer) {
-		String str = getColoredString(path, replacer);
-		if (str != null && str.isEmpty())
-			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
-		return true;
-	}
-
-	/**
-	 * Uses {@link #getColoredString(String, String...)} and then sends the returning
-	 * string to the specified <b>target</b> as an action bar message. If the string is
-	 * null or empty, no message will be sent.
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
-	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean sendColoredActionBar(@Nonnull Player target, @Nullable String path, @Nonnull String... replacements) {
-		String str = getColoredString(path, replacements);
-		if (str != null && str.isEmpty())
-			target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(str));
-		return true;
+		return strings.sendFormattedMessage(target, getColoredString(path, replacements));
 	}
 }
