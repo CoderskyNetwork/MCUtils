@@ -43,7 +43,7 @@ public class YmlFile extends CharsetYamlConfiguration {
 	 * if the path is null, empty or blank, "file" will be used.
 	 * @param charset the charset to use, if null, {@link StandardCharsets#UTF_8} will be used.
 	 * 
-	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * @throws IllegalArgumentException if <b>plugin</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
@@ -54,7 +54,7 @@ public class YmlFile extends CharsetYamlConfiguration {
 	public YmlFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(charset);
 		if (plugin == null)
-			throw new NullPointerException("Plugin cannot be null.");
+			throw new IllegalArgumentException("Plugin cannot be null.");
 		MCUtils mcUtils = JavaPlugin.getPlugin(MCUtils.class);
 		if (!mcUtils.strings().hasContent(path))
 			path = "file";
@@ -79,7 +79,7 @@ public class YmlFile extends CharsetYamlConfiguration {
 	 * @param path the path of the file to create, the ".yml" extension is automatically added if missing,
 	 * if the path is null, empty or blank, "file" will be used.
 	 * 
-	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * @throws IllegalArgumentException if <b>plugin</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 

@@ -34,7 +34,7 @@ public class CGUIAction implements GUIAction {
 	 * @param action the action to trigger if conditions are met.
 	 * @param types the click types that will trigger this <b>action</b>.
 	 * 
-	 * @throws NullPointerException if <b>position</b> or <b>action</b> are null.
+	 * @throws IllegalArgumentException if <b>position</b> or <b>action</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
@@ -42,9 +42,9 @@ public class CGUIAction implements GUIAction {
 	 */
 	public CGUIAction(@Nonnull GUIPosition position, @Nonnull GUIAction action, @Nullable ClickType... types) {
 		if (position == null)
-			throw new NullPointerException("GUI position cannot be null.");
+			throw new IllegalArgumentException("GUI position cannot be null.");
 		if (action == null)
-			throw new NullPointerException("GUI action cannot be null.");
+			throw new IllegalArgumentException("GUI action cannot be null.");
 		this.position = position;
 		this.simpleAction = action;
 		this.clickTypes = new ArrayList<>(types.length);
@@ -60,7 +60,7 @@ public class CGUIAction implements GUIAction {
 	 * @param action the action to trigger if conditions are met.
 	 * @param types the click types that will trigger this <b>action</b>.
 	 * 
-	 * @throws NullPointerException if <b>action</b> is null.
+	 * @throws IllegalArgumentException if <b>action</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 

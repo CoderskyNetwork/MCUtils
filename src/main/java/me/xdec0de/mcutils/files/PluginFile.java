@@ -42,7 +42,7 @@ public class PluginFile extends YmlFile {
 	 * if the path is null, empty or blank, "file" will be used.
 	 * @param charset the charset to use, if null, {@link StandardCharsets#UTF_8} will be used.
 	 * 
-	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * @throws IllegalArgumentException if <b>plugin</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
@@ -69,7 +69,7 @@ public class PluginFile extends YmlFile {
 	 * @param path the path of the file to create, the ".yml" extension is automatically added if missing,
 	 * if the path is null, empty or blank, "file" will be used.
 	 * 
-	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * @throws IllegalArgumentException if <b>plugin</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 

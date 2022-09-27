@@ -58,7 +58,7 @@ public class MessagesFile extends PluginFile {
 	 * if the path is null, empty or blank, "file" will be used.
 	 * @param charset the charset to use, if null, {@link StandardCharsets#UTF_8} will be used.
 	 * 
-	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * @throws IllegalArgumentException if <b>plugin</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
@@ -85,7 +85,7 @@ public class MessagesFile extends PluginFile {
 	 * @param path the path of the file to create, the ".yml" extension is automatically added if missing,
 	 * if the path is null, empty or blank, "file" will be used.
 	 * 
-	 * @throws NullPointerException if <b>plugin</b> is null.
+	 * @throws IllegalArgumentException if <b>plugin</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
@@ -191,7 +191,7 @@ public class MessagesFile extends PluginFile {
 	 * @return The requested string, null if no value for the path exists and no
 	 * default value was specified or the path is null.
 	 * 
-	 * @throws NullPointerException if <b>replacer</b> is null.
+	 * @throws IllegalArgumentException if <b>replacer</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -199,7 +199,7 @@ public class MessagesFile extends PluginFile {
 		if (path == null)
 			return null;
 		if (replacer == null)
-			throw new NullPointerException("Replacer cannot be null.");
+			throw new IllegalArgumentException("Replacer cannot be null.");
 		String str = super.getString(path);
 		return getDefaultReplacer() == null ? replacer.replaceAt(str) : getDefaultReplacer().add(replacer).replaceAt(str);
 	}
@@ -219,8 +219,7 @@ public class MessagesFile extends PluginFile {
 	 * @return The requested string, null if no value for the path exists and no
 	 * default value was specified or the path is null.
 	 * 
-	 * @throws NullPointerException if <b>replacements</b> is null.
-	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
+	 * @throws IllegalArgumentException if <b>replacements</b> null or it's size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -228,7 +227,7 @@ public class MessagesFile extends PluginFile {
 		if (path == null)
 			return null;
 		if (replacements == null)
-			throw new NullPointerException("Replacements cannot be null.");
+			throw new IllegalArgumentException("Replacements cannot be null.");
 		String str = super.getString(path);
 		return getDefaultReplacer() == null ? new Replacer(replacements).replaceAt(str) : getDefaultReplacer().add(replacements).replaceAt(str);
 	}
@@ -271,7 +270,7 @@ public class MessagesFile extends PluginFile {
 	 * @return The requested colored string, null if no value for the path exists and no
 	 * default value was specified or the path is null.
 	 * 
-	 * @throws NullPointerException if <b>replacer</b> is null.
+	 * @throws IllegalArgumentException if <b>replacer</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -280,7 +279,7 @@ public class MessagesFile extends PluginFile {
 		if (path == null)
 			return null;
 		if (replacer == null)
-			throw new NullPointerException("Replacer cannot be null.");
+			throw new IllegalArgumentException("Replacer cannot be null.");
 		String str = super.getString(path);
 		return getDefaultReplacer() == null ? strings.applyColor(replacer.replaceAt(str)) : strings.applyColor(getDefaultReplacer().add(replacer).replaceAt(str));
 	}
@@ -301,8 +300,7 @@ public class MessagesFile extends PluginFile {
 	 * @return The requested colored string, null if no value for the path exists and no
 	 * default value was specified or the path is null.
 	 * 
-	 * @throws NullPointerException if <b>replacements</b> is null.
-	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
+	 * @throws IllegalArgumentException if <b>replacements</b> is null or it's size size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -311,7 +309,7 @@ public class MessagesFile extends PluginFile {
 		if (path == null)
 			return null;
 		if (replacements == null)
-			throw new NullPointerException("Replacements cannot be null.");
+			throw new IllegalArgumentException("Replacements cannot be null.");
 		String str = super.getString(path);
 		return getDefaultReplacer() == null ?
 				strings.applyColor(new Replacer(replacements).replaceAt(str)) : strings.applyColor(getDefaultReplacer().add(replacements).replaceAt(str));
@@ -368,7 +366,7 @@ public class MessagesFile extends PluginFile {
 		if (path == null)
 			return null;
 		if (replacer == null)
-			throw new NullPointerException("Replacer cannot be null.");
+			throw new IllegalArgumentException("Replacer cannot be null.");
 		List<String> atCfg = super.getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
@@ -390,8 +388,7 @@ public class MessagesFile extends PluginFile {
 	 * @return The requested colored list of strings, an empty list if the path doesn't
 	 * exist or the list itself is empty, null if <b>path</b> is null.
 	 * 
-	 * @throws NullPointerException if <b>replacements</b> is null.
-	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
+	 * @throws IllegalArgumentException if <b>replacements</b> is null or it's size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -400,7 +397,7 @@ public class MessagesFile extends PluginFile {
 		if (path == null)
 			return null;
 		if (replacements == null)
-			throw new NullPointerException("Replacements cannot be null.");
+			throw new IllegalArgumentException("Replacements cannot be null.");
 		List<String> atCfg = super.getStringList(path);
 		List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
@@ -430,7 +427,7 @@ public class MessagesFile extends PluginFile {
 	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
 	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
 	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
+	 * @throws IllegalArgumentException if <b>target</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -452,7 +449,7 @@ public class MessagesFile extends PluginFile {
 	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
 	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
 	 * 
-	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
+	 * @throws IllegalArgumentException if <b>target</b> or <b>replacer</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -474,8 +471,7 @@ public class MessagesFile extends PluginFile {
 	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
 	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
 	 * 
-	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
-	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
+	 * @throws IllegalArgumentException if <b>target</b> or <b>replacements</b> are null or if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -496,7 +492,7 @@ public class MessagesFile extends PluginFile {
 	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
 	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
 	 * 
-	 * @throws NullPointerException if <b>target</b> is null.
+	 * @throws IllegalArgumentException if <b>target</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -518,7 +514,7 @@ public class MessagesFile extends PluginFile {
 	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
 	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
 	 * 
-	 * @throws NullPointerException if <b>target</b> or <b>replacer</b> are null.
+	 * @throws IllegalArgumentException if <b>target</b> or <b>replacer</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -540,8 +536,7 @@ public class MessagesFile extends PluginFile {
 	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
 	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
 	 * 
-	 * @throws NullPointerException if <b>target</b> or <b>replacements</b> are null.
-	 * @throws IllegalArgumentException if <b>replacements</b> size % 2 is not equal to 0.
+	 * @throws IllegalArgumentException if <b>target</b> or <b>replacements</b> are null or if <b>replacements</b> size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */

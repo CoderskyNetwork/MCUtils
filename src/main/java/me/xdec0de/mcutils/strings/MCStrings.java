@@ -74,8 +74,12 @@ public class MCStrings {
 	 * @param str the message to send, if null or empty, nothing will be done.
 	 * 
 	 * @return Always true, to make sending messages on commands easier.
+	 * 
+	 * @throws IllegalArgumentException if <b>target</b> is null.
 	 */
-	public boolean sendFormattedMessage(CommandSender target, String str) {
+	public boolean sendFormattedMessage(@Nonnull CommandSender target, @Nullable String str) {
+		if (target == null)
+			throw new IllegalArgumentException("target cannot be null.");
 		if (str != null && !str.isEmpty()) {
 			String toChat = str;
 			for (ChatPattern pattern : chatPatterns)
