@@ -33,9 +33,9 @@ public class Region2D {
 	 * @param loc1 the first location.
 	 * @param loc2 the second location.
 	 * 
-	 * @throws NullPointerException If either location is null or {@link Location#getWorld()} returns null in either location.
+	 * @throws IllegalArgumentException If either location is null, {@link Location#getWorld()} returns null in either location or
+	 * if said locations aren't from the same {@link World}.
 	 * @throws IllegalStateException If either location has it's world unloaded.
-	 * @throws IllegalArgumentException If locations aren't from the same {@link World}.
 	 * 
 	 * @since MCUtils v1.0.0
 	 * 
@@ -43,11 +43,11 @@ public class Region2D {
 	 */
 	public Region2D(@Nonnull Location loc1, @Nonnull Location loc2) {
 		if (loc1 == null || loc2 == null)
-			throw new NullPointerException("Region locations cannot be null.");
+			throw new IllegalArgumentException("Region locations cannot be null.");
 		if (loc1.getWorld() == null || loc2.getWorld() == null)
-			throw new NullPointerException("Location worlds cannot be null.");
+			throw new IllegalArgumentException("Location worlds cannot be null.");
 		if (!loc1.isWorldLoaded() || !loc2.isWorldLoaded())
-			throw new IllegalStateException("Location worlds must be loaded.");
+			throw new IllegalArgumentException("Location worlds must be loaded.");
 		if (!loc1.getWorld().equals(loc2.getWorld()))
 			throw new IllegalArgumentException("Region locations must be on the same world.");
 		this.world = loc1.getWorld();
@@ -66,7 +66,7 @@ public class Region2D {
 	 * @param x2 the x coordinate of the second location.
 	 * @param z2 the z coordinate of the second location.
 	 * 
-	 * @throws NullPointerException If <b>world</b> is null.
+	 * @throws IllegalArgumentException If <b>world</b> is null.
 	 * 
 	 * @since MCUtils v1.0.0
 	 * 
@@ -74,7 +74,7 @@ public class Region2D {
 	 */
 	public Region2D(@Nonnull World world, int x1, int z1, int x2, int z2) {
 		if (world == null)
-			throw new NullPointerException("Region world cannot be null.");
+			throw new IllegalArgumentException("Region world cannot be null.");
 		this.world = world;
 
 		minX = Math.min(x1, x2);

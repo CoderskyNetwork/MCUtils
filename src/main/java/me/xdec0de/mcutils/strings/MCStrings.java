@@ -168,13 +168,13 @@ public class MCStrings {
 	 * @param <T> must implement {@link ColorPattern}.
 	 * @param pattern the class of the {@link ColorPattern} to return.
 	 * 
-	 * @throws NullPointerException If <b>pattern</b> is null.
+	 * @throws IllegalArgumentException If <b>pattern</b> is null.
 	 * 
 	 * @return an instance of <b>pattern</b> if registered, null otherwise.
 	 */
 	public <T extends ColorPattern> ColorPattern getColorPattern(@Nonnull Class<T> pattern) {
 		if (pattern == null)
-			throw new NullPointerException("Pattern cannot be null");
+			throw new IllegalArgumentException("Pattern cannot be null");
 		for (ColorPattern implPattern : colorPatterns)
 			if (implPattern.getClass().equals(pattern))
 				return implPattern;
@@ -198,15 +198,15 @@ public class MCStrings {
 	 * @param before the {@link Class} of the {@link ColorPattern} that will
 	 * go after <b>pattern</b>, putting <b>pattern</b> before it.
 	 * 
-	 * @throws NullPointerException If <b>pattern</b> or <b>before</b> are null.
+	 * @throws IllegalArgumentException If <b>pattern</b> or <b>before</b> are null.
 	 * 
 	 * @see #addColorPattern(ColorPattern)
 	 */
 	public <T extends ColorPattern> void addColorPatternBefore(@Nonnull ColorPattern pattern, @Nonnull Class<T> before) {
 		if (pattern == null)
-			throw new NullPointerException("Added pattern cannot be null");
+			throw new IllegalArgumentException("Added pattern cannot be null");
 		if (before == null)
-			throw new NullPointerException("Before pattern class cannot be null");
+			throw new IllegalArgumentException("Before pattern class cannot be null");
 		final LinkedList<ColorPattern> tempPatterns = new LinkedList<>();
 		boolean added = false;
 		for (ColorPattern implPattern : colorPatterns) {
@@ -232,13 +232,13 @@ public class MCStrings {
 	 * 
 	 * @param pattern the {@link ColorPattern} to add.
 	 * 
-	 * @throws NullPointerException If <b>pattern</b> is null.
+	 * @throws IllegalArgumentException If <b>pattern</b> is null.
 	 * 
 	 * @see #addColorPatternBefore(ColorPattern, Class)
 	 */
 	public void addColorPattern(@Nonnull ColorPattern pattern) {
 		if (pattern == null)
-			throw new NullPointerException("Pattern cannot be null");
+			throw new IllegalArgumentException("Pattern cannot be null");
 		colorPatterns.add(pattern);
 	}
 

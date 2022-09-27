@@ -31,9 +31,9 @@ public class Region3D extends Region2D {
 	 * @param loc1 the first location.
 	 * @param loc2 the second location.
 	 * 
-	 * @throws NullPointerException If either location is null or {@link Location#getWorld()} returns null in either location.
+	 * @throws NullPointerException If either location is null, {@link Location#getWorld()} returns null in either location
+	 * or if said locations aren't from the same {@link World}
 	 * @throws IllegalStateException If either location has it's world unloaded.
-	 * @throws IllegalArgumentException If locations aren't from the same {@link World}.
 	 * 
 	 * @since MCUtils v1.0.0
 	 * 
@@ -56,7 +56,7 @@ public class Region3D extends Region2D {
 	 * @param y2 the y coordinate of the second location.
 	 * @param z2 the z coordinate of the second location.
 	 * 
-	 * @throws NullPointerException If <b>world</b> is null.
+	 * @throws IllegalArgumentException If <b>world</b> is null.
 	 * 
 	 * @since MCUtils v1.0.0
 	 * 

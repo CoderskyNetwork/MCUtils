@@ -52,13 +52,13 @@ public class ItemBuilder implements Cloneable {
 	 * 
 	 * @param material the {@link Material} of the new {@link ItemStack} to create.
 	 * 
-	 * @throws NullPointerException if <b>material</b> is null.
+	 * @throws IllegalArgumentException if <b>material</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	public ItemBuilder(@Nonnull Material material) {
 		if (material == null)
-			throw new NullPointerException("Material cannot be null.");
+			throw new IllegalArgumentException("Material cannot be null.");
 		this.item = new ItemStack(material);
 		this.meta = Bukkit.getItemFactory().getItemMeta(material);
 	}
@@ -68,13 +68,13 @@ public class ItemBuilder implements Cloneable {
 	 * 
 	 * @param stack the {@link ItemStack} to clone.
 	 * 
-	 * @throws NullPointerException if <b>stack</b> is null.
+	 * @throws IllegalArgumentException if <b>stack</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	public ItemBuilder(@Nonnull ItemStack stack) {
 		if (stack == null)
-			throw new NullPointerException("Stack cannot be null.");
+			throw new IllegalArgumentException("Stack cannot be null.");
 		this.item = stack.clone();
 		this.meta = item.hasItemMeta() ? item.getItemMeta().clone() : Bukkit.getItemFactory().getItemMeta(stack.getType());
 	}
@@ -569,17 +569,17 @@ public class ItemBuilder implements Cloneable {
 	 * @param <T> the generic java type of the tag value.
 	 * @param <Z> the generic type of the object to store.
 	 * @param key the key this value will be stored under.
-     * @param type the type this tag uses.
-     * @param value the value stored in the tag.
+	 * @param type the type this tag uses.
+	 * @param value the value stored in the tag.
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
 	 * @throws NullPointerException if the <b>key</b> is null.
-     * @throws NullPointerException if the <b>type</b> is null.
-     * @throws NullPointerException if the <b>value</b> is null. Removing a tag should
-     * be done using {@link #removePersistentData(NamespacedKey)}.
-     * @throws IllegalArgumentException if no suitable adapter is found for
-     * the {@link PersistentDataType#getPrimitiveType()}
+	 * @throws NullPointerException if the <b>type</b> is null.
+	 * @throws NullPointerException if the <b>value</b> is null. Removing a tag should
+	 * be done using {@link #removePersistentData(NamespacedKey)}.
+	 * @throws IllegalArgumentException if no suitable adapter is found for
+	 * the {@link PersistentDataType#getPrimitiveType()}
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -612,19 +612,19 @@ public class ItemBuilder implements Cloneable {
 	/**
 	 * Add an Attribute and it's Modifier.
 	 * <p>
-     * {@link AttributeModifier AttributeModifiers} support {@link EquipmentSlot EquipmentSlots}.
-     * If not set, the {@link AttributeModifier} will be active in ALL slots.
-     * <p>
-     * Two {@link AttributeModifier AttributeModifiers} that have the same {@link UUID}
-     * cannot exist on the same Attribute.
-     *
-     * @param attribute the {@link Attribute} to modify
-     * @param modifier the {@link AttributeModifier} specifying the modification
+	 * {@link AttributeModifier AttributeModifiers} support {@link EquipmentSlot EquipmentSlots}.
+	 * If not set, the {@link AttributeModifier} will be active in ALL slots.
+	 * <p>
+	 * Two {@link AttributeModifier AttributeModifiers} that have the same {@link UUID}
+	 * cannot exist on the same Attribute.
+	 *
+	 * @param attribute the {@link Attribute} to modify
+	 * @param modifier the {@link AttributeModifier} specifying the modification
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
 	 * @throws NullPointerException if either <b>attribute</b> or <b>modifier</b> are null.
-     * @throws IllegalArgumentException if <b>modifier</b> already exists.
+	 * @throws IllegalArgumentException if <b>modifier</b> already exists.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -638,16 +638,13 @@ public class ItemBuilder implements Cloneable {
 	 * Set all {@link AttributeModifier AttributeModifiers} and their
 	 * {@link AttributeModifier AttributeModifiers}. To clear all currently
 	 * set Attributes and AttributeModifiers use null or an empty {@link Multimap}.
-     * If not null nor empty, this will filter all entries that are not-null
-     * and add them to the ItemStack.
-     *
-     * @param attributeModifiers the new {@link Multimap} containing the {@link Attribute Attributes}
-     * and their {@link AttributeModifier AttributeModifiers}.
+	 * If not null nor empty, this will filter all entries that are not-null
+	 * and add them to the ItemStack.
+	 *
+	 * @param attributeModifiers the new {@link Multimap} containing the {@link Attribute Attributes}
+	 * and their {@link AttributeModifier AttributeModifiers}.
 	 * 
 	 * @return This {@link ItemBuilder}.
-	 * 
-	 * @throws NullPointerException if either <b>attribute</b> or <b>modifier</b> are null.
-     * @throws IllegalArgumentException if <b>modifier</b> already exists.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -659,10 +656,10 @@ public class ItemBuilder implements Cloneable {
 
 	/**
 	 * Remove a specific {@link Attribute} and {@link AttributeModifier}.
-     * AttributeModifiers are matched according to their {@link UUID}.
+	 * AttributeModifiers are matched according to their {@link UUID}.
 	 * 
 	 * @param attribute the {@link Attribute} to remove.
-     * @param modifier the {@link AttributeModifier} to remove.
+	 * @param modifier the {@link AttributeModifier} to remove.
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
@@ -695,9 +692,9 @@ public class ItemBuilder implements Cloneable {
 	/**
 	 * Remove all {@link Attribute Attributes} and {@link AttributeModifier AttributeModifiers}
 	 * for a given {@link EquipmentSlot}.
-     * <p>
-     * If the given {@link EquipmentSlot} is null, this will remove all
-     * {@link AttributeModifier AttributeModifiers} that do not have an EquipmentSlot set.
+	 * <p>
+	 * If the given {@link EquipmentSlot} is null, this will remove all
+	 * {@link AttributeModifier AttributeModifiers} that do not have an EquipmentSlot set.
 	 * 
 	 * @param slot the {@link EquipmentSlot} to clear all Attributes and
 	 * their modifiers for.
