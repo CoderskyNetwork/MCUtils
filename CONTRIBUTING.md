@@ -4,8 +4,8 @@ Thank you for taking your time to contrubute to MCUtils! Any help is much apprec
 ## Requirements
 MCUtils is built to have the lowest amount of requirements / dependencies possible, however, you still need some things:
 
--  A Java 17 or later JDK
--  Maven, 3.8.6 has been used to compile MCUtils, however, it might work with previous versions
+- A Java 17 or later JDK
+- Maven, 3.8.6 has been used to compile MCUtils, however, it might work with previous versions
 
 ## Adding new features
 You are more than welcome to add new features to MCUtils, however, please do it in a way that makes sense, remember that this changes don't only affect you and your plugins but also every plugin using MCUtils.
