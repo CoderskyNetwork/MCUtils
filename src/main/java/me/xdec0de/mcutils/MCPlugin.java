@@ -116,7 +116,6 @@ public class MCPlugin extends JavaPlugin {
 			return null;
 		try {
 			Constructor<T> constructor = type.getDeclaredConstructor(JavaPlugin.class, String.class);
-			constructor.setAccessible(true);
 			return registerFile(constructor.newInstance(this, path));
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			logException(e, "&8[&4MCUtils&8] &cAn error occured while registering &e"+path+".yml &cfrom &6"+getName()+"&8:");
