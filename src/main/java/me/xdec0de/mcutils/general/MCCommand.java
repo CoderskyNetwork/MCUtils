@@ -31,18 +31,18 @@ public class MCCommand {
 	 * @param label name or alias of the command
 	 * @param executor the {@link CommandExecutor} for this command.
 	 * 
-	 * @throws NullPointerException if <b>plugin</b>, <b>label</b> or <b>executor</b> are null.
+	 * @throws IllegalArgumentException if <b>plugin</b>, <b>label</b> or <b>executor</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
 	public MCCommand(@Nonnull JavaPlugin plugin, @Nonnull String label, @Nonnull CommandExecutor executor) {
 		if (plugin == null)
-			throw new NullPointerException("Plugin cannot be null.");
+			throw new IllegalArgumentException("Plugin cannot be null.");
 		if (label == null)
-			throw new NullPointerException("Label cannot be null.");
+			throw new IllegalArgumentException("Label cannot be null.");
 		if (executor == null)
-			throw new NullPointerException("Executor cannot be null.");
+			throw new IllegalArgumentException("Executor cannot be null.");
 		cmd = plugin.getCommand(label);
 		cmd.setExecutor(executor);
 	}
@@ -56,12 +56,14 @@ public class MCCommand {
 	 * 
 	 * @return This {@link MCCommand} object, for chaining
 	 * 
-	 * @throws NullPointerException if <b>aliases</b> is null.
+	 * @throws IllegalArgumentException if <b>aliases</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
 	public MCCommand aliases(@Nonnull List<String> aliases) {
+		if (aliases == null)
+			throw new IllegalArgumentException("aliases cannot be null");
 		cmd.setAliases(aliases);
 		return this;
 	}
@@ -75,12 +77,14 @@ public class MCCommand {
 	 * 
 	 * @return This {@link MCCommand} object, for chaining
 	 * 
-	 * @throws NullPointerException if <b>aliases</b> is null.
+	 * @throws IllegalArgumentException if <b>aliases</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
 	public MCCommand aliases(@Nonnull String... aliases) {
+		if (aliases == null)
+			throw new IllegalArgumentException("aliases cannot be null.");
 		cmd.setAliases(Arrays.asList(aliases));
 		return this;
 	}

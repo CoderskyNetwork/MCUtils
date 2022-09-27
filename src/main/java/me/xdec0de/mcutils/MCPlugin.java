@@ -388,7 +388,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @param label name or alias of the command
 	 * @param executor the {@link CommandExecutor} for this command.
 	 * 
-	 * @throws NullPointerException if <b>label</b> or <b>executor</b> are null.
+	 * @throws IllegalArgumentException if <b>label</b> or <b>executor</b> are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
