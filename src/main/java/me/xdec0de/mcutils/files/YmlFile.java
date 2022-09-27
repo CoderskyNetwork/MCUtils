@@ -56,10 +56,11 @@ public class YmlFile extends CharsetYamlConfiguration {
 		if (plugin == null)
 			throw new IllegalArgumentException("Plugin cannot be null.");
 		MCUtils mcUtils = JavaPlugin.getPlugin(MCUtils.class);
-		if (!mcUtils.strings().hasContent(path))
-			path = "file";
-		if (!path.endsWith(".yml"))
-			path += ".yml";
+		String modifiedPath = path;
+		if (!mcUtils.strings().hasContent(modifiedPath))
+			modifiedPath = "file";
+		if (!modifiedPath.endsWith(".yml"))
+			modifiedPath += ".yml";
 		this.file = new File(plugin.getDataFolder(), path);
 		this.plugin = plugin;
 		this.path = path;
