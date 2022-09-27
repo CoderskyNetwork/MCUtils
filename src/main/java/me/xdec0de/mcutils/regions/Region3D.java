@@ -178,12 +178,8 @@ public class Region3D extends Region2D {
 	public <T extends Region2D> boolean overlaps(T region) {
 		if (region == null)
 			return false;
-		int otherMinY = world.getMinHeight(), otherMaxY = world.getMaxHeight();
-		if (region instanceof Region3D) {
-			Region3D other = (Region3D)region;
-			otherMinY = other.getMinY();
-			otherMaxY = other.getMaxY();
-		}
+		final int otherMinY = region instanceof Region3D ? ((Region3D)region).getMinY() : world.getMinHeight();
+		final int otherMaxY = region instanceof Region3D ? ((Region3D)region).getMaxY() : world.getMaxHeight();
 		return region.getWorld().equals(world) &&
 				!(region.getMinX() > maxX || otherMinY > maxY || region.getMinZ() > maxZ ||
 						minZ > region.getMaxX() || minY > otherMaxY || minZ > region.getMaxZ());
