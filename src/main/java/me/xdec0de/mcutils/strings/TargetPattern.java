@@ -15,7 +15,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class TargetPattern implements ChatPattern {
 
 	private final MCStrings strings;
-	private final Pattern player = Pattern.compile("<p:(.*?)[/]p>"), console = Pattern.compile("<c:(.*?)[/]c>");
+	private final Pattern player = Pattern.compile("<p:(.*?)[/]p>");
+	private final Pattern console = Pattern.compile("<c:(.*?)[/]c>");
 
 	TargetPattern(MCStrings strings) {
 		this.strings = strings;

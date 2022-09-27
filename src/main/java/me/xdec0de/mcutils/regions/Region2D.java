@@ -22,7 +22,10 @@ import org.bukkit.World;
 public class Region2D {
 
 	final World world;
-	final int minX, maxX, minZ, maxZ;
+	final int minX;
+	final int maxX;
+	final int minZ;
+	final int maxZ;
 
 	/**
 	 * Creates a 2D region from two locations.

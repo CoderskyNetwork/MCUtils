@@ -16,12 +16,10 @@ import javax.annotation.Nullable;
  */
 public class Hex extends ColorPattern {
 
-	private final Pattern pattern, simplePattern;
+	private final Pattern pattern = Pattern.compile("#([A-Fa-f0-9]{6})");
+	private final Pattern simplePattern = Pattern.compile("#([A-Fa-f0-9]{3})");
 
-	protected Hex() {
-		pattern = Pattern.compile("#([A-Fa-f0-9]{6})");
-		simplePattern = Pattern.compile("#([A-Fa-f0-9]{3})");
-	}
+	protected Hex() {}
 
 	/**
 	 * Applies hexadecimal colors to the provided <b>string</b>.

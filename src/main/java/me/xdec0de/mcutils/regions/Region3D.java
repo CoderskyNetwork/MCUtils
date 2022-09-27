@@ -22,7 +22,8 @@ import org.bukkit.World;
  */
 public class Region3D extends Region2D {
 
-	final int minY, maxY;
+	final int minY;
+	final int maxY;
 
 	/**
 	 * Creates a 3D region from two locations.
