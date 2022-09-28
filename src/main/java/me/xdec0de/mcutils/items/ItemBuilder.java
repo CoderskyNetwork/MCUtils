@@ -1,5 +1,6 @@
 package me.xdec0de.mcutils.items;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -474,7 +475,7 @@ public class ItemBuilder implements Cloneable {
 	public ItemBuilder addLore(@Nullable String... lines) {
 		if (lines == null)
 			return this;
-		List<String> lore = meta.getLore();
+		List<String> lore = meta.getLore() == null ? new ArrayList<String>(lines.length) : meta.getLore();
 		for (String line : lines)
 			lore.add(line);
 		return setLore(lore);
@@ -495,7 +496,7 @@ public class ItemBuilder implements Cloneable {
 	public ItemBuilder addColoredLore(@Nullable String... lines) {
 		if (lines == null)
 			return this;
-		List<String> lore = meta.getLore();
+		List<String> lore = meta.getLore() == null ? new ArrayList<String>(lines.length) : meta.getLore();
 		for (String line : lines)
 			lore.add(strings.applyColor(line));
 		return setLore(lore);
