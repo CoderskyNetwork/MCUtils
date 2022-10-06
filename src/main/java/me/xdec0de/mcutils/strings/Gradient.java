@@ -82,10 +82,11 @@ public class Gradient extends ColorPattern {
 	}
 
 	private Color getSimpleColor(String group) {
-		final int[] positions = new int[]{0, 0, 1, 1, 2, 2};
 		StringBuffer buff = new StringBuffer(22); // 22 is the capacity of a 6 character string buffer.
-		for (int i = 0; i < 6; i++)
-			buff.append(group.charAt(positions[i]));
+		for (int i = 0; i < 3; i++) {
+			buff.append(group.charAt(i));
+			buff.append(group.charAt(i));
+		}
 		return new Color(Integer.parseInt(buff.toString(), 16));
 	}
 
