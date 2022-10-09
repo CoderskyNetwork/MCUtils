@@ -29,7 +29,7 @@ public class TargetPattern implements ChatPattern {
 		Matcher matcher = isPlayer ? player.matcher(postProcess) : console.matcher(postProcess);
 		while (matcher.find()) {
 			if (isPlayer) {
-				BaseComponent[] components = strings.processActions(matcher.group(1));
+				BaseComponent[] components = strings.applyEvents(matcher.group(1));
 				((Player)target).spigot().sendMessage(components != null ? components : TextComponent.fromLegacyText(matcher.group(1)));
 			} else
 				target.sendMessage(matcher.group(1));
