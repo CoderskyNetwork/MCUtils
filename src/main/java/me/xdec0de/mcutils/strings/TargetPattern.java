@@ -9,9 +9,6 @@ import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-
 public class TargetPattern implements ChatPattern {
 
 	private final MCStrings strings;
@@ -28,10 +25,9 @@ public class TargetPattern implements ChatPattern {
 		final boolean isPlayer = target instanceof Player;
 		Matcher matcher = isPlayer ? player.matcher(postProcess) : console.matcher(postProcess);
 		while (matcher.find()) {
-			if (isPlayer) {
-				BaseComponent[] components = strings.applyEvents(matcher.group(1));
-				((Player)target).spigot().sendMessage(components != null ? components : TextComponent.fromLegacyText(matcher.group(1)));
-			} else
+			if (isPlayer)
+				((Player)target).spigot().sendMessage(strings.applyEventPatterns(matcher.group(1)));
+			else
 				target.sendMessage(matcher.group(1));
 			matcher.reset((postProcess = matcher.replaceFirst("")));
 		}

@@ -19,6 +19,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -37,7 +38,7 @@ public class MCStrings {
 	private LinkedList<ColorPattern> colorPatterns = new LinkedList<>();
 	private LinkedList<ChatPattern> chatPatterns = new LinkedList<>();
 
-	private final Pattern actionPattern = Pattern.compile("(.*)<(.*)>(.*)[/]>(.*)");
+	private final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
 	public MCStrings(MCUtils plugin) {
 		if (plugin.strings() != null)
@@ -65,6 +66,8 @@ public class MCStrings {
 	 * @return Always true, to make sending messages on commands easier.
 	 * 
 	 * @throws IllegalArgumentException if <b>target</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public boolean sendFormattedMessage(@Nonnull CommandSender target, @Nullable String str) {
 		if (target == null)
@@ -76,45 +79,57 @@ public class MCStrings {
 			toChat = pattern.process(target, toChat);
 		if (toChat.isEmpty())
 			return true;
-		if (target instanceof Player) {
-			BaseComponent[] components = applyEvents(toChat);
-			((Player)target).spigot().sendMessage(components != null ? components : TextComponent.fromLegacyText(toChat));
-		} else
+		if (target instanceof Player)
+			((Player)target).spigot().sendMessage(applyEventPatterns(toChat));
+		else
 			target.sendMessage(toChat);
 		return true;
 	}
 
-	BaseComponent[] applyEvents(@Nullable String str) {
+	/**
+	 * Applies <a href=https://mcutils.xdec0de.me/chat-features/event-patterns>Event patterns</a>
+	 * to the specified string, note that this method won't apply the {@link TargetPattern} nor
+	 * the {@link ActionBar} pattern as both patterns require a target to be used and send the
+	 * message to said target when applied.
+	 * 
+	 * @param str the string that will have the events applied.
+	 * 
+	 * @return A {@link BaseComponent} array with the events applied to it,
+	 * {@link TextComponent#toLegacyText()} will be used on <b>str</b> if no event was applied,
+	 * null if <b>str</b> is null or empty.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public BaseComponent[] applyEventPatterns(@Nullable String str) {
 		if (str == null || str.isEmpty())
 			return null;
-		Matcher matcher = actionPattern.matcher(str);
+		// Group 1: event args, Group 2: event text.
 		ComponentBuilder res = new ComponentBuilder();
-		boolean found = false;
+		Matcher matcher = actionPattern.matcher(str);
+		int prevEnd = 0;
 		while (matcher.find()) {
-			final String pre = matcher.group(1);
-			final String[] args = matcher.group(2).split(";");
-			final String text = matcher.group(3);
-			final String post = matcher.group(4);
+			final String prev = str.substring(prevEnd, matcher.start());
+			final String[] args = matcher.group(1).split(";");
 			if (args.length == 0 || args.length % 2 != 0)
 				return null;
-			res.append(TextComponent.fromLegacyText(pre));
-			BaseComponent[] components = TextComponent.fromLegacyText(text);
+			BaseComponent[] content = TextComponent.fromLegacyText(matcher.group(2));
 			for (int i = 0; i < args.length; i += 2) {
 				switch(args[i].toLowerCase()) {
-				case "text", "show_text" -> new Hover(HoverEvent.Action.SHOW_TEXT, args[i + 1]).apply(components);
-				case "item", "show_item" -> new Hover(HoverEvent.Action.SHOW_ITEM, args[i + 1]).apply(components);
-				case "entity", "show_entity" -> new Hover(HoverEvent.Action.SHOW_ENTITY, args[i + 1]).apply(components);
-				case "url", "open_url" -> new Click(ClickEvent.Action.OPEN_URL, args[i + 1]).apply(components);
-				case "file", "open_file" -> new Click(ClickEvent.Action.OPEN_FILE, args[i + 1]).apply(components);
-				case "run", "run_cmd", "run_command" -> new Click(ClickEvent.Action.RUN_COMMAND, args[i + 1]).apply(components);
-				case "suggest", "suggest_cmd", "suggest_command" -> new Click(ClickEvent.Action.SUGGEST_COMMAND, args[i + 1]).apply(components);
-				case "copy", "copy_to_clipboard" -> new Click(ClickEvent.Action.COPY_TO_CLIPBOARD, args[i + 1]).apply(components);
+				case "text", "show_text" -> new Hover(HoverEvent.Action.SHOW_TEXT, args[i + 1]).apply(content);
+				case "item", "show_item" -> new Hover(HoverEvent.Action.SHOW_ITEM, args[i + 1]).apply(content);
+				case "entity", "show_entity" -> new Hover(HoverEvent.Action.SHOW_ENTITY, args[i + 1]).apply(content);
+				case "url", "open_url" -> new Click(ClickEvent.Action.OPEN_URL, args[i + 1]).apply(content);
+				case "file", "open_file" -> new Click(ClickEvent.Action.OPEN_FILE, args[i + 1]).apply(content);
+				case "run", "run_cmd", "run_command" -> new Click(ClickEvent.Action.RUN_COMMAND, args[i + 1]).apply(content);
+				case "suggest", "suggest_cmd", "suggest_command" -> new Click(ClickEvent.Action.SUGGEST_COMMAND, args[i + 1]).apply(content);
+				case "copy", "copy_to_clipboard" -> new Click(ClickEvent.Action.COPY_TO_CLIPBOARD, args[i + 1]).apply(content);
 				}
 			}
-			found = true;
-			res.append(components).append(TextComponent.fromLegacyText(post));
+			res.append(TextComponent.fromLegacyText(prev), FormatRetention.FORMATTING).append(content);
+			prevEnd = matcher.end();
 		}
-		return found ? res.create() : null;
+		return prevEnd != 0 ? res.append(TextComponent.fromLegacyText(str.substring(prevEnd))).create() : TextComponent.fromLegacyText(str);
 	}
 
 	/**
