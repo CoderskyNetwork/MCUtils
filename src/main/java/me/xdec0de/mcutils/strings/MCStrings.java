@@ -74,6 +74,8 @@ public class MCStrings {
 		String toChat = str;
 		for (ChatPattern pattern : chatPatterns)
 			toChat = pattern.process(target, toChat);
+		if (toChat.isEmpty())
+			return true;
 		if (target instanceof Player) {
 			BaseComponent[] components = applyEvents(toChat);
 			((Player)target).spigot().sendMessage(components != null ? components : TextComponent.fromLegacyText(toChat));
