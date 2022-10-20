@@ -188,7 +188,10 @@ public class Replacer {
 	 * <p>
 	 * You don't need to worry about non-numeric replacements here, for example <b>"&#60;string:singular:plural>"</b>, it
 	 * won't match the regex and nothing will be done.
-	 * @param support
+	 * 
+	 * @param support true to enable, false to disable.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public void setNumSupport(boolean support) {
 		this.numPattern = support ? Pattern.compile("<([+-]?[0-9]{1,}):(.{1,}):(.{1,})>") : null;
