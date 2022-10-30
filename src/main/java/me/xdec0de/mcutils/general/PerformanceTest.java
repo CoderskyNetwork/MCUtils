@@ -4,7 +4,7 @@ import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -37,8 +37,8 @@ public class PerformanceTest {
 	private final long amount;
 	private final long sleep;
 
-	private final HashMap<String, Runnable> tests = new HashMap<>();
-	private final HashMap<String, List<Long>> results = new HashMap<>();
+	private final LinkedHashMap<String, Runnable> tests = new LinkedHashMap<>();
+	private final LinkedHashMap<String, List<Long>> results = new LinkedHashMap<>();
 
 	/**
 	 * Creates a new {@link PerformanceTest} with the specified <b>amount</b>
@@ -144,7 +144,7 @@ public class PerformanceTest {
 						max = time;
 					sum += time;
 				}
-				stream.println(id+" - Min: " + min + "ms | Average: "+ (sum / resultList.size()) +" | Max: " + max+"ms");
+				stream.println(id+" - Min: " + min + "ms | Average: "+ (sum / resultList.size()) +"ms | Max: " + max+"ms");
 			});
 		}
 	}
