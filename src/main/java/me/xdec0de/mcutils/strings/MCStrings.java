@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.xdec0de.mcutils.MCUtils;
 import me.xdec0de.mcutils.strings.builders.Click;
 import me.xdec0de.mcutils.strings.builders.Hover;
 import net.md_5.bungee.api.ChatColor;
@@ -40,10 +39,10 @@ public class MCStrings {
 
 	private final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
-	public MCStrings(MCUtils plugin) {
-		if (plugin.strings() != null)
-			throw new SecurityException("Illegal constructor call, access this class using MCUtils#strings()");
-		addColorPattern(new Gradient());
+	public MCStrings() {
+		//if (plugin.strings() != null)
+			//throw new SecurityException("Illegal constructor call, access this class using MCUtils#strings()");
+		addColorPattern(new Gradient(this));
 		addColorPattern(new Hex());
 		chatPatterns.add(new ActionBar());
 		chatPatterns.add(new TargetPattern(this));
@@ -318,6 +317,46 @@ public class MCStrings {
 		for (ColorPattern pattern : colorPatterns)
 			res = pattern.process(res);
 		return ChatColor.translateAlternateColorCodes('&', res);
+	}
+
+	/**
+	 * Strips all vanilla chat formatting from the specified string,
+	 * that is, color and text formatting, for example, assuming that
+	 * <b>colorChar</b> is '&', this method will remove all occurrences
+	 * of &[a-f], &[0-9], &[k-o] and &r, leaving the string as an uncolored,
+	 * unformatted, simple string, doing the same with {@link ChatColor#COLOR_CHAR}
+	 * <p>
+	 * This method has been tested to be quite faster than {@link ChatColor#stripColor(String)}
+	 * as {@link ChatColor}'s method uses regex, however, this difference isn't
+	 * really noticeable unless millions of strings are stripped.
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public String stripColor(String str, char colorChar) {
+		final StringBuilder res = new StringBuilder();
+		final int length = str.length();
+		for (int i = 0; i < length; i++) {
+			char ch = str.charAt(i);
+			if ((ch == '&' || ch == ChatColor.COLOR_CHAR) && (i + 1 < length) && isColorChar(str.charAt(i + 1)))
+				i++;
+			else
+				res.append(ch);
+		}
+		return res.toString();
+	}
+
+	/**
+	 * A simple convenience method that checks if <b>ch</b> is a character
+	 * that can be used to apply color or formatting to a string, that is,
+	 * r, R, x, X, or a character between this ranges: [a-f], [A-F], [k-o], [K-O] and [0-9].
+	 * 
+	 * @param ch the character to check.
+	 * @return
+	 */
+	public boolean isColorChar(char ch) {
+		return (ch == 'r' || ch == 'x' || ch == 'R' || ch == 'X' || (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') ||
+				(ch >= 'k' && ch <= 'o') || (ch >= 'A' && ch <= 'F') || (ch >= 'K' && ch <= 'O') || (ch >= '0' && ch <= '9'));
 	}
 
 	/**
