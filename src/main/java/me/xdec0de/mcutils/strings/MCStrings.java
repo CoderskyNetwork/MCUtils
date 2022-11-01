@@ -320,6 +320,28 @@ public class MCStrings {
 	}
 
 	/**
+	 * Applies colors to every string of <b>lst</b>
+	 * using {@link #applyColor(String)}. If <b>lst</b>
+	 * is null, null elements on the list will be kept
+	 * as null.
+	 * 
+	 * @param lst the list to apply colors.
+	 * 
+	 * @return The list, colored.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public List<String> applyColor(@Nullable List<String> lst) {
+		if (lst == null)
+			return null;
+		List<String> res = new ArrayList<>(lst.size());
+		for (String str : lst)
+			res.add(applyColor(str));
+		return res;
+	}
+
+	/**
 	 * Strips all vanilla chat formatting from the specified string,
 	 * that is, color and text formatting, for example, assuming that
 	 * <b>colorChar</b> is '&', this method will remove all occurrences
@@ -354,31 +376,9 @@ public class MCStrings {
 	 * @param ch the character to check.
 	 * @return
 	 */
-	public boolean isColorChar(char ch) {
-		return (ch == 'r' || ch == 'x' || ch == 'R' || ch == 'X' || (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') ||
-				(ch >= 'k' && ch <= 'o') || (ch >= 'A' && ch <= 'F') || (ch >= 'K' && ch <= 'O') || (ch >= '0' && ch <= '9'));
-	}
-
-	/**
-	 * Applies colors to every string of <b>lst</b>
-	 * using {@link #applyColor(String)}. If <b>lst</b>
-	 * is null, null elements on the list will be kept
-	 * as null.
-	 * 
-	 * @param lst the list to apply colors.
-	 * 
-	 * @return The list, colored.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	public List<String> applyColor(@Nullable List<String> lst) {
-		if (lst == null)
-			return null;
-		List<String> res = new ArrayList<>(lst.size());
-		for (String str : lst)
-			res.add(applyColor(str));
-		return res;
+	public boolean isColorChar(char c) {
+		final char ch = Character.toLowerCase(c);
+		return (ch == 'r' || ch == 'x' || (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'k' && ch <= 'o'));
 	}
 
 	/**
