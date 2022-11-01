@@ -3,10 +3,6 @@ package me.xdec0de.mcutils.strings.builders;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
-import me.xdec0de.mcutils.MCUtils;
-import me.xdec0de.mcutils.strings.MCStrings;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
@@ -43,12 +39,11 @@ public class Hover {
 	// minecraft:diamond 64
 	// minecraft:diamond 64 {display:{Name:'[{"text":"Name"}]'}}
 	private HoverEvent buildItem(String hoverData) {
-		MCStrings strings = JavaPlugin.getPlugin(MCUtils.class).strings();
 		String[] itemData = hoverData.split(" ");
 		final String item = itemData[0];
 		int amount = 1;
 		if (itemData.length >= 2)
-			amount = strings.isNumeric(itemData[1]) ? Integer.valueOf(itemData[1]) : 1;
+			amount = isNumeric(itemData[1]) ? Integer.valueOf(itemData[1]) : 1;
 		String nbt = itemData.length >= 3 ? itemData[2] : null;
 		if (itemData.length > 3)
 			for (int i = 3; i < itemData.length; i++)
@@ -66,5 +61,16 @@ public class Hover {
 			for (int i = 3; i < entityData.length; i++)
 				name += " " + entityData[i];
 		return new HoverEvent(Action.SHOW_ENTITY, new Entity(type, uuid, TextComponent.fromLegacyText(name)[0]));
+	}
+
+	private boolean isNumeric(String str) {
+		if (str == null)
+			return false;
+		for (int i = 0; i < str.length(); i++) {
+			final char ch = str.charAt(i);
+			if (ch < '0' || ch > '9')
+				return false;
+		}
+		return true;
 	}
 }
