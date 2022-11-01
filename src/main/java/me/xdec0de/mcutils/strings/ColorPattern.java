@@ -58,10 +58,27 @@ public abstract class ColorPattern {
 	@Nonnull
 	String apply(@Nonnull String source, @Nonnull ChatColor[] colors) {
 		StringBuilder res = new StringBuilder();
+		StringBuilder formatting = new StringBuilder();
 		final char[] characters = source.toCharArray();
-		for (int i = 0; i < characters.length; i++) {
-			res.append(colors[i]);
-			res.append(characters[i]);
+		int colorIndex = 0;
+		for (int strIndex = 0; strIndex < characters.length; strIndex++) {
+			char current = characters[strIndex];
+			if (current == '&' || current == COLOR_CHAR) {
+				char next = characters[++strIndex];
+				if (next >= 'k' && next <= 'o') {// if next == k, l, m, n or o
+					formatting.append(COLOR_CHAR);
+					formatting.append(next);
+					continue;
+				} else if (next == 'r') {
+					formatting = new StringBuilder();
+					continue;
+				}
+				else
+					strIndex--;
+			}
+			res.append(colors[colorIndex++]);
+			res.append(formatting.toString());
+			res.append(current);
 		}
 		return res.toString();
 	}
