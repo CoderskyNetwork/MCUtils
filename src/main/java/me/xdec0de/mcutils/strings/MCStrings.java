@@ -40,8 +40,6 @@ public class MCStrings {
 	private final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
 	public MCStrings() {
-		//if (plugin.strings() != null)
-			//throw new SecurityException("Illegal constructor call, access this class using MCUtils#strings()");
 		addColorPattern(new Gradient(this));
 		addColorPattern(new Hex());
 		chatPatterns.add(new ActionBar());
@@ -339,6 +337,34 @@ public class MCStrings {
 		for (String str : lst)
 			res.add(applyColor(str));
 		return res;
+	}
+
+	/**
+	 * Similar to {@link ChatColor#translateAlternateColorCodes(char, String)},
+	 * replaces every occurrence of <b>ch</b> with {@link ChatColor#COLOR_CHAR} if
+	 * followed by a valid color character ({@link #isColorChar(char)}),
+	 * performance differences aren't noticeable, this method exists for accessibility
+	 * purposes... And to have a shorter name.
+	 * 
+	 * @param ch the character to replace, normally '&'.
+	 * @param str the string to apply color characters to.
+	 * 
+	 * @return The string with translated color characters, null if <b>str</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public String applyColorChar(@Nonnull char ch, @Nullable String str) {
+		if (str == null)
+			return null;
+		final int length = str.length() - 1;
+		char[] arr = str.toCharArray();
+		for (int i = 0; i < length; i++) {
+			char strCh = str.charAt(i);
+			if (strCh == ch && isColorChar(str.charAt(i + 1)))
+				arr[i++] = ChatColor.COLOR_CHAR;
+		}
+		return new String(arr);
 	}
 
 	/**
