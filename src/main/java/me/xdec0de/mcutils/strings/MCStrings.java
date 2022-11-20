@@ -378,20 +378,28 @@ public class MCStrings {
 	 * as {@link ChatColor}'s method uses regex, however, this difference isn't
 	 * really noticeable unless millions of strings are stripped.
 	 * 
-	 * @param str
-	 * @return
+	 * @param str the string to strip colors.
+	 * 
+	 * @return The string with stripped colors, null if <b>str</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public String stripColor(String str, char colorChar) {
-		final StringBuilder res = new StringBuilder();
+		if (str == null)
+			return null;
 		final int length = str.length();
+		char[] arr = new char[length];
+		int arrIndex = 0;
 		for (int i = 0; i < length; i++) {
 			char ch = str.charAt(i);
-			if ((ch == '&' || ch == ChatColor.COLOR_CHAR) && (i + 1 < length) && isColorChar(str.charAt(i + 1)))
+			if ((ch == colorChar || ch == ChatColor.COLOR_CHAR) && (i + 1 < length) && isColorChar(str.charAt(i + 1)))
 				i++;
-			else
-				res.append(ch);
+			else {
+				arr[arrIndex] = ch;
+				arrIndex++;
+			}
 		}
-		return res.toString();
+		return new String(arr);
 	}
 
 	/**
