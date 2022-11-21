@@ -408,7 +408,10 @@ public class MCStrings {
 	 * r, R, x, X, or a character between this ranges: [a-f], [A-F], [k-o], [K-O] and [0-9].
 	 * 
 	 * @param ch the character to check.
-	 * @return
+	 * 
+	 * @return true if the character is a color character, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public boolean isColorChar(char c) {
 		final char ch = Character.toLowerCase(c);
