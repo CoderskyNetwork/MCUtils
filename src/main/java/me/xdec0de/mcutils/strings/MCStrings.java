@@ -314,7 +314,7 @@ public class MCStrings {
 		String res = string;
 		for (ColorPattern pattern : colorPatterns)
 			res = pattern.process(res);
-		return ChatColor.translateAlternateColorCodes('&', res);
+		return applyColorChar('&', res);
 	}
 
 	/**
