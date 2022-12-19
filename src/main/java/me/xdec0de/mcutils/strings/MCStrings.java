@@ -1,6 +1,7 @@
 package me.xdec0de.mcutils.strings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -34,7 +35,7 @@ import net.md_5.bungee.api.chat.TextComponent;
  */
 public class MCStrings {
 
-	private LinkedList<ColorPattern> colorPatterns = new LinkedList<>();
+	private HashMap<String, ColorPattern> colorPatterns = new HashMap<>();
 	private LinkedList<ChatPattern> chatPatterns = new LinkedList<>();
 
 	private final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
@@ -149,7 +150,7 @@ public class MCStrings {
 	public <T extends ColorPattern> ColorPattern getColorPattern(@Nonnull Class<T> pattern) {
 		if (pattern == null)
 			throw new IllegalArgumentException("Pattern cannot be null");
-		for (ColorPattern implPattern : colorPatterns)
+		for (ColorPattern implPattern : colorPatterns.values())
 			if (implPattern.getClass().equals(pattern))
 				return implPattern;
 		return null;
@@ -175,7 +176,7 @@ public class MCStrings {
 	public void addColorPattern(@Nonnull ColorPattern pattern) {
 		if (pattern == null)
 			throw new IllegalArgumentException("Pattern cannot be null");
-		colorPatterns.add(pattern);
+		colorPatterns.put(pattern.getID().toLowerCase(), pattern);
 	}
 
 	/**
@@ -204,15 +205,17 @@ public class MCStrings {
 			throw new IllegalArgumentException("Added pattern cannot be null");
 		if (before == null)
 			throw new IllegalArgumentException("Before pattern class cannot be null");
-		final LinkedList<ColorPattern> tempPatterns = new LinkedList<>();
+		final HashMap<String, ColorPattern> tempPatterns = new HashMap<>();
 		boolean added = false;
-		for (ColorPattern implPattern : colorPatterns) {
-			if (implPattern.getClass().equals(before))
-				added = tempPatterns.add(pattern); // Always true as the Collection changes.
-			tempPatterns.add(implPattern);
+		for (ColorPattern implPattern : colorPatterns.values()) {
+			if (implPattern.getClass().equals(before)) {
+				tempPatterns.put(pattern.getID().toLowerCase(), pattern);
+				added = true;
+			}
+			tempPatterns.put(implPattern.getID(), implPattern);
 		}
 		if (!added)
-			tempPatterns.add(pattern);
+			tempPatterns.put(pattern.getID().toLowerCase(), pattern);
 		colorPatterns = tempPatterns;
 	}
 
@@ -312,7 +315,7 @@ public class MCStrings {
 		if (string == null)
 			return null;
 		String res = string;
-		for (ColorPattern pattern : colorPatterns)
+		for (ColorPattern pattern : colorPatterns.values())
 			res = pattern.process(res);
 		return applyColorChar('&', res);
 	}

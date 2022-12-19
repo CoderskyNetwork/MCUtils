@@ -21,6 +21,11 @@ public class Hex extends ColorPattern {
 
 	protected Hex() {}
 
+	@Override
+	String getID() {
+		return "Hex";
+	}
+
 	/**
 	 * Applies hexadecimal colors to the provided <b>string</b>.
 	 * Output might me the same as the input if this pattern is not present.

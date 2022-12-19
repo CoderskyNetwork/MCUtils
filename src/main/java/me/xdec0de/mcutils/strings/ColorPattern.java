@@ -15,6 +15,18 @@ public abstract class ColorPattern {
 	final char COLOR_CHAR = 0x00A7;
 
 	/**
+	 * Gets the ID of this {@link ColorPattern}, used to
+	 * enable or disable patterns on <b>config.yml</b>.
+	 * The ID of this pattern cannot be the same as the ID
+	 * of other existing and registered pattern on MCUtils,
+	 * otherwise, you won't be able to register it.
+	 * 
+	 * @return The ID of this {@link ColorPattern}
+	 */
+	@Nonnull
+	abstract String getID();
+
+	/**
 	 * Applies this pattern to the provided <b>string</b>.
 	 * Output might be the same as the input if this pattern is not present.
 	 * If the <b>string</b> is null, null will be returned.

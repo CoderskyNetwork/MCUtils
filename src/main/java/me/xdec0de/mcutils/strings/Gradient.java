@@ -32,6 +32,11 @@ public class Gradient extends ColorPattern {
 		this.strings = strings;
 	}
 
+	@Override
+	String getID() {
+		return "Gradient";
+	}
+
 	/**
 	 * Applies gradients to the provided <b>string</b>.
 	 * Output might me the same as the input if this pattern is not present.
