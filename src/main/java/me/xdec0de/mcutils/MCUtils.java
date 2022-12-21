@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.xdec0de.mcutils.files.PluginFile;
 import me.xdec0de.mcutils.general.PlayerUtils;
 import me.xdec0de.mcutils.guis.GUIHandler;
 import me.xdec0de.mcutils.strings.MCStrings;
@@ -41,6 +42,7 @@ public class MCUtils extends MCPlugin {
 
 	@Override
 	public void onEnable() {
+		registerFile("config.yml", PluginFile.class); // Added to #getConfig() by MCPlugin
 		logCol("&8[&6MCUtils&8] &aPlugin enabled &8| &bv"+getDescription().getVersion()+" &8| &bMC "+getServerVersion().getFormatName());
 	}
 
