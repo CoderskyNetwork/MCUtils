@@ -72,6 +72,9 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
+	 * Registers an existing {@link YmlFile} to this plugin, if the file doesn't exist it will be created,
+	 * if the file type is {@link PluginFile} and it's name ({@link YmlFile#getName()}) is "config.yml"
+	 * (Or just config as the extension will be added), {@link #getConfig()} will return it automatically as specified on said method.
 	 * 
 	 * @param <T> must extend {@link YmlFile}
 	 * @param file the file to be registered, {@link T#create()} will be called to ensure that the file exists,
@@ -95,7 +98,9 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Registers a file to this plugin, if the file doesn't exist it will be created.
+	 * Registers a file to this plugin, if the file doesn't exist it will be created, if the file type is {@link PluginFile}
+	 * and it's registered as "config.yml" (Or just config as the extension will be added),
+	 * {@link #getConfig()} will return it automatically as specified on said method.
 	 * 
 	 * @param <T> must extend {@link YmlFile}
 	 * @param path the path of the file to register, if {@link MCStrings#hasContent(String)} returns false, "file" will be used.
