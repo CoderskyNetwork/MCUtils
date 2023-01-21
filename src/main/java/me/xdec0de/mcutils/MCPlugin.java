@@ -73,7 +73,7 @@ public class MCPlugin extends JavaPlugin {
 
 	/**
 	 * Registers an existing {@link YmlFile} to this plugin, if the file doesn't exist it will be created,
-	 * if the file type is {@link PluginFile} and it's name ({@link YmlFile#getName()}) is "config.yml"
+	 * if the file type is {@link PluginFile} and it's {@link YmlFile#getName() name} is "config.yml"
 	 * (Or just config as the extension will be added), {@link #getConfig()} will return it automatically as specified on said method.
 	 * 
 	 * @param <T> must extend {@link YmlFile}
@@ -117,7 +117,7 @@ public class MCPlugin extends JavaPlugin {
 	 */
 	@Nullable
 	public <T extends YmlFile> T registerFile(@Nonnull String path, @Nonnull Class<T> type) {
-		if (!getMCUtils().strings().hasContent(path))
+		if (!strings().hasContent(path))
 			return null;
 		try {
 			Constructor<T> constructor = type.getDeclaredConstructor(JavaPlugin.class, String.class);

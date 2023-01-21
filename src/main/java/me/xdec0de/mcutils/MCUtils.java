@@ -95,4 +95,39 @@ public class MCUtils extends MCPlugin {
 			guiHandlers.put(plugin, registerEvents(new GUIHandler()));
 		return guiHandlers.get(plugin);
 	}
+
+	/**
+	 * Checks if the version of MCUtils installed on the server supports the
+	 * specified <b>version</b>. Supported formats are <i>"X.X.X"</i> and <i>"X.X.XbX"</i>.
+	 * <br><br>
+	 * <b>Version convention</b>:
+	 * <br>
+	 * MCUtils versions work this way: (major).(minor).(revision)b(build), so, for example
+	 * , <i>"1.0.0b1"</i>, this is highly unlikely to change and you shouldn't be checking
+	 * for specific builds but revisions at most as builds are intended for testing, not production.
+	 * 
+	 * @param version the MCUtils version to check, for example, <i>"1.0.0"</i>.
+	 * 
+	 * @return true if the installed version of MCUtils on the server
+	 * is higher or equal to the specified <b>version</b>, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public boolean supports(@Nonnull String version) {
+		if (!strings.hasContent(version))
+			return false;
+		float[] versions = new float[2]; // Convert to float, so 1.3.1b1 would be 131.1
+		for (int v = 0; v <= 1; v++) {
+			String ver = v == 0 ? version : getDescription().getVersion();
+			boolean decimal = false;
+			for (int i = 0; i < ver.length(); i++) {
+				char c = ver.charAt(i);
+				if (c == 'b')
+					decimal = true;
+				if (c >= '0' && c <= '9')
+					versions[v] = decimal ? versions[v] + ((c - '0') / 10.0f) : (versions[v] * 10) + (c - '0');
+			}
+		}
+		return versions[0] >= versions[1];
+	}
 }
