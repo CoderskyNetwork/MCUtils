@@ -12,7 +12,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.xdec0de.mcutils.MCPlugin;
-import me.xdec0de.mcutils.MCUtils;
 
 /**
  * Represents a basic yml file, not necessarily present
@@ -55,9 +54,8 @@ public class YmlFile extends CharsetYamlConfiguration {
 		super(charset);
 		if (plugin == null)
 			throw new IllegalArgumentException("Plugin cannot be null.");
-		MCUtils mcUtils = JavaPlugin.getPlugin(MCUtils.class);
 		String modifiedPath = path;
-		if (!mcUtils.strings().hasContent(modifiedPath))
+		if (modifiedPath == null || modifiedPath.isBlank())
 			modifiedPath = "file";
 		if (!modifiedPath.endsWith(".yml"))
 			modifiedPath += ".yml";
