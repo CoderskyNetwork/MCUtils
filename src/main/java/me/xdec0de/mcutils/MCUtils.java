@@ -43,12 +43,12 @@ public class MCUtils extends MCPlugin {
 	@Override
 	public void onEnable() {
 		registerFile("config.yml", PluginFile.class); // Added to #getConfig() by MCPlugin
-		logCol("&8[&6MCUtils&8] &aPlugin enabled &8| &bv"+getDescription().getVersion()+" &8| &bMC "+getServerVersion().getFormatName());
+		logCol("&8[&6MCUtils&8] &aPlugin enabled &8| &bv"+getDescription().getVersion()+" &8| &bMC "+getServerVersion());
 	}
 
 	@Override
 	public void onDisable() {
-		logCol("&8[&6MCUtils&8] &cPlugin disabled &8| &bv"+getDescription().getVersion()+" &8| &bMC "+getServerVersion().getFormatName());
+		logCol("&8[&6MCUtils&8] &cPlugin disabled &8| &bv"+getDescription().getVersion()+" &8| &bMC "+getServerVersion());
 	}
 
 	/**

@@ -29,7 +29,6 @@ import me.xdec0de.mcutils.files.PluginFile;
 import me.xdec0de.mcutils.files.YmlFile;
 import me.xdec0de.mcutils.general.MCCommand;
 import me.xdec0de.mcutils.guis.GUI;
-import me.xdec0de.mcutils.server.MCVersion;
 import me.xdec0de.mcutils.strings.MCStrings;
 
 /**
@@ -231,19 +230,62 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Gets the current server version as an {@link MCVersion}
+	 * Gets the user-friendly name of the server version, for example, <i>"1.19.3"</i>.
 	 * 
-	 * @return the current server version.
+	 * @return The current server version.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public MCVersion getServerVersion() {
-		String bukkitVer = Bukkit.getVersion();
-		for(MCVersion version : MCVersion.values())
-			if(bukkitVer.contains(version.getFormatName()))
-				return version;
-		return MCVersion.UNKNOWN;
+	public String getServerVersion() {
+		String ver = Bukkit.getBukkitVersion();
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < ver.length(); i++) {
+			char c = ver.charAt(i);
+			if (c == '-')
+				break;
+			builder.append(c);
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * Checks if the server supports the specified <b>version</b>.
+	 * Supported formats are <i>"X.X"</i> and <i>"X.X.X"</i>.
+	 * <br><br>
+	 * <b>Note about 1.7.10</b>:
+	 * <br>
+	 * Because of the way this method works, if the server is running on
+	 * 1.7.10 and you check if the server supports 1.7.9, the result will
+	 * be false, that is because 1.7.10 gets translated to 17.1f, which is
+	 * lower to 17.9f, this is the only version with this issue and this is
+	 * highly unlikely to be fixed as this version is currently unsupported.
+	 * 
+	 * @param version the server version to check, for example, <i>"1.19"</i>.
+	 * 
+	 * @return true if the server version is higher or equal to the specified
+	 * <b>version</b>, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public boolean serverSupports(@Nonnull String version) {
+		if (version == null || version.isBlank())
+			return false;
+		float[] versions = new float[2]; // Convert to float, so 1.19.3 would be 119.3
+		String server = getServerVersion();
+		for (int v = 0; v <= 1; v++) {
+			String ver = v == 0 ? server : version;
+			int points = 0;
+			for (int i = 0; i < ver.length(); i++) {
+				char c = ver.charAt(i);
+				if (c == '.')
+					points++;
+				else if (c >= '0' && c <= '9')
+					versions[v] = points >= 2 ? versions[v] + ((c - '0') / 10.0f) : (versions[v] * 10) + (c - '0');
+			}
+		}
+		return versions[0] >= versions[1];
 	}
 
 	/**
