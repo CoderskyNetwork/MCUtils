@@ -41,8 +41,9 @@ public class MCStrings {
 	private final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
 	public MCStrings() {
-		addColorPattern(new Gradient(this));
-		addColorPattern(new Hex());
+		addColorPattern("gradient", new Gradient(this));
+		addColorPattern("hex", new Hex());
+		addColorPattern("classic", (str, simple) -> applyColorChar('&', str));
 		chatPatterns.add(new ActionBar());
 		chatPatterns.add(new TargetPattern(this));
 	}
@@ -135,91 +136,6 @@ public class MCStrings {
 	}
 
 	/**
-	 * Gets a <b>previously registered</b> {@link ColorPattern} by class, that is,
-	 * a {@link ColorPattern} that has been added using either {@link #addColorPattern(ColorPattern)}
-	 * or {@link #addColorPatternBefore(ColorPattern, Class)}, if no {@link ColorPattern} matching
-	 * <b>pattern</b> has been added, null will be returned.
-	 * 
-	 * @param <T> must extend {@link ColorPattern}.
-	 * @param pattern the class of the {@link ColorPattern} to return.
-	 * 
-	 * @throws IllegalArgumentException If <b>pattern</b> is null.
-	 * 
-	 * @return an instance of <b>pattern</b> if registered, null otherwise.
-	 */
-	public <T extends ColorPattern> ColorPattern getColorPattern(@Nonnull Class<T> pattern) {
-		if (pattern == null)
-			throw new IllegalArgumentException("Pattern cannot be null");
-		for (ColorPattern implPattern : colorPatterns.values())
-			if (implPattern.getClass().equals(pattern))
-				return implPattern;
-		return null;
-	}
-
-	/**
-	 * Adds a new {@link ColorPattern} to be used on {@link #applyColor(String)}
-	 * and {@link #applyColor(List)}, it's important to take into account pattern
-	 * order as patterns might conflict with one another. For example the {@link Hex}
-	 * pattern directly conflicts with the {@link Gradient} pattern overwriting it 
-	 * because {@link Gradient} uses hexadecimal colors, so {@link Gradient} needs to
-	 * be added first as it doesn't overwrite {@link Hex}.
-	 * <p>
-	 * Want to add a {@link ColorPattern} that would be overwritten by a MCUtils
-	 * {@link ColorPattern} like {@link Hex}? Use {@link #addColorPatternBefore(ColorPattern, Class)}
-	 * 
-	 * @param pattern the {@link ColorPattern} to add.
-	 * 
-	 * @throws IllegalArgumentException If <b>pattern</b> is null.
-	 * 
-	 * @see #addColorPatternBefore(ColorPattern, Class)
-	 */
-	public void addColorPattern(@Nonnull ColorPattern pattern) {
-		if (pattern == null)
-			throw new IllegalArgumentException("Pattern cannot be null");
-		colorPatterns.put(pattern.getID().toLowerCase(), pattern);
-	}
-
-	/**
-	 * Adds a new {@link ColorPattern} to be used on {@link #applyColor(String)}
-	 * and {@link #applyColor(List)} before the specified <b>pattern</b>, it's
-	 * important to take into account pattern order as patterns might conflict with
-	 * one another. For example the {@link Hex} pattern directly conflicts with the
-	 * {@link Gradient} pattern overwriting it because {@link Gradient} uses
-	 * hexadecimal colors, so {@link Gradient} needs to be added before {@link Hex}.
-	 * <p>
-	 * Normally, this method won't be needed unless you are adding a pattern that uses
-	 * hexadecimal colors on it's syntax as {@link Gradient} does. If that's not the case,
-	 * you can just use {@link #addColorPattern(ColorPattern)} to improve performance a bit.
-	 * 
-	 * @param <T> must extend {@link ColorPattern}
-	 * @param pattern the {@link ColorPattern} to add.
-	 * @param before the {@link Class} of the {@link ColorPattern} that will
-	 * go after <b>pattern</b>, putting <b>pattern</b> before it.
-	 * 
-	 * @throws IllegalArgumentException If <b>pattern</b> or <b>before</b> are null.
-	 * 
-	 * @see #addColorPattern(ColorPattern)
-	 */
-	public <T extends ColorPattern> void addColorPatternBefore(@Nonnull ColorPattern pattern, @Nonnull Class<T> before) {
-		if (pattern == null)
-			throw new IllegalArgumentException("Added pattern cannot be null");
-		if (before == null)
-			throw new IllegalArgumentException("Before pattern class cannot be null");
-		final HashMap<String, ColorPattern> tempPatterns = new HashMap<>();
-		boolean added = false;
-		for (ColorPattern implPattern : colorPatterns.values()) {
-			if (implPattern.getClass().equals(before)) {
-				tempPatterns.put(pattern.getID().toLowerCase(), pattern);
-				added = true;
-			}
-			tempPatterns.put(implPattern.getID(), implPattern);
-		}
-		if (!added)
-			tempPatterns.put(pattern.getID().toLowerCase(), pattern);
-		colorPatterns = tempPatterns;
-	}
-
-	/**
 	 * Gets a <b>previously registered</b> {@link ChatPattern} by class, that is,
 	 * a {@link ChatPattern} that has been added using either {@link #addChatPattern(ColorPattern)}
 	 * or {@link #addChatPatternBefore(ChatPattern, Class)}, if no {@link ChatPattern} matching
@@ -300,10 +216,117 @@ public class MCStrings {
 		chatPatterns = tempPatterns;
 	}
 
+	/*
+	 * Chat color methods
+	 */
+
 	/**
-	 * Applies all registered patterns to a <b>string</b> with hexadecimal
-	 * color support, then, applies "traditional" colors with char '&' using
-	 * {@link ChatColor#translateAlternateColorCodes(char, String)}
+	 * Gets a <b>previously registered</b> {@link ColorPattern} by <b>id</b>, that is,
+	 * a {@link ColorPattern} that has been added using either {@link #addColorPattern(ColorPattern)}
+	 * or {@link #addColorPatternBefore(ColorPattern, Class)}, if no {@link ColorPattern} matching
+	 * <b>pattern</b> has been added, null will be returned.
+	 * 
+	 * @param id the id of the registered {@link ColorPattern} to get, these are always lower case and
+	 * this method will convert this parameter to lower case.
+	 * 
+	 * @throws IllegalArgumentException If <b>id</b> is null or blank.
+	 * 
+	 * @return An instance of a {@link ColorPattern} with the specified <b>id</b> if registered, null otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public ColorPattern getColorPattern(@Nonnull String id) {
+
+		if (!hasContent(id))
+			throw new IllegalArgumentException("Pattern id cannot be null or blank");
+		return colorPatterns.get(id);
+	}
+
+	/**
+	 * Adds a new {@link ColorPattern} to be used on {@link #applyColor(String)}
+	 * and {@link #applyColor(List)}, note that if a pattern with the specified <b>id</b>
+	 * is already registered, it will be replaced. It's important to take into account pattern
+	 * order as patterns might conflict with one another. For example the {@link Hex}
+	 * pattern directly conflicts with the {@link Gradient} pattern overwriting it 
+	 * because {@link Gradient} uses hexadecimal colors, so {@link Gradient} needs to
+	 * be added first as it doesn't overwrite {@link Hex}.
+	 * <p>
+	 * Want to add a {@link ColorPattern} that would be overwritten by a MCUtils
+	 * {@link ColorPattern} like {@link Hex}? Use {@link #addColorPatternBefore(ColorPattern, Class)}
+	 * 
+	 * @param id the id of the {@link ColorPattern} to register, these are always lower case and
+	 * this method will convert this parameter to lower case.
+	 * @param pattern the {@link ColorPattern} to register.
+	 * 
+	 * @throws IllegalArgumentException If <b>pattern</b> is null.
+	 * 
+	 * @see #addColorPatternBefore(ColorPattern, Class)
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void addColorPattern(@Nonnull String id, @Nonnull ColorPattern pattern) {
+		if (!hasContent(id))
+			throw new IllegalArgumentException("Pattern id cannot be null or blank");
+		if (pattern == null)
+			throw new IllegalArgumentException("Pattern cannot be null");
+		colorPatterns.put(id.toLowerCase(), pattern);
+	}
+
+	/**
+	 * Adds a new {@link ColorPattern} to be used on {@link #applyColor(String)}
+	 * and {@link #applyColor(List)} before the specified <b>pattern</b>, note that if
+	 * a pattern with the specified <b>id</b> is already registered, it will be replaced. 
+	 * It's important to take into account pattern order as patterns might conflict with
+	 * one another. For example the {@link Hex} pattern directly conflicts with the
+	 * {@link Gradient} pattern overwriting it because {@link Gradient} uses
+	 * hexadecimal colors, so {@link Gradient} needs to be added before {@link Hex}.
+	 * <p>
+	 * Normally, this method won't be needed unless you are adding a pattern that uses
+	 * hexadecimal colors on it's syntax as {@link Gradient} does. If that's not the case,
+	 * you can just use {@link #addColorPattern(ColorPattern)} to improve performance a bit.
+	 * 
+	 * @param id the id of the {@link ColorPattern} to register, these are always lower case and
+	 * this method will convert this parameter to lower case.
+	 * @param pattern the {@link ColorPattern} to register.
+	 * @param beforeId the id of the {@link ColorPattern} that will go after <b>pattern</b>. 
+	 * Putting <b>pattern</b> before it.
+	 * 
+	 * @throws IllegalArgumentException If <b>pattern</b> or <b>before</b> are null.
+	 * 
+	 * @see #addColorPattern(ColorPattern)
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void addColorPatternBefore(@Nonnull String id, @Nonnull ColorPattern pattern, @Nonnull String beforeId) {
+		if (!hasContent(id))
+			throw new IllegalArgumentException("Pattern id cannot be null or blank");
+		if (pattern == null)
+			throw new IllegalArgumentException("Added pattern cannot be null");
+		if (!hasContent(beforeId))
+			throw new IllegalArgumentException("Before pattern id cannot be null or blank");
+		final HashMap<String, ColorPattern> tempPatterns = new HashMap<>();
+		boolean added = false;
+		for (String implId : colorPatterns.keySet()) {
+			if (implId.equals(beforeId)) {
+				tempPatterns.put(id.toLowerCase(), pattern);
+				added = true;
+			}
+			tempPatterns.put(implId, colorPatterns.get(implId));
+		}
+		if (!added)
+			tempPatterns.put(id, pattern);
+		colorPatterns = tempPatterns;
+	}
+
+	/**
+	 * Applies all registered patterns to a <b>string</b>.
+	 * MCUtils registers "classic", "{@link Hex hex}" and 
+	 * "{@link Gradient gradient}" by default, but
+	 * any pattern can be disabled by the user on MCUtil's config.yml.
+	 * <p>
+	 * The "classic" color pattern is just {@link #applyColorChar(char, String)}
+	 * with the famous '&' character.
 	 * 
 	 * @param string the string to apply colors.
 	 * @return The string, colored.
@@ -316,15 +339,15 @@ public class MCStrings {
 			return null;
 		String res = string;
 		for (ColorPattern pattern : colorPatterns.values())
-			res = pattern.process(res);
-		return applyColorChar('&', res);
+			res = pattern.process(res, true);
+		return res;
 	}
 
 	/**
 	 * Applies colors to every string of <b>lst</b>
 	 * using {@link #applyColor(String)}. If <b>lst</b>
-	 * is null, null elements on the list will be kept
-	 * as null.
+	 * is null, null will be returned.
+	 * null elements on the list will be kept as null.
 	 * 
 	 * @param lst the list to apply colors.
 	 * 
@@ -420,6 +443,10 @@ public class MCStrings {
 		final char ch = Character.toLowerCase(c);
 		return (ch == 'r' || ch == 'x' || (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'k' && ch <= 'o'));
 	}
+
+	/*
+	 * General string methods
+	 */
 
 	/**
 	 * Checks if a string has any content on it. If

@@ -21,7 +21,7 @@ import net.md_5.bungee.api.ChatColor;
  * 
  * @since MCUtils 1.0.0
  */
-public class Gradient extends ColorPattern {
+public class Gradient implements ColorPattern {
 
 	private final MCStrings strings;
 
@@ -30,32 +30,6 @@ public class Gradient extends ColorPattern {
 
 	protected Gradient(MCStrings strings) {
 		this.strings = strings;
-	}
-
-	@Override
-	String getID() {
-		return "Gradient";
-	}
-
-	/**
-	 * Applies gradients to the provided <b>string</b>.
-	 * Output might me the same as the input if this pattern is not present.
-	 * If the <b>string</b> is null, null will be returned.
-	 * <p>
-	 * The gradient color pattern supports a "simple" mode, that also applies
-	 * a three-character pattern <i>(See {@link Gradient})</i> useful when string length matters.
-	 * This method enables it by default, use {@link #process(String, boolean)} if you want
-	 * to disable it.
-	 *
-	 * @param string the string to which gradients should be applied to.
-	 * 
-	 * @return The new string with applied gradient.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	public String process(@Nullable String string) {
-		return process(string, true);
 	}
 
 	/**
@@ -74,6 +48,7 @@ public class Gradient extends ColorPattern {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
+	@Override
 	public String process(@Nullable String string, boolean simple) {
 		if (string == null)
 			return null;
@@ -131,5 +106,42 @@ public class Gradient extends ColorPattern {
 			//colors[i] = plugin.getServerVersion().supports(MCVersion.V1_16) ? ChatColor.of(color) : getClosestColor(color);
 		}
 		return colors;
+	}
+
+	/**
+	 * Applies the specified list of <b>colors</b> to <b>source</b>,
+	 * this method is designed for patterns like {@link Gradient}.
+	 * 
+	 * @param source the string to apply colors.
+	 * @param colors the colors to apply.
+	 * 
+	 * @return <b>Source</b> with <b>colors</b> applied to it.
+	 */
+	@Nonnull
+	String apply(@Nonnull String source, @Nonnull ChatColor[] colors) {
+		StringBuilder res = new StringBuilder();
+		StringBuilder formatting = new StringBuilder();
+		final char[] characters = source.toCharArray();
+		int colorIndex = 0;
+		for (int strIndex = 0; strIndex < characters.length; strIndex++) {
+			char current = characters[strIndex];
+			if (current == '&' || current == ChatColor.COLOR_CHAR) {
+				char next = characters[++strIndex];
+				if (next >= 'k' && next <= 'o') {// if next == k, l, m, n or o
+					formatting.append(ChatColor.COLOR_CHAR);
+					formatting.append(next);
+					continue;
+				} else if (next == 'r') {
+					formatting = new StringBuilder();
+					continue;
+				}
+				else
+					strIndex--;
+			}
+			res.append(colors[colorIndex++]);
+			res.append(formatting.toString());
+			res.append(current);
+		}
+		return res.toString();
 	}
 }
