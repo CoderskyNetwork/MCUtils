@@ -23,9 +23,6 @@ import me.xdec0de.mcutils.MCPlugin;
  */
 public class YmlFile extends CharsetYamlConfiguration {
 
-	/** The {@link JavaPlugin} that initialized this file */
-	final JavaPlugin plugin;
-
 	private final String path;
 	final File file;
 
@@ -37,7 +34,8 @@ public class YmlFile extends CharsetYamlConfiguration {
 	 * exact reason they can't copy any default file from <b>plugin</b>'s source. This files can
 	 * be used, for example, as storage files for players, where you don't need a "template" file to copy.
 	 * 
-	 * @param plugin an instance of the plugin creating the file, used to get it's data folder.
+	 * @param plugin an instance of the plugin creating the file, used to get it's data folder, if null,
+	 * the file will be just in <b>path</b>, not inside a plugin data folder.
 	 * @param path the path of the file to create, the ".yml" extension is automatically added if missing,
 	 * if the path is null, empty or blank, "file" will be used.
 	 * @param charset the charset to use, if null, {@link StandardCharsets#UTF_8} will be used.
@@ -50,17 +48,14 @@ public class YmlFile extends CharsetYamlConfiguration {
 	 * @see MCPlugin#registerFile(String, Class)
 	 * @see #create()
 	 */
-	public YmlFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
+	public YmlFile(@Nullable JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(charset);
-		if (plugin == null)
-			throw new IllegalArgumentException("Plugin cannot be null.");
 		String modifiedPath = path;
 		if (modifiedPath == null || modifiedPath.isBlank())
-			modifiedPath = "file";
-		if (!modifiedPath.endsWith(".yml"))
+			modifiedPath = "file.yml";
+		else if (!modifiedPath.endsWith(".yml"))
 			modifiedPath += ".yml";
-		this.file = new File(plugin.getDataFolder(), modifiedPath);
-		this.plugin = plugin;
+		this.file = plugin == null ? new File(modifiedPath) : new File(plugin.getDataFolder(), modifiedPath);
 		this.path = modifiedPath;
 	}
 

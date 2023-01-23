@@ -28,6 +28,9 @@ import me.xdec0de.mcutils.MCPlugin;
  */
 public class PluginFile extends YmlFile {
 
+	/** The {@link JavaPlugin} that initialized this file */
+	final JavaPlugin plugin;
+
 	/**
 	 * Creates an instance, <b>NOT</b> a file, of a {@link PluginFile} for the specified <b>plugin</b> and <b>path</b>.
 	 * Fast access for file creation is provided by {@link MCPlugin#registerFile(String, Class)}.
@@ -52,6 +55,7 @@ public class PluginFile extends YmlFile {
 	 */
 	public PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(plugin, path, charset);
+		this.plugin = plugin;
 	}
 
 	/**
@@ -79,6 +83,7 @@ public class PluginFile extends YmlFile {
 	 */
 	public PluginFile(@Nonnull JavaPlugin plugin, @Nullable String path) {
 		super(plugin, path, StandardCharsets.UTF_8);
+		this.plugin = plugin;
 	}
 
 	/**
