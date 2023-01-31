@@ -32,7 +32,8 @@ public class CGUIAction implements GUIAction {
 	 * 
 	 * @param position the position that will trigger this <b>action</b>.
 	 * @param action the action to trigger if conditions are met.
-	 * @param types the click types that will trigger this <b>action</b>.
+	 * @param types the click types that will trigger this <b>action</b>, if no types are specified,
+	 * every click type will trigger the <b>action</b>.
 	 * 
 	 * @throws IllegalArgumentException if <b>position</b> or <b>action</b> are null.
 	 * 
@@ -58,7 +59,8 @@ public class CGUIAction implements GUIAction {
 	 * The {@link GUIPosition} will be {@link GUIPosition#TOP}.
 	 * 
 	 * @param action the action to trigger if conditions are met.
-	 * @param types the click types that will trigger this <b>action</b>.
+	 * @param types the click types that will trigger this <b>action</b>, if no types are specified,
+	 * every click type will trigger the <b>action</b>.
 	 * 
 	 * @throws IllegalArgumentException if <b>action</b> is null.
 	 * 
@@ -72,7 +74,7 @@ public class CGUIAction implements GUIAction {
 
 	@Override
 	public void click(Player player, InventoryClickEvent event) {
-		if (clickTypes == null || clickTypes.contains(event.getClick()) && position.matches(event))
+		if ((clickTypes.isEmpty() || clickTypes.contains(event.getClick())) && position.matches(event))
 			simpleAction.click(player, event);
 	}
 
