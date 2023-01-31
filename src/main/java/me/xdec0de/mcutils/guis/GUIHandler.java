@@ -133,5 +133,6 @@ public class GUIHandler implements Listener {
 		List<GUIAction> actions = gui.getActions(event.getSlot());
 		if (actions != null)
 			actions.forEach(action -> action.click((Player)event.getWhoClicked(), event));
+		gui.onClick(event);
 	}
 }
