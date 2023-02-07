@@ -1,8 +1,5 @@
 package me.xdec0de.mcutils.strings;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.annotation.Nullable;
 
 import org.bukkit.ChatColor;
@@ -18,42 +15,57 @@ import org.bukkit.ChatColor;
  */
 public class Hex implements ColorPattern {
 
-	private final Pattern pattern = Pattern.compile("#([A-Fa-f0-9]{6})");
-	private final Pattern simplePattern = Pattern.compile("#([A-Fa-f0-9]{3})");
-
 	Hex() {}
 
 	/**
-	 * Applies hexadecimal colors to the provided <b>string</b>.
-	 * Output might me the same as the input if this pattern is not present.
+	 * Applies hexadecimal colors (#RRGGBB) to the provided <b>string</b>.
+	 * Output will be the same as the input if no hex code is present.
 	 * If the <b>string</b> is null, null will be returned.
-	 * <p>
+	 * 
 	 * The hexadecimal color pattern supports a "simple" mode, that also applies
-	 * a three-character pattern (#([A-Fa-f0-9]{3})), useful when string length matters.
+	 * a three-character pattern (#RGB), useful when string length matters.
 	 *
 	 * @param string the string to which gradients should be applied to.
-	 * @param simple whether to apply the simple pattern or not.
 	 * 
-	 * @return The new string with applied gradient.
+	 * @return The new string with applied hexadecimal colors.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
 	public String process(@Nullable String string, boolean simple) {
-		if(string == null)
-			return null;
-		String res = string;
-		for (int i = simple ? 2 : 1; i > 0; i--) { // i will be 1 for simplePattern, 2 for pattern.
-			final Matcher matcher = i == 1 ? simplePattern.matcher(res) : pattern.matcher(res);
-			final StringBuffer buffer = new StringBuffer(res.length() + 4 * 8);
-			int[] positions = i == 1 ? new int[]{0, 0, 1, 1, 2, 2} : new int[]{0, 1, 2, 3, 4, 5};
-			while (matcher.find()) {
-				final String group = matcher.group(1);
-				matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-						+ ChatColor.COLOR_CHAR + group.charAt(positions[0]) + ChatColor.COLOR_CHAR + group.charAt(positions[1])
-						+ ChatColor.COLOR_CHAR + group.charAt(positions[2]) + ChatColor.COLOR_CHAR + group.charAt(positions[3])
-						+ ChatColor.COLOR_CHAR + group.charAt(positions[4]) + ChatColor.COLOR_CHAR + group.charAt(positions[5]));
-			}
-			res = matcher.appendTail(buffer).toString();
+		if (string == null || string.indexOf('#') < 0)
+			return string;
+		int len = string.length();
+		StringBuilder result = new StringBuilder(len);
+		for (int i = 0; i < len; i++) {
+			final char current = string.charAt(i);
+			if (current == '#') {
+				int hexSize = getHexSize(string, i + 1, len, simple);
+				if (hexSize != 0) {
+					int[] positions = hexSize == 3 ? new int[]{1, 1, 2, 2, 3, 3} : new int[]{1, 2, 3, 4, 5, 6};
+					result.append(ChatColor.COLOR_CHAR + "x");
+					for (int pos : positions)
+						result.append(ChatColor.COLOR_CHAR + Character.toString(string.charAt(i + pos)));
+					i += hexSize;
+				} else
+					result.append(current);
+			} else
+				result.append(current);
 		}
-		return res;
+		return result.toString();
+	}
+
+	private int getHexSize(String str, int start, int len, boolean simple) {
+		int size = 0;
+		for (int i = start; i < len && size <= 6; i++, size++)
+			if (!isHex(str.charAt(i)))
+				break;
+		if (size == 6 || (simple && size == 3))
+			return size;
+		return size > 3 ? 3 : 0;
+	}
+
+	private boolean isHex(char ch) {
+		return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
 	}
 }
