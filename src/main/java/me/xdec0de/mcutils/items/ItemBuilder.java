@@ -585,7 +585,7 @@ public class ItemBuilder implements Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public ItemBuilder setPersistentData(@Nonnull NamespacedKey key, @Nonnull PersistentDataType<Object, Object> type, @Nonnull Object value) {
+	public <T, Z> ItemBuilder setPersistentData(@Nonnull NamespacedKey key, @Nonnull PersistentDataType<T, Z> type, @Nonnull Z value) {
 		meta.getPersistentDataContainer().set(key, type, value);
 		return this;
 	}
