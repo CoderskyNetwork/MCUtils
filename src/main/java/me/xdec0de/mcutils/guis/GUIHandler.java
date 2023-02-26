@@ -85,6 +85,8 @@ public class GUIHandler implements Listener {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #registerGUIs(GUI...)
+	 * @see #unregisterGUIs()
+	 * @see #unregisterGUIs(GUI...)
 	 */
 	public GUI registerGUI(GUI gui) {
 		if (gui == null || guis.contains(gui))
@@ -94,21 +96,59 @@ public class GUIHandler implements Listener {
 	}
 
 	/**
-	 * Register any number of {@link GUI}s easily, at the cost
+	 * Register any number of {@link GUI GUIs} easily, at the cost
 	 * of not returning anything as opposed to {@link #registerGUI(GUI)}.
 	 * 
-	 * @param guis the {@link GUI}s to be registered, if null, nothing
+	 * @param guis the {@link GUI GUIs} to be registered, if null, nothing
 	 * will be done.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #registerGUI(GUI)
+	 * @see #unregisterGUIs()
+	 * @see #unregisterGUIs(GUI...)
 	 */
 	public void registerGUIs(GUI... guis) {
 		if (guis == null)
 			return;
 		for (GUI gui : guis)
 			registerGUI(gui);
+	}
+
+	/**
+	 * Unregisters all specified {@link GUI GUIs} from this {@link GUIHandler}.
+	 * 
+	 * @param guis the {@link GUI GUIs} to be unregistered, the instance doesn't
+	 * need to be the same as the registered {@link GUI} as this is checked by class.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #registerGUI(GUI)
+	 * @see #registerGUIs(GUI...)
+	 * @see #unregisterGUIs()
+	 */
+	public void unregisterGUIs(GUI... guis) {
+		if (guis == null)
+			return;
+		List<Class<? extends GUI>> registered = new ArrayList<>();
+		for (GUI gui : this.guis)
+			registered.add(gui.getClass());
+		for (GUI gui : guis)
+			if (registered.contains(gui.getClass()))
+				this.guis.remove(gui);
+	}
+
+	/**
+	 * Unregisters all the {@link GUI GUIs} registered on this {@link GUIHandler}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #registerGUI(GUI)
+	 * @see #registerGUIs(GUI...)
+	 * @see #unregisterGUIs(GUI...)
+	 */
+	public void unregisterGUIs() {
+		guis.clear();
 	}
 
 	@EventHandler

@@ -29,6 +29,7 @@ import me.xdec0de.mcutils.files.PluginFile;
 import me.xdec0de.mcutils.files.YmlFile;
 import me.xdec0de.mcutils.general.MCCommand;
 import me.xdec0de.mcutils.guis.GUI;
+import me.xdec0de.mcutils.guis.GUIHandler;
 import me.xdec0de.mcutils.strings.MCStrings;
 
 /**
@@ -455,23 +456,56 @@ public class MCPlugin extends JavaPlugin {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #registerGUIs(GUI...)
+	 * @see #unregisterGUIs()
+	 * @see #unregisterGUIs(GUI...)
 	 */
 	public GUI registerGUI(GUI gui) {
 		return getMCUtils().getGUIHandler(this).registerGUI(gui);
 	}
 
 	/**
-	 * Register any number of {@link GUI}s easily, at the cost
+	 * Register any number of {@link GUI GUIs} easily, at the cost
 	 * of not returning anything as opposed to {@link #registerGUI(GUI)}.
 	 * 
-	 * @param guis the {@link GUI}s to be registered, if null, nothing
+	 * @param guis the {@link GUI GUIs} to be registered, if null, nothing
 	 * will be done.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #registerGUI(GUI)
+	 * @see #unregisterGUIs()
+	 * @see #unregisterGUIs(GUI...)
 	 */
 	public void registerGUIs(GUI... guis) {
 		getMCUtils().getGUIHandler(this).registerGUIs(guis);
+	}
+
+	/**
+	 * Unregisters all specified {@link GUI GUIs} from this {@link GUIHandler}.
+	 * 
+	 * @param guis the {@link GUI GUIs} to be unregistered, the instance doesn't
+	 * need to be the same as the registered {@link GUI} as this is checked by class.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #registerGUI(GUI)
+	 * @see #registerGUIs(GUI...)
+	 * @see #unregisterGUIs()
+	 */
+	public void unregisterGUIs(GUI... guis) {
+		getMCUtils().getGUIHandler(this).unregisterGUIs(guis);
+	}
+
+	/**
+	 * Unregisters all the {@link GUI GUIs} registered on this {@link GUIHandler}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #registerGUI(GUI)
+	 * @see #registerGUIs(GUI...)
+	 * @see #unregisterGUIs(GUI...)
+	 */
+	public void unregisterGUIs() {
+		getMCUtils().getGUIHandler(this).unregisterGUIs();
 	}
 }

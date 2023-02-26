@@ -38,7 +38,7 @@ import me.xdec0de.mcutils.strings.MCStrings;
 public class MCUtils extends MCPlugin {
 
 	private final MCStrings strings = new MCStrings();
-	final HashMap<JavaPlugin, GUIHandler> guiHandlers = new HashMap<>();
+	private final HashMap<JavaPlugin, GUIHandler> guiHandlers = new HashMap<>();
 
 	@Override
 	public void onEnable() {
