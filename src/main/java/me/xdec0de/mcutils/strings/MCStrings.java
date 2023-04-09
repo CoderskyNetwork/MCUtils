@@ -414,18 +414,15 @@ public class MCStrings {
 		if (str == null)
 			return null;
 		final int length = str.length();
-		char[] arr = new char[length];
-		int arrIndex = 0;
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < length; i++) {
 			char ch = str.charAt(i);
 			if ((ch == colorChar || ch == ChatColor.COLOR_CHAR) && (i + 1 < length) && isColorChar(str.charAt(i + 1)))
 				i++;
-			else {
-				arr[arrIndex] = ch;
-				arrIndex++;
-			}
+			else
+				result.append(ch);
 		}
-		return new String(arr);
+		return result.toString();
 	}
 
 	/**
