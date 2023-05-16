@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TargetPattern implements ChatPattern {
+public class TargetPattern implements FormatPattern {
 
 	private final MCStrings strings;
 	private final Pattern player = Pattern.compile("<p:(.*?)[/]p>");

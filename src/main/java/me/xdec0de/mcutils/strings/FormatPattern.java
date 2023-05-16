@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import org.bukkit.command.CommandSender;
 
-public interface ChatPattern {
+public interface FormatPattern {
 
 	@Nullable
 	String process(@Nonnull CommandSender target, @Nullable String string);

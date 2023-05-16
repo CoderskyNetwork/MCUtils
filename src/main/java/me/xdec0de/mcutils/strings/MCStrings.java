@@ -36,7 +36,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class MCStrings {
 
 	private HashMap<String, ColorPattern> colorPatterns = new HashMap<>();
-	private LinkedList<ChatPattern> chatPatterns = new LinkedList<>();
+	private LinkedList<FormatPattern> formatPatterns = new LinkedList<>();
 
 	private final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
@@ -44,8 +44,8 @@ public class MCStrings {
 		addColorPattern("gradient", new Gradient(this));
 		addColorPattern("hex", new Hex());
 		addColorPattern("classic", (str, simple) -> applyColorChar('&', str));
-		chatPatterns.add(new ActionBar());
-		chatPatterns.add(new TargetPattern(this));
+		formatPatterns.add(new ActionBar());
+		formatPatterns.add(new TargetPattern(this));
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class MCStrings {
 		if (str == null || str.isEmpty())
 			return true;
 		String toChat = str;
-		for (ChatPattern pattern : chatPatterns)
+		for (FormatPattern pattern : formatPatterns)
 			toChat = pattern.process(target, toChat);
 		if (toChat.isEmpty())
 			return true;
@@ -136,50 +136,50 @@ public class MCStrings {
 	}
 
 	/**
-	 * Gets a <b>previously registered</b> {@link ChatPattern} by class, that is,
-	 * a {@link ChatPattern} that has been added using either {@link #addChatPattern(ColorPattern)}
-	 * or {@link #addChatPatternBefore(ChatPattern, Class)}, if no {@link ChatPattern} matching
+	 * Gets a <b>previously registered</b> {@link FormatPattern} by class, that is,
+	 * a {@link FormatPattern} that has been added using either {@link #addChatPattern(ColorPattern)}
+	 * or {@link #addChatPatternBefore(FormatPattern, Class)}, if no {@link FormatPattern} matching
 	 * <b>pattern</b> has been added, null will be returned.
 	 * 
-	 * @param <T> must implement {@link ChatPattern}.
-	 * @param pattern the class of the {@link ChatPattern} to return.
+	 * @param <T> must implement {@link FormatPattern}.
+	 * @param pattern the class of the {@link FormatPattern} to return.
 	 * 
 	 * @throws IllegalArgumentException If <b>pattern</b> is null.
 	 * 
 	 * @return an instance of <b>pattern</b> if registered, null otherwise.
 	 * 
-	 * @see #addChatPattern(ChatPattern)
+	 * @see #addChatPattern(FormatPattern)
 	 */
-	public <T extends ChatPattern> ChatPattern getChatPattern(@Nonnull Class<T> pattern) {
+	public <T extends FormatPattern> FormatPattern getChatPattern(@Nonnull Class<T> pattern) {
 		if (pattern == null)
 			throw new IllegalArgumentException("Pattern cannot be null");
-		for (ChatPattern implPattern : chatPatterns)
+		for (FormatPattern implPattern : formatPatterns)
 			if (implPattern.getClass().equals(pattern))
 				return implPattern;
 		return null;
 	}
 
 	/**
-	 * Adds a new {@link ChatPattern} to be used on {@link #sendFormattedMessage(CommandSender, String)},
+	 * Adds a new {@link FormatPattern} to be used on {@link #sendFormattedMessage(CommandSender, String)},
 	 * it's important to take into account pattern order as patterns might conflict with one another.
 	 * <p>
-	 * Want to add a {@link ChatPattern} that would be overwritten by a MCUtils
-	 * {@link ChatPattern}? Use {@link #addChatPatternBefore(ChatPattern, Class)}
+	 * Want to add a {@link FormatPattern} that would be overwritten by a MCUtils
+	 * {@link FormatPattern}? Use {@link #addChatPatternBefore(FormatPattern, Class)}
 	 * 
-	 * @param pattern the {@link ChatPattern} to add.
+	 * @param pattern the {@link FormatPattern} to add.
 	 * 
 	 * @throws IllegalArgumentException If <b>pattern</b> is null.
 	 * 
 	 * @see #addChatPatternBefore(ColorPattern, Class)
 	 */
-	public void addChatPattern(@Nonnull ChatPattern pattern) {
+	public void addChatPattern(@Nonnull FormatPattern pattern) {
 		if (pattern == null)
 			throw new IllegalArgumentException("Pattern cannot be null");
-		chatPatterns.add(pattern);
+		formatPatterns.add(pattern);
 	}
 
 	/**
-	 * Adds a new {@link ChatPattern} to be used on {@link #applyColor(String)}
+	 * Adds a new {@link FormatPattern} to be used on {@link #applyColor(String)}
 	 * and {@link #applyColor(List)} before the specified <b>pattern</b>, it's
 	 * important to take into account pattern order as patterns might conflict with
 	 * one another. For example the {@link Hex} pattern directly conflicts with the
@@ -199,21 +199,21 @@ public class MCStrings {
 	 * 
 	 * @see #addChatPattern(ColorPattern)
 	 */
-	public <T extends ChatPattern> void addChatPatternBefore(@Nonnull ChatPattern pattern, @Nonnull Class<T> before) {
+	public <T extends FormatPattern> void addChatPatternBefore(@Nonnull FormatPattern pattern, @Nonnull Class<T> before) {
 		if (pattern == null)
 			throw new IllegalArgumentException("Added pattern cannot be null");
 		if (before == null)
 			throw new IllegalArgumentException("Before pattern class cannot be null");
-		final LinkedList<ChatPattern> tempPatterns = new LinkedList<>();
+		final LinkedList<FormatPattern> tempPatterns = new LinkedList<>();
 		boolean added = false;
-		for (ChatPattern implPattern : chatPatterns) {
+		for (FormatPattern implPattern : formatPatterns) {
 			if (implPattern.getClass().equals(before))
 				added = tempPatterns.add(pattern); // Always true as the Collection changes.
 			tempPatterns.add(implPattern);
 		}
 		if (!added)
 			tempPatterns.add(pattern);
-		chatPatterns = tempPatterns;
+		formatPatterns = tempPatterns;
 	}
 
 	/*
