@@ -23,14 +23,8 @@ import net.md_5.bungee.api.ChatColor;
  */
 public class Gradient implements ColorPattern {
 
-	private final MCStrings strings;
-
 	private final Pattern pattern = Pattern.compile("<#([0-9A-Fa-f]{6})(.*?)#([0-9A-Fa-f]{6})>");
 	private final Pattern simplePattern = Pattern.compile("<#([0-9A-Fa-f]{3})(.*?)#([0-9A-Fa-f]{3})>");
-
-	protected Gradient(MCStrings strings) {
-		this.strings = strings;
-	}
 
 	/**
 	 * Applies gradients to the provided <b>string</b>.
@@ -56,7 +50,7 @@ public class Gradient implements ColorPattern {
 		for (int i = simple ? 2 : 1; i > 0; i--) { // i will be 1 for simplePattern, 2 for pattern.
 			final Matcher matcher = i == 1 ? simplePattern.matcher(res) : pattern.matcher(res);
 			while (matcher.find()) {
-				final int step = strings.stripColor(matcher.group(2), '&').length();
+				final int step = MCStrings.stripColor(matcher.group(2), '&').length();
 				final Color start = i == 1 ? getSimpleColor(matcher.group(1)) : new Color(Integer.parseInt(matcher.group(1), 16));
 				final Color end = i == 1 ? getSimpleColor(matcher.group(3)) : new Color(Integer.parseInt(matcher.group(3), 16));
 				res = matcher.replaceFirst(apply(matcher.group(2), createGradient(start, end, step)));

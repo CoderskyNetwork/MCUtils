@@ -11,13 +11,8 @@ import org.bukkit.entity.Player;
 
 public class TargetPattern implements FormatPattern {
 
-	private final MCStrings strings;
 	private final Pattern player = Pattern.compile("<p:(.*?)[/]p>");
 	private final Pattern console = Pattern.compile("<c:(.*?)[/]c>");
-
-	TargetPattern(MCStrings strings) {
-		this.strings = strings;
-	}
 
 	@Nullable
 	public String process(@Nonnull CommandSender target, @Nullable String string) {
@@ -26,7 +21,7 @@ public class TargetPattern implements FormatPattern {
 		Matcher matcher = isPlayer ? player.matcher(postProcess) : console.matcher(postProcess);
 		while (matcher.find()) {
 			if (isPlayer)
-				((Player)target).spigot().sendMessage(strings.applyEventPatterns(matcher.group(1)));
+				((Player)target).spigot().sendMessage(MCStrings.applyEventPatterns(matcher.group(1)));
 			else
 				target.sendMessage(matcher.group(1));
 			matcher.reset((postProcess = matcher.replaceFirst("")));

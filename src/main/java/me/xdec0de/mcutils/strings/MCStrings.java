@@ -35,18 +35,10 @@ import net.md_5.bungee.api.chat.TextComponent;
  */
 public class MCStrings {
 
-	private HashMap<String, ColorPattern> colorPatterns = new HashMap<>();
-	private LinkedList<FormatPattern> formatPatterns = new LinkedList<>();
+	private static HashMap<String, ColorPattern> colorPatterns = new HashMap<>();
+	private static LinkedList<FormatPattern> formatPatterns = new LinkedList<>();
 
-	private final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
-
-	public MCStrings() {
-		addColorPattern("gradient", new Gradient(this));
-		addColorPattern("hex", new Hex());
-		addColorPattern("classic", (str, simple) -> applyColorChar('&', str));
-		formatPatterns.add(new ActionBar());
-		formatPatterns.add(new TargetPattern(this));
-	}
+	private static final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
 	/**
 	 * Sends <b>str</b> to <b>target</b> using the dynamic message format. This feature
@@ -68,7 +60,7 @@ public class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public boolean sendFormattedMessage(@Nonnull CommandSender target, @Nullable String str) {
+	public static boolean sendFormattedMessage(@Nonnull CommandSender target, @Nullable String str) {
 		if (target == null)
 			throw new IllegalArgumentException("target cannot be null.");
 		if (str == null || str.isEmpty())
@@ -100,7 +92,7 @@ public class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public BaseComponent[] applyEventPatterns(@Nullable String str) {
+	public static BaseComponent[] applyEventPatterns(@Nullable String str) {
 		if (str == null || str.isEmpty())
 			return null;
 		// Group 1: event args, Group 2: event text.
@@ -118,7 +110,7 @@ public class MCStrings {
 		return prevEnd != 0 ? res.append(TextComponent.fromLegacyText(str.substring(prevEnd))).create() : TextComponent.fromLegacyText(str);
 	}
 
-	private BaseComponent[] getAppliedContent(String text, String [] args) {
+	private static BaseComponent[] getAppliedContent(String text, String [] args) {
 		BaseComponent[] content = TextComponent.fromLegacyText(text);
 		for (int i = 0; i < args.length; i += 2) {
 			switch(args[i].toLowerCase()) {
@@ -150,7 +142,7 @@ public class MCStrings {
 	 * 
 	 * @see #addChatPattern(FormatPattern)
 	 */
-	public <T extends FormatPattern> FormatPattern getChatPattern(@Nonnull Class<T> pattern) {
+	public static <T extends FormatPattern> FormatPattern getFormatPattern(@Nonnull Class<T> pattern) {
 		if (pattern == null)
 			throw new IllegalArgumentException("Pattern cannot be null");
 		for (FormatPattern implPattern : formatPatterns)
@@ -172,7 +164,7 @@ public class MCStrings {
 	 * 
 	 * @see #addChatPatternBefore(ColorPattern, Class)
 	 */
-	public void addChatPattern(@Nonnull FormatPattern pattern) {
+	public static void addFormatPattern(@Nonnull FormatPattern pattern) {
 		if (pattern == null)
 			throw new IllegalArgumentException("Pattern cannot be null");
 		formatPatterns.add(pattern);
@@ -199,7 +191,7 @@ public class MCStrings {
 	 * 
 	 * @see #addChatPattern(ColorPattern)
 	 */
-	public <T extends FormatPattern> void addChatPatternBefore(@Nonnull FormatPattern pattern, @Nonnull Class<T> before) {
+	public static <T extends FormatPattern> void addFormatPatternBefore(@Nonnull FormatPattern pattern, @Nonnull Class<T> before) {
 		if (pattern == null)
 			throw new IllegalArgumentException("Added pattern cannot be null");
 		if (before == null)
@@ -236,8 +228,7 @@ public class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public ColorPattern getColorPattern(@Nonnull String id) {
-
+	public static ColorPattern getColorPattern(@Nonnull String id) {
 		if (!hasContent(id))
 			throw new IllegalArgumentException("Pattern id cannot be null or blank");
 		return colorPatterns.get(id);
@@ -265,7 +256,7 @@ public class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void addColorPattern(@Nonnull String id, @Nonnull ColorPattern pattern) {
+	public static void addColorPattern(@Nonnull String id, @Nonnull ColorPattern pattern) {
 		if (!hasContent(id))
 			throw new IllegalArgumentException("Pattern id cannot be null or blank");
 		if (pattern == null)
@@ -298,7 +289,7 @@ public class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public void addColorPatternBefore(@Nonnull String id, @Nonnull ColorPattern pattern, @Nonnull String beforeId) {
+	public static void addColorPatternBefore(@Nonnull String id, @Nonnull ColorPattern pattern, @Nonnull String beforeId) {
 		if (!hasContent(id))
 			throw new IllegalArgumentException("Pattern id cannot be null or blank");
 		if (pattern == null)
@@ -334,7 +325,7 @@ public class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String applyColor(@Nullable String string) {
+	public static String applyColor(@Nullable String string) {
 		if (string == null)
 			return null;
 		String res = string;
@@ -356,7 +347,7 @@ public class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> applyColor(@Nullable List<String> lst) {
+	public static List<String> applyColor(@Nullable List<String> lst) {
 		if (lst == null)
 			return null;
 		List<String> res = new ArrayList<>(lst.size());
@@ -380,7 +371,7 @@ public class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String applyColorChar(@Nonnull char ch, @Nullable String str) {
+	public static String applyColorChar(@Nonnull char ch, @Nullable String str) {
 		if (str == null)
 			return null;
 		final int length = str.length() - 1;
@@ -410,7 +401,7 @@ public class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public String stripColor(String str, char colorChar) {
+	public static String stripColor(String str, char colorChar) {
 		if (str == null)
 			return null;
 		final int length = str.length();
@@ -436,7 +427,7 @@ public class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public boolean isColorChar(char c) {
+	public static boolean isColorChar(char c) {
 		final char ch = Character.toLowerCase(c);
 		return (ch == 'r' || ch == 'x' || (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'k' && ch <= 'o'));
 	}
@@ -456,7 +447,7 @@ public class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public boolean hasContent(@Nullable String str) {
+	public static boolean hasContent(@Nullable String str) {
 		return str == null ? false : (!str.isBlank());
 	}
 
@@ -484,7 +475,7 @@ public class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asString(@Nullable List<String> lst, @Nullable String separator) {
+	public static String asString(@Nullable List<String> lst, @Nullable String separator) {
 		String res = "";
 		if (lst == null)
 			return null;
@@ -509,7 +500,7 @@ public class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public boolean isNumeric(String str) {
+	public static boolean isNumeric(String str) {
 		if (!hasContent(str))
 			return false;
 		final char sign = str.charAt(0);

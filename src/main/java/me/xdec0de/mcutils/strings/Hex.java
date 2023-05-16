@@ -15,8 +15,6 @@ import org.bukkit.ChatColor;
  */
 public class Hex implements ColorPattern {
 
-	Hex() {}
-
 	/**
 	 * Applies hexadecimal colors (#RRGGBB) to the provided <b>string</b>.
 	 * Output will be the same as the input if no hex code is present.

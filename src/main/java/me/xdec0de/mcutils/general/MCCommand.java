@@ -10,7 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.xdec0de.mcutils.MCUtils;
 import me.xdec0de.mcutils.strings.MCStrings;
 
 /**
@@ -142,8 +141,7 @@ public class MCCommand {
 	 */
 	@Nonnull
 	public MCCommand permissionMessage(@Nullable String permissionMessage) {
-		MCStrings strings = JavaPlugin.getPlugin(MCUtils.class).strings();
-		cmd.setPermissionMessage(strings.applyColor(permissionMessage));
+		cmd.setPermissionMessage(MCStrings.applyColor(permissionMessage));
 		return this;
 	}
 
@@ -160,8 +158,7 @@ public class MCCommand {
 	 */
 	@Nonnull
 	public MCCommand usage(@Nullable String usage) {
-		MCStrings strings = JavaPlugin.getPlugin(MCUtils.class).strings();
-		cmd.setUsage(strings.applyColor(usage));
+		cmd.setUsage(MCStrings.applyColor(usage));
 		return this;
 	}
 

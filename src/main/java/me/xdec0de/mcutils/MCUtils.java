@@ -10,7 +10,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.xdec0de.mcutils.files.PluginFile;
 import me.xdec0de.mcutils.general.PlayerUtils;
 import me.xdec0de.mcutils.guis.GUIHandler;
+import me.xdec0de.mcutils.strings.ActionBar;
+import me.xdec0de.mcutils.strings.Gradient;
+import me.xdec0de.mcutils.strings.Hex;
 import me.xdec0de.mcutils.strings.MCStrings;
+import me.xdec0de.mcutils.strings.TargetPattern;
 
 /**
  * The main class of the MCUtils API, used
@@ -37,30 +41,22 @@ import me.xdec0de.mcutils.strings.MCStrings;
  */
 public class MCUtils extends MCPlugin {
 
-	private final MCStrings strings = new MCStrings();
 	private final HashMap<JavaPlugin, GUIHandler> guiHandlers = new HashMap<>();
 
 	@Override
 	public void onEnable() {
 		registerFile("config.yml", PluginFile.class); // Added to #getConfig() by MCPlugin
+		MCStrings.addColorPattern("gradient", new Gradient());
+		MCStrings.addColorPattern("hex", new Hex());
+		MCStrings.addColorPattern("classic", (str, simple) -> MCStrings.applyColorChar('&', str));
+		MCStrings.addFormatPattern(new ActionBar());
+		MCStrings.addFormatPattern(new TargetPattern());
 		logCol("&8[&6MCUtils&8] &aPlugin enabled &8| &bv"+getDescription().getVersion()+" &8| &bMC "+getServerVersion());
 	}
 
 	@Override
 	public void onDisable() {
 		logCol("&8[&6MCUtils&8] &cPlugin disabled &8| &bv"+getDescription().getVersion()+" &8| &bMC "+getServerVersion());
-	}
-
-	/**
-	 * Gets an instance of {@link MCStrings}.
-	 * 
-	 * @return An instance of {@link MCStrings}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nonnull
-	public MCStrings strings() {
-		return strings;
 	}
 
 	/**
@@ -114,7 +110,7 @@ public class MCUtils extends MCPlugin {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean supports(@Nonnull String version) {
-		if (!strings.hasContent(version))
+		if (!MCStrings.hasContent(version))
 			return false;
 		float[] versions = new float[2]; // Convert to float, so 1.3.1b1 would be 131.1
 		for (int v = 0; v <= 1; v++) {

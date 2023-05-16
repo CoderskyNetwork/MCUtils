@@ -13,7 +13,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.xdec0de.mcutils.MCPlugin;
-import me.xdec0de.mcutils.MCUtils;
 import me.xdec0de.mcutils.general.Replacer;
 import me.xdec0de.mcutils.strings.MCStrings;
 
@@ -40,8 +39,6 @@ import me.xdec0de.mcutils.strings.MCStrings;
  */
 public class MessagesFile extends PluginFile {
 
-	/** An instance of {@link MCStrings} used for the messages methods */
-	final MCStrings strings = JavaPlugin.getPlugin(MCUtils.class).strings();
 	private Replacer defReplacer;
 
 	/**
@@ -252,7 +249,7 @@ public class MessagesFile extends PluginFile {
 		if (path == null)
 			return null;
 		String str = super.getString(path);
-		return getDefaultReplacer() == null ? strings.applyColor(str) : strings.applyColor(getDefaultReplacer().replaceAt(str));
+		return getDefaultReplacer() == null ? MCStrings.applyColor(str) : MCStrings.applyColor(getDefaultReplacer().replaceAt(str));
 	}
 
 	/**
@@ -280,7 +277,7 @@ public class MessagesFile extends PluginFile {
 		if (replacer == null)
 			throw new IllegalArgumentException("Replacer cannot be null.");
 		String str = super.getString(path);
-		return getDefaultReplacer() == null ? strings.applyColor(replacer.replaceAt(str)) : strings.applyColor(getDefaultReplacer().add(replacer).replaceAt(str));
+		return getDefaultReplacer() == null ? MCStrings.applyColor(replacer.replaceAt(str)) : MCStrings.applyColor(getDefaultReplacer().add(replacer).replaceAt(str));
 	}
 
 	/**
@@ -311,7 +308,7 @@ public class MessagesFile extends PluginFile {
 			throw new IllegalArgumentException("Replacements cannot be null.");
 		String str = super.getString(path);
 		return getDefaultReplacer() == null ?
-				strings.applyColor(new Replacer(replacements).replaceAt(str)) : strings.applyColor(getDefaultReplacer().add(replacements).replaceAt(str));
+				MCStrings.applyColor(new Replacer(replacements).replaceAt(str)) : MCStrings.applyColor(getDefaultReplacer().add(replacements).replaceAt(str));
 	}
 
 	// Lists //
@@ -340,10 +337,10 @@ public class MessagesFile extends PluginFile {
 		Replacer rep = getDefaultReplacer();
 		if (rep != null)
 			for (String str : atCfg)
-				res.add(strings.applyColor(rep.replaceAt(str)));
+				res.add(MCStrings.applyColor(rep.replaceAt(str)));
 		else
 			for (String str : atCfg)
-				res.add(strings.applyColor(str));
+				res.add(MCStrings.applyColor(str));
 		return res;
 	}
 
@@ -372,7 +369,7 @@ public class MessagesFile extends PluginFile {
 			return res; 
 		Replacer rep = getDefaultReplacer() != null ? getDefaultReplacer().add(replacer) : replacer;
 		for (String str : atCfg)
-			res.add(strings.applyColor(rep.replaceAt(str)));
+			res.add(MCStrings.applyColor(rep.replaceAt(str)));
 		return res;
 	}
 
@@ -403,7 +400,7 @@ public class MessagesFile extends PluginFile {
 			return res; 
 		Replacer rep = getDefaultReplacer() != null ? getDefaultReplacer().add(replacements) : new Replacer(replacements);
 		for (String str : atCfg)
-			res.add(strings.applyColor(rep.replaceAt(str)));
+			res.add(MCStrings.applyColor(rep.replaceAt(str)));
 		return res;
 	}
 
@@ -431,7 +428,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path) {
-		return strings.sendFormattedMessage(target, getString(path));
+		return MCStrings.sendFormattedMessage(target, getString(path));
 	}
 
 	/**
@@ -453,7 +450,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		return strings.sendFormattedMessage(target, getString(path, replacer));
+		return MCStrings.sendFormattedMessage(target, getString(path, replacer));
 	}
 
 	/**
@@ -475,7 +472,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
-		return strings.sendFormattedMessage(target, getString(path, replacements));
+		return MCStrings.sendFormattedMessage(target, getString(path, replacements));
 	}
 
 	/**
@@ -496,7 +493,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path) {
-		return strings.sendFormattedMessage(target, getColoredString(path));
+		return MCStrings.sendFormattedMessage(target, getColoredString(path));
 	}
 
 	/**
@@ -518,7 +515,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		return strings.sendFormattedMessage(target, getColoredString(path, replacer));
+		return MCStrings.sendFormattedMessage(target, getColoredString(path, replacer));
 	}
 
 	/**
@@ -540,6 +537,6 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
-		return strings.sendFormattedMessage(target, getColoredString(path, replacements));
+		return MCStrings.sendFormattedMessage(target, getColoredString(path, replacements));
 	}
 }

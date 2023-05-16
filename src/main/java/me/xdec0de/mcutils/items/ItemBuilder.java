@@ -26,11 +26,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Multimap;
 
-import me.xdec0de.mcutils.MCUtils;
 import me.xdec0de.mcutils.strings.MCStrings;
 
 /**
@@ -46,7 +44,6 @@ public class ItemBuilder implements Cloneable {
 
 	private final ItemStack item;
 	private final ItemMeta meta;
-	private final MCStrings strings = JavaPlugin.getPlugin(MCUtils.class).strings();
 
 	/**
 	 * Creates a new {@link ItemBuilder} with the specified {@link Material}.
@@ -382,7 +379,7 @@ public class ItemBuilder implements Cloneable {
 	 */
 	@Nonnull
 	public ItemBuilder setColoredDisplayName(@Nullable String name) {
-		meta.setDisplayName(strings.applyColor(name));
+		meta.setDisplayName(MCStrings.applyColor(name));
 		return this;
 	}
 
@@ -402,7 +399,7 @@ public class ItemBuilder implements Cloneable {
 	 */
 	@Nonnull
 	public ItemBuilder setLore(@Nullable List<String> lore) {
-		meta.setLore(strings.applyColor(lore));
+		meta.setLore(MCStrings.applyColor(lore));
 		return this;
 	}
 
@@ -439,7 +436,7 @@ public class ItemBuilder implements Cloneable {
 	 */
 	@Nonnull
 	public ItemBuilder setColoredLore(@Nullable List<String> lore) {
-		meta.setLore(strings.applyColor(lore));
+		meta.setLore(MCStrings.applyColor(lore));
 		return this;
 	}
 
@@ -498,7 +495,7 @@ public class ItemBuilder implements Cloneable {
 			return this;
 		List<String> lore = meta.getLore() == null ? new ArrayList<String>(lines.length) : meta.getLore();
 		for (String line : lines)
-			lore.add(strings.applyColor(line));
+			lore.add(MCStrings.applyColor(line));
 		return setLore(lore);
 	}
 

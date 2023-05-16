@@ -60,18 +60,6 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Gets an instance of {@link MCStrings}.
-	 * 
-	 * @return An instance of {@link MCStrings}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nonnull
-	public MCStrings strings() {
-		return getMCUtils().strings();
-	}
-
-	/**
 	 * Registers an existing {@link YmlFile} to this plugin, if the file doesn't exist it will be created,
 	 * if the file type is {@link PluginFile} and it's {@link YmlFile#getName() name} is "config.yml"
 	 * (Or just config as the extension will be added), {@link #getConfig()} will return it automatically as specified on said method.
@@ -117,7 +105,7 @@ public class MCPlugin extends JavaPlugin {
 	 */
 	@Nullable
 	public <T extends YmlFile> T registerFile(@Nonnull String path, @Nonnull Class<T> type) {
-		if (!strings().hasContent(path))
+		if (!MCStrings.hasContent(path))
 			return null;
 		try {
 			Constructor<T> constructor = type.getDeclaredConstructor(JavaPlugin.class, String.class);
@@ -350,9 +338,8 @@ public class MCPlugin extends JavaPlugin {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean logCol(@Nullable String... strings) {
-		MCStrings mcStrings = getMCUtils().strings();
 		for (String str : strings)
-			Bukkit.getConsoleSender().sendMessage(mcStrings.applyColor(str));
+			Bukkit.getConsoleSender().sendMessage(MCStrings.applyColor(str));
 		return true;
 	}
 

@@ -16,8 +16,6 @@ public class ActionBar implements FormatPattern {
 
 	private final Pattern pattern = Pattern.compile("<ab:(.*?)[/]ab>");
 
-	protected ActionBar() {}
-
 	@Nullable
 	public String process(@Nonnull CommandSender target, @Nullable String string) {
 		String postProcess = string;
