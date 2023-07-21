@@ -511,4 +511,52 @@ public class MCStrings {
 		}
 		return true;
 	}
+
+	/**
+	 * Gets a substring of <b>src</b>, starting at <b>from</b> and ending at <b>to</b>.
+	 * 
+	 * @param src the source string to cut.
+	 * @param from the string to match at the beginning of the new substring.
+	 * @param to the string to match at the end of the new substring.
+	 * @param inclusive if true, <b>from</b> and <b>to</b> will be included in the
+	 * resulting substring, if false, they won't.
+	 * 
+	 * @return A substring of <b>src</b> starting at <b>from</b> and ending at <b>to</b>,
+	 * <code>null</code> if no match is found.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #substring(String, String, String)
+	 */
+	public static String substring(String src, String from, String to, boolean inclusive) {
+		if (src == null || from == null || to == null)
+			return src;
+		final int start = src.indexOf(from);
+		final int end = src.indexOf(to);
+		if (start == -1 || end == -1)
+			return null;
+		return inclusive ? src.substring(start, end + to.length()) : src.substring(start + from.length(), end);
+	}
+
+	/**
+	 * Gets a substring of <b>src</b>, starting at <b>from</b> and ending
+	 * at <b>to</b>, both inclusive, meaning that
+	 * <code>MCStrings.substring("From one to two", "one", "two")</code>
+	 * will return "one to two", if any parameter is <code>null</code>, <b>src</b> will
+	 * be returned, if no substring is found, <code>null</code> will be returned.
+	 * 
+	 * @param src the source string to cut.
+	 * @param from the string to match at the beginning of the new substring.
+	 * @param to the string to match at the end of the new substring.
+	 * 
+	 * @return A substring of <b>src</b> starting at <b>from</b> and ending at <b>to</b>,
+	 * <code>null</code> if no match is found.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #substring(String, String, String, boolean)
+	 */
+	public static String substring(String src, String from, String to) {
+		return substring(src, from, to, true);
+	}
 }
