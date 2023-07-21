@@ -514,6 +514,102 @@ public class MCStrings {
 	}
 
 	/**
+	 * Converts <b>str</b> to <code>int</code>. As the name implies, this method doesn't allow signed
+	 * values, only numeric strings without sign. This method is designed to not throw any exception.
+	 * 
+	 * @param str the String to convert to <code>int</code>.
+	 * @param def the default value to return in case <b>str</b> is invalid.
+	 * 
+	 * @return <b>str</b> as an <code>int</code>, <b>def</b> if the value is negative, over {@link Integer#MAX_VALUE}
+	 * or if <b>str</b> is null or non-numeric.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static int asUnsignedInteger(@Nullable String str, int def) {
+		final int size = str == null ? 0 : str.length();
+		if (size == 0)
+			return def;
+		long result = 0;
+		for (int i = 0; i < size; i++) {
+			final char ch = str.charAt(i);
+			if (ch < '0' || ch > '9')
+				return def; // Not fully numeric, return -1 now.
+			result = (result * 10) + (ch - '0'); // Any numeric char - the char '0' will equal to it's numeric value.
+		}
+		return result > Integer.MAX_VALUE ? def : (int) result;
+	}
+
+	/**
+	 * Converts <b>str</b> to <code>int</code>. As the name implies, this method doesn't allow signed
+	 * values, only numeric strings without sign. This method is designed to not throw any exception.
+	 * 
+	 * @param str the String to convert to <code>int</code>.
+	 * 
+	 * @return <b>str</b> as an <code>int</code>, -1 if the value is negative, over {@link Integer#MAX_VALUE}
+	 * or if <b>str</b> is null or non-numeric.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static int asUnsignedInteger(@Nullable String str) {
+		return asUnsignedInteger(str, -1);
+	}
+
+	/**
+	 * Converts <b>str</b> to {@link Integer}. A bit slower than {@link #asUnsignedInteger(String)},
+	 * not only because of the logic behind sign handling but also the usage of the {@link Integer}
+	 * class in order to return null, which is much slower than using the primitive <code>int</code> type.
+	 * This method is designed to not throw any exception.
+	 * <p>
+	 * This method only allows one sign before the actual number, otherwise, the format is considered
+	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
+	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
+	 * 
+	 * @param str the String to convert to {@link Integer}.
+	 * @param def the default value to return in case <b>str</b> is invalid.
+	 * 
+	 * @return <b>Def</b> if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
+	 * otherwise, an {@link Integer} with the numeric value of <b>str</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public static Integer asInteger(@Nullable String str, @Nullable Integer def) {
+		final int size = str == null ? 0 : str.length();
+		if (size == 0)
+			return def;
+		int result = 0;
+		final char sign = str.charAt(0);
+		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++) {
+			final char ch = str.charAt(i);
+			if (ch < '0' || ch > '9')
+				return def; // Not fully numeric, return null now.
+			result = (result * 10) + (ch - '0'); // Any numeric char - the char '0' will equal to it's numeric value.
+		}
+		return sign == '-' ? -result : result;
+	}
+
+	/**
+	 * Converts <b>str</b> to {@link Integer}. Slower than {@link #asUnsignedInteger(String)},
+	 * not only because of the logic behind sign handling but also the usage of the {@link Integer}
+	 * class in order to return null, which is much slower than using the primitive <code>int</code> type.
+	 * This method is designed to not throw any exception.
+	 * <p>
+	 * This method only allows one sign before the actual number, otherwise, the format is considered
+	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
+	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
+	 * 
+	 * @param str the String to convert to {@link Integer}.
+	 * 
+	 * @return Null if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
+	 * otherwise, an {@link Integer} with the numeric value of <b>str</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static Integer asInteger(@Nullable String str) {
+		return asInteger(str, null);
+	}
+
+	/**
 	 * Converts a {@link String} to a {@link UUID} <b>the safe way</b>,
 	 * trying to use {@link UUID#fromString(String)} and catching
 	 * an {@link IllegalArgumentException} is <b>not</b> the safest approach, use
