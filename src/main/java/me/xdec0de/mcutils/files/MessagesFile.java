@@ -316,8 +316,9 @@ public class MessagesFile extends PluginFile {
 	 */
 
 	/**
-	 * Uses {@link #getString(String)} and then sends the returning
-	 * string to the specified <b>target</b>.
+	 * Uses {@link #getList(String)} or {@link #getString(String)} and then sends
+	 * the returned {@link String} or {@link List} of {@link String Strings}
+	 * to the specified <b>target</b>.
 	 * <p>
 	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
 	 * 
@@ -333,12 +334,18 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path) {
-		return MCStrings.sendFormattedMessage(target, getString(path));
+		List<String> lst = getList(path);
+		if (lst == null || lst.isEmpty())
+			return MCStrings.sendFormattedMessage(target, getString(path));
+		for (String msg : lst)
+			MCStrings.sendFormattedMessage(target, msg);
+		return true;
 	}
 
 	/**
-	 * Uses {@link #getString(String, Replacer)} and then sends the returning
-	 * string to the specified <b>target</b>.
+	 * Uses {@link #getList(String, Replacer)} or {@link #getString(String, Replacer)} and then sends
+	 * the returned {@link String} or {@link List} of {@link String Strings}
+	 * to the specified <b>target</b>.
 	 * <p>
 	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
 	 * 
@@ -355,12 +362,18 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		return MCStrings.sendFormattedMessage(target, getString(path, replacer));
+		List<String> lst = getList(path, replacer);
+		if (lst == null || lst.isEmpty())
+			return MCStrings.sendFormattedMessage(target, getString(path, replacer));
+		for (String msg : lst)
+			MCStrings.sendFormattedMessage(target, msg);
+		return true;
 	}
 
 	/**
-	 * Uses {@link #getString(String, Object...)} and then sends the returning
-	 * string to the specified <b>target</b>.
+	 * Uses {@link #getList(String, Object...)} or {@link #getString(String, Object...)} and then sends
+	 * the returned {@link String} or {@link List} of {@link String Strings}
+	 * to the specified <b>target</b>.
 	 * <p>
 	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
 	 * 
@@ -377,6 +390,11 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Object... replacements) {
-		return MCStrings.sendFormattedMessage(target, getString(path, replacements));
+		List<String> lst = getList(path, replacements);
+		if (lst == null || lst.isEmpty())
+			return MCStrings.sendFormattedMessage(target, getString(path, replacements));
+		for (String msg : lst)
+			MCStrings.sendFormattedMessage(target, msg);
+		return true;
 	}
 }
