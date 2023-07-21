@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * Represents a replacer to replace parts of a string with other strings, if you want to use the same replacements for multiple strings, you should 
+ * Represents a replacer to replace parts of a string with other objects, if you want to use the same replacements for multiple strings, you should 
  * create a replacer variable and apply it to as many strings as you want to <b>avoid creating multiple instances of the same replacements</b>, also, 
  * make sure that the amount of strings added to the replacer are <b>even</b>, otherwise, an {@link IllegalArgumentException} will be thrown.
  * 
@@ -18,11 +18,11 @@ import javax.annotation.Nullable;
  * 
  * @author xDec0de_
  * 
- * @see #Replacer(String...)
+ * @see #Replacer(Object...)
  */
 public class Replacer {
 
-	private final ArrayList<String> replaceList = new ArrayList<>();
+	private final ArrayList<Object> replaceList = new ArrayList<>();
 	private Pattern numPattern = null;
 
 	/**
@@ -30,7 +30,7 @@ public class Replacer {
 	 * create a {@link Replacer} variable and apply it to as many strings as you want to <b>avoid creating multiple instances of the same replacements</b>, also, 
 	 * make sure that the amount of strings added to the {@link Replacer} are <b>even</b>, otherwise, an {@link IllegalArgumentException} will be thrown.
 	 * 
-	 * @param replacements the strings to be replaced, the format is <i>"%placeholder1%", "replacement1", "%placeholder2%", "replacement2"...</i>
+	 * @param replacements the new strings to be replaced, the format is <i>"str1", "obj1", "str2", "obj2"...</i>
 	 * 
 	 * @throws IllegalArgumentException if <b>replacements</b> is null or the amount of strings is not even, more technically, if replacements
 	 * size % 2 is not equal to 0.
@@ -42,39 +42,40 @@ public class Replacer {
 	 * @see #replaceAt(String)
 	 * @see #replaceAt(List)
 	 */
-	public Replacer(String... replacements) {
+	public Replacer(Object... replacements) {
 		if (replacements == null)
 			throw new IllegalArgumentException("Replacements cannot be null.");
-		replaceList.addAll(Arrays.asList(replacements));
-		if(replaceList.size() % 2 != 0)
+		for (Object rep : replacements)
+			replaceList.add(rep);
+		if (replaceList.size() % 2 != 0)
 			throw new IllegalArgumentException(replaceList.get(replaceList.size() - 1) + "does not have a replacer! Add one more element to the replacer.");
 	}
 
 	/**
-	 * Adds new strings to an existing replacer, the amount of strings must also be even, note that existing replacements
+	 * Adds new replacements to an existing replacer, the amount of replacements must also be even, note that existing replacements
 	 * will be added to the list but the new replacer won't overwrite them. Because of the way replacements work, only the first
-	 * replacement added for a placeholder will take effect if there is another replacement added to said placeholder later on.
+	 * replacement added for a string will take effect if there is another replacement added to said string later on.
 	 * If <b>replacements</b> is null, nothing will be done.<br><br>
 	 * 
-	 * Example: text is <i>"Replace %placeholder%"</i>, we add <i>"%placeholder%", "Hello"</i> and <i>"%placeholder%", "World"</i>. The
-	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%placeholder%</i> will take effect.
+	 * Example: text is <i>"Replace %test%"</i>, we add <i>"%test%", "Hello"</i> and <i>"%test%", "World"</i>. The
+	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%test%</i> will take effect.
 	 * 
-	 * @param replacements the new strings to be replaced, the format is <i>"%placeholder1%", "replacement1", "%placeholder2%", "replacement2"...</i>
+	 * @param replacements the new strings to be replaced, the format is <i>"str1", "obj1", "str2", "obj2"...</i>
 	 * 
-	 * @return The old {@link Replacer} with the new <b>replacements</b> added to it.
+	 * @return This {@link Replacer} with the new <b>replacements</b> added to it.
 	 * 
-	 * @throws IllegalArgumentException if the amount of strings is not even, more technically, if replacements size % 2 is not equal to 0.
+	 * @throws IllegalArgumentException if the amount of replacements is not even, more technically, if <code>replacements.length</code> % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #replaceAt(String)
 	 * @see #replaceAt(List)
 	 */
-	@Nonnull
-	public Replacer add(@Nullable String... replacements) {
+	@NonNull
+	public Replacer add(@Nullable Object... replacements) {
 		if (replacements == null)
 			return this;
-		if(replacements.length % 2 != 0)
+		if (replacements.length % 2 != 0)
 			throw new IllegalArgumentException(replacements[replacements.length -1] + "does not have a replacer! Add one more element to the replacer.");
 		replaceList.addAll(Arrays.asList(replacements));
 		return this;
@@ -83,11 +84,11 @@ public class Replacer {
 	/**
 	 * Adds the replacements of the specified <b>replacer</b> to this {@link Replacer}, joining them, note that existing replacements
 	 * will be added to the list but the new replacer won't overwrite them. Because of the way replacements work, only the first
-	 * replacement added for a placeholder will take effect if there is another replacement added to said placeholder later on.
-	 * If <b>replacer</b> is null, nothing will be done.<br><br>
+	 * replacement added for a string will take effect if there is another replacement added to said string later on.
+	 * If <b>replacements</b> is null, nothing will be done.<br><br>
 	 * 
-	 * Example: text is <i>"Replace %placeholder%"</i>, we add <i>"%placeholder%", "Hello"</i> and <i>"%placeholder%", "World"</i>. The
-	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%placeholder%</i> will take effect.
+	 * Example: text is <i>"Replace %test%"</i>, we add <i>"%test%", "Hello"</i> and <i>"%test%", "World"</i>. The
+	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%test%</i> will take effect.
 	 * 
 	 * @param replacer the {@link Replacer} to join to the existing {@link Replacer}.
 	 * 
@@ -98,7 +99,7 @@ public class Replacer {
 	 * @see #replaceAt(String)
 	 * @see #replaceAt(List)
 	 */
-	@Nonnull
+	@NonNull
 	public Replacer add(@Nullable Replacer replacer) {
 		if (replacer != null)
 			replaceList.addAll(replacer.replaceList);
@@ -119,11 +120,11 @@ public class Replacer {
 	 */
 	@Nullable
 	public String replaceAt(@Nullable String str) {
-		if(str == null)
-			return null;
+		if (replaceList.isEmpty() || str == null || str.isEmpty())
+			return str;
 		String res = str;
-		for(int i = 0; i <= replaceList.size() - 1; i += 2)
-			res = res.replace(replaceList.get(i), replaceList.get(i + 1));
+		for (int i = 0; i <= replaceList.size() - 1; i += 2)
+			res = res.replace(replaceList.get(i).toString(), replaceList.get(i + 1).toString());
 		if (this.numPattern != null) {
 			Matcher matcher = numPattern.matcher(res);
 			while (matcher.find()) {
@@ -137,21 +138,22 @@ public class Replacer {
 	}
 
 	/**
-	 * Applies this {@link Replacer} to the specified list of strings, it the list is null, null will be returned.
+	 * Applies this {@link Replacer} to the specified list of {@link String strings},
+	 * if the <b>list</b> is null, null will be returned.
 	 * 
-	 * @param list the string list to apply the replacements to.
+	 * @param list the {@link String} {@link List} to apply the replacements to.
 	 * 
-	 * @return A new string list with the replacements applied to it.
+	 * @return A new {@link String} {@link List} with the replacements applied to it.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #add(Replacer)
-	 * @see #add(String...)
+	 * @see #add(Object...)
 	 */
 	@Nullable
 	public List<String> replaceAt(@Nullable List<String> list) {
-		if(list == null)
-			return null;
+		if (replaceList.isEmpty() || list == null || list.isEmpty())
+			return list;
 		List<String> res = new ArrayList<>();
 		list.forEach(str -> res.add(replaceAt(str)));
 		return res;
@@ -167,7 +169,7 @@ public class Replacer {
 	 * @see #Replacer(String...)
 	 */
 	@Override
-	@Nonnull
+	@NonNull
 	public Replacer clone() {
 		Replacer copy = new Replacer();
 		copy.replaceList.addAll(replaceList);
