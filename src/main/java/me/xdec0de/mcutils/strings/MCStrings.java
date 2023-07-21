@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -510,6 +511,41 @@ public class MCStrings {
 				return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Converts a {@link String} to a {@link UUID} <b>the safe way</b>,
+	 * trying to use {@link UUID#fromString(String)} and catching
+	 * an {@link IllegalArgumentException} is <b>not</b> the safest approach, use
+	 * this method for safe {@link String} to {@link UUID} conversion.
+	 * <p>
+	 * This method won't consider uuids without '-' characeters,
+	 * those will be considered regular strings.
+	 * <p>
+	 * Additionally, this method only allows full player {@link UUID}s,
+	 * as {@link UUID#fromString(String)} will accept, for example
+	 * "1-1-1-1-1" as "00000001-0001-0001-0001-000000000001"
+	 * 
+	 * @param uuid the {@link String} to be converted to {@link UUID}
+	 * 
+	 * @return A {@link UUID} by the specified <b>uuid</b> String,
+	 * null if the string doesn't have a valid {@link UUID} format.
+	 */
+	@Nullable
+	public static UUID toUUID(@Nullable String uuid) {
+		int len = uuid == null ? 0 : uuid.length();
+		if (len != 36)
+			return null;
+		char[] chars = uuid.toCharArray();
+		for (int i = 0; i < len; i++) {
+			char ch = chars[i];
+			if ((i == 8 || i == 13 || i == 18 || i == 23) && ch == '-')
+				continue;
+			if ((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))
+				continue;
+			return null;
+		}
+		return UUID.fromString(uuid);
 	}
 
 	/**
