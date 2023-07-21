@@ -95,9 +95,7 @@ public class MessagesFile extends PluginFile {
 	}
 
 	/*
-	 * 
 	 * Replacer handling
-	 * 
 	 */
 
 	/**
@@ -139,113 +137,32 @@ public class MessagesFile extends PluginFile {
 	 * you can see a detailed explanation on said method.
 	 * 
 	 * @param support true to enable, false to disable.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public void setNumSupport(boolean support) {
 		this.defReplacer.setNumSupport(support);
 	}
 
 	/*
-	 * 
 	 * Message getters
-	 * 
 	 */
 
 	// Strings //
 
 	/**
-	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)},
-	 * then applies {@link #getDefaultReplacer()} to it.
-	 * <p>
-	 * If the path is null, null will always be returned,
-	 * if no value exists for it and no default value was specified null will also be returned.
-	 * 
-	 * @param path the path of the String to get from {@link #getPath()}.
-	 * 
-	 * @return The requested string, null if no value for the path exists and no
-	 * default value was specified or the path is null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Override
-	public String getString(@Nullable String path) {
-		if (path == null)
-			return null;
-		String str = super.getString(path);
-		return getDefaultReplacer() == null ? str : getDefaultReplacer().replaceAt(str);
-	}
-
-	/**
-	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)},
-	 * then applies {@link #getDefaultReplacer()} to it with <b>replacer</b> being added to {@link #getDefaultReplacer()}.
-	 * <p>
-	 * If the path is null, null will always be returned,
-	 * if no value exists for it and no default value was specified null will also be returned.
-	 * 
-	 * @param path the path of the String to get from {@link #getPath()}.
-	 * @param replacer the {@link Replacer} to apply.
-	 * 
-	 * @return The requested string, null if no value for the path exists and no
-	 * default value was specified or the path is null.
-	 * 
-	 * @throws IllegalArgumentException if <b>replacer</b> is null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public String getString(@Nullable String path, @Nonnull Replacer replacer) {
-		if (path == null)
-			return null;
-		if (replacer == null)
-			throw new IllegalArgumentException("Replacer cannot be null.");
-		String str = super.getString(path);
-		return getDefaultReplacer() == null ? replacer.replaceAt(str) : getDefaultReplacer().add(replacer).replaceAt(str);
-	}
-
-	/**
-	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)},
-	 * then applies {@link #getDefaultReplacer()} to it with <b>replacements</b> being added to {@link #getDefaultReplacer()}.
-	 * <p>
-	 * If the path is null, null will always be returned,
-	 * if no value exists for it and no default value was specified null will also be returned.
-	 * <p>
-	 * <b>replacements</b> must not be null and it's size must be even as specified on {@link Replacer#add(String...)}
-	 * 
-	 * @param path the path of the String to get from {@link #getPath()}.
-	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
-	 * 
-	 * @return The requested string, null if no value for the path exists and no
-	 * default value was specified or the path is null.
-	 * 
-	 * @throws IllegalArgumentException if <b>replacements</b> null or it's size % 2 is not equal to 0.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public String getString(@Nullable String path, @Nonnull Object... replacements) {
-		if (path == null)
-			return null;
-		if (replacements == null)
-			throw new IllegalArgumentException("Replacements cannot be null.");
-		String str = super.getString(path);
-		return getDefaultReplacer() == null ? new Replacer(replacements).replaceAt(str) : getDefaultReplacer().add(replacements).replaceAt(str);
-	}
-
-	// Colored strings //
-
-	/**
 	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
 	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()} to it.
-	 * <p>
-	 * If the path is null, null will always be returned,
-	 * if no value exists for it and no default value was specified null will also be returned.
 	 * 
 	 * @param path the path of the String to get from {@link #getPath()}.
 	 * 
-	 * @return The requested colored string, null if no value for the path exists and no
-	 * default value was specified or the path is null.
+	 * @return The requested colored string, null if no value for the path exists or the path itself is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String getColoredString(@Nullable String path) {
+	@Override
+	public String getString(@Nullable String path) {
 		if (path == null)
 			return null;
 		String str = super.getString(path);
@@ -256,22 +173,18 @@ public class MessagesFile extends PluginFile {
 	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
 	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()}
 	 * to it with <b>replacer</b> being added to {@link #getDefaultReplacer()}.
-	 * <p>
-	 * If the path is null, null will always be returned,
-	 * if no value exists for it and no default value was specified null will also be returned.
 	 * 
 	 * @param path the path of the String to get from {@link #getPath()}.
 	 * @param replacer the {@link Replacer} to apply.
 	 * 
-	 * @return The requested colored string, null if no value for the path exists and no
-	 * default value was specified or the path is null.
+	 * @return The requested colored string, null if no value for the path exists or the path itself is null.
 	 * 
 	 * @throws IllegalArgumentException if <b>replacer</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String getColoredString(@Nullable String path, @Nonnull Replacer replacer) {
+	public String getString(@Nullable String path, @Nonnull Replacer replacer) {
 		if (path == null)
 			return null;
 		if (replacer == null)
@@ -285,23 +198,19 @@ public class MessagesFile extends PluginFile {
 	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()}
 	 * to it with the <b>replacements</b> being added to {@link #getDefaultReplacer()}.
 	 * <p>
-	 * If the path is null, null will always be returned,
-	 * if no value exists for it and no default value was specified null will also be returned.
-	 * <p>
 	 * The <b>replacements</b> must not be null and it's size must be even as specified on {@link Replacer#add(String...)}
 	 * 
 	 * @param path the path of the String to get from {@link #getPath()}.
 	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
 	 * 
-	 * @return The requested colored string, null if no value for the path exists and no
-	 * default value was specified or the path is null.
+	 * @return The requested colored string, null if no value for the path exists or the path itself is null.
 	 * 
 	 * @throws IllegalArgumentException if <b>replacements</b> is null or it's size size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String getColoredString(@Nullable String path, @Nonnull Object... replacements) {
+	public String getString(@Nullable String path, @Nonnull Object... replacements) {
 		if (path == null)
 			return null;
 		if (replacements == null)
@@ -312,8 +221,6 @@ public class MessagesFile extends PluginFile {
 	}
 
 	// Lists //
-
-	// Colored Lists //
 
 	/**
 	 * Gets the requested list of strings with {@link MCStrings#applyColor(String)}
@@ -327,7 +234,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getColoredList(@Nullable String path) {
+	public List<String> getList(@Nullable String path) {
 		if (path == null)
 			return null;
 		List<String> atCfg = super.getStringList(path);
@@ -358,7 +265,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getColoredList(@Nullable String path, @Nullable Replacer replacer) {
+	public List<String> getList(@Nullable String path, @Nullable Replacer replacer) {
 		if (path == null)
 			return null;
 		if (replacer == null)
@@ -389,7 +296,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getColoredList(@Nullable String path, @Nullable Object... replacements) {
+	public List<String> getList(@Nullable String path, @Nullable Object... replacements) {
 		if (path == null)
 			return null;
 		if (replacements == null)
@@ -405,9 +312,7 @@ public class MessagesFile extends PluginFile {
 	}
 
 	/*
-	 *
 	 * Message sending
-	 * 
 	 */
 
 	/**
@@ -454,7 +359,7 @@ public class MessagesFile extends PluginFile {
 	}
 
 	/**
-	 * Uses {@link #getString(String, String...)} and then sends the returning
+	 * Uses {@link #getString(String, Object...)} and then sends the returning
 	 * string to the specified <b>target</b>.
 	 * <p>
 	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
@@ -473,70 +378,5 @@ public class MessagesFile extends PluginFile {
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Object... replacements) {
 		return MCStrings.sendFormattedMessage(target, getString(path, replacements));
-	}
-
-	/**
-	 * Uses {@link #getColoredString(String)} and then sends the returning
-	 * string to the specified <b>target</b>.
-	 * <p>
-	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws IllegalArgumentException if <b>target</b> is null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path) {
-		return MCStrings.sendFormattedMessage(target, getColoredString(path));
-	}
-
-	/**
-	 * Uses {@link #getColoredString(String, Replacer)} and then sends the returning
-	 * string to the specified <b>target</b>.
-	 * <p>
-	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * @param replacer the {@link Replacer} to apply.
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws IllegalArgumentException if <b>target</b> or <b>replacer</b> are null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		return MCStrings.sendFormattedMessage(target, getColoredString(path, replacer));
-	}
-
-	/**
-	 * Uses {@link #getColoredString(String, String...)} and then sends the returning
-	 * string to the specified <b>target</b>.
-	 * <p>
-	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws IllegalArgumentException if <b>target</b> or <b>replacements</b> are null or if <b>replacements</b> size % 2 is not equal to 0.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull Object... replacements) {
-		return MCStrings.sendFormattedMessage(target, getColoredString(path, replacements));
 	}
 }
