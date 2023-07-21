@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -15,8 +16,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,7 +26,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import me.xdec0de.mcutils.files.MessagesFile;
 import me.xdec0de.mcutils.files.PluginFile;
 import me.xdec0de.mcutils.files.YmlFile;
-import me.xdec0de.mcutils.general.MCCommand;
+import me.xdec0de.mcutils.general.commands.MCCommand;
 import me.xdec0de.mcutils.guis.GUI;
 import me.xdec0de.mcutils.guis.GUIHandler;
 import me.xdec0de.mcutils.strings.MCStrings;
@@ -417,17 +416,40 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Creates and registers a new {@link PluginCommand} to be further modified at runtime.
+	 * Registers the specified <b>command</b>, allowing it to be executed.
 	 * 
-	 * @param label name or alias of the command
-	 * @param executor the {@link CommandExecutor} for this command.
+	 * @param <P> must extend {@link MCPlugin}
+	 * @param command the command to register.
 	 * 
-	 * @throws IllegalArgumentException if <b>label</b> or <b>executor</b> are null.
+	 * @return The specified <b>command</b>.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public MCCommand registerCommand(@Nonnull String label, @Nonnull CommandExecutor executor) {
-		return new MCCommand(this, label, executor);
+	public <P extends MCPlugin> MCCommand<P> registerCommand(@Nullable MCCommand<P> command) {
+		if (command == null)
+			return null;
+		this.getMCUtils().getCommandMap().register(getName(), command);
+		return command;
+	}
+
+	/**
+	 * Registers the specified <b>command</b>, allowing it to be executed.
+	 * 
+	 * @param <P> must extend {@link MCPlugin}
+	 * @param commands the command to register.
+	 * 
+	 * @return The specified <b>command</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@SuppressWarnings("unchecked")
+	public <P extends MCPlugin> P registerCommands(@Nullable MCCommand<P>... commands) {
+		if (commands == null || commands.length == 0)
+			return null;
+		if (!commands[0].getPlugin().equals(this))
+			throw new IllegalArgumentException(getName() + " attempted to register commands from other plugin.");
+		getMCUtils().getCommandMap().registerAll(getName(), Arrays.asList(commands));
+		return (P) this;
 	}
 
 	/**

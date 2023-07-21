@@ -1,10 +1,14 @@
 package me.xdec0de.mcutils;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.xdec0de.mcutils.files.PluginFile;
@@ -42,6 +46,8 @@ import me.xdec0de.mcutils.strings.TargetPattern;
 public class MCUtils extends MCPlugin {
 
 	private final HashMap<JavaPlugin, GUIHandler> guiHandlers = new HashMap<>();
+
+	private SimpleCommandMap commandMap;
 
 	@Override
 	public void onEnable() {
@@ -125,5 +131,21 @@ public class MCUtils extends MCPlugin {
 			}
 		}
 		return versions[0] >= versions[1];
+	}
+
+	final SimpleCommandMap getCommandMap() {
+		if (commandMap != null)
+			return commandMap;
+		try {
+			SimplePluginManager manager = ((SimplePluginManager)getServer().getPluginManager());
+			Field map = SimplePluginManager.class.getDeclaredField("commandMap");
+			map.setAccessible(true);
+			commandMap = (SimpleCommandMap) map.get(manager);
+			return commandMap;
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			logException(e, "Unable to get command map.");
+			Bukkit.getPluginManager().disablePlugin(this);
+			return null;
+		}
 	}
 }
