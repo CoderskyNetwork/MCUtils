@@ -219,7 +219,7 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public String getString(@Nullable String path, @Nonnull String... replacements) {
+	public String getString(@Nullable String path, @Nonnull Object... replacements) {
 		if (path == null)
 			return null;
 		if (replacements == null)
@@ -301,7 +301,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String getColoredString(@Nullable String path, @Nonnull String... replacements) {
+	public String getColoredString(@Nullable String path, @Nonnull Object... replacements) {
 		if (path == null)
 			return null;
 		if (replacements == null)
@@ -389,7 +389,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getColoredList(@Nullable String path, @Nullable String... replacements) {
+	public List<String> getColoredList(@Nullable String path, @Nullable Object... replacements) {
 		if (path == null)
 			return null;
 		if (replacements == null)
@@ -471,7 +471,7 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
+	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Object... replacements) {
 		return MCStrings.sendFormattedMessage(target, getString(path, replacements));
 	}
 
@@ -536,7 +536,7 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull String... replacements) {
+	public boolean sendColored(@Nonnull CommandSender target, @Nullable String path, @Nonnull Object... replacements) {
 		return MCStrings.sendFormattedMessage(target, getColoredString(path, replacements));
 	}
 }
