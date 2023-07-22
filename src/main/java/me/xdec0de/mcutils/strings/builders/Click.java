@@ -17,9 +17,10 @@ public class Click {
 	}
 
 	public BaseComponent[] apply(BaseComponent[] components) {
-		for (BaseComponent component : components)
+		BaseComponent[] clone = new BaseComponent[components.length];
+		for (BaseComponent component : clone)
 			component.setClickEvent(event);
-		return components;
+		return clone;
 	}
 
 	public BaseComponent[] apply(String str) {
