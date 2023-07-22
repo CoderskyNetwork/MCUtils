@@ -411,7 +411,7 @@ public class MCPlugin extends JavaPlugin {
 	public void registerEvents(@Nullable Listener... listeners) {
 		if (listeners == null)
 			return;
-		for(Listener listener : listeners)
+		for (Listener listener : listeners)
 			registerEvents(listener);
 	}
 
@@ -433,23 +433,19 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Registers the specified <b>command</b>, allowing it to be executed.
+	 * Registers the specified <b>command</b>, allowing them to be executed.
 	 * 
-	 * @param <P> must extend {@link MCPlugin}
-	 * @param commands the command to register.
+	 * @param commands the commands to register.
 	 * 
-	 * @return The specified <b>command</b>.
+	 * @return This {@link MCPlugin}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	@SuppressWarnings("unchecked")
-	public <P extends MCPlugin> P registerCommands(@Nullable MCCommand<P>... commands) {
+	public MCPlugin registerCommands(@Nullable MCCommand<?>... commands) {
 		if (commands == null || commands.length == 0)
 			return null;
-		if (!commands[0].getPlugin().equals(this))
-			throw new IllegalArgumentException(getName() + " attempted to register commands from other plugin.");
 		getMCUtils().getCommandMap().registerAll(getName(), Arrays.asList(commands));
-		return (P) this;
+		return this;
 	}
 
 	/**
