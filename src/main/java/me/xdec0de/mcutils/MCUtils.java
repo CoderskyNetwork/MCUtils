@@ -11,6 +11,7 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.xdec0de.mcutils.files.MessagesFile;
 import me.xdec0de.mcutils.files.PluginFile;
 import me.xdec0de.mcutils.general.PlayerUtils;
 import me.xdec0de.mcutils.guis.GUIHandler;
@@ -52,6 +53,7 @@ public class MCUtils extends MCPlugin {
 	@Override
 	public void onEnable() {
 		registerFile("config.yml", PluginFile.class); // Added to #getConfig() by MCPlugin
+		registerFile("messages.yml", MessagesFile.class);
 		MCStrings.addColorPattern("gradient", new Gradient());
 		MCStrings.addColorPattern("hex", new Hex());
 		MCStrings.addColorPattern("classic", (str, simple) -> MCStrings.applyColorChar('&', str));
