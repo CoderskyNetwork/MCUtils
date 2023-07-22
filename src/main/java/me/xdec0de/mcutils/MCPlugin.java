@@ -280,36 +280,31 @@ public class MCPlugin extends JavaPlugin {
 	 * <b>WARNING:</b> This method does <i>NOT</i> run asynchronously by itself, it's recommended to do so by using:
 	 * {@link BukkitScheduler#runTaskAsynchronously(org.bukkit.plugin.Plugin, Consumer)}
 	 * <p><p>
-	 * Gets the latest version of a plugin on <b>consumer</b> using spigotmc's API.
-	 * Version can take a time to update after a new resource update.
-	 * <p><p>
-	 * Example usage from a class extending {@link MCPlugin}:
-	 * <p>
-	 * <code>Bukkit.getScheduler().runTaskAsynchronously(this, () -> getLatestVersion(42, ver -> { } ));</code>
+	 * Gets the latest version of a resource (Premium resources are supported too) using SpigotMC's API.
+	 * The version can take some time to update after a new resource update.
 	 * 
 	 * @param resourceId the ID of the resource to retrieve, the ID can be found at your resource url:
 	 * <i>{@literal https://www.spigotmc.org/resources/<name>.<ID IS HERE>/}</i>
-	 * @param consumer the consumer that will accept the version string, note that this string can be null if
-	 * any error occurred while retrieving the latest version.
 	 * 
-	 * @throws IllegalArgumentException if consumer is null.
+	 * @return The latest available version name at SpigotMC with the specified <b>resourceId</b>,
+	 * may be null if no resource with that id exists or any I/O exception occurs.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see Bukkit#getScheduler()
 	 * @see BukkitScheduler#runTaskAsynchronously(org.bukkit.plugin.Plugin, Consumer)
 	 */
-	public void getLatestVersion(@Nonnegative int resourceId, @Nonnull Consumer<String> consumer) {
-		if (consumer == null)
-			throw new IllegalArgumentException("Consumer cannot be null");
+	public String getLatestVersion(@Nonnegative int resourceId) {
 		try {
 			InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId).openStream();
 			Scanner scanner = new Scanner(inputStream);
+			String ver = null;
 			if (scanner.hasNext())
-				consumer.accept(scanner.next());
+				ver = scanner.next();
 			scanner.close();
+			return ver;
 		} catch (IOException ex) {
-			consumer.accept(null);
+			return null;
 		}
 	}
 
