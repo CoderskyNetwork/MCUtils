@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.xdec0de.mcutils.files.MessagesFile;
 import me.xdec0de.mcutils.files.PluginFile;
+import me.xdec0de.mcutils.general.Replacer;
 import me.xdec0de.mcutils.guis.GUIHandler;
 import me.xdec0de.mcutils.strings.ActionBar;
 import me.xdec0de.mcutils.strings.Gradient;
@@ -45,14 +46,14 @@ import me.xdec0de.mcutils.strings.TargetPattern;
  */
 public class MCUtils extends MCPlugin {
 
+	private final MessagesFile msg = registerFile("messages.yml", MessagesFile.class);
 	private final HashMap<JavaPlugin, GUIHandler> guiHandlers = new HashMap<>();
-
 	private SimpleCommandMap commandMap;
 
 	@Override
 	public void onEnable() {
 		registerFile("config.yml", PluginFile.class); // Added to #getConfig() by MCPlugin
-		registerFile("messages.yml", MessagesFile.class);
+		msg.setDefaultReplacer(new Replacer("%prefix%", msg.getString("prefix"), "%error%", msg.getString("errPrefix")), false);
 		MCStrings.addColorPattern("gradient", new Gradient());
 		MCStrings.addColorPattern("hex", new Hex());
 		MCStrings.addColorPattern("classic", (str, simple) -> MCStrings.applyColorChar('&', str));
@@ -64,6 +65,18 @@ public class MCUtils extends MCPlugin {
 	@Override
 	public void onDisable() {
 		logCol("&8[&6MCUtils&8] &cPlugin disabled &8| &bv"+getDescription().getVersion()+" &8| &bMC "+getServerVersion());
+	}
+
+	/**
+	 * Gets messages.yml as a {@link MessagesFile}
+	 * 
+	 * @return messages.yml as a {@link MessagesFile}
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public MessagesFile getMessages() {
+		return msg;
 	}
 
 	/**

@@ -7,7 +7,7 @@
 # |------------------------------------------------------------------------| #
 
 prefix: "&6&lMC&e&lUtils &8|&7"
-errorPrefix: "&8&l[&4&l!&8&l]&c"
+errPrefix: "&8&l[&4&l!&8&l]&c"
 commands:
   noPlayer: "%error% This command cannot be executed by players&8."
   noConsole: "%error% This command cannot be executed by the console&8."
