@@ -114,7 +114,7 @@ public class MCStrings {
 	private static BaseComponent[] getAppliedContent(String text, String [] args) {
 		BaseComponent[] content = TextComponent.fromLegacyText(text);
 		for (int i = 0; i < args.length; i += 2) {
-			switch(args[i].toLowerCase()) {
+			content = switch (args[i].toLowerCase()) {
 			case "text", "show_text" -> new Hover(HoverEvent.Action.SHOW_TEXT, args[i + 1]).apply(content);
 			case "item", "show_item" -> new Hover(HoverEvent.Action.SHOW_ITEM, args[i + 1]).apply(content);
 			case "entity", "show_entity" -> new Hover(HoverEvent.Action.SHOW_ENTITY, args[i + 1]).apply(content);
@@ -123,7 +123,8 @@ public class MCStrings {
 			case "run", "run_cmd", "run_command" -> new Click(ClickEvent.Action.RUN_COMMAND, args[i + 1]).apply(content);
 			case "suggest", "suggest_cmd", "suggest_command" -> new Click(ClickEvent.Action.SUGGEST_COMMAND, args[i + 1]).apply(content);
 			case "copy", "copy_to_clipboard" -> new Click(ClickEvent.Action.COPY_TO_CLIPBOARD, args[i + 1]).apply(content);
-			}
+			default -> content;
+			};
 		}
 		return content;
 	}
@@ -635,11 +636,11 @@ public class MCStrings {
 		char[] chars = uuid.toCharArray();
 		for (int i = 0; i < len; i++) {
 			char ch = chars[i];
-			if ((i == 8 || i == 13 || i == 18 || i == 23) && ch == '-')
-				continue;
-			if ((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))
-				continue;
-			return null;
+			if (i == 8 || i == 13 || i == 18 || i == 23) {
+				if (ch != '-')
+					return null;
+			} else if (!(ch >= '0' && ch <= '9') && !(ch >= 'a' && ch <= 'f') && !(ch >= 'A' && ch <= 'F'))
+				return null;
 		}
 		return UUID.fromString(uuid);
 	}
