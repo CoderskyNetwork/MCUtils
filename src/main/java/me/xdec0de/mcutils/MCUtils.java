@@ -13,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.xdec0de.mcutils.files.MessagesFile;
 import me.xdec0de.mcutils.files.PluginFile;
-import me.xdec0de.mcutils.general.PlayerUtils;
 import me.xdec0de.mcutils.guis.GUIHandler;
 import me.xdec0de.mcutils.strings.ActionBar;
 import me.xdec0de.mcutils.strings.Gradient;
@@ -65,19 +64,6 @@ public class MCUtils extends MCPlugin {
 	@Override
 	public void onDisable() {
 		logCol("&8[&6MCUtils&8] &cPlugin disabled &8| &bv"+getDescription().getVersion()+" &8| &bMC "+getServerVersion());
-	}
-
-	/**
-	 * Gets an instance of {@link PlayerUtils}, this
-	 * method exists purely for accessibility, you
-	 * can just call {@link PlayerUtils}'s constructor.
-	 * 
-	 * @return An instance of {@link PlayerUtils}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public PlayerUtils players() {
-		return new PlayerUtils();
 	}
 
 	/**
