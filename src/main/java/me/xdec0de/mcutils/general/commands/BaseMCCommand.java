@@ -1,5 +1,6 @@
 package me.xdec0de.mcutils.general.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +30,18 @@ import me.xdec0de.mcutils.strings.MCStrings;
  * @since MCUtils 1.0.0
  *
  * @author xDec0de_
+ * 
+ * @see #onCommand(CommandSender, String[])
+ * @see #onTab(CommandSender, String[])
+ * @see MCCommand
+ * @see MCSubCommand
  */
 abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 
 	private final P plugin;
 	private final HashMap<MCSubCommand<?>, Integer> subCommands = new HashMap<>();
+
+	private Class<?> restrictedSenderClass = null;
 
 	/**
 	 * Creates a new instance of a {@link BaseMCCommand} with the
@@ -85,7 +93,7 @@ abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 	 * Commands can be owned by a plugin other than the command owner, this is to allow
 	 * add-ons that add sub commands to existing plugin commands.
 	 * 
-	 * @return this {@link BaseMCCommand}
+	 * @return This {@link BaseMCCommand}
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -98,17 +106,76 @@ abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 		return this;
 	}
 
+	/**
+	 * Sets the restricted {@link CommandSender} class, this means that any
+	 * {@link CommandSender} from the specified <b>senderClass</b> won't be
+	 * able to run or tab complete this command and MCUtils directly won't
+	 * call {@link #onCommand(CommandSender, String[])} nor {@link #onTab(CommandSender, String[])}
+	 * for that command if the sender class doesn't match, so you don't have to worry about it.
+	 * You can restrict either the {@link Player} class or the {@link ConsoleCommandSender} class
+	 * to make player or console only commands, using <code>null</code> (The default
+	 * value) will remove any restrictions.
+	 * <p>
+	 * Note that the parent command will always take priority with this, meaning that if the
+	 * sender has access to a sub command but not to the parent command, the sender won't
+	 * have access anyways as the parent command won't allow it.
+	 * <p>
+	 * For command execution, both commands and sub commands work the same way, respecting
+	 * priority, the first command to restrict the sender will send it a custom message specified
+	 * by MCUtils at messages.yml, this message may vary if the sender is a player or the console.
+	 * <p>
+	 * Regarding restricted tab completion, commands and sub commands behave a bit differently, both will
+	 * suggest null to the sender on their own tab completions, however, if the sender is tab completing
+	 * a parent command that has one or more sub commands that don't match the sender class, <b>only</b>
+	 * those sub commands will be removed from the parent suggestions.
+	 * <p>
+	 * As additional information, using the {@link CommandSender} class itself won't have any effect
+	 * as that would make the command impossible to use.
+	 * 
+	 * @param <T> Must be {@link Player} or {@link ConsoleCommandSender}
+	 * @param senderClass the class to restrict from using this command.
+	 * 
+	 * @return This {@link BaseMCCommand}
+	 * 
+	 * @see Player#getClass()
+	 * @see ConsoleCommandSender#getClass()
+	 */
+	@Nonnull
+	public <T extends CommandSender> BaseMCCommand<P> setRestrictedSenderClass(@Nullable Class<T> senderClass) {
+		if (senderClass == null || !senderClass.equals(CommandSender.class))
+			this.restrictedSenderClass = senderClass;
+		return this;
+	}
+
+	/**
+	 * Checks if <b>sender</b> is restricted to use this command,
+	 * check {@link #setRestrictedSenderClass(Class)} for more information.
+	 * 
+	 * @param sender the sender to check.
+	 * 
+	 * @return true if <b>sender</b>'s class is restricted, false otherwise.
+	 * 
+	 * @throws NullPointerException if <b>sender</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public final boolean isRestricted(@Nonnull CommandSender sender) {
+		return sender.getClass() == restrictedSenderClass;
+	}
+
 	/** @deprecated In favor of {@link #onCommand(CommandSender, String[])}
 	 * @hidden */
 	@Deprecated
 	@Override
 	public final boolean execute(CommandSender sender, String commandLabel, String[] args) {
-		for (MCSubCommand<?> cmd : subCommands.keySet()) {
-			int subCmdArg = subCommands.get(cmd);
+		if (isRestricted(sender))
+			return getPlugin().getMCUtils().getMessages().send(sender, sender instanceof Player ? "commands.noPlayer" : "commands.noConsole");
+		for (MCSubCommand<?> subCmd : subCommands.keySet()) {
+			int subCmdPos = subCommands.get(subCmd);
 			for (int i = 0; i < args.length; i++) {
 				String arg = args[i].toLowerCase();
-				if (i == subCmdArg && (arg.equals(cmd.getName()) || cmd.getAliases().contains(arg)))
-					return cmd.onCommand(sender, Arrays.copyOfRange(args, subCmdArg + 1, args.length));
+				if (i == subCmdPos && (subCmd.getName().equals(arg) || subCmd.getAliases().contains(arg)))
+					return subCmd.execute(sender, commandLabel, Arrays.copyOfRange(args, subCmdPos + 1, args.length));
 			}
 		}
 		return onCommand(sender, args);
@@ -149,15 +216,26 @@ abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 	@Override
 	@Nullable
 	public final List<String> tabComplete(@Nonnull CommandSender sender, @Nonnull String alias, @Nonnull String[] args) {
-		for (MCSubCommand<?> cmd : subCommands.keySet()) {
-			int subCmdArg = subCommands.get(cmd);
-			for (int i = 0; i < args.length; i++) {
+		if (isRestricted(sender))
+			return null;
+		List<String> tabs = new ArrayList<String>();
+		for (MCSubCommand<?> subCmd : subCommands.keySet()) {
+			int subCmdPos = subCommands.get(subCmd);
+			if (subCmdPos == args.length - 1) { // One argument before subCmd, we suggest its name.
+				if (!subCmd.isRestricted(sender))
+					tabs.add(subCmd.getName());
+				continue;
+			}
+			for (int i = 0; i < args.length; i++) { // We check all arguments just in case we are in a nested sub command
 				String arg = args[i].toLowerCase();
-				if (i == subCmdArg && arg.equals(cmd.getName()))
-					return cmd.onTab(sender, Arrays.copyOfRange(args, subCmdArg + 1, args.length));
+				if (i == subCmdPos && (subCmd.getName().equals(arg) || subCmd.getAliases().contains(arg)))
+					return subCmd.tabComplete(sender, alias, Arrays.copyOfRange(args, subCmdPos + 1, args.length));
 			}
 		}
-		return onTab(sender, args);
+		List<String> selfTabs = onTab(sender, args);
+		if (selfTabs != null)
+			tabs.addAll(selfTabs);
+		return tabs.isEmpty() ? null : tabs;
 	}
 
 	/**

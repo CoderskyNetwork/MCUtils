@@ -2,9 +2,12 @@ package me.xdec0de.mcutils.general.commands;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 import me.xdec0de.mcutils.MCPlugin;
 
@@ -21,7 +24,10 @@ import me.xdec0de.mcutils.MCPlugin;
  * 
  * @author xDec0de_
  * 
+ * @see #onCommand(CommandSender, String[])
+ * @see #onTab(CommandSender, String[])
  * @see MCCommand#inject(int, MCSubCommand...)
+ * @see MCCommand
  */
 public abstract class MCSubCommand<P extends MCPlugin> extends BaseMCCommand<P> {
 
@@ -57,10 +63,28 @@ public abstract class MCSubCommand<P extends MCPlugin> extends BaseMCCommand<P> 
 	 * Method override for better documentation & return types.
 	 */
 
-	/** @return This {@link MCSubCommand} */
+	/** 
+	 * @return This {@link MCSubCommand}
+	 * 
+	 * @since MCUtils 1.0.0
+	 **/
 	@Override
 	public final MCSubCommand<P> inject(int position, @Nullable MCSubCommand<?>... commands) {
 		super.inject(position, commands);
+		return this;
+	}
+
+	/**
+	 * @return This {@link MCSubCommand}
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see Player#getClass()
+	 * @see ConsoleCommandSender#getClass()
+	 */
+	@Nonnull
+	public final <T extends CommandSender> MCSubCommand<P> setRestrictedSenderClass(@Nullable Class<T> senderClass) {
+		super.setRestrictedSenderClass(senderClass);
 		return this;
 	}
 }
