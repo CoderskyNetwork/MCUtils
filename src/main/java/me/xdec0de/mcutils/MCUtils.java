@@ -15,11 +15,7 @@ import me.xdec0de.mcutils.files.MessagesFile;
 import me.xdec0de.mcutils.files.PluginFile;
 import me.xdec0de.mcutils.general.Replacer;
 import me.xdec0de.mcutils.guis.GUIHandler;
-import me.xdec0de.mcutils.strings.ActionBar;
-import me.xdec0de.mcutils.strings.Gradient;
-import me.xdec0de.mcutils.strings.Hex;
 import me.xdec0de.mcutils.strings.MCStrings;
-import me.xdec0de.mcutils.strings.TargetPattern;
 
 /**
  * The main class of the MCUtils API, used
@@ -54,11 +50,6 @@ public class MCUtils extends MCPlugin {
 	public void onEnable() {
 		registerFile("config.yml", PluginFile.class); // Added to #getConfig() by MCPlugin
 		msg.setDefaultReplacer(new Replacer("%prefix%", msg.getString("prefix"), "%error%", msg.getString("errPrefix")));
-		MCStrings.addColorPattern("gradient", new Gradient());
-		MCStrings.addColorPattern("hex", new Hex());
-		MCStrings.addColorPattern("classic", (str, simple) -> MCStrings.applyColorChar('&', str));
-		MCStrings.addFormatPattern(new ActionBar());
-		MCStrings.addFormatPattern(new TargetPattern());
 		logCol("&8[&6MCUtils&8] &aPlugin enabled &8| &bv"+getDescription().getVersion()+" &8| &bMC "+getServerVersion());
 	}
 

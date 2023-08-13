@@ -41,6 +41,16 @@ public class MCStrings {
 
 	private static final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
+	private MCStrings() {}
+
+	static {
+		addColorPattern("gradient", new Gradient());
+		addColorPattern("hex", new Hex());
+		addColorPattern("classic", (str, simple) -> applyColorChar('&', str));
+		addFormatPattern(new ActionBar());
+		addFormatPattern(new TargetPattern());
+	}
+
 	/**
 	 * Sends <b>str</b> to <b>target</b> using the dynamic message format. This feature
 	 * allows administrators to choose how and where a message will be sent, player specific
