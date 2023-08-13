@@ -65,6 +65,10 @@ public class MessagesFile extends PluginFile {
 	 */
 	public MessagesFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(plugin, path, charset);
+		if (!contains("commands.noPlayer"))
+			addDefault("commands.noPlayer", "&8&l[&4&l!&8&l] &cThis command cannot be executed by players&8.");
+		if (!contains("commands.noConsole"))
+			addDefault("commands.noConsole", "&8&l[&4&l!&8&l] &cThis command cannot be executed by the console&8.");
 	}
 
 	/**
@@ -221,7 +225,8 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getList(@Nullable String path) {
+	@Override
+	public List<String> getStringList(@Nullable String path) {
 		if (path == null)
 			return null;
 		List<String> atCfg = super.getStringList(path);
@@ -252,7 +257,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getList(@Nullable String path, @Nullable Replacer replacer) {
+	public List<String> getStringList(@Nullable String path, @Nullable Replacer replacer) {
 		if (path == null)
 			return null;
 		if (replacer == null)
@@ -283,7 +288,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getList(@Nullable String path, @Nullable Object... replacements) {
+	public List<String> getStringList(@Nullable String path, @Nullable Object... replacements) {
 		if (path == null)
 			return null;
 		if (replacements == null)
@@ -321,7 +326,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path) {
-		List<String> lst = getList(path);
+		List<String> lst = getStringList(path);
 		if (lst == null || lst.isEmpty())
 			return MCStrings.sendFormattedMessage(target, getString(path));
 		for (String msg : lst)
@@ -349,7 +354,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		List<String> lst = getList(path, replacer);
+		List<String> lst = getStringList(path, replacer);
 		if (lst == null || lst.isEmpty())
 			return MCStrings.sendFormattedMessage(target, getString(path, replacer));
 		for (String msg : lst)
@@ -377,7 +382,7 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Object... replacements) {
-		List<String> lst = getList(path, replacements);
+		List<String> lst = getStringList(path, replacements);
 		if (lst == null || lst.isEmpty())
 			return MCStrings.sendFormattedMessage(target, getString(path, replacements));
 		for (String msg : lst)

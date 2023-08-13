@@ -3,6 +3,7 @@ package me.xdec0de.mcutils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -16,10 +17,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -47,6 +50,8 @@ public class MCPlugin extends JavaPlugin {
 
 	private final List<YmlFile> files = new ArrayList<>();
 	private PluginFile config;
+	private MessagesFile messages;
+	private SimpleCommandMap commandMap;
 
 	/**
 	 * Gets an instance of {@link MCUtils}
@@ -79,8 +84,10 @@ public class MCPlugin extends JavaPlugin {
 			return null;
 		file.create();
 		files.add(file);
-		if (file instanceof PluginFile && file.getName().equals("config.yml"))
+		if (file instanceof PluginFile && file.getPath().equals("config.yml"))
 			this.config = (PluginFile) file;
+		else if (file instanceof MessagesFile)
+			this.messages = (MessagesFile) file;
 		return file;
 	}
 
@@ -129,6 +136,11 @@ public class MCPlugin extends JavaPlugin {
 	@Override
 	public PluginFile getConfig() {
 		return config;
+	}
+
+	@Nullable
+	public MessagesFile getMessages() {
+		return messages;
 	}
 
 	/**
@@ -423,7 +435,7 @@ public class MCPlugin extends JavaPlugin {
 	public <P extends MCPlugin> MCCommand<P> registerCommand(@Nullable MCCommand<P> command) {
 		if (command == null)
 			return null;
-		this.getMCUtils().getCommandMap().register(getName(), command);
+		getCommandMap().register(getName(), command);
 		return command;
 	}
 
@@ -439,8 +451,24 @@ public class MCPlugin extends JavaPlugin {
 	public MCPlugin registerCommands(@Nullable MCCommand<?>... commands) {
 		if (commands == null || commands.length == 0)
 			return null;
-		getMCUtils().getCommandMap().registerAll(getName(), Arrays.asList(commands));
+		getCommandMap().registerAll(getName(), Arrays.asList(commands));
 		return this;
+	}
+
+	private final SimpleCommandMap getCommandMap() {
+		if (commandMap != null)
+			return commandMap;
+		try {
+			SimplePluginManager manager = ((SimplePluginManager)getServer().getPluginManager());
+			Field map = SimplePluginManager.class.getDeclaredField("commandMap");
+			map.setAccessible(true);
+			commandMap = (SimpleCommandMap) map.get(manager);
+			return commandMap;
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			logException(e, "Unable to get command map.");
+			Bukkit.getPluginManager().disablePlugin(this);
+			return null;
+		}
 	}
 
 	/**
