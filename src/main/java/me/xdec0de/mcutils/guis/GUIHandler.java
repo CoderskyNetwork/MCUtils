@@ -14,7 +14,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.xdec0de.mcutils.MCUtils;
+import me.xdec0de.mcutils.MCPlugin;
 
 /**
  * A class intended to handle {@link GUI}s, you
@@ -35,7 +35,12 @@ import me.xdec0de.mcutils.MCUtils;
  */
 public class GUIHandler implements Listener {
 
+	private final MCPlugin plugin;
 	private final List<GUI> guis = new ArrayList<>();
+
+	public GUIHandler(MCPlugin plugin) {
+		this.plugin = plugin;
+	}
 
 	/**
 	 * Gets the {@link GUI} a {@link Player} is currently viewing, if any.
@@ -162,7 +167,7 @@ public class GUIHandler implements Listener {
 	public void onClose(InventoryCloseEvent event) {
 		GUI gui = getOpenedGUI(event.getPlayer().getUniqueId());
 		if (gui != null)
-			gui.close((Player) event.getPlayer(), event);
+			gui.close(plugin, (Player) event.getPlayer(), event);
 	}
 
 	@EventHandler

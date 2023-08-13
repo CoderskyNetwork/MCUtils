@@ -35,8 +35,7 @@ import me.xdec0de.mcutils.guis.GUIHandler;
 import me.xdec0de.mcutils.strings.MCStrings;
 
 /**
- * Represents a {@link JavaPlugin} using
- * the {@link MCUtils} API.
+ * Represents a {@link JavaPlugin} using the MCUtils API.
  * 
  * @since MCUtils 1.0.0
  * 
@@ -52,16 +51,7 @@ public class MCPlugin extends JavaPlugin {
 	private PluginFile config;
 	private MessagesFile messages;
 	private SimpleCommandMap commandMap;
-
-	/**
-	 * Gets an instance of {@link MCUtils}
-	 * 
-	 * @return An instance of {@link MCUtils}
-	 */
-	@Nonnull
-	public MCUtils getMCUtils() {
-		return JavaPlugin.getPlugin(MCUtils.class);
-	}
+	private GUIHandler guiHandler;
 
 	/**
 	 * Registers an existing {@link YmlFile} to this plugin, if the file doesn't exist it will be created,
@@ -471,6 +461,10 @@ public class MCPlugin extends JavaPlugin {
 		}
 	}
 
+	public GUIHandler getGUIHandler() {
+		return guiHandler == null ? (guiHandler = registerEvents(new GUIHandler(this))) : guiHandler;
+	}
+
 	/**
 	 * Registers the specified {@link GUI} to be handled, if
 	 * <b>gui</b> is null or already registered, null will
@@ -488,7 +482,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #unregisterGUIs(GUI...)
 	 */
 	public GUI registerGUI(GUI gui) {
-		return getMCUtils().getGUIHandler(this).registerGUI(gui);
+		return getGUIHandler().registerGUI(gui);
 	}
 
 	/**
@@ -505,7 +499,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #unregisterGUIs(GUI...)
 	 */
 	public void registerGUIs(GUI... guis) {
-		getMCUtils().getGUIHandler(this).registerGUIs(guis);
+		getGUIHandler().registerGUIs(guis);
 	}
 
 	/**
@@ -521,7 +515,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #unregisterGUIs()
 	 */
 	public void unregisterGUIs(GUI... guis) {
-		getMCUtils().getGUIHandler(this).unregisterGUIs(guis);
+		getGUIHandler().unregisterGUIs(guis);
 	}
 
 	/**
@@ -534,6 +528,6 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #unregisterGUIs(GUI...)
 	 */
 	public void unregisterGUIs() {
-		getMCUtils().getGUIHandler(this).unregisterGUIs();
+		getGUIHandler().unregisterGUIs();
 	}
 }

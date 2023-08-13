@@ -16,10 +16,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import me.xdec0de.mcutils.MCPlugin;
-import me.xdec0de.mcutils.MCUtils;
 import me.xdec0de.mcutils.items.ItemBuilder;
 
 /**
@@ -108,7 +106,7 @@ public abstract class GUI {
 	 * 
 	 * @apiNote Internal method, don't override it unless you really know what you are doing, implement {@link #onClose(Player, Event)} instead.
 	 */
-	public boolean close(@Nullable Player player, @Nullable Event event) {
+	public boolean close(MCPlugin plugin, @Nullable Player player, @Nullable Event event) {
 		if (event == null)
 			return close(player);
 		if (player == null || !viewing.contains(player.getUniqueId()))
@@ -118,7 +116,7 @@ public abstract class GUI {
 			player.closeInventory();
 			return true;
 		} else if (event instanceof InventoryCloseEvent)
-			Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(MCUtils.class), () -> player.openInventory(((InventoryCloseEvent)event).getInventory()), 1);
+			Bukkit.getScheduler().runTaskLater(plugin, () -> player.openInventory(((InventoryCloseEvent)event).getInventory()), 1);
 		return false;
 	}
 
