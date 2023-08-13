@@ -3,16 +3,27 @@ package me.xdec0de.mcutils.general;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import me.xdec0de.mcutils.strings.MCStrings;
+
 /**
  * Represents a replacer to replace parts of a string with other objects, if you want to use the same replacements for multiple strings, you should 
- * create a replacer variable and apply it to as many strings as you want to <b>avoid creating multiple instances of the same replacements</b>, also, 
+ * create a replacer variable and apply it to as many strings as you want to <b>avoid creating multiple instances of the same replacements</b>, also,
  * make sure that the amount of strings added to the replacer are <b>even</b>, otherwise, an {@link IllegalArgumentException} will be thrown.
+ * <p>
+ * <b>Numeric support:</b>
+ * <br>
+ * This feature is always enabled with Replacers and adds the possibility to apply different replacements
+ * depending on numeric values, don't worry about performance, the impact isn't noticeable unless you are
+ * parsing millions of strings as this doesn't use regular expressions. Here is a common example on how to use it:
+ * <p>
+ * <code>new Replacer("%points%", 10).replaceAt("You have %points% <%points%:point:points>"</code>
+ * <p>
+ * With this example, the returning string will be "<b>You have 10 points</b>".
+ * If instead of 10 we had 1 (or -1) point, the result would be "<b>You have 1 point</b>",
  * 
  * @since MCUtils 1.0.0
  * 
@@ -23,7 +34,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public class Replacer {
 
 	private final ArrayList<Object> replaceList = new ArrayList<>();
-	private Pattern numPattern = null;
 
 	/**
 	 * Creates a replacer to replace parts of a string with other strings, if you want to use the same replacements for multiple strings, you should 
@@ -120,19 +130,46 @@ public class Replacer {
 	 */
 	@Nullable
 	public String replaceAt(@Nullable String str) {
-		if (replaceList.isEmpty() || str == null || str.isEmpty())
+		final int replacelistLen = replaceList.size();
+		if (replacelistLen == 0 || str == null || str.isEmpty())
 			return str;
-		String res = str;
-		for (int i = 0; i <= replaceList.size() - 1; i += 2)
-			res = res.replace(replaceList.get(i).toString(), replaceList.get(i + 1).toString());
-		if (this.numPattern != null) {
-			Matcher matcher = numPattern.matcher(res);
-			while (matcher.find()) {
-				// 1 = value, 2 = singular, 3 = plural. 
-				final int value = Integer.valueOf(matcher.group(1));
-				final String replacement = value == 1 ? matcher.group(2) : matcher.group(3);
-				res = res.replace(matcher.group(), replacement);
+		final StringBuilder res = new StringBuilder(str);
+		for (int i = 0; i <= replacelistLen - 1; i += 2) {
+			final String toSearch = replaceList.get(i).toString();
+			final int searchLen = toSearch.length();
+			final String replacement = replaceList.get(i + 1).toString();
+			final int replacementLen = replacement.length();
+			int index = res.indexOf(toSearch);
+			while (index != -1) {
+				res.replace(index, index + searchLen, replacement);
+				index += replacementLen;
+				index = res.indexOf(toSearch, index);
 			}
+		}
+		return applyNumSupport(res).toString();
+	}
+
+	private StringBuilder applyNumSupport(StringBuilder res) {
+		int start = 0;
+		final int resLen = res.length();
+		while (start < resLen) {
+			int open = res.indexOf("<", start);
+			int close = res.indexOf(">", open);
+			if (open == -1 || close == -1)
+				break;
+			String[] parts = res.substring(open + 1, close).split(":");
+			if (parts.length != 3) {
+				start = close + 1;
+				continue;
+			}
+			final String numStr = parts[0].startsWith("+") || parts[0].startsWith("-") ? parts[0].substring(1) : parts[0];
+			if (MCStrings.isNumeric(numStr)) {
+				int num = Integer.parseInt(numStr);
+				String replacement = num == 1 ? parts[1] : parts[2];
+				res.replace(open, close + 1, replacement);
+				start = open + replacement.length();
+			} else
+				start = close + 1;
 		}
 		return res;
 	}
@@ -174,28 +211,5 @@ public class Replacer {
 		Replacer copy = new Replacer();
 		copy.replaceList.addAll(replaceList);
 		return copy;
-	}
-
-	/**
-	 * This feature adds the possibility to apply different replacements
-	 * depending on numeric values, here is a common example:
-	 * <p>
-	 * Assuming you already have a replacement for the string "%points%" that replaces
-	 * it with a numeric string, you would be able to replace at the following string:
-	 * <p>
-	 * "<b>You have %points% <%points%:point:points></b>"
-	 * <p>
-	 * With this feature, the returning string will either be "<b>You have 1 point</b>" or "<b>You have 2 points</b>",
-	 * same happens with signed numbers (+1 or -1).
-	 * <p>
-	 * You don't need to worry about non-numeric replacements here, for example <b>"&#60;string:singular:plural>"</b>, it
-	 * won't match the regex and nothing will be done.
-	 * 
-	 * @param support true to enable, false to disable.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public void setNumSupport(boolean support) {
-		this.numPattern = support ? Pattern.compile("<([+-]?[0-9]{1,}):(.{1,}):(.{1,})>") : null;
 	}
 }

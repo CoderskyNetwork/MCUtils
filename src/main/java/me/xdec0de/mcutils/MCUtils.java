@@ -53,7 +53,7 @@ public class MCUtils extends MCPlugin {
 	@Override
 	public void onEnable() {
 		registerFile("config.yml", PluginFile.class); // Added to #getConfig() by MCPlugin
-		msg.setDefaultReplacer(new Replacer("%prefix%", msg.getString("prefix"), "%error%", msg.getString("errPrefix")), false);
+		msg.setDefaultReplacer(new Replacer("%prefix%", msg.getString("prefix"), "%error%", msg.getString("errPrefix")));
 		MCStrings.addColorPattern("gradient", new Gradient());
 		MCStrings.addColorPattern("hex", new Hex());
 		MCStrings.addColorPattern("classic", (str, simple) -> MCStrings.applyColorChar('&', str));

@@ -112,8 +112,8 @@ public class MessagesFile extends PluginFile {
 	 * @see #setNumSupport(boolean)
 	 * @see Replacer#setNumSupport(boolean)
 	 */
-	public void setDefaultReplacer(@Nullable Replacer replacer, boolean numSupport) {
-		(this.defReplacer = replacer).setNumSupport(numSupport);
+	public void setDefaultReplacer(@Nullable Replacer replacer) {
+		this.defReplacer = replacer;
 	}
 
 	/**
@@ -129,19 +129,6 @@ public class MessagesFile extends PluginFile {
 	@Nullable
 	public Replacer getDefaultReplacer() {
 		return defReplacer == null ? null : defReplacer.clone();
-	}
-
-	/**
-	 * This method toggles a feature from the {@link Replacer} class, and it is essentially
-	 * a shortcut to {@link Replacer#setNumSupport(boolean)} on {@link #getDefaultReplacer()},
-	 * you can see a detailed explanation on said method.
-	 * 
-	 * @param support true to enable, false to disable.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public void setNumSupport(boolean support) {
-		this.defReplacer.setNumSupport(support);
 	}
 
 	/*
