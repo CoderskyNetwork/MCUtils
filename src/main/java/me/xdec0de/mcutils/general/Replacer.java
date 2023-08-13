@@ -1,9 +1,9 @@
 package me.xdec0de.mcutils.general;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.OfflinePlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -33,7 +33,7 @@ import me.xdec0de.mcutils.strings.MCStrings;
  */
 public class Replacer {
 
-	private final ArrayList<Object> replaceList = new ArrayList<>();
+	private final ArrayList<String> replaceList = new ArrayList<>();
 
 	/**
 	 * Creates a replacer to replace parts of a string with other strings, if you want to use the same replacements for multiple strings, you should 
@@ -48,17 +48,14 @@ public class Replacer {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #add(Replacer)
-	 * @see #add(String...)
+	 * @see #add(Object...)
 	 * @see #replaceAt(String)
 	 * @see #replaceAt(List)
 	 */
 	public Replacer(Object... replacements) {
 		if (replacements == null)
 			throw new IllegalArgumentException("Replacements cannot be null.");
-		for (Object rep : replacements)
-			replaceList.add(rep);
-		if (replaceList.size() % 2 != 0)
-			throw new IllegalArgumentException(replaceList.get(replaceList.size() - 1) + "does not have a replacer! Add one more element to the replacer.");
+		add(replacements);
 	}
 
 	/**
@@ -87,7 +84,12 @@ public class Replacer {
 			return this;
 		if (replacements.length % 2 != 0)
 			throw new IllegalArgumentException(replacements[replacements.length -1] + "does not have a replacer! Add one more element to the replacer.");
-		replaceList.addAll(Arrays.asList(replacements));
+		for (Object replacement : replacements) {
+			if (replacement instanceof OfflinePlayer)
+				replaceList.add(((OfflinePlayer)replacement).getName());
+			else
+				replaceList.add(replacement.toString());
+		}
 		return this;
 	}
 
@@ -126,7 +128,7 @@ public class Replacer {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #add(Replacer)
-	 * @see #add(String...)
+	 * @see #add(Object...)
 	 */
 	@Nullable
 	public String replaceAt(@Nullable String str) {
@@ -142,8 +144,7 @@ public class Replacer {
 			int index = res.indexOf(toSearch);
 			while (index != -1) {
 				res.replace(index, index + searchLen, replacement);
-				index += replacementLen;
-				index = res.indexOf(toSearch, index);
+				index = res.indexOf(toSearch, index + replacementLen);
 			}
 		}
 		return applyNumSupport(res).toString();
@@ -203,7 +204,7 @@ public class Replacer {
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #Replacer(String...)
+	 * @see #Replacer(Object...)
 	 */
 	@Override
 	@NonNull
