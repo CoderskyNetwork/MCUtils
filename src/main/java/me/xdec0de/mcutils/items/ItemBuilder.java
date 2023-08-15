@@ -38,12 +38,14 @@ import me.xdec0de.mcutils.strings.MCStrings;
  * @author xDec0de_
  * 
  * @since MCUtils 1.0.0
+ * 
+ * @see SkullBuilder
  */
 @SuppressWarnings("deprecation")
 public class ItemBuilder implements Cloneable {
 
-	private final ItemStack item;
-	private final ItemMeta meta;
+	final ItemStack item;
+	final ItemMeta meta;
 
 	/**
 	 * Creates a new {@link ItemBuilder} with the specified {@link Material}.
@@ -105,7 +107,7 @@ public class ItemBuilder implements Cloneable {
 	 */
 	@Nonnull
 	public ItemStack build() {
-		item.setItemMeta(meta);
+		item.setItemMeta(meta());
 		return item;
 	}
 
