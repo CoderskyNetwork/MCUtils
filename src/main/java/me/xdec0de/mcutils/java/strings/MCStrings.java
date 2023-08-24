@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.strings;
+package me.xdec0de.mcutils.java.strings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,8 +14,8 @@ import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.xdec0de.mcutils.strings.builders.Click;
-import me.xdec0de.mcutils.strings.builders.Hover;
+import me.xdec0de.mcutils.java.strings.builders.Click;
+import me.xdec0de.mcutils.java.strings.builders.Hover;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

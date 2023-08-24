@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.strings.builders;
+package me.xdec0de.mcutils.java.strings.builders;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
