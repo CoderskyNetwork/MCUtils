@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.files;
+package me.xdec0de.mcutils.files.yaml;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.xdec0de.mcutils.MCPlugin;
 import me.xdec0de.mcutils.general.Replacer;
-import me.xdec0de.mcutils.strings.MCStrings;
+import me.xdec0de.mcutils.java.strings.MCStrings;
 
 /**
  * A class intended to be used to create

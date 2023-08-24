@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.files;
+package me.xdec0de.mcutils.files.yaml;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,6 +19,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.xdec0de.mcutils.MCPlugin;
+import me.xdec0de.mcutils.files.FileUpdater;
 
 /**
  * 
@@ -26,7 +27,7 @@ import me.xdec0de.mcutils.MCPlugin;
  * 
  * @author xDec0de_
  */
-public class PluginFile extends YmlFile {
+public class PluginFile extends YmlFile implements FileUpdater {
 
 	/** The {@link JavaPlugin} that initialized this file */
 	final JavaPlugin plugin;
@@ -101,64 +102,14 @@ public class PluginFile extends YmlFile {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #reload()
-	 * @see #reload(List)
-	 * @see #update()
 	 * @see #update(List)
 	 */
 	@Override
-	public void create() {
+	public boolean create() {
 		file.getParentFile().mkdirs();
-		if(!file.exists())
+		if (!file.exists())
 			plugin.saveResource(getPath(), false);
-		reload();
-	}
-
-	/**
-	 * Reloads this file without updating. Any non saved value contained within this configuration will be removed
-	 * and the new values will be loaded from the given file. If there is any error reloading the file,
-	 * the errors will be logged and false will be returned. Use {@link #reload(boolean)} to update.
-	 * 
-	 * @return True if no errors occurred while reloading, false otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #reload(List)
-	 * @see #update()
-	 * @see #update(List)
-	 */
-	@Nonnull
-	@Override
-	public boolean reload() {
-		return super.reload();
-	}
-
-	/**
-	 * Reloads this file. The file updater ignores the paths present
-	 * on <b>updateIgnored</b>, this is specially useful
-	 * if you want administrators to create their own paths
-	 * without them being removed, for example, on a GUI plugin.
-	 * If there are any errors reloading or updating the file,
-	 * they will be logged and false will be returned.
-	 * <p>
-	 * Update is assumed to be true with this method, if you want
-	 * to reload without updating use {@link #reload()}.
-	 * 
-	 * @param updateIgnored a list with the paths to
-	 * be ignored by the file updater, if null
-	 * or empty, no paths will be ignored.
-	 * 
-	 * @return true if no errors occurred while reloading and updating, false otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #reload()
-	 * @see #update()
-	 * @see #update(List)
-	 */
-	@Nonnull
-	public boolean reload(@Nullable List<String> updateIgnored) {
-		super.reload();
-		return update(updateIgnored);
+		return reload();
 	}
 
 	private File copyInputStreamToFile(String path, InputStream inputStream) {
@@ -179,22 +130,6 @@ public class PluginFile extends YmlFile {
 	 * Updates this file, adding any missing path from the plugin
 	 * source file to the local file stored on the server.
 	 * 
-	 * @return True if no errors occurred, false otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #reload()
-	 * @see #reload(List)
-	 * @see #update(List)
-	 */
-	public boolean update() {
-		return update(null);
-	}
-
-	/**
-	 * Updates this file, adding any missing path from the plugin
-	 * source file to the local file stored on the server.
-	 * 
 	 * @param ignored a list of paths to ignore on update, if null
 	 * or empty, no paths will be ignored.
 	 * 
@@ -202,9 +137,8 @@ public class PluginFile extends YmlFile {
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
+	 * @see #create()
 	 * @see #reload()
-	 * @see #reload(List)
-	 * @see #update()
 	 */
 	public boolean update(@Nullable List<String> ignored) {
 		String pluginName = plugin.getName();

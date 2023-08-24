@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.files;
+package me.xdec0de.mcutils.files.yaml;
 
 import java.io.File;
 import java.io.FileInputStream;

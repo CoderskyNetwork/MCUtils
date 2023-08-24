@@ -26,13 +26,15 @@ import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import me.xdec0de.mcutils.files.MessagesFile;
-import me.xdec0de.mcutils.files.PluginFile;
-import me.xdec0de.mcutils.files.YmlFile;
+import me.xdec0de.mcutils.files.FileHolder;
+import me.xdec0de.mcutils.files.FileUpdater;
+import me.xdec0de.mcutils.files.yaml.MessagesFile;
+import me.xdec0de.mcutils.files.yaml.PluginFile;
+import me.xdec0de.mcutils.files.yaml.YmlFile;
 import me.xdec0de.mcutils.general.commands.MCCommand;
-import me.xdec0de.mcutils.guis.GUI;
-import me.xdec0de.mcutils.guis.GUIHandler;
-import me.xdec0de.mcutils.strings.MCStrings;
+import me.xdec0de.mcutils.gui.GUI;
+import me.xdec0de.mcutils.gui.GUIHandler;
+import me.xdec0de.mcutils.java.strings.MCStrings;
 
 /**
  * Represents a {@link JavaPlugin} using the MCUtils API.
@@ -47,41 +49,44 @@ import me.xdec0de.mcutils.strings.MCStrings;
  */
 public class MCPlugin extends JavaPlugin {
 
-	private final List<YmlFile> files = new ArrayList<>();
+	private final List<FileHolder> files = new ArrayList<>();
 	private PluginFile config;
 	private MessagesFile messages;
 	private SimpleCommandMap commandMap;
 	private GUIHandler guiHandler;
 
 	/**
-	 * Registers an existing {@link YmlFile} to this plugin, if the file doesn't exist it will be created,
-	 * if the file type is {@link PluginFile} and it's {@link YmlFile#getName() name} is "config.yml"
-	 * (Or just config as the extension will be added), {@link #getConfig()} will return it automatically as specified on said method.
+	 * Registers a new {@link FileHolder} to this plugin, if the file doesn't exist it will be created,
+	 * if the file type is {@link PluginFile} and it's {@link PluginFile#getName() name} is "config.yml",
+	 * {@link #getConfig()} will return it automatically as specified on said method.
 	 * 
-	 * @param <T> must extend {@link YmlFile}
-	 * @param file the file to be registered, {@link T#create()} will be called to ensure that the file exists,
-	 * the actual method being called depends on the type of file, for example, if the file is a {@link YmlFile},
-	 * {@link YmlFile#create()} will be called, if the file is a {@link PluginFile}, then {@link PluginFile#create()}
-	 * gets called and so on.
+	 * @param <T> must implement {@link FileHolder}
+	 * @param file the file to be registered, {@link T#create()} will be called to ensure that the file exists.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @return The registered file, the <b>file</b> parameter.
 	 */
 	@Nullable
-	public <T extends YmlFile> T registerFile(@Nonnull T file) {
+	public <T extends FileHolder> T registerFile(@Nonnull T file) {
 		if (file == null)
 			return null;
 		file.create();
 		files.add(file);
-		if (file instanceof PluginFile && file.getPath().equals("config.yml"))
-			this.config = (PluginFile) file;
+		if (file instanceof PluginFile) {
+			final PluginFile pFile = (PluginFile)file;
+			if (pFile.getPath().equals("config.yml"))
+				this.config = pFile;
+		}
 		else if (file instanceof MessagesFile)
 			this.messages = (MessagesFile) file;
 		return file;
 	}
 
 	/**
+	 * <b>Note:</b> This method can only register .yml files, if you want to register other file types,
+	 * please use {@link #registerFile(FileHolder)}, which is the preferred (faster) method anyways.
+	 * 
 	 * Registers a file to this plugin, if the file doesn't exist it will be created, if the file type is {@link PluginFile}
 	 * and it's registered as "config.yml" (Or just config as the extension will be added),
 	 * {@link #getConfig()} will return it automatically as specified on said method.
@@ -98,6 +103,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @see {@link YmlFile}
 	 * @see {@link PluginFile}
 	 * @see {@link MessagesFile}
+	 * @see #registerFile(FileHolder)
 	 */
 	@Nullable
 	public <T extends YmlFile> T registerFile(@Nonnull String path, @Nonnull Class<T> type) {
@@ -148,36 +154,8 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Reloads all files registered to the plugin by
-	 * calling {@link PluginFile#reload(List)} on them.
-	 * Which makes the file updater ignore the paths present
-	 * on <b>updateIgnored</b>, this is specially useful
-	 * if you want administrators to create their own paths
-	 * without them being removed, for example, on a {@link GUI} plugin.
-	 * 
-	 * @param updateIgnored a list with the paths to
-	 * be ignored by the file updater, update is assumed
-	 * to be true with this method, if you want to reload
-	 * without updating use {@link #reload()}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #reload()
-	 * @see #update()
-	 * @see #update(List)
-	 */
-	public void reload(@Nullable List<String> updateIgnored) {
-		files.forEach(file -> {
-			if (file instanceof PluginFile)
-				((PluginFile)file).reload(updateIgnored);
-			else
-				file.reload();
-		});
-	}
-
-	/**
 	 * Updates all files registered to the plugin by calling
-	 * {@link PluginFile#update()} on them, 
+	 * {@link PluginFile#update(List)} with null on them, 
 	 * {@link YmlFile}s will be ignored by this method.
 	 * 
 	 * @since MCUtils 1.0.0
@@ -186,11 +164,12 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #reload(List)
 	 * @see #update(List)
 	 */
-	public void update() {
+	public MCPlugin update() {
 		files.forEach(file -> {
-			if (file instanceof PluginFile)
-				((PluginFile)file).update();
+			if (file instanceof FileUpdater)
+				((FileUpdater)file).update(null);
 		});
+		return this;
 	}
 
 	/**
@@ -214,8 +193,8 @@ public class MCPlugin extends JavaPlugin {
 	 */
 	public void update(@Nullable List<String> updateIgnored) {
 		files.forEach(file -> {
-			if (file instanceof PluginFile)
-				((PluginFile)file).update(updateIgnored);
+			if (file instanceof FileUpdater)
+				((FileUpdater)file).update(updateIgnored);
 		});
 	}
 
@@ -481,7 +460,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #unregisterGUIs()
 	 * @see #unregisterGUIs(GUI...)
 	 */
-	public GUI registerGUI(GUI gui) {
+	public <G extends GUI> G registerGUI(G gui) {
 		return getGUIHandler().registerGUI(gui);
 	}
 
@@ -498,8 +477,8 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #unregisterGUIs()
 	 * @see #unregisterGUIs(GUI...)
 	 */
-	public void registerGUIs(GUI... guis) {
-		getGUIHandler().registerGUIs(guis);
+	public GUIHandler registerGUIs(GUI... guis) {
+		return getGUIHandler().registerGUIs(guis);
 	}
 
 	/**
