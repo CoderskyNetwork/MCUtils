@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -707,5 +708,101 @@ public class MCStrings {
 	 */
 	public static String substring(String src, String from, String to) {
 		return substring(src, from, to, true);
+	}
+
+	/**
+	 * This method is mostly designed for patterns. It will attempt to
+	 * get a substring of <b>src</b> between <b>from</b> and <b>to</b>.
+	 * If a substring is found, <b>action</b> will accept it, removing
+	 * said substring from the returning string only if <b>remove</b> is true.
+	 * Note that <b>from</b> and <b>to</b> won't be present on the substrings
+	 * that <b>action</b> will accept nor the returning string if a match is found.
+	 * This is because you can always add them on the consumer if you really want.
+	 * Let's see an example where "print" stands for System.out.println:
+	 * <p>
+	 * <code>matchAndAccept("Match (this)", "(", ")", match -> print("Match: " + match), true);</code>
+	 * <p>
+	 * The output of this one line program will be "Match: this", the returning string of
+	 * the method will be "Match ", if <b>remove</b> was false, the output would stay the
+	 * same, but the returning string would be "Match (this)", without any change.
+	 * as you can see, <b>from</b> and <b>to</b> will never be sent to the {@link Consumer}.
+	 * <p>
+	 * You can see an example of this method being used on MCUtils here:
+	 * <ul>
+	 * <li>{@link ActionBar#process(CommandSender, String)}</li>
+	 * </ul>
+	 * 
+	 * @param src the source string to use.
+	 * @param from the String to match at the beginning of the pattern.
+	 * @param to the String to match at the end of the pattern.
+	 * @param action a {@link Consumer} that may accept any matching
+	 * substrings of <b>src</b> between <b>from</b> and <b>to</b>.
+	 * @param remove if true, the matching content will be removed
+	 * from the resulting String, if false, the resulting string
+	 * will be an exact copy of <b>src</b>.
+	 * 
+	 * @return If <b>remove</b> is true, <b>src</b> with any match from
+	 * the specified pattern removed from it, otherwise, a exact copy
+	 * of <b>src</b>.
+	 * 
+	 * @throws NulPointerException if any parameter is null.
+	 * 
+	 * @see #substring(String, String, String)
+	 * @see #matchAndAccept(String, String, String, Consumer)
+	 */
+	@Nonnull
+	public static String matchAndAccept(@Nonnull String src, @Nonnull String from, @Nonnull String to, @Nonnull Consumer<String> action, boolean remove) {
+		final StringBuffer res = new StringBuffer(src);
+		final int toLen = to.length();
+		final int fromLen = from.length();
+		int start = res.indexOf(from, 0);
+		while (start != -1) {
+			final int end = res.indexOf(to, start);
+			if (end != -1) {
+				action.accept(res.substring(start + fromLen, end));
+				if (remove)
+					res.replace(start, end + toLen, "");
+			}
+			start = res.indexOf(from, start + 1);
+		}
+		return res.toString();
+	}
+
+	/**
+	 * This method is mostly designed for patterns. It will attempt to
+	 * get a substring of <b>src</b> between <b>from</b> and <b>to</b>.
+	 * If a substring is found, <b>action</b> will accept it, removing
+	 * said substring from the returning string.
+	 * Note that <b>from</b> and <b>to</b> won't be present on the substrings
+	 * that <b>action</b> will accept nor the returning string if a match is found.
+	 * This is because you can always add them on the consumer if you really want.
+	 * Let's see an example where "print" stands for System.out.println:
+	 * <p>
+	 * <code>matchAndAccept("Match (this)", "(", ")", match -> print("Match: " + match));</code>
+	 * <p>
+	 * The output of this one line program will be "Match: this", the returning string of
+	 * the method will be "Match ", as you can see, <b>from</b> and <b>to</b> will never
+	 * be sent to the {@link Consumer}.
+	 * <p>
+	 * You can see an example of this method being used on MCUtils here:
+	 * <ul>
+	 * <li>{@link ActionBar#process(CommandSender, String)}</li>
+	 * </ul>
+	 * 
+	 * @param src the source string to use.
+	 * @param from the String to match at the beginning of the pattern.
+	 * @param to the String to match at the end of the pattern.
+	 * @param action a {@link Consumer} that may accept any matching
+	 * substrings of <b>src</b> between <b>from</b> and <b>to</b>.
+	 * 
+	 * @return <b>src</b> with any match from the specified pattern removed from it.
+	 * 
+	 * @throws NulPointerException if any parameter is null.
+	 * 
+	 * @see #substring(String, String, String)
+	 * @see #matchAndAccept(String, String, String, Consumer, boolean)
+	 */
+	public static String matchAndAccept(@Nonnull String src, @Nonnull String from, @Nonnull String to, @Nonnull Consumer<String> action) {
+		return matchAndAccept(src, from, to, action, true);
 	}
 }
