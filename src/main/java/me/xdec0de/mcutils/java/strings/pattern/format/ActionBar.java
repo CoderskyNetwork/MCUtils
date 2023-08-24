@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.java.strings;
+package me.xdec0de.mcutils.java.strings.pattern.format;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.xdec0de.mcutils.java.strings.pattern.FormatPattern;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 

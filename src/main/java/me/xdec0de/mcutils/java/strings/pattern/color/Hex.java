@@ -1,8 +1,10 @@
-package me.xdec0de.mcutils.java.strings;
+package me.xdec0de.mcutils.java.strings.pattern.color;
 
 import javax.annotation.Nullable;
 
 import org.bukkit.ChatColor;
+
+import me.xdec0de.mcutils.java.strings.pattern.ColorPattern;
 
 /**
  * Represents a hexadecimal color pattern which can be applied to a String.

@@ -16,6 +16,12 @@ import org.bukkit.entity.Player;
 
 import me.xdec0de.mcutils.java.strings.builders.Click;
 import me.xdec0de.mcutils.java.strings.builders.Hover;
+import me.xdec0de.mcutils.java.strings.pattern.ColorPattern;
+import me.xdec0de.mcutils.java.strings.pattern.FormatPattern;
+import me.xdec0de.mcutils.java.strings.pattern.color.Gradient;
+import me.xdec0de.mcutils.java.strings.pattern.color.Hex;
+import me.xdec0de.mcutils.java.strings.pattern.format.ActionBar;
+import me.xdec0de.mcutils.java.strings.pattern.format.TargetPattern;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

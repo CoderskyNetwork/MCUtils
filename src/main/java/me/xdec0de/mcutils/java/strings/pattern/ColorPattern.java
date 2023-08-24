@@ -1,8 +1,10 @@
-package me.xdec0de.mcutils.java.strings;
+package me.xdec0de.mcutils.java.strings.pattern;
 
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import me.xdec0de.mcutils.java.strings.MCStrings;
 
 /**
  * Represents a color pattern which can be applied to a String.

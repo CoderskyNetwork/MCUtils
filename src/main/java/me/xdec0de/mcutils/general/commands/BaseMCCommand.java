@@ -18,8 +18,8 @@ import org.bukkit.entity.Player;
 import com.google.common.base.Enums;
 
 import me.xdec0de.mcutils.MCPlugin;
-import me.xdec0de.mcutils.files.MessagesFile;
-import me.xdec0de.mcutils.strings.MCStrings;
+import me.xdec0de.mcutils.files.yaml.MessagesFile;
+import me.xdec0de.mcutils.java.strings.MCStrings;
 
 /**
  * A class shared by {@link MCCommand} and {@link MCSubCommand}

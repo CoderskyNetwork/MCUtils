@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.java.strings;
+package me.xdec0de.mcutils.java.strings.pattern.color;
 
 import java.awt.Color;
 import java.util.regex.Matcher;
@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import me.xdec0de.mcutils.java.strings.MCStrings;
+import me.xdec0de.mcutils.java.strings.pattern.ColorPattern;
 import net.md_5.bungee.api.ChatColor;
 
 /**

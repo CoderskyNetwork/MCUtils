@@ -7,7 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import me.xdec0de.mcutils.strings.MCStrings;
+import me.xdec0de.mcutils.java.strings.MCStrings;
 
 /**
  * Represents a replacer to replace parts of a string with other objects, if you want to use the same replacements for multiple strings, you should 
