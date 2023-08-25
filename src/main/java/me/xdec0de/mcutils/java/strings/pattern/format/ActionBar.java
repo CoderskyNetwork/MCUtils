@@ -17,7 +17,7 @@ public class ActionBar implements FormatPattern {
 	@Nullable
 	public String process(@Nonnull CommandSender target, @Nullable String message) {
 		final Spigot receiver = target instanceof Player ? ((Player)target).spigot() : null;
-		return MCStrings.matchAndAccept(message, "<ab:", "/ab>", ab -> {
+		return MCStrings.match(message, "<ab:", "/ab>", ab -> {
 			if (receiver != null)
 				receiver.sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ab));
 		});

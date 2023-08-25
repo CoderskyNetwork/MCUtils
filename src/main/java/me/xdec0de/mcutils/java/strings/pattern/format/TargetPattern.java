@@ -15,12 +15,12 @@ public class TargetPattern implements FormatPattern {
 	public String process(@Nonnull CommandSender target, @Nullable String message) {
 		final Player asPlayer = target instanceof Player ? (Player)target : null;
 		// Process for players
-		String processed = MCStrings.matchAndAccept(message, "<p:", "/p>", msg -> {
+		String processed = MCStrings.match(message, "<p:", "/p>", msg -> {
 			if (asPlayer != null)
 				asPlayer.sendMessage(msg);
 		});
 		// Process for the console
-		processed = MCStrings.matchAndAccept(processed, "<c:", "/c>", msg -> {
+		processed = MCStrings.match(processed, "<c:", "/c>", msg -> {
 			if (asPlayer == null)
 				target.sendMessage(msg);
 		});

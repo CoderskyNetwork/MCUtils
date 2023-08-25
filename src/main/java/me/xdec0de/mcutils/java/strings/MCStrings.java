@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -713,14 +714,11 @@ public class MCStrings {
 	/**
 	 * This method is mostly designed for patterns. It will attempt to
 	 * get a substring of <b>src</b> between <b>from</b> and <b>to</b>.
-	 * If a substring is found, <b>action</b> will accept it, removing
-	 * said substring from the returning string only if <b>remove</b> is true.
-	 * Note that <b>from</b> and <b>to</b> won't be present on the substrings
-	 * that <b>action</b> will accept nor the returning string if a match is found.
-	 * This is because you can always add them on the consumer if you really want.
+	 * If a substring is found, <b>action</b> will {@link Consumer#accept(Object) accept}
+	 * it, removing said substring from the returning string only if <b>remove</b> is true.
 	 * Let's see an example where "print" stands for System.out.println:
 	 * <p>
-	 * <code>matchAndAccept("Match (this)", "(", ")", match -> print("Match: " + match), true);</code>
+	 * <code>match("Match (this)", "(", ")", match -> print("Match: " + match), true);</code>
 	 * <p>
 	 * The output of this one line program will be "Match: this", the returning string of
 	 * the method will be "Match ", if <b>remove</b> was false, the output would stay the
@@ -748,37 +746,21 @@ public class MCStrings {
 	 * @throws NulPointerException if any parameter is null.
 	 * 
 	 * @see #substring(String, String, String)
-	 * @see #matchAndAccept(String, String, String, Consumer)
+	 * @see #match(String, String, String, Consumer)
 	 */
 	@Nonnull
-	public static String matchAndAccept(@Nonnull String src, @Nonnull String from, @Nonnull String to, @Nonnull Consumer<String> action, boolean remove) {
-		final StringBuffer res = new StringBuffer(src);
-		final int toLen = to.length();
-		final int fromLen = from.length();
-		int start = res.indexOf(from, 0);
-		while (start != -1) {
-			final int end = res.indexOf(to, start);
-			if (end != -1) {
-				action.accept(res.substring(start + fromLen, end));
-				if (remove)
-					res.replace(start, end + toLen, "");
-			}
-			start = res.indexOf(from, start + 1);
-		}
-		return res.toString();
+	public static String match(@Nonnull String src, @Nonnull String from, @Nonnull String to, @Nonnull Consumer<String> action, boolean remove) {
+		return match(src, from, to, remove ? match -> "" : match -> match);
 	}
 
 	/**
 	 * This method is mostly designed for patterns. It will attempt to
 	 * get a substring of <b>src</b> between <b>from</b> and <b>to</b>.
-	 * If a substring is found, <b>action</b> will accept it, removing
-	 * said substring from the returning string.
-	 * Note that <b>from</b> and <b>to</b> won't be present on the substrings
-	 * that <b>action</b> will accept nor the returning string if a match is found.
-	 * This is because you can always add them on the consumer if you really want.
+	 * If a substring is found, <b>action</b> will {@link Consumer#accept(Object) accept}
+	 * it, removing said substring from the returning string.
 	 * Let's see an example where "print" stands for System.out.println:
 	 * <p>
-	 * <code>matchAndAccept("Match (this)", "(", ")", match -> print("Match: " + match));</code>
+	 * <code>match("Match (this)", "(", ")", match -> print("Match: " + match));</code>
 	 * <p>
 	 * The output of this one line program will be "Match: this", the returning string of
 	 * the method will be "Match ", as you can see, <b>from</b> and <b>to</b> will never
@@ -800,9 +782,55 @@ public class MCStrings {
 	 * @throws NulPointerException if any parameter is null.
 	 * 
 	 * @see #substring(String, String, String)
+	 * @see #match(String, String, String, Consumer, boolean)
+	 */
+	public static String match(@Nonnull String src, @Nonnull String from, @Nonnull String to, @Nonnull Consumer<String> action) {
+		return match(src, from, to, action, true);
+	}
+
+	/**
+	 * This method can be used like a {@link Replacer} but it allows for more
+	 * flexibility on what to do with the matching substrings. It will attempt to
+	 * get any number of substrings of <b>src</b> between <b>from</b> and <b>to</b>.
+	 * If a substring is found, <b>function</b> will {@link Function#apply(Object) apply}
+	 * it, replacing the matched substring with the return value of <b>function</b>.
+	 * Let's see an example:
+	 * <p>
+	 * <code>match("Match (this)", "(", ")", match -> "done";</code>
+	 * <p>
+	 * The returning String of this will be "Match done". <b>from</b>
+	 * and <b>to</b> aren't considered a part of <b>match</b> here.
+	 * <p>
+	 * You can see an example of this method being used on MCUtils here:
+	 * <ul>
+	 * <li>{@link ActionBar#process(CommandSender, String)}</li>
+	 * </ul>
+	 * 
+	 * @param src the source string to use.
+	 * @param from the String to match at the beginning of the pattern.
+	 * @param to the String to match at the end of the pattern.
+	 * @param function a {@link Function} that may accept any matching
+	 * substrings of <b>src</b> between <b>from</b> and <b>to</b>, returning
+	 * the String that will be used to replace the mathing substring.
+	 * 
+	 * @return <b>src</b> with any match from the specified pattern removed from it.
+	 * 
+	 * @throws NulPointerException if any parameter is null.
+	 * 
+	 * @see #substring(String, String, String)
 	 * @see #matchAndAccept(String, String, String, Consumer, boolean)
 	 */
-	public static String matchAndAccept(@Nonnull String src, @Nonnull String from, @Nonnull String to, @Nonnull Consumer<String> action) {
-		return matchAndAccept(src, from, to, action, true);
+	public static String match(@Nonnull String src, @Nonnull String from, @Nonnull String to, @Nonnull Function<String, String> function) {
+		final StringBuffer res = new StringBuffer(src);
+		final int toLen = to.length();
+		final int fromLen = from.length();
+		int start = res.indexOf(from, 0);
+		while (start != -1) {
+			final int end = res.indexOf(to, start);
+			if (end != -1)
+				res.replace(start, end + toLen, function.apply(res.substring(start + fromLen, end)));
+			start = res.indexOf(from, start + 1);
+		}
+		return res.toString();
 	}
 }
