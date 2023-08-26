@@ -176,7 +176,8 @@ abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 			msg.append(sender instanceof Player ? "players&8." : "the console&8.");
 			sender.sendMessage(MCStrings.applyColor(msg.toString()));
 			return true;
-		}
+		} else if (!hasAccess(sender, true))
+			return true;
 		for (MCSubCommand<?> subCmd : subCommands.keySet()) {
 			int subCmdPos = subCommands.get(subCmd);
 			for (int i = 0; i < args.length; i++) {
@@ -223,7 +224,7 @@ abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 	@Override
 	@Nullable
 	public final List<String> tabComplete(@Nonnull CommandSender sender, @Nonnull String alias, @Nonnull String[] args) {
-		if (isRestricted(sender))
+		if (isRestricted(sender) || !hasAccess(sender, false))
 			return null;
 		List<String> tabs = new ArrayList<String>();
 		for (MCSubCommand<?> subCmd : subCommands.keySet()) {
@@ -268,6 +269,40 @@ abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 	 */
 	@Nullable
 	public abstract List<String> onTab(@Nonnull CommandSender sender, @Nonnull String[] args);
+
+	/**
+	 * A custom access check for other classes that may extend
+	 * {@link MCCommand} or {@link MCSubCommand}, allowing them
+	 * to filter senders with custom rules without having to
+	 * code {@link #onCommand(CommandSender, String[])} and
+	 * {@link #onTab(CommandSender, String[])} themselves.
+	 * By default, with MCUtils, this method always returns
+	 * true. Note that this access check is only done after
+	 * {@link #isRestricted(CommandSender)} returns false,
+	 * so there is no need to implement that here either.
+	 * <p>
+	 * <b>Handling by MCUtils:</b> If this method returns false, MCUtils
+	 * will return null when tab completing and will do nothing
+	 * as if the command was never sent on command. You can identify
+	 * whether the <b>sender</b> is tab completing or sending the
+	 * command with the <b>message</b> parameter to send any needed
+	 * message if the sender isn't allowed to run the command.
+	 * 
+	 * @param sender the {@link CommandSender} to check.
+	 * @param message whether a message should be sent to
+	 * the <b>sender</b>. This will be false {@link #onTab(CommandSender, String[])}
+	 * and will be true {@link #onCommand(CommandSender, String[])},
+	 * as MCUtils won't send any message to the <b>sender</b>.
+	 * 
+	 * @return Always true by default, classes other than
+	 * {@link MCCommand} and {@link MCSubCommand} should
+	 * change this.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public boolean hasAccess(@Nonnull CommandSender sender, boolean message) {
+		return true;
+	}
 
 	// ARGUMENT CONVERSION //
 

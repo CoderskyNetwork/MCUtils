@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.xdec0de.mcutils.general.Replacer;
 import me.xdec0de.mcutils.java.strings.builders.Click;
 import me.xdec0de.mcutils.java.strings.builders.Hover;
 import me.xdec0de.mcutils.java.strings.pattern.ColorPattern;
@@ -728,6 +729,7 @@ public class MCStrings {
 	 * You can see an example of this method being used on MCUtils here:
 	 * <ul>
 	 * <li>{@link ActionBar#process(CommandSender, String)}</li>
+	 * <li>{@link TargetPattern#process(CommandSender, String)}</li>
 	 * </ul>
 	 * 
 	 * @param src the source string to use.
@@ -769,6 +771,7 @@ public class MCStrings {
 	 * You can see an example of this method being used on MCUtils here:
 	 * <ul>
 	 * <li>{@link ActionBar#process(CommandSender, String)}</li>
+	 * <li>{@link TargetPattern#process(CommandSender, String)}</li>
 	 * </ul>
 	 * 
 	 * @param src the source string to use.
@@ -800,11 +803,6 @@ public class MCStrings {
 	 * <p>
 	 * The returning String of this will be "Match done". <b>from</b>
 	 * and <b>to</b> aren't considered a part of <b>match</b> here.
-	 * <p>
-	 * You can see an example of this method being used on MCUtils here:
-	 * <ul>
-	 * <li>{@link ActionBar#process(CommandSender, String)}</li>
-	 * </ul>
 	 * 
 	 * @param src the source string to use.
 	 * @param from the String to match at the beginning of the pattern.
