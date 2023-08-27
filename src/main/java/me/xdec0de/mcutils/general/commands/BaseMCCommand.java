@@ -24,6 +24,9 @@ import me.xdec0de.mcutils.java.strings.MCStrings;
 /**
  * A class shared by {@link MCCommand} and {@link MCSubCommand}
  * to provide utilities to both of them.
+ * <p>
+ * <b>Note:</b> This class should <b>NOT</b> be used to make
+ * commands, only to create custom command types, see {@link #hasAccess(CommandSender, boolean)}.
  * 
  * @param <P> An {@link MCPlugin} that owns this command.
  * 
@@ -36,7 +39,7 @@ import me.xdec0de.mcutils.java.strings.MCStrings;
  * @see MCCommand
  * @see MCSubCommand
  */
-abstract class BaseMCCommand<P extends MCPlugin> extends Command {
+public abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 
 	private final P plugin;
 	private final HashMap<MCSubCommand<?>, Integer> subCommands = new HashMap<>();
