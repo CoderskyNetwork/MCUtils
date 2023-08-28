@@ -846,7 +846,7 @@ public abstract class MCStrings {
 	 * @see #matchAndAccept(String, String, String, Consumer, boolean)
 	 */
 	public static String match(@Nonnull CharSequence src, @Nonnull String from, @Nonnull String to, @Nonnull Function<String, String> function) {
-		final StringBuffer res = new StringBuffer(src);
+		final StringBuilder res = new StringBuilder(src);
 		final int toLen = to.length();
 		final int fromLen = from.length();
 		int start = res.indexOf(from, 0);
