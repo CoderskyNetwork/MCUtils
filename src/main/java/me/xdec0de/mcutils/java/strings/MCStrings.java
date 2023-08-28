@@ -71,19 +71,15 @@ public class MCStrings {
 	 * <p>
 	 * - <a href=https://mcutils.xdec0de.me/chat-features/event-patterns>Event patterns</a>.
 	 * 
-	 * @param target the {@link CommandSender} that will receive the message.
+	 * @param target the {@link CommandSender} that will receive the message, if null, nothing will be done.
 	 * @param str the message to send, if null or empty, nothing will be done.
 	 * 
 	 * @return Always true, to make sending messages on commands easier.
 	 * 
-	 * @throws IllegalArgumentException if <b>target</b> is null.
-	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public static boolean sendFormattedMessage(@Nonnull CommandSender target, @Nullable String str) {
-		if (target == null)
-			throw new IllegalArgumentException("target cannot be null.");
-		if (str == null || str.isEmpty())
+	public static boolean sendFormattedMessage(@Nullable CommandSender target, @Nullable String str) {
+		if (target == null || str == null || str.isEmpty())
 			return true;
 		String toChat = str;
 		for (FormatPattern pattern : formatPatterns)
