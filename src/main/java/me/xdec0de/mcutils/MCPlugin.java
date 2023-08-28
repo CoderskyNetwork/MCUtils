@@ -31,7 +31,7 @@ import me.xdec0de.mcutils.files.FileUpdater;
 import me.xdec0de.mcutils.files.yaml.MessagesFile;
 import me.xdec0de.mcutils.files.yaml.PluginFile;
 import me.xdec0de.mcutils.files.yaml.YmlFile;
-import me.xdec0de.mcutils.general.commands.MCCommand;
+import me.xdec0de.mcutils.general.MCCommand;
 import me.xdec0de.mcutils.gui.GUI;
 import me.xdec0de.mcutils.gui.GUIHandler;
 import me.xdec0de.mcutils.java.strings.MCStrings;
@@ -206,7 +206,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public String getServerVersion() {
+	public static String getServerVersion() {
 		String ver = Bukkit.getBukkitVersion();
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < ver.length(); i++) {
@@ -238,7 +238,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public boolean serverSupports(@Nonnull String version) {
+	public static boolean serverSupports(@Nonnull String version) {
 		if (version == null || version.isBlank())
 			return false;
 		float[] versions = new float[2]; // Convert to float, so 1.19.3 would be 119.3
