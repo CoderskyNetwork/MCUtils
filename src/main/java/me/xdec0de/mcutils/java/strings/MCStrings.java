@@ -400,7 +400,7 @@ public abstract class MCStrings {
 	}
 
 	/**
-	 * Strips all vanilla chat formatting from the specified string,
+	 * Strips all vanilla chat formatting from the specified {@link CharSequence}.
 	 * that is, color and text formatting, for example, assuming that
 	 * <b>colorChar</b> is '&', this method will remove all occurrences
 	 * of &[a-f], &[0-9], &[k-o] and &r, leaving the string as an uncolored,
@@ -416,7 +416,7 @@ public abstract class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public static String stripColor(String str, char colorChar) {
+	public static String stripColor(CharSequence str, char colorChar) {
 		if (str == null)
 			return null;
 		final int length = str.length();
@@ -490,7 +490,7 @@ public abstract class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public static String asString(@Nullable Iterable<String> list, @Nullable String separator) {
+	public static String asString(@Nullable Iterable<String> list, @Nullable CharSequence separator) {
 		final StringBuilder builder = new StringBuilder();
 		if (list == null)
 			return null;
@@ -524,7 +524,7 @@ public abstract class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public static String asString(@Nullable String[] array, @Nullable String separator) {
+	public static String asString(@Nullable String[] array, @Nullable CharSequence separator) {
 		final StringBuilder builder = new StringBuilder();
 		if (array == null)
 			return null;
@@ -547,7 +547,7 @@ public abstract class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public static boolean isNumeric(@Nullable String str) {
+	public static boolean isNumeric(@Nullable CharSequence str) {
 		final int size = str == null ? 0 : str.length();
 		if (size == 0)
 			return false;
@@ -572,7 +572,7 @@ public abstract class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public static int asUnsignedInteger(@Nullable String str, int def) {
+	public static int asUnsignedInteger(@Nullable CharSequence str, int def) {
 		final int size = str == null ? 0 : str.length();
 		if (size == 0)
 			return def;
@@ -597,7 +597,7 @@ public abstract class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public static int asUnsignedInteger(@Nullable String str) {
+	public static int asUnsignedInteger(@Nullable CharSequence str) {
 		return asUnsignedInteger(str, -1);
 	}
 
@@ -620,7 +620,7 @@ public abstract class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public static Integer asInteger(@Nullable String str, @Nullable Integer def) {
+	public static Integer asInteger(@Nullable CharSequence str, @Nullable Integer def) {
 		final int size = str == null ? 0 : str.length();
 		if (size == 0)
 			return def;
@@ -652,7 +652,7 @@ public abstract class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public static Integer asInteger(@Nullable String str) {
+	public static Integer asInteger(@Nullable CharSequence str) {
 		return asInteger(str, null);
 	}
 
@@ -845,7 +845,7 @@ public abstract class MCStrings {
 	 * @see #substring(String, String, String)
 	 * @see #matchAndAccept(String, String, String, Consumer, boolean)
 	 */
-	public static String match(@Nonnull String src, @Nonnull String from, @Nonnull String to, @Nonnull Function<String, String> function) {
+	public static String match(@Nonnull CharSequence src, @Nonnull String from, @Nonnull String to, @Nonnull Function<String, String> function) {
 		final StringBuffer res = new StringBuffer(src);
 		final int toLen = to.length();
 		final int fromLen = from.length();
