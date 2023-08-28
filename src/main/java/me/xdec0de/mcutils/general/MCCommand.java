@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.general.commands;
+package me.xdec0de.mcutils.general;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +13,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Enums;
@@ -22,32 +23,28 @@ import me.xdec0de.mcutils.files.yaml.MessagesFile;
 import me.xdec0de.mcutils.java.strings.MCStrings;
 
 /**
- * A class shared by {@link MCCommand} and {@link MCSubCommand}
- * to provide utilities to both of them.
- * <p>
- * <b>Note:</b> This class should <b>NOT</b> be used to make
- * commands, only to create custom command types, see {@link #hasAccess(CommandSender, boolean)}.
+ * A class used to represent a command that can
+ * be registered by any {@link MCPlugin}.
  * 
  * @param <P> An {@link MCPlugin} that owns this command.
- * 
- * @since MCUtils 1.0.0
  *
+ * @since MCUtils 1.0.0
+ * 
  * @author xDec0de_
  * 
  * @see #onCommand(CommandSender, String[])
  * @see #onTab(CommandSender, String[])
- * @see MCCommand
- * @see MCSubCommand
+ * @see #inject(int, MCCommand...)
  */
-public abstract class BaseMCCommand<P extends MCPlugin> extends Command {
+public abstract class MCCommand<P extends MCPlugin> extends Command implements PluginIdentifiableCommand {
 
 	private final P plugin;
-	private final HashMap<MCSubCommand<?>, Integer> subCommands = new HashMap<>();
+	private final HashMap<MCCommand<?>, Integer> subCommands = new HashMap<>();
 
 	private Class<?> restrictedSenderClass = null;
 
 	/**
-	 * Creates a new instance of a {@link BaseMCCommand} with the
+	 * Creates a new instance of a {@link MCCommand} with the
 	 * specified <b>name</b>, owned by <b>plugin</b>.
 	 * 
 	 * @param plugin the plugin that owns this command.
@@ -55,13 +52,13 @@ public abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	BaseMCCommand(P plugin, @Nonnull String name) {
+	protected MCCommand(P plugin, @Nonnull String name) {
 		super(name);
 		this.plugin = plugin;
 	}
 
 	/**
-	 * Creates a new instance of a {@link BaseMCCommand} with the
+	 * Creates a new instance of a {@link MCCommand} with the
 	 * specified <b>name</b> and <b>aliases</b>, owned by <b>plugin</b>.
 	 * 
 	 * @param plugin the plugin that owns this command.
@@ -70,7 +67,7 @@ public abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	BaseMCCommand(P plugin, String name, String... aliases) {
+	protected MCCommand(P plugin, String name, String... aliases) {
 		this(plugin, name);
 		setAliases(Arrays.asList(aliases));
 	}
@@ -96,14 +93,14 @@ public abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 	 * Commands can be owned by a plugin other than the command owner, this is to allow
 	 * add-ons that add sub commands to existing plugin commands.
 	 * 
-	 * @return This {@link BaseMCCommand}
+	 * @return This {@link MCCommand}
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public BaseMCCommand<P> inject(int position, @Nullable MCSubCommand<?>... commands) {
+	public MCCommand<P> inject(int position, @Nullable MCCommand<?>... commands) {
 		if (commands == null || commands.length == 0)
 			return this;
-		for (MCSubCommand<?> subCmd : commands)
+		for (MCCommand<?> subCmd : commands)
 			if (subCmd != null)
 				subCommands.put(subCmd, position);
 		return this;
@@ -138,13 +135,13 @@ public abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 	 * @param <T> Must be {@link Player} or {@link ConsoleCommandSender}
 	 * @param senderClass the class to restrict from using this command.
 	 * 
-	 * @return This {@link BaseMCCommand}
+	 * @return This {@link MCCommand}
 	 * 
 	 * @see Player#getClass()
 	 * @see ConsoleCommandSender#getClass()
 	 */
 	@Nonnull
-	public <T extends CommandSender> BaseMCCommand<P> setRestrictedSenderClass(@Nullable Class<T> senderClass) {
+	public <T extends CommandSender> MCCommand<P> setRestrictedSenderClass(@Nullable Class<T> senderClass) {
 		if (senderClass == null || !senderClass.equals(CommandSender.class))
 			this.restrictedSenderClass = senderClass;
 		return this;
@@ -181,7 +178,7 @@ public abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 			return true;
 		} else if (!hasAccess(sender, true))
 			return true;
-		for (MCSubCommand<?> subCmd : subCommands.keySet()) {
+		for (MCCommand<?> subCmd : subCommands.keySet()) {
 			int subCmdPos = subCommands.get(subCmd);
 			for (int i = 0; i < args.length; i++) {
 				String arg = args[i].toLowerCase();
@@ -230,7 +227,7 @@ public abstract class BaseMCCommand<P extends MCPlugin> extends Command {
 		if (isRestricted(sender) || !hasAccess(sender, false))
 			return null;
 		List<String> tabs = new ArrayList<String>();
-		for (MCSubCommand<?> subCmd : subCommands.keySet()) {
+		for (MCCommand<?> subCmd : subCommands.keySet()) {
 			int subCmdPos = subCommands.get(subCmd);
 			if (subCmdPos == args.length - 1) { // One argument before subCmd, we suggest its name.
 				if (!subCmd.isRestricted(sender))

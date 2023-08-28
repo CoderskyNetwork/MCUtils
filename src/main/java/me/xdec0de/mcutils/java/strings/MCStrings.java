@@ -43,14 +43,12 @@ import net.md_5.bungee.api.chat.TextComponent;
  * 
  * @see #applyColor(String)
  */
-public class MCStrings {
+public abstract class MCStrings {
 
 	private static HashMap<String, ColorPattern> colorPatterns = new HashMap<>();
 	private static LinkedList<FormatPattern> formatPatterns = new LinkedList<>();
 
 	private static final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
-
-	private MCStrings() {}
 
 	static {
 		addColorPattern("gradient", new Gradient());
