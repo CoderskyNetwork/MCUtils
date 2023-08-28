@@ -2,6 +2,7 @@ package me.xdec0de.mcutils.java.strings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -467,7 +468,41 @@ public abstract class MCStrings {
 	}
 
 	/**
-	 * Gets a string list as a string with all elements separated by
+	 * Gets a {@link String} {@link Iterator list} as a {@link String} with all
+	 * elements separated by the specified <b>separator</b>, null elements will be ignored.
+	 * If <b>lst</b> is null, null will be returned, if <b>separator</b>
+	 * is null, "null" will be used as a separator.
+	 * <p>
+	 * This method doesn't treat strings without content as elements, meaning
+	 * no separator will be added to them (See {@link #hasContent(String)})
+	 * <p>
+	 * Example:
+	 * <p>
+	 * List: [" ", "a", null, "b", "c"]<br>
+	 * Separator: ", "<br>
+	 * Returns: " a, b, c"
+	 * 
+	 * @param list the list to use.
+	 * @param separator the separator to use.
+	 * 
+	 * @return A {@link String} {@link Iterator list} as a {@link String} with all elements
+	 * separated by the specified <b>separator</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public static String asString(@Nullable Iterable<String> list, @Nullable String separator) {
+		final StringBuilder builder = new StringBuilder();
+		if (list == null)
+			return null;
+		for (String str : list)
+			if (hasContent(str))
+				(builder.isEmpty() ? builder : builder.append(separator)).append(str);
+		return builder.toString();
+	}
+
+	/**
+	 * Gets a {@link String} array as a {@link String} with all elements separated by
 	 * the specified <b>separator</b>, null elements will be ignored.
 	 * If <b>lst</b> is null, null will be returned, if <b>separator</b>
 	 * is null, "null" will be used as a separator.
@@ -477,29 +512,27 @@ public abstract class MCStrings {
 	 * <p>
 	 * Example:
 	 * <p>
-	 * Array: [" ", "a", null, "b", "c"]<br>
+	 * List: [" ", "a", null, "b", "c"]<br>
 	 * Separator: ", "<br>
 	 * Returns: " a, b, c"
 	 * 
-	 * @param lst the list to use.
+	 * @param array the array of {@link String strings} to use.
 	 * @param separator the separator to use.
 	 * 
-	 * @return A string list as a string with all elements separated by
+	 * @return A {@link String} array as a {@link String} with all elements separated by
 	 * the specified <b>separator</b>.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public static String asString(@Nullable List<String> lst, @Nullable String separator) {
-		String res = "";
-		if (lst == null)
+	public static String asString(@Nullable String[] array, @Nullable String separator) {
+		final StringBuilder builder = new StringBuilder();
+		if (array == null)
 			return null;
-		for (String str : lst) {
-			if (str == null)
-				continue;
-			res += hasContent(res) ? separator+str : str;
-		}
-		return res;
+		for (String str : array)
+			if (hasContent(str))
+				(builder.isEmpty() ? builder : builder.append(separator)).append(str);
+		return builder.toString();
 	}
 
 	/**
