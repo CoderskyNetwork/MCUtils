@@ -35,6 +35,7 @@ import me.xdec0de.mcutils.java.strings.MCStrings;
  * @see #onCommand(CommandSender, String[])
  * @see #onTab(CommandSender, String[])
  * @see #inject(int, MCCommand...)
+ * @see #setRestrictedSenderClass(Class)
  */
 public abstract class MCCommand<P extends MCPlugin> extends Command implements PluginIdentifiableCommand {
 

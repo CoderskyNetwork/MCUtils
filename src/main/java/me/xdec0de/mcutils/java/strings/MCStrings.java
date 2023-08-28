@@ -125,7 +125,7 @@ public abstract class MCStrings {
 		return prevEnd != 0 ? res.append(TextComponent.fromLegacyText(str.substring(prevEnd))).create() : TextComponent.fromLegacyText(str);
 	}
 
-	private static BaseComponent[] getAppliedContent(String text, String [] args) {
+	private static BaseComponent[] getAppliedContent(String text, String[] args) {
 		BaseComponent[] content = TextComponent.fromLegacyText(text);
 		for (int i = 0; i < args.length; i += 2) {
 			content = switch (args[i].toLowerCase()) {
@@ -377,26 +377,25 @@ public abstract class MCStrings {
 	 * replaces every occurrence of <b>ch</b> with {@link ChatColor#COLOR_CHAR} if
 	 * followed by a valid color character ({@link #isColorChar(char)}),
 	 * performance differences aren't noticeable, this method exists for accessibility
-	 * purposes... And to have a shorter name.
+	 * purposes, to support {@link CharSequence CharSequences}... And to have a shorter name.
 	 * 
 	 * @param ch the character to replace, normally '&'.
-	 * @param str the string to apply color characters to.
+	 * @param str the {@link CharSequence} to apply color characters to.
 	 * 
-	 * @return The string with translated color characters, null if <b>str</b> is null.
+	 * @return A {@link String} from the specified {@link CharSequence} with translated color characters,
+	 * null if <b>str</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public static String applyColorChar(@Nonnull char ch, @Nullable String str) {
+	public static String applyColorChar(@Nonnull char ch, @Nullable CharSequence str) {
 		if (str == null)
 			return null;
 		final int length = str.length() - 1;
-		char[] arr = str.toCharArray();
-		for (int i = 0; i < length; i++) {
-			char strCh = str.charAt(i);
-			if (strCh == ch && isColorChar(str.charAt(i + 1)))
+		final char[] arr = str.toString().toCharArray();
+		for (int i = 0; i < length; i++)
+			if (str.charAt(i) == ch && isColorChar(str.charAt(i + 1)))
 				arr[i++] = ChatColor.COLOR_CHAR;
-		}
 		return new String(arr);
 	}
 
@@ -548,11 +547,12 @@ public abstract class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public static boolean isNumeric(String str) {
-		if (!hasContent(str))
+	public static boolean isNumeric(@Nullable String str) {
+		final int size = str == null ? 0 : str.length();
+		if (size == 0)
 			return false;
 		final char sign = str.charAt(0);
-		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < str.length(); i++) {
+		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++) {
 			final char ch = str.charAt(i);
 			if (ch < '0' || ch > '9')
 				return false;

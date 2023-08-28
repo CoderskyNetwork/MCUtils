@@ -45,10 +45,10 @@ public class Gradient implements ColorPattern {
 	 */
 	@Nullable
 	@Override
-	public String process(@Nullable String string, boolean simple) {
+	public CharSequence process(@Nullable CharSequence string, boolean simple) {
 		if (string == null)
 			return null;
-		String res = string;
+		CharSequence res = string;
 		for (int i = simple ? 2 : 1; i > 0; i--) { // i will be 1 for simplePattern, 2 for pattern.
 			final Matcher matcher = i == 1 ? simplePattern.matcher(res) : pattern.matcher(res);
 			while (matcher.find()) {
