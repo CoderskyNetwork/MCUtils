@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.items;
+package me.xdec0de.mcutils.builders;
 
 import java.net.MalformedURLException;
 import java.net.URL;

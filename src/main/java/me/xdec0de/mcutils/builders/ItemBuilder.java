@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.items;
+package me.xdec0de.mcutils.builders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +29,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import com.google.common.collect.Multimap;
 
-import me.xdec0de.mcutils.strings.MCStrings;
+import me.xdec0de.mcutils.java.strings.MCStrings;
 
 /**
  * A class made to provide easy and fast
