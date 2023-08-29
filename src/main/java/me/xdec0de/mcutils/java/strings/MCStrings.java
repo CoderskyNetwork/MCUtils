@@ -534,14 +534,6 @@ public abstract class MCStrings {
 		return builder.toString();
 	}
 
-	public static void main(String[] args) {
-		String test = "12";
-		System.out.println("Numeric: " + isNumeric(test));
-		System.out.println("Integer: " + isInteger(test));
-		System.out.println("Decimal: " + isDecimal(test));
-		System.out.println(Float.parseFloat(test));
-	}
-
 	/**
 	 * Checks if <b>str</b> is numeric, meaning that it should
 	 * only contain digits ({@link Character#isDigit(char)}),
