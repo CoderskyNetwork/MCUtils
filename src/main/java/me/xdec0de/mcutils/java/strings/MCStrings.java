@@ -534,30 +534,108 @@ public abstract class MCStrings {
 		return builder.toString();
 	}
 
+	public static void main(String[] args) {
+		String test = "12";
+		System.out.println("Numeric: " + isNumeric(test));
+		System.out.println("Integer: " + isInteger(test));
+		System.out.println("Decimal: " + isDecimal(test));
+		System.out.println(Float.parseFloat(test));
+	}
+
 	/**
-	 * Check if <b>str</b> is numeric, meaning that it should
-	 * only contain numeric characters between '0' and '9', the
-	 * first character of the string can be a sign ('+' or '-').
-	 * If {@link #hasContent(String)} returns false, this method
-	 * will also return false.
+	 * Checks if <b>str</b> is numeric, meaning that it should
+	 * only contain digits ({@link Character#isDigit(char)}),
+	 * both integers and decimals will return true with this method,
+	 * the first character of <b>str</b> can also optionally be a sign ('+' or '-').
+	 * If <b>str</b> is null or has a length of zero, null will be returned.
 	 * 
 	 * @param str the string to check.
 	 * 
 	 * @return True if <b>str</b> is numeric, false otherwise.
 	 * 
 	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #isInteger(CharSequence)
+	 * @see #isDecimal(CharSequence)
 	 */
 	public static boolean isNumeric(@Nullable CharSequence str) {
 		final int size = str == null ? 0 : str.length();
 		if (size == 0)
 			return false;
 		final char sign = str.charAt(0);
+		boolean decimal = false;
 		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++) {
 			final char ch = str.charAt(i);
-			if (ch < '0' || ch > '9')
+			if (!Character.isDigit(ch)) {
+				if (ch != '.' || decimal)
+					return false;
+				decimal = true;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks if <b>str</b> is numeric, meaning that it should
+	 * only contain digits ({@link Character#isDigit(char)}),
+	 * the first character of <b>str</b> can also optionally be a sign ('+' or '-'),
+	 * Decimal numbers will return false with this method.
+	 * If <b>str</b> is null or has a length of zero, null will be returned.
+	 * 
+	 * @param str the string to check.
+	 * 
+	 * @return True if <b>str</b> is numeric, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #isNumeric(CharSequence)
+	 * @see #isDecimal(CharSequence)
+	 */
+	public static boolean isInteger(@Nullable CharSequence str) {
+		final int size = str == null ? 0 : str.length();
+		if (size == 0)
+			return false;
+		final char sign = str.charAt(0);
+		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++) {
+			final char ch = str.charAt(i);
+			if (!Character.isDigit(ch))
 				return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Checks if <b>str</b> is a decimal number, meaning that it should
+	 * only contain digits ({@link Character#isDigit(char)}) and
+	 * one decimal separator '.', the first character of
+	 * <b>str</b> can also optionally be a sign ('+' or '-'),
+	 * integers will return false with this method, only decimals return true.
+	 * If <b>str</b> is null or has a length of zero, null will be returned.
+	 * 
+	 * @param str the string to check.
+	 * 
+	 * @return True if <b>str</b> is numeric, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #isNumeric(CharSequence)
+	 * @see #isInteger(CharSequence)
+	 */
+	public static boolean isDecimal(@Nullable CharSequence str) {
+		final int size = str == null ? 0 : str.length();
+		if (size == 0)
+			return false;
+		final char sign = str.charAt(0);
+		boolean decimal = false;
+		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++) {
+			final char ch = str.charAt(i);
+			if (!Character.isDigit(ch)) {
+				if (ch != '.' || decimal)
+					return false;
+				decimal = true;
+			}
+		}
+		return decimal;
 	}
 
 	/**
