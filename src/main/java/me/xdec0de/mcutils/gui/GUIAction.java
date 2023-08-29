@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.guis;
+package me.xdec0de.mcutils.gui;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -7,15 +7,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 /**
- * An implementation of {@link GUIAction} that adds
- * conditions in order to be executed, hence the name
- * C(onditional)GUIAction, even though the class name isn't
- * very descriptive, it's shorted in favor of a shorter implementation.
+ * Represents a registrable action to be handled
+ * when an {@link InventoryClickEvent} gets triggered
+ * on a {@link ActionGUI}.
  * 
  * @author xDec0de_
  *
  * @since MCUtils 1.0.0
  */
+@FunctionalInterface
 public interface GUIAction {
 
 	/**

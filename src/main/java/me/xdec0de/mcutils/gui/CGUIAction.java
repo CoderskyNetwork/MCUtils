@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.guis;
+package me.xdec0de.mcutils.gui;
 
 import java.util.ArrayList;
 
