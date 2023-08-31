@@ -13,7 +13,14 @@ package me.xdec0de.mcutils;
  */
 public class MCUtils extends MCPlugin {
 
-	/** Just. Ignore. It. */
+	/**
+	 * Codacy was complaining about this method not
+	 * being documented while being empty, so yeah,
+	 * here is some documentation to it, this method
+	 * is here so MCUtils can be used as a plugin for
+	 * testing changes to it without pushing to the
+	 * maven repository.
+	 */
 	@Override
 	public void onEnable() {}
 }

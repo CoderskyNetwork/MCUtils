@@ -137,9 +137,9 @@ public class Replacer {
 			return str;
 		final StringBuilder res = new StringBuilder(str);
 		for (int i = 0; i <= replacelistLen - 1; i += 2) {
-			final String toSearch = replaceList.get(i).toString();
+			final String toSearch = replaceList.get(i);
 			final int searchLen = toSearch.length();
-			final String replacement = replaceList.get(i + 1).toString();
+			final String replacement = replaceList.get(i + 1);
 			final int replacementLen = replacement.length();
 			int index = res.indexOf(toSearch);
 			while (index != -1) {
