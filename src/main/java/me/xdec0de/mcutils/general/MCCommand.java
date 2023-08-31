@@ -544,7 +544,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	@Nullable
 	public Integer asInt(int arg, @Nonnull String[] args, @Nullable Integer def) {
-		return MCStrings.asInteger(args.length > arg ? args[arg] : null, def);
+		return args.length > arg ? def : MCStrings.asInteger(args[arg], def);
 	}
 
 	/**
@@ -560,7 +560,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see MCStrings#asInteger(String)
 	 */
 	public int asInt(int arg, @Nonnull String[] args) {
-		return MCStrings.asInteger(args.length > arg ? args[arg] : null, -1);
+		return args.length > arg ? -1 : MCStrings.asInteger(args[arg], -1);
 	}
 
 	/**
@@ -577,7 +577,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see MCStrings#asUnsignedInteger(String, int)
 	 */
 	public int asUnsignedInt(int arg, @Nonnull String[] args, int def) {
-		return MCStrings.asUnsignedInteger(args.length > arg ? args[arg] : null, def);
+		return args.length > arg ? def : MCStrings.asUnsignedInteger(args[arg], def);
 	}
 
 	/**
@@ -586,14 +586,47 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @param arg the array position of the argument to get, can be out of bounds.
 	 * @param args the array of arguments to use.
 	 * 
-	 * @return The argument as an unsigned {@link Integer} if found on the <b>args</b> array, 0 otherwise.
+	 * @return The argument as an unsigned {@link Integer} if found on the <b>args</b> array, -1 otherwise.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see MCStrings#asUnsignedInteger(String)
 	 */
-	public double asUnsignedInt(int arg, @Nonnull String[] args) {
-		return MCStrings.asUnsignedInteger(args.length > arg ? args[arg] : null, 0);
+	public int asUnsignedInt(int arg, @Nonnull String[] args) {
+		return args.length > arg ? -1 : MCStrings.asUnsignedInteger(args[arg]);
+	}
+
+	/**
+	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link Long}.
+	 * 
+	 * @param arg the array position of the argument to get, can be out of bounds.
+	 * @param args the array of arguments to use.
+	 * @param def the default value to return if <b>arg</b> is out of bounds or the argument isn't a valid number.
+	 * 
+	 * @return The argument as a {@link Long} if found on the <b>args</b> array, <b>def</b> otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see MCStrings#asLong(String, Long)
+	 */
+	public Long asLong(int arg, @Nonnull String[] args, @Nullable Long def) {
+		return args.length > arg ? def : MCStrings.asLong(args[arg], def);
+	}
+
+	/**
+	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link Long}.
+	 * 
+	 * @param arg the array position of the argument to get, can be out of bounds.
+	 * @param args the array of arguments to use.
+	 * 
+	 * @return The argument as a {@link Long} if found on the <b>args</b> array, -1 otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see MCStrings#asInteger(String)
+	 */
+	public long asLong(int arg, @Nonnull String[] args) {
+		return args.length > arg ? -1 : MCStrings.asLong(args[arg], -1L);
 	}
 
 	/*
