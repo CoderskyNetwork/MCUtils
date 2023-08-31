@@ -59,6 +59,10 @@ public abstract class MCStrings {
 		addFormatPattern(new TargetPattern());
 	}
 
+	/*
+	 * Format pattern methods
+	 */
+
 	/**
 	 * Sends <b>str</b> to <b>target</b> using the dynamic message format. This feature
 	 * allows administrators to choose how and where a message will be sent, player specific
@@ -463,8 +467,12 @@ public abstract class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	public static boolean hasContent(@Nullable String str) {
-		return str == null ? false : (!str.isBlank());
+		return str != null && !str.isBlank();
 	}
+
+	/*
+	 * To string conversion
+	 */
 
 	/**
 	 * Gets a {@link String} {@link Iterator list} as a {@link String} with all
@@ -533,6 +541,10 @@ public abstract class MCStrings {
 				(builder.isEmpty() ? builder : builder.append(separator)).append(str);
 		return builder.toString();
 	}
+
+	/*
+	 * Numeric checkers
+	 */
 
 	/**
 	 * Checks if <b>str</b> is numeric, meaning that it should
@@ -630,6 +642,10 @@ public abstract class MCStrings {
 		return decimal;
 	}
 
+	/*
+	 * Number conversion
+	 */
+
 	/**
 	 * Converts <b>str</b> to <code>int</code>. As the name implies, this method doesn't allow signed
 	 * values, only numeric strings without sign. This method is designed to not throw any exception.
@@ -650,7 +666,7 @@ public abstract class MCStrings {
 		for (int i = 0; i < size; i++) {
 			final char ch = str.charAt(i);
 			if (ch < '0' || ch > '9')
-				return def; // Not fully numeric, return -1 now.
+				return def; // Not fully numeric, return def now.
 			result = (result * 10) + (ch - '0'); // Any numeric char - the char '0' will equal to it's numeric value.
 		}
 		return result > Integer.MAX_VALUE ? def : (int) result;
@@ -727,39 +743,57 @@ public abstract class MCStrings {
 	}
 
 	/**
-	 * Converts a {@link String} to a {@link UUID} <b>the safe way</b>,
-	 * trying to use {@link UUID#fromString(String)} and catching
-	 * an {@link IllegalArgumentException} is <b>not</b> the safest approach, use
-	 * this method for safe {@link String} to {@link UUID} conversion.
+	 * Converts <b>str</b> to {@link Long}. This method is designed to not throw any exception.
 	 * <p>
-	 * This method won't consider uuids without '-' characeters,
-	 * those will be considered regular strings.
-	 * <p>
-	 * Additionally, this method only allows full player {@link UUID}s,
-	 * as {@link UUID#fromString(String)} will accept, for example
-	 * "1-1-1-1-1" as "00000001-0001-0001-0001-000000000001"
+	 * This method only allows one sign before the actual number, otherwise, the format is considered
+	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
+	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
 	 * 
-	 * @param uuid the {@link String} to be converted to {@link UUID}
+	 * @param str the String to convert to {@link Long}.
+	 * @param def the default value to return in case <b>str</b> is invalid.
 	 * 
-	 * @return A {@link UUID} by the specified <b>uuid</b> String,
-	 * null if the string doesn't have a valid {@link UUID} format.
+	 * @return <b>Def</b> if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
+	 * otherwise, an {@link Integer} with the numeric value of <b>str</b>.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public static UUID toUUID(@Nullable String uuid) {
-		int len = uuid == null ? 0 : uuid.length();
-		if (len != 36)
-			return null;
-		char[] chars = uuid.toCharArray();
-		for (int i = 0; i < len; i++) {
-			char ch = chars[i];
-			if (i == 8 || i == 13 || i == 18 || i == 23) {
-				if (ch != '-')
-					return null;
-			} else if (!(ch >= '0' && ch <= '9') && !(ch >= 'a' && ch <= 'f') && !(ch >= 'A' && ch <= 'F'))
-				return null;
+	public static Long asLong(@Nullable CharSequence str, @Nullable Long def) {
+		final int size = str == null ? 0 : str.length();
+		if (size == 0)
+			return def;
+		long result = 0;
+		final char sign = str.charAt(0);
+		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++) {
+			final char ch = str.charAt(i);
+			if (ch < '0' || ch > '9')
+				return def; // Not fully numeric, return null now.
+			result = (result * 10) + (ch - '0'); // Any numeric char - the char '0' will equal to it's numeric value.
 		}
-		return UUID.fromString(uuid);
+		return sign == '-' ? -result : result;
 	}
+
+	/**
+	 * Converts <b>str</b> to {@link Long}. This method is designed to not throw any exception.
+	 * <p>
+	 * This method only allows one sign before the actual number, otherwise, the format is considered
+	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
+	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
+	 * 
+	 * @param str the String to convert to {@link Long}.
+	 * 
+	 * @return Null if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
+	 * otherwise, an {@link Long} with the numeric value of <b>str</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static Long asLong(@Nullable CharSequence str) {
+		return asLong(str, null);
+	}
+
+	/*
+	 * Substrings
+	 */
 
 	/**
 	 * Gets a substring of <b>src</b>, starting at <b>from</b> and ending at <b>to</b>.
@@ -808,6 +842,10 @@ public abstract class MCStrings {
 	public static String substring(String src, String from, String to) {
 		return substring(src, from, to, true);
 	}
+
+	/*
+	 * Match
+	 */
 
 	/**
 	 * This method is mostly designed for patterns. It will attempt to
@@ -927,5 +965,44 @@ public abstract class MCStrings {
 			start = res.indexOf(from, start + 1);
 		}
 		return res.toString();
+	}
+
+	/*
+	 * Miscellaneous
+	 */
+
+	/**
+	 * Converts a {@link String} to a {@link UUID} <b>the safe way</b>,
+	 * trying to use {@link UUID#fromString(String)} and catching
+	 * an {@link IllegalArgumentException} is <b>not</b> the safest approach, use
+	 * this method for safe {@link String} to {@link UUID} conversion.
+	 * <p>
+	 * This method won't consider uuids without '-' characeters,
+	 * those will be considered regular strings.
+	 * <p>
+	 * Additionally, this method only allows full player {@link UUID}s,
+	 * as {@link UUID#fromString(String)} will accept, for example
+	 * "1-1-1-1-1" as "00000001-0001-0001-0001-000000000001"
+	 * 
+	 * @param uuid the {@link String} to be converted to {@link UUID}
+	 * 
+	 * @return A {@link UUID} by the specified <b>uuid</b> String,
+	 * null if the string doesn't have a valid {@link UUID} format.
+	 */
+	@Nullable
+	public static UUID toUUID(@Nullable String uuid) {
+		int len = uuid == null ? 0 : uuid.length();
+		if (len != 36)
+			return null;
+		char[] chars = uuid.toCharArray();
+		for (int i = 0; i < len; i++) {
+			char ch = chars[i];
+			if (i == 8 || i == 13 || i == 18 || i == 23) {
+				if (ch != '-')
+					return null;
+			} else if (!(ch >= '0' && ch <= '9') && !(ch >= 'a' && ch <= 'f') && !(ch >= 'A' && ch <= 'F'))
+				return null;
+		}
+		return UUID.fromString(uuid);
 	}
 }
