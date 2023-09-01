@@ -694,18 +694,7 @@ public abstract class MCStrings {
 	 */
 	@Nullable
 	public static Integer asInteger(@Nullable CharSequence str, @Nullable Integer def) {
-		final int size = str == null ? 0 : str.length();
-		if (size == 0)
-			return def;
-		int result = 0;
-		final char sign = str.charAt(0);
-		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++) {
-			final char ch = str.charAt(i);
-			if (ch < '0' || ch > '9')
-				return def; // Not fully numeric, return null now.
-			result = (result * 10) + (ch - '0'); // Any numeric char - the char '0' will equal to it's numeric value.
-		}
-		return sign == '-' ? -result : result;
+		return isInteger(str) ? Integer.valueOf(str.toString()) : def;
 	}
 
 	/**
@@ -746,18 +735,7 @@ public abstract class MCStrings {
 	 */
 	@Nullable
 	public static Long asLong(@Nullable CharSequence str, @Nullable Long def) {
-		final int size = str == null ? 0 : str.length();
-		if (size == 0)
-			return def;
-		long result = 0;
-		final char sign = str.charAt(0);
-		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++) {
-			final char ch = str.charAt(i);
-			if (ch < '0' || ch > '9')
-				return def; // Not fully numeric, return null now.
-			result = (result * 10) + (ch - '0'); // Any numeric char - the char '0' will equal to it's numeric value.
-		}
-		return sign == '-' ? -result : result;
+		return isInteger(str) ? Long.valueOf(str.toString()) : def;
 	}
 
 	/**
