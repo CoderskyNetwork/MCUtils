@@ -14,6 +14,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Enums;
@@ -37,7 +38,7 @@ import me.xdec0de.mcutils.java.strings.MCStrings;
  * @see #inject(int, MCCommand...)
  * @see #setRestrictedSenderClass(Class)
  */
-public abstract class MCCommand<P extends MCPlugin> extends Command implements PluginIdentifiableCommand {
+public abstract class MCCommand<P extends MCPlugin> extends Command implements PluginIdentifiableCommand, TabExecutor {
 
 	private final P plugin;
 	private final HashMap<MCCommand<?>, Integer> subCommands = new HashMap<>();
@@ -190,6 +191,13 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 		return onCommand(sender, args);
 	}
 
+	/** @deprecated In favor of {@link #onCommand(CommandSender, String[])}
+	 * @hidden */
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		return execute(sender, label, args);
+	}
+
 	/**
 	 * Called automatically when a {@link CommandSender} executes this command,
 	 * note that {@link MessagesFile}'s "send methods" will always return true
@@ -218,6 +226,13 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	@Nullable
 	public abstract boolean onCommand(@Nonnull CommandSender sender, @Nonnull String[] args);
+
+	/** @deprecated In favor of {@link #onTab(CommandSender, String[])}
+	 * @hidden */
+	@Override
+	public final List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+		return tabComplete(sender, label, args);
+	}
 
 	/** @deprecated In favor of {@link #onTab(CommandSender, String[])}.
 	 * @hidden */

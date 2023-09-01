@@ -22,5 +22,7 @@ public class MCUtils extends MCPlugin {
 	 * maven repository.
 	 */
 	@Override
-	public void onEnable() {}
+	public void onEnable() {
+		// This method is intentionally empty, Codacy, please, stop complaining :(
+	}
 }

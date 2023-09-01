@@ -3,11 +3,9 @@ package me.xdec0de.mcutils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -17,12 +15,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
-import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -35,6 +34,7 @@ import me.xdec0de.mcutils.general.MCCommand;
 import me.xdec0de.mcutils.gui.GUI;
 import me.xdec0de.mcutils.gui.GUIHandler;
 import me.xdec0de.mcutils.java.strings.MCStrings;
+import me.xdec0de.mcutils.reflection.RefObject;
 
 /**
  * Represents a {@link JavaPlugin} using the MCUtils API.
@@ -52,7 +52,6 @@ public class MCPlugin extends JavaPlugin {
 	private final List<FileHolder> files = new ArrayList<>();
 	private PluginFile config;
 	private MessagesFile messages;
-	private SimpleCommandMap commandMap;
 	private GUIHandler guiHandler;
 
 	/**
@@ -393,6 +392,21 @@ public class MCPlugin extends JavaPlugin {
 
 	/**
 	 * Registers the specified <b>command</b>, allowing it to be executed.
+	 * <p>
+	 * <b>Important note</b>: MCUtils registers commands in a pretty unusual
+	 * way, if the names of the commands you are trying to register are present
+	 * on your <b>plugin.yml</b>, MCUtils will just register them the "traditional"
+	 * way, if not, it will use some reflection to register it through CraftBukkit's
+	 * getCommandMap (Respecting encapsulation!), meaning that you can register commands without adding them
+	 * to your <b>plugin.yml</b>. <i>However</i>, this may break on future versions
+	 * of the game (Read below) so still, if it fails for some reason, it will attempt to register
+	 * commands via <b>plugin.yml</b>, if both fail, well... Nothing we can do about it.
+	 * <p>
+	 * About our reflection way of registering commands breaking... Pretty unlikely for Spigot at least,
+	 * we are using a <b>public</b> method present on <b>CraftServer</b>, not the private commandMap field that
+	 * many plugins use. Paper has deprecated SimpleCommandMap for removal as of 1.20 though, so we may need
+	 * to make a check there if they were to change it, but we are aware of it, so no worries, just
+	 * make sure to update MCUtils if that ever happens (This will be notified as an important update).
 	 * 
 	 * @param <P> must extend {@link MCPlugin}
 	 * @param command the command to register.
@@ -404,12 +418,40 @@ public class MCPlugin extends JavaPlugin {
 	public <P extends MCPlugin> MCCommand<P> registerCommand(@Nullable MCCommand<P> command) {
 		if (command == null)
 			return null;
-		getCommandMap().register(getName(), command);
+		final PluginCommand plCommand = getCommand(command.getName());
+		if (plCommand == null) { // Not in plugin.yml, attempt to register via SimpleCommandMap...
+			final RefObject mapObj = new RefObject(getServer()).invoke("getCommandMap");
+			final SimpleCommandMap commandMap = mapObj == null ? null : ((SimpleCommandMap)mapObj.getInstance());
+			if (commandMap == null) { // Method removed for some reason, notify about it.
+				logCol("&8[&6" + getName() + "&8] &cCould not register &e" + command.getName() + " &ccommands, please inform about this&8.",
+						" &8- &7MCUtils is at fault here (If outdated), do not contact &e" + getName() + "&7's author(s)&8.",
+						" &8- &7Contact&8: &espigotmc.org/members/xdec0de_.178174/ &7or Discord &9@xdec0de_",
+						" &8- &7Server info&8: &b" + getServer().getName() + " " + getServerVersion());
+				Bukkit.getPluginManager().disablePlugin(this);
+			} else
+				commandMap.register(getName(), command);
+		} else
+			plCommand.setExecutor(command);
 		return command;
 	}
 
 	/**
 	 * Registers the specified <b>command</b>, allowing them to be executed.
+	 * <p>
+	 * <b>Important note</b>: MCUtils registers commands in a pretty unusual
+	 * way, if the names of the commands you are trying to register are present
+	 * on your <b>plugin.yml</b>, MCUtils will just register them the "traditional"
+	 * way, if not, it will use some reflection to register it through CraftBukkit's
+	 * getCommandMap (Respecting encapsulation!), meaning that you can register commands without adding them
+	 * to your <b>plugin.yml</b>. <i>However</i>, this may break on future versions
+	 * of the game (Read below) so still, if it fails for some reason, it will attempt to register
+	 * commands via <b>plugin.yml</b>, if both fail, well... Nothing we can do about it.
+	 * <p>
+	 * About our reflection way of registering commands breaking... Pretty unlikely for Spigot at least,
+	 * we are using a <b>public</b> method present on <b>CraftServer</b>, not the private commandMap field that
+	 * many plugins use. Paper has deprecated SimpleCommandMap for removal as of 1.20 though, so we may need
+	 * to make a check there if they were to change it, but we are aware of it, so no worries, just
+	 * make sure to update MCUtils if that ever happens (This will be notified as an important update).
 	 * 
 	 * @param commands the commands to register.
 	 * 
@@ -419,25 +461,28 @@ public class MCPlugin extends JavaPlugin {
 	 */
 	public MCPlugin registerCommands(@Nullable MCCommand<?>... commands) {
 		if (commands == null || commands.length == 0)
-			return null;
-		getCommandMap().registerAll(getName(), Arrays.asList(commands));
-		return this;
-	}
-
-	private final SimpleCommandMap getCommandMap() {
-		if (commandMap != null)
-			return commandMap;
-		try {
-			SimplePluginManager manager = ((SimplePluginManager)getServer().getPluginManager());
-			Field map = SimplePluginManager.class.getDeclaredField("commandMap");
-			map.setAccessible(true);
-			commandMap = (SimpleCommandMap) map.get(manager);
-			return commandMap;
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			logException(e, "Unable to get command map.");
-			Bukkit.getPluginManager().disablePlugin(this);
-			return null;
+			return this;
+		final List<Command> remaining = new ArrayList<>();
+		for (MCCommand<?> command : commands) {
+			final PluginCommand plCommand = getCommand(command.getName());
+			if (plCommand != null)
+				plCommand.setExecutor(command);
+			else
+				remaining.add(command);
 		}
+		if (remaining.size() == 0)
+			return this;
+		final RefObject mapObj = new RefObject(getServer()).invoke("getCommandMap");
+		final SimpleCommandMap commandMap = mapObj == null ? null : ((SimpleCommandMap)mapObj.getInstance());
+		if (commandMap == null) { // Method removed for some reason, notify about it.
+			logCol("&8[&6" + getName() + "&8] &cCould not register &e" + remaining.size() + " &ccommands, please inform about this&8.",
+					" &8- &7MCUtils is at fault here (If outdated), do not contact &e" + getName() + "&7's author(s)&8.",
+					" &8- &7Contact&8: &espigotmc.org/members/xdec0de_.178174/ &7or Discord &9@xdec0de_",
+					" &8- &7Server info&8: &b" + getServer().getName() + " " + getServerVersion());
+			Bukkit.getPluginManager().disablePlugin(this);
+		} else
+			commandMap.registerAll(getName(), remaining);
+		return this;
 	}
 
 	public GUIHandler getGUIHandler() {
