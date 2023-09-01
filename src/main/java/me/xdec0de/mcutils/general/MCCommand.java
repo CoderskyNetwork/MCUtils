@@ -579,39 +579,6 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	}
 
 	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to an unsigned {@link Integer}.
-	 * 
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * @param def the default value to return if <b>arg</b> is out of bounds or the argument isn't a valid number.
-	 * 
-	 * @return The argument as an unsigned {@link Integer} if found on the <b>args</b> array, <b>def</b> otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see MCStrings#asUnsignedInteger(String, int)
-	 */
-	public int asUnsignedInt(int arg, @Nonnull String[] args, int def) {
-		return args.length > arg ? def : MCStrings.asUnsignedInteger(args[arg], def);
-	}
-
-	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to an unsigned {@link Integer}.
-	 * 
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * 
-	 * @return The argument as an unsigned {@link Integer} if found on the <b>args</b> array, -1 otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see MCStrings#asUnsignedInteger(String)
-	 */
-	public int asUnsignedInt(int arg, @Nonnull String[] args) {
-		return args.length > arg ? -1 : MCStrings.asUnsignedInteger(args[arg]);
-	}
-
-	/**
 	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link Long}.
 	 * 
 	 * @param arg the array position of the argument to get, can be out of bounds.

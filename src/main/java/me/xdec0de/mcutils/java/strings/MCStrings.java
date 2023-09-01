@@ -1,6 +1,6 @@
 package me.xdec0de.mcutils.java.strings;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.xdec0de.mcutils.general.Replacer;
+import me.xdec0de.mcutils.java.MCLists;
 import me.xdec0de.mcutils.java.strings.builders.Click;
 import me.xdec0de.mcutils.java.strings.builders.Hover;
 import me.xdec0de.mcutils.java.strings.pattern.ColorPattern;
@@ -368,12 +369,7 @@ public abstract class MCStrings {
 	 */
 	@Nullable
 	public static List<String> applyColor(@Nullable List<String> lst) {
-		if (lst == null)
-			return null;
-		List<String> res = new ArrayList<>(lst.size());
-		for (String str : lst)
-			res.add(applyColor(str));
-		return res;
+		return lst == null ? null : MCLists.map(str -> applyColor(str), lst);
 	}
 
 	/**
@@ -533,13 +529,7 @@ public abstract class MCStrings {
 	 */
 	@Nullable
 	public static String asString(@Nullable String[] array, @Nullable CharSequence separator) {
-		final StringBuilder builder = new StringBuilder();
-		if (array == null)
-			return null;
-		for (String str : array)
-			if (hasContent(str))
-				(builder.isEmpty() ? builder : builder.append(separator)).append(str);
-		return builder.toString();
+		return asString(Arrays.asList(array), separator);
 	}
 
 	/*
@@ -632,47 +622,6 @@ public abstract class MCStrings {
 	/*
 	 * Number conversion
 	 */
-
-	/**
-	 * Converts <b>str</b> to <code>int</code>. As the name implies, this method doesn't allow signed
-	 * values, only numeric strings without sign. This method is designed to not throw any exception.
-	 * 
-	 * @param str the String to convert to <code>int</code>.
-	 * @param def the default value to return in case <b>str</b> is invalid.
-	 * 
-	 * @return <b>str</b> as an <code>int</code>, <b>def</b> if the value is negative, over {@link Integer#MAX_VALUE}
-	 * or if <b>str</b> is null or non-numeric.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public static int asUnsignedInteger(@Nullable CharSequence str, int def) {
-		final int size = str == null ? 0 : str.length();
-		if (size == 0)
-			return def;
-		long result = 0;
-		for (int i = 0; i < size; i++) {
-			final char ch = str.charAt(i);
-			if (ch < '0' || ch > '9')
-				return def; // Not fully numeric, return def now.
-			result = (result * 10) + (ch - '0'); // Any numeric char - the char '0' will equal to it's numeric value.
-		}
-		return result > Integer.MAX_VALUE ? def : (int) result;
-	}
-
-	/**
-	 * Converts <b>str</b> to <code>int</code>. As the name implies, this method doesn't allow signed
-	 * values, only numeric strings without sign. This method is designed to not throw any exception.
-	 * 
-	 * @param str the String to convert to <code>int</code>.
-	 * 
-	 * @return <b>str</b> as an <code>int</code>, -1 if the value is negative, over {@link Integer#MAX_VALUE}
-	 * or if <b>str</b> is null or non-numeric.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public static int asUnsignedInteger(@Nullable CharSequence str) {
-		return asUnsignedInteger(str, -1);
-	}
 
 	/**
 	 * Converts <b>str</b> to {@link Integer}. A bit slower than {@link #asUnsignedInteger(String)},
