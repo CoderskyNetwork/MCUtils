@@ -563,20 +563,7 @@ public abstract class MCStrings {
 	 * @see #isDecimal(CharSequence)
 	 */
 	public static boolean isNumeric(@Nullable CharSequence str) {
-		final int size = str == null ? 0 : str.length();
-		if (size == 0)
-			return false;
-		final char sign = str.charAt(0);
-		boolean decimal = false;
-		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++) {
-			final char ch = str.charAt(i);
-			if (!Character.isDigit(ch)) {
-				if (ch != '.' || decimal)
-					return false;
-				decimal = true;
-			}
-		}
-		return true;
+		return isInteger(str) || isDecimal(str);
 	}
 
 	/**
