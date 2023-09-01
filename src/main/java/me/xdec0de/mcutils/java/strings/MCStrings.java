@@ -1,7 +1,6 @@
 package me.xdec0de.mcutils.java.strings;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,22 +46,19 @@ import net.md_5.bungee.api.chat.TextComponent;
  */
 public abstract class MCStrings {
 
-	private static HashMap<String, ColorPattern> colorPatterns = new HashMap<>();
-	private static LinkedList<FormatPattern> formatPatterns = new LinkedList<>();
+	protected static final LinkedList<ColorPattern> colorPatterns = new LinkedList<>();
+	protected static final LinkedList<FormatPattern> formatPatterns = new LinkedList<>();
 
 	private static final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
 	static {
-		addColorPattern("gradient", new Gradient());
-		addColorPattern("hex", new Hex());
-		addColorPattern("classic", (str, simple) -> applyColorChar('&', str));
-		addFormatPattern(new ActionBar());
-		addFormatPattern(new TargetPattern());
+		colorPatterns.add(new Gradient());
+		colorPatterns.add(new Gradient());
+		colorPatterns.add(new Hex());
+		colorPatterns.add((str, simple) -> applyColorChar('&', str));
+		formatPatterns.add(new ActionBar());
+		formatPatterns.add(new TargetPattern());
 	}
-
-	/*
-	 * Format pattern methods
-	 */
 
 	/**
 	 * Sends <b>str</b> to <b>target</b> using the dynamic message format. This feature
@@ -149,189 +145,6 @@ public abstract class MCStrings {
 	}
 
 	/**
-	 * Gets a <b>previously registered</b> {@link FormatPattern} by class, that is,
-	 * a {@link FormatPattern} that has been added using either {@link #addChatPattern(ColorPattern)}
-	 * or {@link #addChatPatternBefore(FormatPattern, Class)}, if no {@link FormatPattern} matching
-	 * <b>pattern</b> has been added, null will be returned.
-	 * 
-	 * @param <T> must implement {@link FormatPattern}.
-	 * @param pattern the class of the {@link FormatPattern} to return.
-	 * 
-	 * @throws IllegalArgumentException If <b>pattern</b> is null.
-	 * 
-	 * @return an instance of <b>pattern</b> if registered, null otherwise.
-	 * 
-	 * @see #addChatPattern(FormatPattern)
-	 */
-	public static <T extends FormatPattern> FormatPattern getFormatPattern(@Nonnull Class<T> pattern) {
-		if (pattern == null)
-			throw new IllegalArgumentException("Pattern cannot be null");
-		for (FormatPattern implPattern : formatPatterns)
-			if (implPattern.getClass().equals(pattern))
-				return implPattern;
-		return null;
-	}
-
-	/**
-	 * Adds a new {@link FormatPattern} to be used on {@link #sendFormattedMessage(CommandSender, String)},
-	 * it's important to take into account pattern order as patterns might conflict with one another.
-	 * <p>
-	 * Want to add a {@link FormatPattern} that would be overwritten by a MCUtils
-	 * {@link FormatPattern}? Use {@link #addChatPatternBefore(FormatPattern, Class)}
-	 * 
-	 * @param pattern the {@link FormatPattern} to add.
-	 * 
-	 * @throws IllegalArgumentException If <b>pattern</b> is null.
-	 * 
-	 * @see #addChatPatternBefore(ColorPattern, Class)
-	 */
-	public static void addFormatPattern(@Nonnull FormatPattern pattern) {
-		if (pattern == null)
-			throw new IllegalArgumentException("Pattern cannot be null");
-		formatPatterns.add(pattern);
-	}
-
-	/**
-	 * Adds a new {@link FormatPattern} to be used on {@link #applyColor(String)}
-	 * and {@link #applyColor(List)} before the specified <b>pattern</b>, it's
-	 * important to take into account pattern order as patterns might conflict with
-	 * one another. For example the {@link Hex} pattern directly conflicts with the
-	 * {@link Gradient} pattern overwriting it because {@link Gradient} uses
-	 * hexadecimal colors, so {@link Gradient} needs to be added before {@link Hex}.
-	 * <p>
-	 * Normally, this method won't be needed unless you are adding a pattern that uses
-	 * hexadecimal colors on it's syntax as {@link Gradient} does. If that's not the case,
-	 * you can just use {@link #addColorPattern(ColorPattern)} to improve performance a bit.
-	 * 
-	 * @param <T> must implement {@link ColorPattern}
-	 * @param pattern the {@link ColorPattern} to add.
-	 * @param before the {@link Class} of the {@link ColorPattern} that will
-	 * go after <b>pattern</b>, putting <b>pattern</b> before it.
-	 * 
-	 * @throws IllegalArgumentException If <b>pattern</b> or <b>before</b> are null.
-	 * 
-	 * @see #addChatPattern(ColorPattern)
-	 */
-	public static <T extends FormatPattern> void addFormatPatternBefore(@Nonnull FormatPattern pattern, @Nonnull Class<T> before) {
-		if (pattern == null)
-			throw new IllegalArgumentException("Added pattern cannot be null");
-		if (before == null)
-			throw new IllegalArgumentException("Before pattern class cannot be null");
-		final LinkedList<FormatPattern> tempPatterns = new LinkedList<>();
-		boolean added = false;
-		for (FormatPattern implPattern : formatPatterns) {
-			if (implPattern.getClass().equals(before))
-				added = tempPatterns.add(pattern); // Always true as the Collection changes.
-			tempPatterns.add(implPattern);
-		}
-		if (!added)
-			tempPatterns.add(pattern);
-		formatPatterns = tempPatterns;
-	}
-
-	/*
-	 * Chat color methods
-	 */
-
-	/**
-	 * Gets a <b>previously registered</b> {@link ColorPattern} by <b>id</b>, that is,
-	 * a {@link ColorPattern} that has been added using either {@link #addColorPattern(ColorPattern)}
-	 * or {@link #addColorPatternBefore(ColorPattern, Class)}, if no {@link ColorPattern} matching
-	 * <b>pattern</b> has been added, null will be returned.
-	 * 
-	 * @param id the id of the registered {@link ColorPattern} to get, these are always lower case and
-	 * this method will convert this parameter to lower case.
-	 * 
-	 * @throws IllegalArgumentException If <b>id</b> is null or blank.
-	 * 
-	 * @return An instance of a {@link ColorPattern} with the specified <b>id</b> if registered, null otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	public static ColorPattern getColorPattern(@Nonnull String id) {
-		if (!hasContent(id))
-			throw new IllegalArgumentException("Pattern id cannot be null or blank");
-		return colorPatterns.get(id);
-	}
-
-	/**
-	 * Adds a new {@link ColorPattern} to be used on {@link #applyColor(String)}
-	 * and {@link #applyColor(List)}, note that if a pattern with the specified <b>id</b>
-	 * is already registered, it will be replaced. It's important to take into account pattern
-	 * order as patterns might conflict with one another. For example the {@link Hex}
-	 * pattern directly conflicts with the {@link Gradient} pattern overwriting it 
-	 * because {@link Gradient} uses hexadecimal colors, so {@link Gradient} needs to
-	 * be added first as it doesn't overwrite {@link Hex}.
-	 * <p>
-	 * Want to add a {@link ColorPattern} that would be overwritten by a MCUtils
-	 * {@link ColorPattern} like {@link Hex}? Use {@link #addColorPatternBefore(ColorPattern, Class)}
-	 * 
-	 * @param id the id of the {@link ColorPattern} to register, these are always lower case and
-	 * this method will convert this parameter to lower case.
-	 * @param pattern the {@link ColorPattern} to register.
-	 * 
-	 * @throws IllegalArgumentException If <b>pattern</b> is null.
-	 * 
-	 * @see #addColorPatternBefore(ColorPattern, Class)
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public static void addColorPattern(@Nonnull String id, @Nonnull ColorPattern pattern) {
-		if (!hasContent(id))
-			throw new IllegalArgumentException("Pattern id cannot be null or blank");
-		if (pattern == null)
-			throw new IllegalArgumentException("Pattern cannot be null");
-		colorPatterns.put(id.toLowerCase(), pattern);
-	}
-
-	/**
-	 * Adds a new {@link ColorPattern} to be used on {@link #applyColor(String)}
-	 * and {@link #applyColor(List)} before the specified <b>pattern</b>, note that if
-	 * a pattern with the specified <b>id</b> is already registered, it will be replaced. 
-	 * It's important to take into account pattern order as patterns might conflict with
-	 * one another. For example the {@link Hex} pattern directly conflicts with the
-	 * {@link Gradient} pattern overwriting it because {@link Gradient} uses
-	 * hexadecimal colors, so {@link Gradient} needs to be added before {@link Hex}.
-	 * <p>
-	 * Normally, this method won't be needed unless you are adding a pattern that uses
-	 * hexadecimal colors on it's syntax as {@link Gradient} does. If that's not the case,
-	 * you can just use {@link #addColorPattern(ColorPattern)} to improve performance a bit.
-	 * 
-	 * @param id the id of the {@link ColorPattern} to register, these are always lower case and
-	 * this method will convert this parameter to lower case.
-	 * @param pattern the {@link ColorPattern} to register.
-	 * @param beforeId the id of the {@link ColorPattern} that will go after <b>pattern</b>. 
-	 * Putting <b>pattern</b> before it.
-	 * 
-	 * @throws IllegalArgumentException If <b>pattern</b> or <b>before</b> are null.
-	 * 
-	 * @see #addColorPattern(ColorPattern)
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public static void addColorPatternBefore(@Nonnull String id, @Nonnull ColorPattern pattern, @Nonnull String beforeId) {
-		if (!hasContent(id))
-			throw new IllegalArgumentException("Pattern id cannot be null or blank");
-		if (pattern == null)
-			throw new IllegalArgumentException("Added pattern cannot be null");
-		if (!hasContent(beforeId))
-			throw new IllegalArgumentException("Before pattern id cannot be null or blank");
-		final HashMap<String, ColorPattern> tempPatterns = new HashMap<>();
-		boolean added = false;
-		for (String implId : colorPatterns.keySet()) {
-			if (implId.equals(beforeId)) {
-				tempPatterns.put(id.toLowerCase(), pattern);
-				added = true;
-			}
-			tempPatterns.put(implId, colorPatterns.get(implId));
-		}
-		if (!added)
-			tempPatterns.put(id, pattern);
-		colorPatterns = tempPatterns;
-	}
-
-	/**
 	 * Applies all registered patterns to a <b>string</b>.
 	 * MCUtils registers "classic", "{@link Hex hex}" and 
 	 * "{@link Gradient gradient}" by default, but
@@ -350,7 +163,7 @@ public abstract class MCStrings {
 		if (string == null)
 			return null;
 		String res = string;
-		for (ColorPattern pattern : colorPatterns.values())
+		for (ColorPattern pattern : colorPatterns)
 			res = pattern.process(res, true);
 		return res;
 	}
@@ -577,11 +390,9 @@ public abstract class MCStrings {
 		if (size == 0)
 			return false;
 		final char sign = str.charAt(0);
-		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++) {
-			final char ch = str.charAt(i);
-			if (!Character.isDigit(ch))
+		for (int i = (sign == '-' || sign == '+') ? 1 : 0; i < size; i++)
+			if (!Character.isDigit(str.charAt(i)))
 				return false;
-		}
 		return true;
 	}
 
