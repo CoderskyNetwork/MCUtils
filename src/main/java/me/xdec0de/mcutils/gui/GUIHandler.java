@@ -106,7 +106,7 @@ public class GUIHandler implements Listener {
 		InventoryView view = clicker.getOpenInventory();
 		Inventory clicked = event.getClickedInventory();
 		if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)
-			clicked = view.getTopInventory(); // TODO Slot won't be right, this is a temporary patch.
+			clicked = view.getTopInventory();
 		if (clicked == null || clicked.equals(view.getTopInventory()) && !iGui.onClick(clicker, clicked, event.getSlot())) {
 			event.setCancelled(true);
 			return;
