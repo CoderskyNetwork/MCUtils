@@ -44,12 +44,13 @@ public abstract class MCNumbers {
 		if (size == 0)
 			return new int[] {to};
 		final int[] res = new int[size > 0 ? size + 1 : (size * -1) + 1];
+		int start = from;
 		if (from > to)
 			for (int i = 0; i < res.length; i++)
-				res[i] = from--;
+				res[i] = start--;
 		else
 			for (int i = 0; i < res.length; i++)
-				res[i] = from++;
+				res[i] = start++;
 		return res;
 	}
 
