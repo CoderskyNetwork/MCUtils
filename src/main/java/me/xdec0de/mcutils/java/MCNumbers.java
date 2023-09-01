@@ -85,12 +85,13 @@ public abstract class MCNumbers {
 		if (size > Integer.MAX_VALUE)
 			size = Integer.MAX_VALUE;
 		final long[] res = new long[(int)size];
+		long start = from;
 		if (from > to)
 			for (int i = 0; i < res.length; i++)
-				res[i] = from--;
+				res[i] = start--;
 		else
 			for (int i = 0; i < res.length; i++)
-				res[i] = from++;
+				res[i] = start++;
 		return res;
 	}
 
