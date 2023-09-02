@@ -56,8 +56,9 @@ public class MCPlugin extends JavaPlugin {
 
 	/**
 	 * Registers a new {@link FileHolder} to this plugin, if the file doesn't exist it will be created,
-	 * if the file type is {@link PluginFile} and it's {@link PluginFile#getName() name} is "config.yml",
-	 * {@link #getConfig()} will return it automatically as specified on said method.
+	 * if the file type is {@link PluginFile} and its {@link PluginFile#getName() name} is "config.yml",
+	 * {@link #getConfig()} will return it automatically as specified on said method. This also happens
+	 * with {@link #getMessages()} whenever you register a {@link MessagesFile}.
 	 * 
 	 * @param <T> must implement {@link FileHolder}
 	 * @param file the file to be registered, {@link T#create()} will be called to ensure that the file exists.
@@ -76,8 +77,7 @@ public class MCPlugin extends JavaPlugin {
 			final PluginFile pFile = (PluginFile)file;
 			if (pFile.getPath().equals("config.yml"))
 				this.config = pFile;
-		}
-		else if (file instanceof MessagesFile)
+		} else if (file instanceof MessagesFile)
 			this.messages = (MessagesFile) file;
 		return file;
 	}
@@ -133,6 +133,17 @@ public class MCPlugin extends JavaPlugin {
 		return config;
 	}
 
+	/**
+	 * Gets the last {@link MessagesFile} registered by this
+	 * {@link MCPlugin}. Plugins may override this method to
+	 * return their own {@link MessagesFile} type.
+	 * 
+	 * @return The last {@link MessagesFile} registered by this
+	 * {@link MCPlugin}, may be null if no {@link MessagesFile}
+	 * has been registered yet.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
 	@Nullable
 	public MessagesFile getMessages() {
 		return messages;
