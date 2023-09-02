@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -46,16 +47,15 @@ import me.xdec0de.mcutils.reflection.RefObject;
  */
 public class MCPlugin extends JavaPlugin {
 
-	private final List<FileHolder> files = new ArrayList<>();
-	private PluginFile config;
-	private MessagesFile messages;
+	private final LinkedList<FileHolder> files = new LinkedList<>();
 	private GUIHandler guiHandler;
 
 	/**
-	 * Registers a new {@link FileHolder} to this plugin, if the file doesn't exist it will be created,
-	 * if the file type is {@link PluginFile} and its {@link PluginFile#getName() name} is "config.yml",
-	 * {@link #getConfig()} will return it automatically as specified on said method. This also happens
-	 * with {@link #getMessages()} whenever you register a {@link MessagesFile}.
+	 * Registers a new {@link FileHolder} to this plugin, if the file doesn't exist it will be created.
+	 * <p>
+	 * The <b>recommended</b> registration order of files is: config.yml as {@link PluginFile}, any
+	 * {@link MessagesFile} and then any other files you may need, this is done so {@link #getConfig()}
+	 * and {@link #getMessages()} perform the faster as they iterate over {@link #getFiles()}.
 	 * 
 	 * @param <T> must implement {@link FileHolder}
 	 * @param file the file to be registered, {@link T#create()} will be called to ensure that the file exists.
@@ -70,22 +70,17 @@ public class MCPlugin extends JavaPlugin {
 			return null;
 		file.create();
 		files.add(file);
-		if (file instanceof PluginFile) {
-			final PluginFile pFile = (PluginFile)file;
-			if (pFile.getPath().equals("config.yml"))
-				this.config = pFile;
-		} else if (file instanceof MessagesFile)
-			this.messages = (MessagesFile) file;
 		return file;
 	}
 
 	/**
-	 * <b>Note:</b> This method can only register .yml files, if you want to register other file types,
+	 * <b>Note:</b> This method can only register yml files, if you want to register other file types,
 	 * please use {@link #registerFile(FileHolder)}, which is the preferred (faster) method anyways.
-	 * 
-	 * Registers a file to this plugin, if the file doesn't exist it will be created, if the file type is {@link PluginFile}
-	 * and it's registered as "config.yml" (Or just config as the extension will be added),
-	 * {@link #getConfig()} will return it automatically as specified on said method.
+	 * <p>
+	 * Registers a file to this plugin, if the file doesn't exist it will be created.
+	 * The <b>recommended</b> registration order of files is: config.yml as {@link PluginFile}, any
+	 * {@link MessagesFile} and then any other files you may need, this is done so {@link #getConfig()}
+	 * and {@link #getMessages()} perform the faster as they iterate over {@link #getFiles()}.
 	 * 
 	 * @param <T> must extend {@link YmlFile}
 	 * @param path the path of the file to register, if {@link MCStrings#hasContent(String)} returns false, "file" will be used.
@@ -106,7 +101,7 @@ public class MCPlugin extends JavaPlugin {
 		if (!MCStrings.hasContent(path))
 			return null;
 		try {
-			Constructor<T> constructor = type.getDeclaredConstructor(JavaPlugin.class, String.class);
+			Constructor<T> constructor = type.getConstructor(JavaPlugin.class, String.class);
 			return registerFile(constructor.newInstance(this, path));
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			logException(e, "&8[&4MCUtils&8] &cAn error occured while registering &e"+path+".yml &cfrom &6"+getName()+"&8:");
@@ -115,10 +110,36 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
+	 * Gets the files currently being handled by this {@link MCPlugin}. The list returned
+	 * is a new list, not the actual list used by the plugin, meaning that you can change
+	 * it but the changes won't be applied to the original list. You can also use this
+	 * list to create new file getters such as {@link #getConfig()} or {@link #getMessages()},
+	 * those methods do work that way. Executing something over all or some files of the list
+	 * as {@link #reload()} or {@link #update()} do is also a valid usage of this list.
+	 * 
+	 * @return The list files currently being handled by this {@link MCPlugin}, this list will
+	 * never be null but may be empty, the order of the elements is the same order that the plugin
+	 * used to register any files, meaning that if the plugin registers config.yml first (As recommended),
+	 * config.yml will be on the first position of this list.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public LinkedList<FileHolder> getFiles() {
+		return new LinkedList<>(files);
+	}
+
+	/**
 	 * Gets the configuration file of this {@link MCPlugin} only if
 	 * a file with the name <b>"config.yml"</b> that extends {@link PluginFile}
 	 * has been registered. {@link MCPlugin MCPlugins} may override this
 	 * method to return their config file if it uses another name.
+	 * <p>
+	 * <b>Performance note</b>: Even though this <b>very</b> insignificant, this
+	 * method does iterate through all the registered {@link FileHolder FileHolders}
+	 * of this {@link MCPlugin} and checks if they are an instance of
+	 * {@link PluginFile} and are named "config.yml", so you may want to store the file instead of
+	 * calling this method more than once on a listener or something like that.
 	 * 
 	 * @return The <b>config.yml</b> file being used by this {@link MCPlugin} as a {@link PluginFile}.
 	 * 
@@ -127,13 +148,26 @@ public class MCPlugin extends JavaPlugin {
 	@Nullable
 	@Override
 	public PluginFile getConfig() {
-		return config;
+		for (FileHolder holder : files) {
+			if (holder instanceof PluginFile) {
+				final PluginFile pFile = (PluginFile)holder;
+				if (pFile.getName().equals("config.yml"))
+					return pFile;
+			}
+		}
+		return null;
 	}
 
 	/**
-	 * Gets the last {@link MessagesFile} registered by this
+	 * Gets the first {@link MessagesFile} registered by this
 	 * {@link MCPlugin}. Plugins may override this method to
 	 * return their own {@link MessagesFile} type.
+	 * <p>
+	 * <b>Performance note</b>: Even though this <b>very</b> insignificant, this
+	 * method does iterate through all the registered {@link FileHolder FileHolders}
+	 * of this {@link MCPlugin} and checks if they are an instance of
+	 * {@link MessagesFile}, so you may want to store the file instead of
+	 * calling this method more than once on a listener or something like that.
 	 * 
 	 * @return The last {@link MessagesFile} registered by this
 	 * {@link MCPlugin}, may be null if no {@link MessagesFile}
@@ -143,7 +177,10 @@ public class MCPlugin extends JavaPlugin {
 	 */
 	@Nullable
 	public MessagesFile getMessages() {
-		return messages;
+		for (FileHolder holder : files)
+			if (holder instanceof MessagesFile)
+				return (MessagesFile)holder;
+		return null;
 	}
 
 	/**
