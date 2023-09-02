@@ -435,153 +435,67 @@ public abstract class MCStrings {
 	 */
 
 	/**
-	 * Converts <b>str</b> to {@link Integer}. Designed to not throw any exceptions.
-	 * <p>
-	 * This method only allows one sign before the actual number, otherwise, the format is considered
-	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
-	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
+	 * Returns a {@link Number} of any (java.lang) number type
+	 * with the value of <b>str</b>. That means that this method can return
+	 * {@link Integer integers}, {@link Float floats}, {@link Double doubles},
+	 * {@link Long longs}, {@link Short shorts} and {@link Byte bytes}, this
+	 * method will use their parseX method, so for example for {@link Integer integers},
+	 * {@link Integer#parseInt(String)} will be used, verifying whether <b>str</b>
+	 * {@link #isNumeric(CharSequence)} or {@link #isInteger(CharSequence)} if necessary.
+	 * If <b>str</b> can't be parsed for the desired numeric type for whatever reason,
+	 * <b>def</b> will be returned. 
 	 * 
-	 * @param str the String to convert to {@link Integer}.
-	 * @param def the default value to return in case <b>str</b> is invalid.
+	 * @param <T> the type of {@link Number} to return
+	 * @param str the {@link CharSequence} to convert.
+	 * @param def the default value to return if <b>str</b> could not be parsed.
 	 * 
-	 * @return <b>Def</b> if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
-	 * otherwise, an {@link Integer} with the numeric value of <b>str</b>.
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @return Returns a {@link Number} of any (java.lang) number type
+	 * with the value of <b>str</b>, <b>def</b> if <b>str</b> could not be parsed.
 	 */
-	@Nullable
-	public static Integer asInteger(@Nullable CharSequence str, @Nullable Integer def) {
-		return isInteger(str) ? Integer.valueOf(str.toString()) : def;
+	public static <T extends Number> T asNumber(@Nullable CharSequence str, @Nullable T def) {
+		if (def == null)
+			return def;
+		@SuppressWarnings("unchecked")
+		final T number = asNumber(str, (Class<T>) def.getClass());
+		return number == null ? def : number;
 	}
 
 	/**
-	 * Converts <b>str</b> to {@link Integer}. Designed to not throw any exceptions.
-	 * <p>
-	 * This method only allows one sign before the actual number, otherwise, the format is considered
-	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
-	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
+	 * Returns a {@link Number} of any (java.lang) number type
+	 * with the value of <b>str</b>. That means that this method can return
+	 * {@link Integer integers}, {@link Float floats}, {@link Double doubles},
+	 * {@link Long longs}, {@link Short shorts} and {@link Byte bytes}, this
+	 * method will use their parseX method, so for example for {@link Integer integers},
+	 * {@link Integer#parseInt(String)} will be used, verifying whether <b>str</b>
+	 * {@link #isNumeric(CharSequence)} or {@link #isInteger(CharSequence)} if necessary.
+	 * If <b>str</b> can't be parsed for the desired numeric type for whatever reason,
+	 * <code>null</code> will be returned. 
 	 * 
-	 * @param str the String to convert to {@link Integer}.
+	 * @param <T> the type of {@link Number} to return
+	 * @param str the {@link CharSequence} to convert.
+	 * @param type the type of number to return.
 	 * 
-	 * @return Null if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
-	 * otherwise, an {@link Integer} with the numeric value of <b>str</b>.
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @return Returns a {@link Number} of any (java.lang) number type
+	 * with the value of <b>str</b>, <code>null</code> if <b>str</b> could not be parsed.
 	 */
-	public static Integer asInteger(@Nullable CharSequence str) {
-		return asInteger(str, null);
-	}
-
-	/**
-	 * Converts <b>str</b> to {@link Long}. Designed to not throw any exceptions.
-	 * <p>
-	 * This method only allows one sign before the actual number, otherwise, the format is considered
-	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
-	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
-	 * 
-	 * @param str the String to convert to {@link Long}.
-	 * @param def the default value to return in case <b>str</b> is invalid.
-	 * 
-	 * @return <b>Def</b> if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
-	 * otherwise, a {@link Long} with the numeric value of <b>str</b>.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	public static Long asLong(@Nullable CharSequence str, @Nullable Long def) {
-		return isInteger(str) ? Long.valueOf(str.toString()) : def;
-	}
-
-	/**
-	 * Converts <b>str</b> to {@link Long}. This method is designed to not throw any exception.
-	 * <p>
-	 * This method only allows one sign before the actual number, otherwise, the format is considered
-	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
-	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
-	 * 
-	 * @param str the String to convert to {@link Long}.
-	 * 
-	 * @return Null if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
-	 * otherwise, a {@link Long} with the numeric value of <b>str</b>.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public static Long asLong(@Nullable CharSequence str) {
-		return asLong(str, null);
-	}
-
-	/**
-	 * Converts <b>str</b> to {@link Float}. Designed to not throw any exceptions.
-	 * <p>
-	 * This method only allows one sign before the actual number, otherwise, the format is considered
-	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
-	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
-	 * 
-	 * @param str the String to convert to {@link Float}.
-	 * @param def the default value to return in case <b>str</b> is invalid.
-	 * 
-	 * @return <b>Def</b> if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
-	 * otherwise, a {@link Float} with the numeric value of <b>str</b>.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public static Float asFloat(@Nullable CharSequence str, @Nullable Float def) {
-		return isNumeric(str) ? Float.valueOf(str.toString()) : def;
-	}
-
-	/**
-	 * Converts <b>str</b> to {@link Float}. This method is designed to not throw any exception.
-	 * <p>
-	 * This method only allows one sign before the actual number, otherwise, the format is considered
-	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
-	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
-	 * 
-	 * @param str the String to convert to {@link Float}.
-	 * 
-	 * @return Null if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
-	 * otherwise, a {@link Float} with the numeric value of <b>str</b>.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public static Float asFloat(@Nullable CharSequence str) {
-		return asFloat(str, null);
-	}
-
-	/**
-	 * Converts <b>str</b> to {@link Double}. Designed to not throw any exceptions.
-	 * <p>
-	 * This method only allows one sign before the actual number, otherwise, the format is considered
-	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
-	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
-	 * 
-	 * @param str the String to convert to {@link Double}.
-	 * @param def the default value to return in case <b>str</b> is invalid.
-	 * 
-	 * @return <b>Def</b> if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
-	 * otherwise, a {@link Double} with the numeric value of <b>str</b>.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public static Double asDouble(@Nullable CharSequence str, @Nullable Double def) {
-		return isNumeric(str) ? Double.valueOf(str.toString()) : def;
-	}
-
-	/**
-	 * Converts <b>str</b> to {@link Double}. This method is designed to not throw any exception.
-	 * <p>
-	 * This method only allows one sign before the actual number, otherwise, the format is considered
-	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
-	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
-	 * 
-	 * @param str the String to convert to {@link Double}.
-	 * 
-	 * @return Null if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
-	 * otherwise, a {@link Double} with the numeric value of <b>str</b>.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public static Double asDouble(@Nullable CharSequence str) {
-		return asDouble(str, null);
+	public static <T extends Number> T asNumber(@Nullable CharSequence str, @Nullable Class<T> type) {
+		try {
+			if (type.equals(Integer.class))
+				return isInteger(str) ? type.cast(Integer.parseInt(str.toString())) : null;
+			else if (type.equals(Float.class))
+				return isNumeric(str) ? type.cast(Float.parseFloat(str.toString())) : null;
+			else if (type.equals(Double.class))
+				return isNumeric(str) ? type.cast(Double.parseDouble(str.toString())) : null;
+			else if (type.equals(Long.class))
+				return isInteger(str) ? type.cast(Long.parseLong(str.toString())) : null;
+			else if (type.equals(Short.class))
+				return isInteger(str) ? type.cast(Short.parseShort(str.toString())) : null;
+			else if (type.equals(Byte.class))
+				return isInteger(str) ? type.cast(Byte.parseByte(str.toString())) : null;
+			return null;
+		} catch (NumberFormatException outOfRange) {
+			return null;
+		}
 	}
 
 	/*

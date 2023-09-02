@@ -545,70 +545,41 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 
 	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to an {@link Integer}.
+	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link Number}
+	 * (See {@link MCStrings#asNumber(CharSequence, Number)} for more details).
 	 * 
+	 * @param <T> the type of {@link Number} to return.
 	 * @param arg the array position of the argument to get, can be out of bounds.
 	 * @param args the array of arguments to use.
 	 * @param def the default value to return if <b>arg</b> is out of bounds or the argument isn't a valid number.
 	 * 
-	 * @return The argument as an {@link Integer} if found on the <b>args</b> array, <b>def</b> otherwise.
+	 * @return The argument as a {@link Number} if found on the <b>args</b> array, <b>def</b> otherwise.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see MCStrings#asInteger(String, Integer)
+	 * @see MCStrings#asNumber(CharSequence, Number)
 	 */
 	@Nullable
-	public Integer asInt(int arg, @Nonnull String[] args, @Nullable Integer def) {
-		return args.length > arg ? def : MCStrings.asInteger(args[arg], def);
+	public <T extends Number> T asNumber(int arg, @Nonnull String[] args, @Nullable T def) {
+		return args.length > arg ? def : MCStrings.asNumber(args[arg], def);
 	}
 
 	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to an {@link Integer}.
+	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link Number}
+	 * (See {@link MCStrings#asNumber(CharSequence, Class)} for more details).
 	 * 
+	 * @param <T> the type of {@link Number} to return.
 	 * @param arg the array position of the argument to get, can be out of bounds.
 	 * @param args the array of arguments to use.
 	 * 
-	 * @return The argument as an {@link Integer} if found on the <b>args</b> array, -1 otherwise.
+	 * @return The argument as an {@link Number} if found on the <b>args</b> array, null otherwise.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see MCStrings#asInteger(String)
+	 * @see MCStrings#asNumber(CharSequence, Class)
 	 */
-	public int asInt(int arg, @Nonnull String[] args) {
-		return args.length > arg ? -1 : MCStrings.asInteger(args[arg], -1);
-	}
-
-	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link Long}.
-	 * 
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * @param def the default value to return if <b>arg</b> is out of bounds or the argument isn't a valid number.
-	 * 
-	 * @return The argument as a {@link Long} if found on the <b>args</b> array, <b>def</b> otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see MCStrings#asLong(String, Long)
-	 */
-	public Long asLong(int arg, @Nonnull String[] args, @Nullable Long def) {
-		return args.length > arg ? def : MCStrings.asLong(args[arg], def);
-	}
-
-	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link Long}.
-	 * 
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * 
-	 * @return The argument as a {@link Long} if found on the <b>args</b> array, -1 otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see MCStrings#asInteger(String)
-	 */
-	public long asLong(int arg, @Nonnull String[] args) {
-		return args.length > arg ? -1 : MCStrings.asLong(args[arg], -1L);
+	public <T extends Number> T asNumber(int arg, @Nonnull String[] args, Class<T> type) {
+		return args.length > arg ? null : MCStrings.asNumber(args[arg], type);
 	}
 
 	/*
