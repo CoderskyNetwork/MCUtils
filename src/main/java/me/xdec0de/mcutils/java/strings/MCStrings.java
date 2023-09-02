@@ -435,10 +435,7 @@ public abstract class MCStrings {
 	 */
 
 	/**
-	 * Converts <b>str</b> to {@link Integer}. A bit slower than {@link #asUnsignedInteger(String)},
-	 * not only because of the logic behind sign handling but also the usage of the {@link Integer}
-	 * class in order to return null, which is much slower than using the primitive <code>int</code> type.
-	 * This method is designed to not throw any exception.
+	 * Converts <b>str</b> to {@link Integer}. Designed to not throw any exceptions.
 	 * <p>
 	 * This method only allows one sign before the actual number, otherwise, the format is considered
 	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
@@ -458,10 +455,7 @@ public abstract class MCStrings {
 	}
 
 	/**
-	 * Converts <b>str</b> to {@link Integer}. Slower than {@link #asUnsignedInteger(String)},
-	 * not only because of the logic behind sign handling but also the usage of the {@link Integer}
-	 * class in order to return null, which is much slower than using the primitive <code>int</code> type.
-	 * This method is designed to not throw any exception.
+	 * Converts <b>str</b> to {@link Integer}. Designed to not throw any exceptions.
 	 * <p>
 	 * This method only allows one sign before the actual number, otherwise, the format is considered
 	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
@@ -479,7 +473,7 @@ public abstract class MCStrings {
 	}
 
 	/**
-	 * Converts <b>str</b> to {@link Long}. This method is designed to not throw any exception.
+	 * Converts <b>str</b> to {@link Long}. Designed to not throw any exceptions.
 	 * <p>
 	 * This method only allows one sign before the actual number, otherwise, the format is considered
 	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
@@ -489,7 +483,7 @@ public abstract class MCStrings {
 	 * @param def the default value to return in case <b>str</b> is invalid.
 	 * 
 	 * @return <b>Def</b> if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
-	 * otherwise, an {@link Integer} with the numeric value of <b>str</b>.
+	 * otherwise, a {@link Long} with the numeric value of <b>str</b>.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -508,12 +502,86 @@ public abstract class MCStrings {
 	 * @param str the String to convert to {@link Long}.
 	 * 
 	 * @return Null if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
-	 * otherwise, an {@link Long} with the numeric value of <b>str</b>.
+	 * otherwise, a {@link Long} with the numeric value of <b>str</b>.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	public static Long asLong(@Nullable CharSequence str) {
 		return asLong(str, null);
+	}
+
+	/**
+	 * Converts <b>str</b> to {@link Float}. Designed to not throw any exceptions.
+	 * <p>
+	 * This method only allows one sign before the actual number, otherwise, the format is considered
+	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
+	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
+	 * 
+	 * @param str the String to convert to {@link Float}.
+	 * @param def the default value to return in case <b>str</b> is invalid.
+	 * 
+	 * @return <b>Def</b> if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
+	 * otherwise, a {@link Float} with the numeric value of <b>str</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static Float asFloat(@Nullable CharSequence str, @Nullable Float def) {
+		return isNumeric(str) ? Float.valueOf(str.toString()) : def;
+	}
+
+	/**
+	 * Converts <b>str</b> to {@link Float}. This method is designed to not throw any exception.
+	 * <p>
+	 * This method only allows one sign before the actual number, otherwise, the format is considered
+	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
+	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
+	 * 
+	 * @param str the String to convert to {@link Float}.
+	 * 
+	 * @return Null if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
+	 * otherwise, a {@link Float} with the numeric value of <b>str</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static Float asFloat(@Nullable CharSequence str) {
+		return asFloat(str, null);
+	}
+
+	/**
+	 * Converts <b>str</b> to {@link Double}. Designed to not throw any exceptions.
+	 * <p>
+	 * This method only allows one sign before the actual number, otherwise, the format is considered
+	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
+	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
+	 * 
+	 * @param str the String to convert to {@link Double}.
+	 * @param def the default value to return in case <b>str</b> is invalid.
+	 * 
+	 * @return <b>Def</b> if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
+	 * otherwise, a {@link Double} with the numeric value of <b>str</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static Double asDouble(@Nullable CharSequence str, @Nullable Double def) {
+		return isNumeric(str) ? Double.valueOf(str.toString()) : def;
+	}
+
+	/**
+	 * Converts <b>str</b> to {@link Double}. This method is designed to not throw any exception.
+	 * <p>
+	 * This method only allows one sign before the actual number, otherwise, the format is considered
+	 * invalid, here are a few examples of valid strings that can be converted with this method, for example,
+	 * "42", "+42" and "-42" would be valid strings, but " 42" or "++42" wouldn't.
+	 * 
+	 * @param str the String to convert to {@link Double}.
+	 * 
+	 * @return Null if <b>str</b> isn't numeric, it's null, empty, or uses an invalid format,
+	 * otherwise, a {@link Double} with the numeric value of <b>str</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static Double asDouble(@Nullable CharSequence str) {
+		return asDouble(str, null);
 	}
 
 	/*
