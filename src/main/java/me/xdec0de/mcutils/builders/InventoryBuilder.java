@@ -1,5 +1,6 @@
 package me.xdec0de.mcutils.builders;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -130,9 +131,9 @@ public class InventoryBuilder implements Cloneable {
 
 	private int getRowsAsSize(int rows) {
 		if (rows < 1)
-			rows = 1;
+			return 9;
 		else if (rows > 6)
-			rows = 6;
+			return 54;
 		return rows * 9;
 	}
 
@@ -419,5 +420,42 @@ public class InventoryBuilder implements Cloneable {
 	 */
 	public InventoryBuilder replaceAllIf(@Nonnull Predicate<ItemStack> condition, @Nullable ItemStack item) {
 		return setIf(item, condition, getSlots());
+	}
+
+	/*
+	 * Object
+	 */
+
+	/**
+	 * Checks if this {@link InventoryBuilder} is equal to <b>obj</b>.
+	 * An {@link InventoryBuilder} is considered to be equal to another
+	 * if both inventories and titles are equal.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof InventoryBuilder))
+			return false;
+		final InventoryBuilder other = (InventoryBuilder) obj;
+		return inv.equals(other.inv) && (title == null ? other.title == null : title.equals(other.title));
+	}
+
+	/**
+	 * Gets the {@link String} representation of this {@link InventoryBuilder},
+	 * including its title (If not null), type, size and contents.
+	 * 
+	 * @return A {@link String} representation of this {@link InventoryBuilder}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("InventoryBuilder{");
+		if (title != null)
+			sb.append("title = '").append(title).append("', ");
+		return sb.append("type = ").append(inv.getType()).append(", ")
+			.append("size = ").append(getSize()).append(", ")
+			.append("contents = ").append(Arrays.toString(inv.getContents())).append("}").toString();
 	}
 }
