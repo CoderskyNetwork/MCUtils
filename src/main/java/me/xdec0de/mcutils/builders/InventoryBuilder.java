@@ -240,6 +240,8 @@ public class InventoryBuilder implements Cloneable {
 	 * Slot editing
 	 */
 
+	// Setters //
+
 	/**
 	 * Sets the specified <b>slots</b> of the {@link Inventory} handled
 	 * by this {@link InventoryBuilder} with the specified <b>item</b>.
@@ -252,7 +254,7 @@ public class InventoryBuilder implements Cloneable {
 	 * 
 	 * @param item the item to use, if null {@link Material#AIR} will be used,
 	 * note that this item will be cloned for every slot so the {@link ItemStack}
-	 * won't actually be the same instance for every slot.
+	 * instance won't actually be the same for every slot.
 	 * @param slots the slots to set this item to, any out of bounds slot will
 	 * just be ignored without throwing any exception.
 	 * 
@@ -281,7 +283,7 @@ public class InventoryBuilder implements Cloneable {
 	 * 
 	 * @param item the item to use, if null {@link Material#AIR} will be used,
 	 * note that this item will be cloned for every slot so the {@link ItemStack}
-	 * won't actually be the same instance for every slot.
+	 * instance won't actually be the same for every slot.
 	 * @param condition the condition every replaced item should pass in order
 	 * for the replacement to be done, note that the {@link ItemStack} passed
 	 * to the condition can be null or {@link Material#AIR}, in fact, that is
@@ -318,7 +320,7 @@ public class InventoryBuilder implements Cloneable {
 	 * 
 	 * @param item the item to use, if null {@link Material#AIR} will be used,
 	 * note that this item will be cloned for every slot so the {@link ItemStack}
-	 * won't actually be the same instance for every slot.
+	 * instance won't actually be the same for every slot.
 	 * @param slots the slots to set this item to, any out of bounds or already
 	 * occupied slot will just be ignored without throwing any exception.
 	 * 
@@ -332,5 +334,66 @@ public class InventoryBuilder implements Cloneable {
 	@Nonnull
 	public InventoryBuilder setIfEmpty(@Nullable ItemStack item, int... slots) {
 		return setIf(item, i -> i == null || i.getType() == Material.AIR, slots);
+	}
+
+	// Replacement //
+
+	/**
+	 * Replaces all items of the specified <b>material</b> with <b>item</b>
+	 * in the {@link Inventory} handled by this {@link InventoryBuilder}.
+	 * If <b>material</b> is null, only null items will be replaced, if
+	 * <b>item</b> is null, {@link Material#AIR} will be used instead.
+	 * 
+	 * @param material the {@link Material} to match.
+	 * @param item the item to use as a replacement, if null {@link Material#AIR}
+	 * will be used, note that this item will be cloned for every slot so the
+	 * {@link ItemStack} instance won't actually be the same for every slot.
+	 * 
+	 * @return This {@link InventoryBuilder}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public InventoryBuilder replaceAll(@Nullable Material material, @Nullable ItemStack item) {
+		return replaceAllIf(material == null ? i -> i == null : i -> i != null && i.getType() == material, item);
+	}
+
+	/**
+	 * Replaces all items of the specified <b>material</b> with <b>item</b>
+	 * in the {@link Inventory} handled by this {@link InventoryBuilder}
+	 * if a certain <b>condition</b> is met individually per slot, please
+	 * take into account that items may be null. Speaking of that, if
+	 * <b>item</b> is null, {@link Material#AIR} will be used instead.
+	 * 
+	 * @param condition the {@link Predicate condition} to {@link Predicate#test(Object) test}
+	 * before any {@link ItemStack} gets replaced on the inventory. Remember that items
+	 * may be null to avoid exceptions with this method.
+	 * @param item the item to use as a replacement, if null {@link Material#AIR}
+	 * will be used, note that this item will be cloned for every slot so the
+	 * {@link ItemStack} instance won't actually be the same for every slot.
+	 * 
+	 * @return This {@link InventoryBuilder}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public InventoryBuilder replaceAllIf(@Nonnull Predicate<ItemStack> condition, @Nullable ItemStack item) {
+		return setIf(item, condition, MCNumbers.range(0, getSize()));
+	}
+
+	/**
+	 * Replaces all items that are either null or {@link Material#AIR air} on
+	 * the {@link Inventory} handled by this {@link InventoryBuilder}, essentially
+	 * filling all empty slots of it. If <b>item</b> is null, {@link Material#AIR}
+	 * will be used instead, meaning that all null items would be replaced with {@link Material#AIR air}. 
+	 * 
+	 * @param item the item to use as a replacement, if null {@link Material#AIR}
+	 * will be used, note that this item will be cloned for every slot so the
+	 * {@link ItemStack} instance won't actually be the same for every slot.
+	 * 
+	 * @return This {@link InventoryBuilder}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public InventoryBuilder replaceAllEmpty(@Nullable ItemStack item) {
+		return setIfEmpty(item, MCNumbers.range(0, getSize()));
 	}
 }
