@@ -236,6 +236,20 @@ public class InventoryBuilder implements Cloneable {
 		return inv.getSize();
 	}
 
+	/**
+	 * Gets all the slots of the {@link Inventory} being handled
+	 * by this {@link InventoryBuilder}. Useful if you want to target
+	 * all slots on, for example, {@link #set(ItemStack, int...)}.
+	 * 
+	 * @return All the slots of the {@link Inventory} being handled
+	 * by this {@link InventoryBuilder}
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public int[] getSlots() {
+		return MCNumbers.range(0, getSize());
+	}
+
 	/*
 	 * Slot editing
 	 */
@@ -376,7 +390,7 @@ public class InventoryBuilder implements Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	public InventoryBuilder replaceAllIf(@Nonnull Predicate<ItemStack> condition, @Nullable ItemStack item) {
-		return setIf(item, condition, MCNumbers.range(0, getSize()));
+		return setIf(item, condition, getSlots());
 	}
 
 	/**
@@ -394,6 +408,6 @@ public class InventoryBuilder implements Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	public InventoryBuilder replaceAllEmpty(@Nullable ItemStack item) {
-		return setIfEmpty(item, MCNumbers.range(0, getSize()));
+		return setIfEmpty(item, getSlots());
 	}
 }
