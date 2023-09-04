@@ -458,4 +458,9 @@ public class InventoryBuilder implements Cloneable {
 			.append("size = ").append(getSize()).append(", ")
 			.append("contents = ").append(Arrays.toString(inv.getContents())).append("}").toString();
 	}
+
+	@Override
+	public int hashCode() {
+		return title == null ? Objects.hash(inv) : Objects.hash(inv, title);
+	}
 }
