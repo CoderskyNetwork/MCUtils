@@ -350,24 +350,6 @@ public class ItemBuilder implements Cloneable {
 
 	/**
 	 * Sets the display name of the {@link ItemMeta} being
-	 * used by this {@link ItemBuilder}.
-	 * 
-	 * @param name the name to set.
-	 * 
-	 * @return This {@link ItemBuilder}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #setColoredDisplayName(String)
-	 */
-	@Nonnull
-	public ItemBuilder setDisplayName(@Nullable String name) {
-		meta.setDisplayName(name);
-		return this;
-	}
-
-	/**
-	 * Sets the display name of the {@link ItemMeta} being
 	 * used by this {@link ItemBuilder}, applying colors to
 	 * it by using {@link MCStrings#applyColor(String)}.
 	 * 
@@ -376,11 +358,9 @@ public class ItemBuilder implements Cloneable {
 	 * @return This {@link ItemBuilder}.
 	 * 
 	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #setDisplayName(String)
 	 */
 	@Nonnull
-	public ItemBuilder setColoredDisplayName(@Nullable String name) {
+	public ItemBuilder setDisplayName(@Nullable String name) {
 		meta.setDisplayName(MCStrings.applyColor(name));
 		return this;
 	}
@@ -389,7 +369,8 @@ public class ItemBuilder implements Cloneable {
 
 	/**
 	 * Sets the lore of the {@link ItemMeta} being
-	 * used by this {@link ItemBuilder}.
+	 * used by this {@link ItemBuilder}, applying colors to
+	 * it by using {@link MCStrings#applyColor(List)}.
 	 * 
 	 * @param lore the lore to set, if null, the lore will be removed.
 	 * 
@@ -397,7 +378,7 @@ public class ItemBuilder implements Cloneable {
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #setColoredLore(List)
+	 * @see #setLore(List)
 	 */
 	@Nonnull
 	public ItemBuilder setLore(@Nullable List<String> lore) {
@@ -407,62 +388,24 @@ public class ItemBuilder implements Cloneable {
 
 	/**
 	 * Sets the lore of the {@link ItemMeta} being
-	 * used by this {@link ItemBuilder}.
+	 * used by this {@link ItemBuilder}, applying colors to
+	 * it by using {@link MCStrings#applyColor(List)}.
 	 * 
 	 * @param lore the lore to set, if null, the lore will be removed.
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
 	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #setColoredLore(List)
 	 */
 	@Nonnull
 	public ItemBuilder setLore(@Nullable String... lore) {
-		meta.setLore(Arrays.asList(lore));
-		return this;
-	}
-
-	/**
-	 * Sets the lore of the {@link ItemMeta} being
-	 * used by this {@link ItemBuilder}, applying colors to
-	 * it by using {@link MCStrings#applyColor(List)}.
-	 * 
-	 * @param lore the lore to set, if null, the lore will be removed.
-	 * 
-	 * @return This {@link ItemBuilder}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #setLore(List)
-	 */
-	@Nonnull
-	public ItemBuilder setColoredLore(@Nullable List<String> lore) {
-		meta.setLore(MCStrings.applyColor(lore));
-		return this;
-	}
-
-	/**
-	 * Sets the lore of the {@link ItemMeta} being
-	 * used by this {@link ItemBuilder}, applying colors to
-	 * it by using {@link MCStrings#applyColor(List)}.
-	 * 
-	 * @param lore the lore to set, if null, the lore will be removed.
-	 * 
-	 * @return This {@link ItemBuilder}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #setLore(List)
-	 */
-	@Nonnull
-	public ItemBuilder setColoredLore(@Nullable String... lore) {
-		return setColoredLore(Arrays.asList(lore));
+		return setLore(Arrays.asList(lore));
 	}
 
 	/**
 	 * Adds the specified <b>lines</b> to the lore of the
-	 * {@link ItemMeta} being used by this {@link ItemBuilder}.
+	 * {@link ItemMeta} being used by this {@link ItemBuilder},
+	 * applying colors to them by using {@link MCStrings#applyColor(String)}.
 	 * 
 	 * @param lines the lines to add, if null, nothing will be done.
 	 * 
@@ -470,14 +413,14 @@ public class ItemBuilder implements Cloneable {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
-	public ItemBuilder addLore(@Nullable String... lines) {
-		if (lines == null)
+	public ItemBuilder addLore(@Nullable List<String> lines) {
+		if (lines == null || lines.isEmpty())
 			return this;
-		List<String> lore = meta.getLore() == null ? new ArrayList<String>(lines.length) : meta.getLore();
+		final List<String> lore = meta.getLore() == null ? new ArrayList<>(lines.size()) : meta.getLore();
 		for (String line : lines)
-			lore.add(line);
-		return setLore(lore);
+			lore.add(MCStrings.applyColor(line));
+		meta.setLore(lore);
+		return this;
 	}
 
 	/**
@@ -492,13 +435,8 @@ public class ItemBuilder implements Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public ItemBuilder addColoredLore(@Nullable String... lines) {
-		if (lines == null)
-			return this;
-		List<String> lore = meta.getLore() == null ? new ArrayList<String>(lines.length) : meta.getLore();
-		for (String line : lines)
-			lore.add(MCStrings.applyColor(line));
-		return setLore(lore);
+	public ItemBuilder addLore(@Nullable String... lines) {
+		return lines == null ? this : addLore(Arrays.asList(lines));
 	}
 
 	// Durability //
