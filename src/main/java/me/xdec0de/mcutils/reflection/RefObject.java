@@ -50,7 +50,9 @@ public class RefObject {
 	 * may use quite often, storing it is recommended to avoid using
 	 * reflection a lot. Also, please read {@link RefObject}.
 	 * 
-	 * @param instance
+	 * @param instance the instance to use to invoke methods.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public RefObject(@Nonnull Object instance) {
 		this.instance = Objects.requireNonNull(instance, "The instance of RefObject cannot be null.");
@@ -91,6 +93,15 @@ public class RefObject {
 	 * this {@link RefObject} instance doesn't have access to it or the <b>method</b> itself
 	 * returns null. If you want to catch exceptions you can use
 	 * {@link #invoke(String, Consumer)}.
+	 * <p>
+	 * Currently handled exceptions:
+	 * <ul>
+	 * <li>{@link NoSuchMethodException}</li>
+	 * <li>{@link SecurityException}</li>
+	 * <li>{@link IllegalAccessException}</li>
+	 * <li>{@link IllegalArgumentException}</li>
+	 * <li>{@link InvocationTargetException}</li>
+	 * </ul>
 	 * 
 	 * @param method the method to invoke.
 	 * @param params the parameters to use when invoking the method.
