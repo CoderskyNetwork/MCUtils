@@ -461,6 +461,6 @@ public class InventoryBuilder implements Cloneable {
 
 	@Override
 	public int hashCode() {
-		return title == null ? Objects.hash(inv) : Objects.hash(inv, title);
+		return title == null ? Objects.hashCode(inv) : Objects.hash(inv, title);
 	}
 }
