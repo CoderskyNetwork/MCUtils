@@ -16,7 +16,6 @@ import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.xdec0de.mcutils.general.Replacer;
 import me.xdec0de.mcutils.java.MCLists;
 import me.xdec0de.mcutils.java.strings.builders.Click;
 import me.xdec0de.mcutils.java.strings.builders.Hover;
@@ -26,6 +25,7 @@ import me.xdec0de.mcutils.java.strings.pattern.color.Gradient;
 import me.xdec0de.mcutils.java.strings.pattern.color.Hex;
 import me.xdec0de.mcutils.java.strings.pattern.format.ActionBar;
 import me.xdec0de.mcutils.java.strings.pattern.format.TargetPattern;
+import me.xdec0de.mcutils.java.strings.replacers.Replacer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

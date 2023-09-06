@@ -1,4 +1,4 @@
-package me.xdec0de.mcutils.general;
+package me.xdec0de.mcutils.java.strings.replacers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +85,9 @@ public class Replacer {
 		if (replacements.length % 2 != 0)
 			throw new IllegalArgumentException(replacements[replacements.length -1] + "does not have a replacer! Add one more element to the replacer.");
 		for (Object replacement : replacements) {
-			if (replacement instanceof OfflinePlayer)
+			if (replacement instanceof Replacement)
+				replaceList.add(((Replacement)replacement).asReplacement());
+			else if (replacement instanceof OfflinePlayer)
 				replaceList.add(((OfflinePlayer)replacement).getName());
 			else
 				replaceList.add(replacement.toString());

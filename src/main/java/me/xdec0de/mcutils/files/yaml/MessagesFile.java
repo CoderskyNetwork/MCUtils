@@ -13,8 +13,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.xdec0de.mcutils.MCPlugin;
-import me.xdec0de.mcutils.general.Replacer;
 import me.xdec0de.mcutils.java.strings.MCStrings;
+import me.xdec0de.mcutils.java.strings.replacers.Replacer;
 
 /**
  * A class intended to be used to create
