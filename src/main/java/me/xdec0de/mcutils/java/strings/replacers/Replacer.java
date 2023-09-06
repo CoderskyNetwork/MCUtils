@@ -2,10 +2,13 @@ package me.xdec0de.mcutils.java.strings.replacers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.bukkit.OfflinePlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import me.xdec0de.mcutils.java.strings.MCStrings;
 
@@ -53,9 +56,7 @@ public class Replacer {
 	 * @see #replaceAt(List)
 	 */
 	public Replacer(Object... replacements) {
-		if (replacements == null)
-			throw new IllegalArgumentException("Replacements cannot be null.");
-		add(replacements);
+		add(Objects.requireNonNull(replacements, "Replacements cannot be null."));
 	}
 
 	/**
@@ -209,10 +210,27 @@ public class Replacer {
 	 * @see #Replacer(Object...)
 	 */
 	@Override
-	@NonNull
+	@Nonnull
 	public Replacer clone() {
 		Replacer copy = new Replacer();
 		copy.replaceList.addAll(replaceList);
 		return copy;
+	}
+
+	/**
+	 * Gets the replacements being used by this {@link Replacer}.
+	 * Modifying this list will have no effect, it can be used
+	 * for debugging or to create your own {@link Replacer} type
+	 * while being able to {@link #clone()} it. This can be done
+	 * by calling the {@link #Replacer(Object...)} constructor
+	 * with {@link #getReplacements()}.
+	 * 
+	 * @return The replacements being used by this {@link Replacer}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public Object[] getReplacements() {
+		return replaceList.toArray();
 	}
 }
