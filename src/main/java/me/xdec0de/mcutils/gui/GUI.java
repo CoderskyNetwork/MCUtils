@@ -19,27 +19,29 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author xDec0de_
  * 
  * @since MCUtils 1.0.0
+ * 
+ * @see #open(Player, Event)
+ * @see #onOpen(Player, Event)
+ * @see #onClick(Player, Inventory, InventoryAction, int)
+ * @see #onClose(Player, Event)
  */
+@FunctionalInterface
 public interface GUI {
 
 	/**
-	 * Called whenever this {@link GUI} is closed, note that {@link GUI GUIs}
-	 * can be closed by a {@link Player}, a {@link JavaPlugin plugin} or an
-	 * {@link Event}.
+	 * Called whenever this {@link GUI} gets opened to a {@link Player}.
+	 * The returned {@link Inventory} will automatically be opened to the
+	 * {@link Player}, you don't need to open the {@link Inventory} for the
+	 * {@link Player}.
 	 * 
-	 * @param player the {@link Player} that closed the {@link GUI}.
-	 * @param event the {@link Event} that caused this to happen, which
-	 * may be null but generally is an {@link InventoryCloseEvent}.
+	 * @param player the {@link Player} that will view the {@link GUI}.
+	 * @param event the {@link Event} that caused this, which may be {@code null}.
 	 * 
-	 * @return true to allow the {@link GUI} to close, false to re-open it if
-	 * necessary or to not close it if possible. This method returns true
-	 * by default.
+	 * @return The {@link Inventory} to display to the {@link Player}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public default boolean onClose(@Nonnull Player player, @Nullable Event event) {
-		return true;
-	}
+	public abstract Inventory onOpen(@Nonnull Player player, @Nullable Event event);
 
 	/**
 	 * Called whenever a {@link Player} clicks on this {@link GUI}.
@@ -60,17 +62,21 @@ public interface GUI {
 	}
 
 	/**
-	 * Called whenever this {@link GUI} gets opened to a {@link Player}.
-	 * The returned {@link Inventory} will automatically be opened to the
-	 * {@link Player}, you don't need to open the {@link Inventory} for the
-	 * {@link Player}.
+	 * Called whenever this {@link GUI} is closed, note that {@link GUI GUIs}
+	 * can be closed by a {@link Player}, a {@link JavaPlugin plugin} or an
+	 * {@link Event}.
 	 * 
-	 * @param player the {@link Player} that will view the {@link GUI}.
-	 * @param event the {@link Event} that caused this, which may be null.
+	 * @param player the {@link Player} that closed the {@link GUI}.
+	 * @param event the {@link Event} that caused this to happen, which
+	 * may be {@code null} but generally is an {@link InventoryCloseEvent}.
 	 * 
-	 * @return The {@link Inventory} to display to the {@link Player}.
+	 * @return true to allow the {@link GUI} to close, false to re-open it if
+	 * necessary or to not close it if possible. This method returns true
+	 * by default.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public Inventory onOpen(@Nonnull Player player, @Nullable Event event);
+	public default boolean onClose(@Nonnull Player player, @Nullable Event event) {
+		return true;
+	}
 }

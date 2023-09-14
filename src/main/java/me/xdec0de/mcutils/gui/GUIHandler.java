@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
@@ -29,8 +32,39 @@ public class GUIHandler implements Listener {
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Gets the {@link MCPlugin} that manages this {@link GUIHandler}.
+	 * 
+	 * @return The {@link MCPlugin} that manages this {@link GUIHandler}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
 	public MCPlugin getPlugin() {
 		return plugin;
+	}
+
+	/**
+	 * Opens the specified {@link GUI} to a {@link Player}. Note that this calls
+	 * {@link GUI#onOpen(Player, Event)}, so if said method returns a {@code null}
+	 * {@link Inventory}, nothing will be done.
+	 * 
+	 * @param gui the {@link GUI} to open.
+	 * @param target the {@link Player} that <b>may</b> have the {@link GUI} opened.
+	 * @param event the {@link Event} that caused this, can be {@code null}.
+	 * 
+	 * @return true if an {@link Inventory} was returned by {@link GUI#onOpen(Player, Event)}
+	 * so it could be opened to the <b>target</b>, false otherwise.
+	 * 
+	 * @throws NullPointerException if <b>target</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public boolean openGUI(@Nonnull GUI gui, @Nonnull Player target, @Nullable Event event) {
+		final Inventory inv = gui.onOpen(Objects.requireNonNull(target, "target is null"), event);
+		if (inv == null)
+			return false;
+		target.openInventory(inv);
+		return true;
 	}
 
 	/*

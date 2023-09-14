@@ -571,7 +571,8 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Unregisters all specified {@link GUI GUIs} from this {@link GUIHandler}.
+	 * Unregisters all specified {@link GUI GUIs} from the {@link GUIHandler}
+	 * used by this {@link MCPlugin}.
 	 * 
 	 * @param guis the {@link GUI GUIs} to be unregistered, the instance doesn't
 	 * need to be the same as the registered {@link GUI} as this is checked by class.
@@ -587,7 +588,8 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Unregisters all the {@link GUI GUIs} registered on this {@link GUIHandler}.
+	 * Unregisters all the {@link GUI GUIs} registered on this {@link GUIHandler}
+	 * used by this {@link MCPlugin}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
