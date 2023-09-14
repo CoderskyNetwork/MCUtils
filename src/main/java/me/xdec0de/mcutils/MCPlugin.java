@@ -512,6 +512,23 @@ public class MCPlugin extends JavaPlugin {
 		return this;
 	}
 
+	/**
+	 * Gets the {@link GUIHandler} used by this {@link MCPlugin}, note
+	 * that you don't need to register the events of the handler, this
+	 * method will do that for you the first time you call it.
+	 * 
+	 * @return The {@link GUIHandler} used by this {@link MCPlugin}, which
+	 * will never be null as one will be created the first time this method
+	 * is called.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #registerGUI(GUI)
+	 * @see #registerGUIs(GUI...)
+	 * @see #unregisterGUIs()
+	 * @see #unregisterGUIs(GUI...)
+	 */
+	@Nonnull
 	public GUIHandler getGUIHandler() {
 		return guiHandler == null ? (guiHandler = registerEvents(new GUIHandler(this))) : guiHandler;
 	}
@@ -538,7 +555,7 @@ public class MCPlugin extends JavaPlugin {
 
 	/**
 	 * Register any number of {@link GUI GUIs} easily, at the cost
-	 * of not returning anything as opposed to {@link #registerGUI(GUI)}.
+	 * of only returning the {@link GUIHandler} used as opposed to {@link #registerGUI(GUI)}.
 	 * 
 	 * @param guis the {@link GUI GUIs} to be registered, if null, nothing
 	 * will be done.

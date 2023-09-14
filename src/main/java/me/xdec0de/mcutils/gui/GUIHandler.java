@@ -106,8 +106,8 @@ public class GUIHandler implements Listener {
 		InventoryView view = clicker.getOpenInventory();
 		Inventory clicked = event.getClickedInventory();
 		if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)
-			clicked = view.getTopInventory();
-		if (clicked == null || clicked.equals(view.getTopInventory()) && !iGui.onClick(clicker, clicked, event.getSlot())) {
+			clicked = clicked.equals(view.getTopInventory()) ? view.getBottomInventory() : view.getTopInventory();
+		if (clicked == null || !iGui.onClick(clicker, clicked, event.getAction(), event.getSlot())) {
 			event.setCancelled(true);
 			return;
 		}
