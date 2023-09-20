@@ -3,10 +3,9 @@ description: Something isn't working as expected?
 labels: [ "Status: Unverified", "Type: Bug" ]
 body:
   - type: checkboxes
-    id:
     attributes:
       label: Prerequisites
-      description: This steps are required in order tu submit a bug report
+      description: This steps are required in order to submit a bug report
       options:
         - label: I have checked that this bug report doesn't already exist
           required: true
@@ -20,7 +19,7 @@ body:
     attributes:
       label: Server software
       description: What server software are you using?
-      placeholder: ex. Spigot
+      placeholder: Spigot, Paper, Purpur...
     validations:
       required: false
 
@@ -46,6 +45,7 @@ body:
     attributes:
       label: Expected behavior
       description: What you expected to see.
+      placeholder: The hexadecimal color being correctly applied on "#F00Hello".
     validations:
       required: true
 
@@ -53,6 +53,7 @@ body:
     attributes:
       label: Actual behavior
       description: What you actually saw.
+      placeholder: The color is applied but the text ends up being "#Hello", the '#' character shouldn't be there.
     validations:
       required: true
 
@@ -60,5 +61,14 @@ body:
     attributes:
       label: Steps to reproduce
       description: This may include a video, screenshots, or detailed instructions to help reconstruct the issue.
+      placeholder: Just get a player and do player.sendMessage(MCStrings.applyColor("#F00Hello"));
     validations:
       required: true
+
+  - type: textarea
+    attributes:
+      label: Additional iformation
+      description: Anything that may help us solve the issue faster, such as a theory on why this is happening
+      placeholder: This may be caused because the '#' character is appended to the StringBuilder when checking if the format is present.
+    validations:
+      required: false
