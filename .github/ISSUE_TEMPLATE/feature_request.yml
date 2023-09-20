@@ -1,0 +1,38 @@
+name: Feature request
+description: Do you need a new feature on MCUtils?
+labels: [ "Status: Unverified", "Type: Feature" ]
+body:
+  - type: checkboxes
+    attributes:
+      label: Prerequisites
+      description: This steps are required in order to request a new feature
+      options:
+        - label: I have checked that this feature isn't already requested
+          required: true
+        - label: I am using the latest version of MCUtils and this feature doesn't exist
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature description
+      description: Explain the new feature / change, be as detailed as possible.
+      placeholder: Hexadecimal color support for MCStrings and MessagesFile, such as "#F00Hello"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Why do you want this feature?
+      description: Explain why this feature should be added.
+      placeholder: This adds way more customization to chat messages!
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: Anything that may help, such as how this feature could be used or implemented.
+      placeholder: The usage could be something like MCStrings.applyColor("#F00Hello");
+    validations:
+      required: false
