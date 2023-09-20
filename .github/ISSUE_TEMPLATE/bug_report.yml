@@ -1,5 +1,5 @@
 name: Bug report
-description: Something is not working as expected?
+description: Something isn't working as expected?
 labels: [ "Status: Unverified", "Type: Bug" ]
 body:
   - type: checkboxes
@@ -10,7 +10,7 @@ body:
       options:
         - label: I have checked that this bug report doesn't already exist
           required: true
-        - label: I am using the latest MCUtils version
+        - label: I am using the latest version of MCUtils
           required: true
         - label: I am using the latest build of my server software
           required: true
@@ -30,6 +30,7 @@ body:
       label: Minecraft version
       description: What Minecraft version are you using?
       options:
+        - 1.20
         - 1.19
         - 1.18
         - 1.17
@@ -38,10 +39,6 @@ body:
         - 1.14
         - 1.13
         - 1.12
-        - 1.11
-        - 1.10
-        - 1.9
-        - 1.8
     validations:
       required: true
 
@@ -54,7 +51,7 @@ body:
 
   - type: textarea
     attributes:
-      label: Observed/Actual behavior
+      label: Actual behavior
       description: What you actually saw.
     validations:
       required: true
