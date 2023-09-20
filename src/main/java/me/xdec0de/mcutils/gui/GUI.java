@@ -37,11 +37,14 @@ public interface GUI {
 	 * @param player the {@link Player} that will view the {@link GUI}.
 	 * @param event the {@link Event} that caused this, which may be {@code null}.
 	 * 
-	 * @return The {@link Inventory} to display to the {@link Player}.
+	 * @return The {@link Inventory} to display to the {@link Player}, which may
+	 * be {@code null} so that {@link GUIHandler#openGUI(GUI, Player, Event)}
+	 * does nothing when trying to open this {@link GUI}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public abstract Inventory onOpen(@Nonnull Player player, @Nullable Event event);
+	@Nullable
+	public Inventory onOpen(@Nonnull Player player, @Nullable Event event);
 
 	/**
 	 * Called whenever a {@link Player} clicks on this {@link GUI}.

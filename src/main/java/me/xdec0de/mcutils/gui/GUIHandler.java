@@ -310,7 +310,9 @@ public class GUIHandler implements Listener {
 	 * Be aware that this may be cancelled by any {@link GUI} if
 	 * {@link GUI#onClose(Player, Event)} returns false.
 	 * 
-	 * @param guis
+	 * @param guis the list of {@link GUI GUIs} to close, note that
+	 * {@link GUI GUIs} that are {@code null} or not handled by this
+	 * {@link GUIHandler} will be ignored.
 	 * 
 	 * @return This {@link GUIHandler}.
 	 * 

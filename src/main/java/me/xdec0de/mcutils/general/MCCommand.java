@@ -21,6 +21,7 @@ import com.google.common.base.Enums;
 
 import me.xdec0de.mcutils.MCPlugin;
 import me.xdec0de.mcutils.files.yaml.MessagesFile;
+import me.xdec0de.mcutils.java.annotations.Internal;
 import me.xdec0de.mcutils.java.strings.MCStrings;
 
 /**
@@ -169,6 +170,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @hidden */
 	@Deprecated
 	@Override
+	@Internal
 	public final boolean execute(CommandSender sender, String commandLabel, String[] args) {
 		if (isRestricted(sender)) {
 			final MessagesFile file = plugin.getMessages();
@@ -193,7 +195,9 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 
 	/** @deprecated In favor of {@link #onCommand(CommandSender, String[])}
 	 * @hidden */
+	@Deprecated
 	@Override
+	@Internal
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		return execute(sender, label, args);
 	}
@@ -239,6 +243,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	@Deprecated
 	@Override
 	@Nullable
+	@Internal
 	public final List<String> tabComplete(@Nonnull CommandSender sender, @Nonnull String alias, @Nonnull String[] args) {
 		if (isRestricted(sender) || !hasAccess(sender, false))
 			return null;
