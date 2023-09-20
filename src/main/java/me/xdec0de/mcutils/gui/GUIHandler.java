@@ -1,6 +1,7 @@
 package me.xdec0de.mcutils.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -210,15 +211,14 @@ public class GUIHandler implements Listener {
 	 * {@link Player} will be able to interact with the {@link GUI}
 	 * as if it was a regular {@link Inventory}, so be careful
 	 * about when and how you use this method. You can of course
-	 * iterate over all online players and {@link Player#closeInventory() close}
-	 * their opened inventory if {@link #getOpenedGUI(Player)} doesn't
-	 * return null before calling this method.
+	 * avoid this problem with {@link #closeAll()}.
 	 * 
 	 * @return This {@link GUIHandler}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #unregisterGUIs(GUI...)
+	 * @see #closeAll()
 	 */
 	@Nonnull
 	public GUIHandler unregisterGUIs() {
@@ -240,6 +240,7 @@ public class GUIHandler implements Listener {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #unregisterGUIs()
+	 * @see #closeAll(GUI...)
 	 */
 	@Nonnull
 	public GUIHandler unregisterGUIs(GUI... guis) {
@@ -252,6 +253,61 @@ public class GUIHandler implements Listener {
 	/*
 	 * GUI handling
 	 */
+
+	/**
+	 * Convenience method to close the {@link Inventory} of
+	 * all online {@link Player players} that are currently viewing
+	 * any {@link GUI} that is handled by this {@link GUIHandler}.
+	 * This can be used before unregistering {@link GUI GUIs} with
+	 * {@link #unregisterGUIs()} to avoid problems. Be aware that this may be cancelled
+	 * by any {@link GUI} if {@link GUI#onClose(Player, Event)} returns false.
+	 * 
+	 * @return This {@link GUIHandler}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #closeAll(GUI...)
+	 * @see #unregisterGUIs()
+	 */
+	@Nonnull
+	public GUIHandler closeAll() {
+		for (Player on : Bukkit.getOnlinePlayers())
+			if (getOpenedGUI(on) != null)
+				on.closeInventory();
+		return this;
+	}
+
+	/**
+	 * Convenience method to close the {@link Inventory} of
+	 * all online {@link Player players} that are currently viewing
+	 * any of the specified <b>guis</b>. Note that only the {@link GUI GUIs}
+	 * handled by this {@link GUIHandler} will be closed as {@link #getOpenedGUI(Player)}
+	 * is used to check if a {@link Player} is currently viewing a {@link GUI}.
+	 * This can be used before unregistering {@link GUI GUIs} with
+	 * {@link #unregisterGUIs(GUI...)} to avoid problems. Be aware that this may be cancelled
+	 * by any {@link GUI} if {@link GUI#onClose(Player, Event)} returns false.
+	 * 
+	 * @param guis
+	 * 
+	 * @return This {@link GUIHandler}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #closeAll()
+	 * @see #unregisterGUIs(GUI...)
+	 */
+	@Nonnull
+	public GUIHandler closeAll(@Nullable GUI... guis) {
+		if (guis == null || guis.length == 0)
+			return this;
+		final List<GUI> toClose = Arrays.asList(guis);
+		for (Player on : Bukkit.getOnlinePlayers()) {
+			final GUI opened = getOpenedGUI(on);
+			if (opened != null && toClose.contains(opened))
+				on.closeInventory();
+		}
+		return this;
+	}
 
 	@Internal
 	@EventHandler
