@@ -2,6 +2,7 @@ package me.xdec0de.mcutils.gui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -24,6 +25,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.scheduler.BukkitTask;
 
 import me.xdec0de.mcutils.MCPlugin;
+import me.xdec0de.mcutils.java.MCLists;
 import me.xdec0de.mcutils.java.annotations.Internal;
 
 /**
@@ -211,7 +213,12 @@ public class GUIHandler implements Listener {
 	 * {@link Player} will be able to interact with the {@link GUI}
 	 * as if it was a regular {@link Inventory}, so be careful
 	 * about when and how you use this method. You can of course
-	 * avoid this problem with {@link #closeAll()}.
+	 * avoid this problem with <b>forceClose</b>.
+	 * 
+	 * @param forceClose whether we should close unregistered {@link GUI GUIs}
+	 * to any {@link Player} currently viewing any of them. This won't call
+	 * {@link GUI#onClose(Player, Event)} as {@link GUI GUIs} will be unregistered
+	 * before closing.
 	 * 
 	 * @return This {@link GUIHandler}.
 	 * 
@@ -221,8 +228,11 @@ public class GUIHandler implements Listener {
 	 * @see #closeAll()
 	 */
 	@Nonnull
-	public GUIHandler unregisterGUIs() {
+	public GUIHandler unregisterGUIs(boolean forceClose) {
+		final Collection<? extends Player> toClose = forceClose ? MCLists.filter(on -> getOpenedGUI(on) != null, Bukkit.getOnlinePlayers()) : null;
 		this.guis.clear();
+		if (toClose != null)
+			toClose.forEach(Player::closeInventory);
 		return this;
 	}
 
@@ -232,6 +242,10 @@ public class GUIHandler implements Listener {
 	 * or not present on this {@link GUIHandler}, it will be skipped.
 	 * For more details please read {@link #unregisterGUIs()}.
 	 * 
+	 * @param forceClose whether we should close unregistered {@link GUI GUIs}
+	 * to any {@link Player} currently viewing any of them. This won't call
+	 * {@link GUI#onClose(Player, Event)} as the specified <b>guis</b>
+	 * will be unregistered before closing.
 	 * @param guis the list of {@link GUI GUIs} to unregister, if
 	 * {@code null}, nothing will be done.
 	 * 
@@ -243,10 +257,21 @@ public class GUIHandler implements Listener {
 	 * @see #closeAll(GUI...)
 	 */
 	@Nonnull
-	public GUIHandler unregisterGUIs(GUI... guis) {
-		if (guis != null)
-			for (GUI gui : guis)
-				this.guis.remove(gui);
+	public GUIHandler unregisterGUIs(boolean forceClose, @Nullable GUI... guis) {
+		if (guis == null || guis.length == 0)
+			return this;
+		final List<GUI> toUnregister = Arrays.asList(guis);
+		final List<Player> toClose = forceClose ? new ArrayList<>(Bukkit.getOnlinePlayers().size()) : null;
+		if (forceClose) {
+			for (Player on : Bukkit.getOnlinePlayers()) {
+				final GUI opened = getOpenedGUI(on);
+				if (opened != null && toUnregister.contains(opened))
+					toClose.add(on);
+			}
+		}
+		toUnregister.forEach(gui -> this.guis.remove(gui));
+		if (toClose != null)
+			toClose.forEach(Player::closeInventory);
 		return this;
 	}
 
@@ -258,9 +283,8 @@ public class GUIHandler implements Listener {
 	 * Convenience method to close the {@link Inventory} of
 	 * all online {@link Player players} that are currently viewing
 	 * any {@link GUI} that is handled by this {@link GUIHandler}.
-	 * This can be used before unregistering {@link GUI GUIs} with
-	 * {@link #unregisterGUIs()} to avoid problems. Be aware that this may be cancelled
-	 * by any {@link GUI} if {@link GUI#onClose(Player, Event)} returns false.
+	 * Be aware that this may be cancelled by any {@link GUI} if
+	 * {@link GUI#onClose(Player, Event)} returns false.
 	 * 
 	 * @return This {@link GUIHandler}.
 	 * 
@@ -283,9 +307,8 @@ public class GUIHandler implements Listener {
 	 * any of the specified <b>guis</b>. Note that only the {@link GUI GUIs}
 	 * handled by this {@link GUIHandler} will be closed as {@link #getOpenedGUI(Player)}
 	 * is used to check if a {@link Player} is currently viewing a {@link GUI}.
-	 * This can be used before unregistering {@link GUI GUIs} with
-	 * {@link #unregisterGUIs(GUI...)} to avoid problems. Be aware that this may be cancelled
-	 * by any {@link GUI} if {@link GUI#onClose(Player, Event)} returns false.
+	 * Be aware that this may be cancelled by any {@link GUI} if
+	 * {@link GUI#onClose(Player, Event)} returns false.
 	 * 
 	 * @param guis
 	 * 
