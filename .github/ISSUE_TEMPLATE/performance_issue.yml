@@ -1,0 +1,39 @@
+name: Performance issue
+description: Memory leaks or excesive resource usage
+labels: [ "Status: Unverified", "Type: Performance" ]
+body:
+  - type: checkboxes
+    attributes:
+      label: Prerequisites
+      description: This steps are required in order to submit a bug report
+      options:
+        - label: I have checked that this issue doesn't already exist
+          required: true
+        - label: I am using the latest version of MCUtils
+          required: true
+        - label: I am sure that MCUtils is causing this issue
+          required: true
+
+  - type: textarea
+    attributes:
+      label: What is the issue?
+      description: What type of performance issue are you experimenting
+      placeholder: A memory leak when performing SQL operations
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: This may include a video, screenshots, or detailed instructions to help reconstruct the issue.
+      placeholder: Create an SQL connection and...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional iformation
+      description: Anything that may help us solve the issue faster, such as a theory on why this is happening
+      placeholder: I think this is caused due to some statements not being closed
+    validations:
+      required: false
