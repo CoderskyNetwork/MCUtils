@@ -3,11 +3,15 @@ package me.xdec0de.mcutils.java;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -232,6 +236,10 @@ public abstract class MCLists {
 		return collections.stream().filter(predicate).toList();
 	}
 
+	public static <T> Set<T> filter(Predicate<T> predicate, Set<T> collections) {
+		return collections.stream().filter(predicate).collect(Collectors.toSet());
+	}
+
 	public static <T> List<T> filter(Predicate<T> predicate, List<T> lst) {
 		return lst.stream().filter(predicate).toList();
 	}
@@ -274,6 +282,13 @@ public abstract class MCLists {
 	public static <R, T> List<R> map(@Nonnull Function<T, R> mapper, @Nonnull Collection<T> collection) {
 		List<R> result = new ArrayList<>();
 		for (T element : collection)
+			result.add(mapper.apply(element));
+		return result;
+	}
+
+	public static <R, T> Set<R> map(@Nonnull Function<T, R> mapper, @Nonnull Set<T> set) {
+		Set<R> result = new HashSet<>();
+		for (T element : set)
 			result.add(mapper.apply(element));
 		return result;
 	}
