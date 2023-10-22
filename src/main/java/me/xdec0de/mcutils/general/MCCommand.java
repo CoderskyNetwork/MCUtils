@@ -163,7 +163,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	public final boolean isRestricted(@Nonnull CommandSender sender) {
-		return restrictedSenderClass.isAssignableFrom(sender.getClass());
+		return restrictedSenderClass == null ? false : restrictedSenderClass.isAssignableFrom(sender.getClass());
 	}
 
 	/** @deprecated In favor of {@link #onCommand(CommandSender, String[])}
