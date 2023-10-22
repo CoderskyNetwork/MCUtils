@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.xdec0de.mcutils.MCPlugin;
 import me.xdec0de.mcutils.files.FileUpdater;
+import me.xdec0de.mcutils.java.MCLists;
 
 /**
  * 
@@ -108,8 +108,8 @@ public class PluginFile extends YmlFile implements FileUpdater {
 	public boolean create() {
 		file.getParentFile().mkdirs();
 		if (!file.exists())
-			plugin.saveResource(getPath(), false);
-		return reload();
+			plugin.saveResource(this.getPath(), false);
+		return this.reload();
 	}
 
 	private File copyInputStreamToFile(String path, InputStream inputStream) {
@@ -141,33 +141,34 @@ public class PluginFile extends YmlFile implements FileUpdater {
 	 * @see #reload()
 	 */
 	public boolean update(@Nullable List<String> ignored) {
-		String pluginName = plugin.getName();
+		final String pluginName = plugin.getName();
+		final String path = this.getPath();
+		final boolean ignores = ignored != null && !ignored.isEmpty();
+		int changes = 0;
 		try {
-			int changes = 0;
-			CharsetYamlConfiguration updated = new CharsetYamlConfiguration(getCharset());
-			if (plugin.getResource(getPath()) != null)
-				updated.load(copyInputStreamToFile(plugin.getDataFolder()+ "/"+getPath(), plugin.getResource(getPath())));
+			final CharsetYamlConfiguration updated = new CharsetYamlConfiguration(this.getCharset());
+			if (plugin.getResource(path) != null)
+				updated.load(copyInputStreamToFile(plugin.getDataFolder() + "/" + path, plugin.getResource(path)));
 			else
-				return log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4File not found", false);
-			final boolean ignores = ignored == null || ignored.isEmpty();
-			Set<String> oldKeys = ignores ? getKeys(true) : getKeys(true).stream().filter(str -> !ignored.contains(str)).collect(Collectors.toSet());
-			Set<String> updKeys = ignores ? updated.getKeys(true) : updated.getKeys(true).stream().filter(str -> !ignored.contains(str)).collect(Collectors.toSet());
-			for (String str : oldKeys)
-				if(!updKeys.contains(str)) {
-					set(str, null);
+				return log("&8[&4"+pluginName+"&8] > &cCould not update &6" + path + "&8: &4File not found", false);
+			Set<String> oldKeys = ignores ? MCLists.filter(str -> !ignored.contains(str), this.getKeys(true)) : this.getKeys(true);
+			Set<String> updKeys = ignores ? MCLists.filter(str -> !ignored.contains(str), updated.getKeys(true)) : updated.getKeys(true);
+			for (String oldPath : oldKeys)
+				if(!updKeys.contains(oldPath)) {
+					this.set(oldPath, null);
 					changes++;
 				}
-			for (String str : updKeys)
-				if(!oldKeys.contains(str)) {
-					set(str, updated.get(str));
+			for (String updPath : updKeys)
+				if(!oldKeys.contains(updPath)) {
+					this.set(updPath, updated.get(updPath));
 					changes++;
 				}
-			save(plugin.getDataFolder() + "/"+getPath());
-			if (changes != 0)
-				return log("&8[&6"+pluginName+"&8] &6"+getPath()+" &7has been updated to &ev"+plugin.getDescription().getVersion()+"&7 with &b"+changes+" &7changes.", true);
-			return true;
+			if (changes == 0)
+				return true;
+			this.save(plugin.getDataFolder() + "/" + path);
+			return log("&8[&6"+pluginName+"&8] &6" + path + " &7has been updated to &ev"+plugin.getDescription().getVersion()+"&7 with &b"+changes+" &7changes.", true);
 		} catch(InvalidConfigurationException | IOException ex) {
-			return log("&8[&4"+pluginName+"&8] > &cCould not update &6"+getPath()+"&8: &4"+ex.getMessage(), false);
+			return log("&8[&4"+pluginName+"&8] > &cCould not update &6" + path + "&8: &4"+ex.getMessage(), false);
 		}
 	}
 

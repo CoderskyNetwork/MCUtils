@@ -103,7 +103,7 @@ public class YmlFile extends CharsetYamlConfiguration implements FileHolder {
 			e.printStackTrace();
 			return false;
 		}
-		return reload();
+		return this.reload();
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class YmlFile extends CharsetYamlConfiguration implements FileHolder {
 	 */
 	public boolean save() {
 		try {
-			save(file);
+			this.save(file);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -153,7 +153,7 @@ public class YmlFile extends CharsetYamlConfiguration implements FileHolder {
 	 */
 	public boolean reload() {
 		try {
-			load(file);
+			this.load(file);
 			return true;
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
