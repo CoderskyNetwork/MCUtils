@@ -4,6 +4,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,10 +67,10 @@ public class MessagesFile extends PluginFile {
 	 */
 	public MessagesFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(plugin, path, charset);
-		if (!contains("commands.noPlayer"))
-			addDefault("commands.noPlayer", "&8&l[&4&l!&8&l] &cThis command cannot be executed by players&8.");
-		if (!contains("commands.noConsole"))
-			addDefault("commands.noConsole", "&8&l[&4&l!&8&l] &cThis command cannot be executed by the console&8.");
+		if (!this.contains("commands.noPlayer"))
+			this.addDefault("commands.noPlayer", "&8&l[&4&l!&8&l] &cThis command cannot be executed by players&8.");
+		if (!this.contains("commands.noConsole"))
+			this.addDefault("commands.noConsole", "&8&l[&4&l!&8&l] &cThis command cannot be executed by the console&8.");
 	}
 
 	/**
@@ -156,8 +158,9 @@ public class MessagesFile extends PluginFile {
 	public String getString(@Nullable String path) {
 		if (path == null)
 			return null;
-		String str = super.getString(path);
-		return getDefaultReplacer() == null ? MCStrings.applyColor(str) : MCStrings.applyColor(getDefaultReplacer().replaceAt(str));
+		final String str = super.getString(path);
+		final Replacer defRep = this.getDefaultReplacer();
+		return MCStrings.applyColor(defRep == null ? str : defRep.replaceAt(str));
 	}
 
 	/**
@@ -170,7 +173,7 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @return The requested colored string, null if no value for the path exists or the path itself is null.
 	 * 
-	 * @throws IllegalArgumentException if <b>replacer</b> is null.
+	 * @throws NullPointerException if <b>replacer</b> is {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -178,10 +181,10 @@ public class MessagesFile extends PluginFile {
 	public String getString(@Nullable String path, @Nonnull Replacer replacer) {
 		if (path == null)
 			return null;
-		if (replacer == null)
-			throw new IllegalArgumentException("Replacer cannot be null.");
-		String str = super.getString(path);
-		return getDefaultReplacer() == null ? MCStrings.applyColor(replacer.replaceAt(str)) : MCStrings.applyColor(getDefaultReplacer().add(replacer).replaceAt(str));
+		Objects.requireNonNull(replacer, "Replacer cannot be null");
+		final String str = super.getString(path);
+		final Replacer defRep = this.getDefaultReplacer();
+		return MCStrings.applyColor((defRep == null ? replacer : defRep.add(replacer)).replaceAt(str));
 	}
 
 	/**
@@ -196,7 +199,7 @@ public class MessagesFile extends PluginFile {
 	 * 
 	 * @return The requested colored string, null if no value for the path exists or the path itself is null.
 	 * 
-	 * @throws IllegalArgumentException if <b>replacements</b> is null or it's size size % 2 is not equal to 0.
+	 * @throws NullPointerException if <b>replacements</b> is null or it's size size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -204,11 +207,10 @@ public class MessagesFile extends PluginFile {
 	public String getString(@Nullable String path, @Nonnull Object... replacements) {
 		if (path == null)
 			return null;
-		if (replacements == null)
-			throw new IllegalArgumentException("Replacements cannot be null.");
-		String str = super.getString(path);
-		return getDefaultReplacer() == null ?
-				MCStrings.applyColor(new Replacer(replacements).replaceAt(str)) : MCStrings.applyColor(getDefaultReplacer().add(replacements).replaceAt(str));
+		Objects.requireNonNull(replacements, "Replacements cannot be null");
+		final String str = super.getString(path);
+		final Replacer defRep = this.getDefaultReplacer();
+		return MCStrings.applyColor((defRep == null ? new Replacer(replacements) : defRep.add(replacements)).replaceAt(str));
 	}
 
 	// Lists //
@@ -229,17 +231,14 @@ public class MessagesFile extends PluginFile {
 	public List<String> getStringList(@Nullable String path) {
 		if (path == null)
 			return null;
-		List<String> atCfg = super.getStringList(path);
-		List<String> res = new ArrayList<>();
+		final List<String> atCfg = super.getStringList(path);
+		final List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
 			return res; 
-		Replacer rep = getDefaultReplacer();
-		if (rep != null)
-			for (String str : atCfg)
-				res.add(MCStrings.applyColor(rep.replaceAt(str)));
-		else
-			for (String str : atCfg)
-				res.add(MCStrings.applyColor(str));
+		final Replacer defRep = this.getDefaultReplacer();
+		final Function<String, String> func = defRep == null ? str -> str : str -> defRep.replaceAt(str);
+		for (String str : atCfg)
+			res.add(MCStrings.applyColor(func.apply(str)));
 		return res;
 	}
 
@@ -293,11 +292,11 @@ public class MessagesFile extends PluginFile {
 			return null;
 		if (replacements == null)
 			throw new IllegalArgumentException("Replacements cannot be null.");
-		List<String> atCfg = super.getStringList(path);
-		List<String> res = new ArrayList<>();
+		final List<String> atCfg = super.getStringList(path);
+		final List<String> res = new ArrayList<>();
 		if (atCfg == null || atCfg.isEmpty())
-			return res; 
-		Replacer rep = getDefaultReplacer() != null ? getDefaultReplacer().add(replacements) : new Replacer(replacements);
+			return res;
+		Replacer rep = defReplacer != null ? this.getDefaultReplacer().add(replacements) : new Replacer(replacements);
 		for (String str : atCfg)
 			res.add(MCStrings.applyColor(rep.replaceAt(str)));
 		return res;
@@ -326,9 +325,9 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path) {
-		List<String> lst = getStringList(path);
+		List<String> lst = this.getStringList(path);
 		if (lst == null || lst.isEmpty())
-			return MCStrings.sendFormattedMessage(target, getString(path));
+			return MCStrings.sendFormattedMessage(target, this.getString(path));
 		for (String msg : lst)
 			MCStrings.sendFormattedMessage(target, msg);
 		return true;
@@ -354,9 +353,9 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		List<String> lst = getStringList(path, replacer);
+		List<String> lst = this.getStringList(path, replacer);
 		if (lst == null || lst.isEmpty())
-			return MCStrings.sendFormattedMessage(target, getString(path, replacer));
+			return MCStrings.sendFormattedMessage(target, this.getString(path, replacer));
 		for (String msg : lst)
 			MCStrings.sendFormattedMessage(target, msg);
 		return true;
@@ -382,9 +381,9 @@ public class MessagesFile extends PluginFile {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Object... replacements) {
-		List<String> lst = getStringList(path, replacements);
+		List<String> lst = this.getStringList(path, replacements);
 		if (lst == null || lst.isEmpty())
-			return MCStrings.sendFormattedMessage(target, getString(path, replacements));
+			return MCStrings.sendFormattedMessage(target, this.getString(path, replacements));
 		for (String msg : lst)
 			MCStrings.sendFormattedMessage(target, msg);
 		return true;
