@@ -566,7 +566,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	@Nullable
 	public <T extends Number> T asNumber(int arg, @Nonnull String[] args, @Nullable T def) {
-		return args.length > arg ? def : MCStrings.asNumber(args[arg], def);
+		return args.length > arg ? MCStrings.asNumber(args[arg], def) : def;
 	}
 
 	/**
@@ -584,7 +584,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see MCStrings#asNumber(CharSequence, Class)
 	 */
 	public <T extends Number> T asNumber(int arg, @Nonnull String[] args, Class<T> type) {
-		return args.length > arg ? null : MCStrings.asNumber(args[arg], type);
+		return args.length > arg ? MCStrings.asNumber(args[arg], type) : null;
 	}
 
 	/*
