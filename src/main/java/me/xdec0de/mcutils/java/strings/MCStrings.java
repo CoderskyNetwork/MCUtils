@@ -14,7 +14,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import me.xdec0de.mcutils.java.MCLists;
 import me.xdec0de.mcutils.java.strings.builders.Click;
@@ -84,12 +83,6 @@ public abstract class MCStrings {
 		String toChat = str;
 		for (FormatPattern pattern : formatPatterns)
 			toChat = pattern.process(target, toChat);
-		if (toChat.isEmpty())
-			return true;
-		if (target instanceof Player)
-			((Player)target).spigot().sendMessage(applyEventPatterns(toChat));
-		else
-			target.sendMessage(toChat);
 		return true;
 	}
 
