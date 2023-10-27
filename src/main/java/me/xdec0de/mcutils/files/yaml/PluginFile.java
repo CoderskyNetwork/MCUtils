@@ -29,7 +29,6 @@ import me.xdec0de.mcutils.java.MCLists;
  */
 public class PluginFile extends YmlFile implements FileUpdater {
 
-	/** The {@link JavaPlugin} that initialized this file */
 	final JavaPlugin plugin;
 
 	/**
@@ -175,5 +174,17 @@ public class PluginFile extends YmlFile implements FileUpdater {
 	private boolean log(String str, boolean ret) {
 		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', str));
 		return ret;
+	}
+
+	/**
+	 * Gets the {@link JavaPlugin} that initialized this file.
+	 * 
+	 * @return The {@link JavaPlugin} that initialized this file.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public JavaPlugin getPlugin() {
+		return plugin;
 	}
 }
