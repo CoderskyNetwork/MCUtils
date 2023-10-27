@@ -21,6 +21,7 @@ import com.google.common.base.Enums;
 
 import me.xdec0de.mcutils.MCPlugin;
 import me.xdec0de.mcutils.files.yaml.MessagesFile;
+import me.xdec0de.mcutils.java.MCLists;
 import me.xdec0de.mcutils.java.annotations.Internal;
 import me.xdec0de.mcutils.java.strings.MCStrings;
 
@@ -198,7 +199,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	@Deprecated
 	@Override
 	@Internal
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public final boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		return execute(sender, label, args);
 	}
 
@@ -264,7 +265,14 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 		List<String> selfTabs = onTab(sender, args);
 		if (selfTabs != null)
 			tabs.addAll(selfTabs);
-		return tabs.isEmpty() ? null : tabs;
+		return tabs.isEmpty() ? null : filterTabs(tabs, args[args.length - 1]);
+	}
+
+	private List<String> filterTabs(List<String> tabs, String arg) {
+		if (arg == null || arg.isEmpty())
+			return tabs;
+		String argLow = arg.toLowerCase();
+		return MCLists.filter(tab -> tab.toLowerCase().startsWith(argLow), tabs);
 	}
 
 	/**
