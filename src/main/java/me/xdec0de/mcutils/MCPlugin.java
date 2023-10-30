@@ -16,10 +16,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.Listener;
+import org.bukkit.generator.BiomeProvider;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -33,6 +38,8 @@ import me.xdec0de.mcutils.gui.GUI;
 import me.xdec0de.mcutils.gui.GUIHandler;
 import me.xdec0de.mcutils.java.strings.MCStrings;
 import me.xdec0de.mcutils.reflection.RefObject;
+import me.xdec0de.mcutils.worldgen.SingleBiomeProvider;
+import me.xdec0de.mcutils.worldgen.VoidGenerator;
 
 /**
  * Represents a {@link JavaPlugin} using the MCUtils API.
@@ -531,5 +538,95 @@ public class MCPlugin extends JavaPlugin {
 	@Nonnull
 	public GUIHandler getGUIHandler() {
 		return guiHandler == null ? (guiHandler = registerEvents(new GUIHandler(this))) : guiHandler;
+	}
+
+	/*
+	 * World creation
+	 */
+
+	/**
+	 * Creates or loads a new {@link World} with the specified
+	 * <b>creator</b>. If <b>creator</b> is {@code null},
+	 * nothing will be done.
+	 * 
+	 * @param creator the {@link WorldCreator} to use
+	 * for the new {@link World}.
+	 * 
+	 * @return The newly created or loaded {@link World}, {@code null}
+	 * if <b>creator</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public World createWorld(@Nullable WorldCreator creator) {
+		return creator != null ? Bukkit.createWorld(creator) : null;
+	}
+
+	/**
+	 * Creates or loads a new {@link World} with the specified
+	 * <b>name</b> and world <b>type</b>. If <b>type</b>
+	 * is {@code null}, {@link WorldType#NORMAL} will be used.
+	 * 
+	 * @param name the name of the new {@link World}.
+	 * @param type the {@link WorldType} of the new {@link World}.
+	 * 
+	 * @return The newly created or loaded {@link World}, {@code null}
+	 * if <b>name</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public World createWorld(@Nullable String name, @Nullable WorldType type) {
+		if (name == null)
+			return null;
+		return createWorld(WorldCreator.name(name).type(type == null ? WorldType.NORMAL : type));
+	}
+
+	/**
+	 * Creates or loads a new {@link World} with the specified
+	 * <b>name</b> and world <b>generator</b>.
+	 * 
+	 * @param name the name of the new {@link World}.
+	 * @param generator the {@link WorldGenerator} of the new {@link World}.
+	 * 
+	 * @return The newly created or loaded {@link World}, {@code null}
+	 * if <b>name</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see VoidGenerator
+	 */
+	@Nullable
+	public World createWorld(@Nonnull String name, @Nullable ChunkGenerator generator) {
+		if (name == null)
+			return null;
+		return createWorld(WorldCreator.name(name).generator(generator));
+	}
+
+	/**
+	 * Creates or loads a new {@link World} with the specified
+	 * <b>name</b>, world <b>generator</b> and <b>biomeProvider</b>.
+	 * 
+	 * @param name the name of the new {@link World}.
+	 * @param generator the {@link WorldGenerator} of the new {@link World}. If
+	 * {@code null}, the "natural" generator for the {@link World} will be used.
+	 * @param biomeProvider the {@link BiomeProvider} of the new {@link World}.
+	 * If {@code null}, the {@link BiomeProvider} of the <b>generator</b> will be used,
+	 * if said <b>generator</b> doesn't specify a provider, the "natural" provider for
+	 * the {@link World} will be used.
+	 * 
+	 * @return The newly created or loaded {@link World}, {@code null}
+	 * if <b>name</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see VoidGenerator
+	 * @see SingleBiomeProvider
+	 */
+	@Nonnull
+	public World createWorld(@Nullable String name, @Nullable ChunkGenerator generator, @Nullable BiomeProvider biomeProvider) {
+		if (name == null)
+			return null;
+		return createWorld(WorldCreator.name(name).generator(generator).biomeProvider(biomeProvider));
 	}
 }
