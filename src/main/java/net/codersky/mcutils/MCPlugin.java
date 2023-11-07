@@ -5,9 +5,12 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
@@ -33,6 +36,7 @@ import net.codersky.mcutils.files.FileUpdater;
 import net.codersky.mcutils.files.yaml.MessagesFile;
 import net.codersky.mcutils.files.yaml.PluginFile;
 import net.codersky.mcutils.files.yaml.YmlFile;
+import net.codersky.mcutils.general.Feature;
 import net.codersky.mcutils.general.MCCommand;
 import net.codersky.mcutils.gui.GUI;
 import net.codersky.mcutils.gui.GUIHandler;
@@ -55,6 +59,7 @@ import net.codersky.mcutils.worldgen.VoidGenerator;
 public class MCPlugin extends JavaPlugin {
 
 	private final LinkedList<FileHolder> files = new LinkedList<>();
+	private final HashMap<Feature, SimpleEntry<String, Boolean>> features = new HashMap<>();
 	private GUIHandler guiHandler;
 
 	/**
@@ -628,5 +633,134 @@ public class MCPlugin extends JavaPlugin {
 		if (name == null)
 			return null;
 		return createWorld(WorldCreator.name(name).generator(generator).biomeProvider(biomeProvider));
+	}
+
+	/*
+	 * Features
+	 */
+
+	/**
+	 * Checks if a {@link Feature} is enabled on this {@link MCPlugin}.
+	 * If <b>feature</b> is {@code null}, {@code false} will be returned.
+	 * Note that a feature may be disabled even if it is registered, see
+	 * {@link #registerFeature(Feature, String)} for more details.
+	 * 
+	 * @param feature the {@link Feature} to check.
+	 * 
+	 * @return {@code true} if the feature is enabled, {@code false} otherwise.
+	 */
+	public boolean isEnabled(@Nullable Feature feature) {
+		// entry.getValue().getValue() checks if the feature is enabled, it's ugly, I know :)
+		if (feature != null)
+			for (Entry<Feature, SimpleEntry<String, Boolean>> entry : features.entrySet())
+				if (entry.getKey().equals(feature))
+					return entry.getValue().getValue();
+		return false;
+	}
+
+	/**
+	 * Reloads every registered {@link Feature} on this {@link MCPlugin}. If a feature
+	 * is {@link #isEnabled() enabled}, it will be {@link Feature#onDisable() disabled}
+	 * and then re-enabled if it can still be enabled (If the config allows it), see
+	 * {@link #registerFeature(Feature, String)} for more details about when a
+	 * {@link Feature} cannot be enabled.
+	 * <p>
+	 * Note that if any error occurs while {@link #onDisable() disabiling} a {@link Feature},
+	 * (Feature{@link #onDisable()} returns {@code false}), the feature won't be re-enabled.
+	 * This is to avoid unexpected behavior on said {@link Feature}.
+	 * 
+	 * @return The amount of failures that occurred while {@link Feature#onDisable() disabling}
+	 * and {@link Feature#onEnable() re-enabling} {@link Feature features}. 0 means every
+	 * {@link Feature} reloaded correctly.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public int reloadFeatures() {
+		int failures = 0;
+		for (Entry<Feature, SimpleEntry<String, Boolean>> entry : features.entrySet()) {
+			final Feature feature = entry.getKey();
+			final SimpleEntry<String, Boolean> info = entry.getValue();
+			if (!setFeatureStatus(feature, info, false)) {
+				failures++;
+				continue;
+			}
+			if (!setFeatureStatus(feature, info, true))
+				failures++;
+		}
+		return failures;
+	}
+
+	/**
+	 * Disables all <b>enabled</b> {@link Feature features} on this {@link MCPlugin}.
+	 * This will call {@link Feature#onDisable()} on all <b>enabled</b> and only
+	 * <b>enabled</b> {@link Feature features}.
+	 * 
+	 * @return the amount of failures ({@link Feature#onDisable()} returning {@code false})
+	 * that happened when disabling all <b>enabled</b> {@link Feature features}. 0 means
+	 * every {@link Feature} disabled successfully.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public int disableFeatures() {
+		int failures = 0;
+		for (Entry<Feature, SimpleEntry<String, Boolean>> entry : features.entrySet())
+			if (!setFeatureStatus(entry.getKey(), entry.getValue(), false))
+				failures++;
+		return failures;
+	}
+
+	/**
+	 * Registers a new {@link Feature} that will optionally require
+	 * a certain boolean value to be true on the {@link #getConfig() config}
+	 * of this {@link MCPlugin plugin} if <b>configPath</b> is not {@code null}.
+	 * Note that {@link Feature features} are not disabled automatically, you will
+	 * need to call {@link #disableFeatures()} on your {@link #onDisable()} method
+	 * in order for them to disable when the {@link MCPlugin plugin} disables.
+	 * <p>
+	 * If both {@link #getConfig()} and <b>configPath</b> are {@code null}, the
+	 * <b>feature</b> will be enabled.
+	 * <p>
+	 * If <b>configPath</b> isn't {@code null} but {@link #getConfig()} is
+	 * {@code null}, the feature will not be enabled.
+	 * <p>
+	 * If <b>configPath</b> and {@link #getConfig()} aren't null, then the feature
+	 * will only be enabled if {@link PluginFile#getBoolean(String)} returns
+	 * {@code true} with the {@link String} being <b>configPath</b>.
+	 * 
+	 * @param feature the {@link Feature} to register.
+	 * @param configPath the {@link #getConfig() config} path to optionally use
+	 * to decide whether to register the feature or not, can be {@code null}.
+	 * 
+	 * @return {@code true} if {@link Feature#onEnable()} returned {@code true},
+	 * {@code false} otherwise or if <b>feature</b> is {@code null}.
+	 * Note that {@link true} will also be returned if the feature doesn't get
+	 * enabled because of {@link #getConfig() config} options, this is intentional
+	 * as this value is used to check for errors, not the status of the <b>feature</b>,
+	 * use {@link #isEnabled(Feature)} for that.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #isEnabled(Feature)
+	 * @see #reloadFeatures()
+	 * @see #disableFeatures()
+	 */
+	public boolean registerFeature(@Nonnull Feature feature, @Nullable String configPath) {
+		return feature == null ? false : setFeatureStatus(feature, new SimpleEntry<String, Boolean>(configPath, true), true);
+	}
+
+	private boolean setFeatureStatus(Feature feature, SimpleEntry<String, Boolean> info, boolean status) {
+		boolean result = true;
+		if (status && !info.getValue()) {
+			if (info.getKey() != null) {
+				final PluginFile cfg = getConfig();
+				if (cfg != null && cfg.getBoolean(info.getKey(), false))
+					result = feature.onEnable();
+			} else
+				result = feature.onEnable();
+		} else if (!status && info.getValue())
+			result = feature.onDisable();
+		info.setValue(status);
+		features.put(feature, info);
+		return result;
 	}
 }
