@@ -640,6 +640,52 @@ public class MCPlugin extends JavaPlugin {
 	 */
 
 	/**
+	 * Gets all the {@link Feature features} that have been
+	 * {@link #registerFeature(Feature, String) registered} to this {@link MCPlugin}.
+	 * Note that this method won't filter disabled features and every
+	 * {@link #registerFeature(Feature, String) registered} {@link Feature} will be returned by it.
+	 * 
+	 * @return All the {@link Feature features} that have been
+	 * {@link #registerFeature(Feature, String) registered} to this {@link MCPlugin}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public List<Feature> getFeatures() {
+		return new ArrayList<Feature>(features.keySet());
+	}
+
+	/**
+	 * Gets a {@link Feature} registered to this {@link MCPlugin} via
+	 * <b>configPath</b>. Note that there is no way to get {@link Feature features}
+	 * that have been {@link #registerFeature(Feature, String) registered}
+	 * with a {@code null} {@link #getConfig() config} path as those are
+	 * assumed to not change their status unexpectedly anyway.
+	 * Also note that if two {@link Feature features} are 
+	 * {@link #registerFeature(Feature, String) registered} under the
+	 * same {@link #getConfig() config} path for some reason, only one of them will be returned.
+	 * 
+	 * @param configPath the {@link #getConfig() config} path that was used to
+	 * {@link #registerFeature(Feature, String) register}
+	 * the {@link Feature} that this method will try to return.
+	 * 
+	 * @return A {@link Feature} matching the specified <b>configPath</b>,
+	 * {@code null} if no match is found or if <b>configPath</b> is {@code null}
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public Feature getFeature(@Nonnull String configPath) {
+		if (configPath == null)
+			for (Entry<Feature, SimpleEntry<String, Boolean>> entry : features.entrySet()) {
+				final String key = entry.getValue().getKey();
+				if (key != null && key.equals(configPath))
+					return entry.getKey();
+			}
+		return null;
+	}
+
+	/**
 	 * Checks if a {@link Feature} is enabled on this {@link MCPlugin}.
 	 * If <b>feature</b> is {@code null}, {@code false} will be returned.
 	 * Note that a feature may be disabled even if it is registered, see
@@ -648,6 +694,8 @@ public class MCPlugin extends JavaPlugin {
 	 * @param feature the {@link Feature} to check.
 	 * 
 	 * @return {@code true} if the feature is enabled, {@code false} otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public boolean isEnabled(@Nullable Feature feature) {
 		// entry.getValue().getValue() checks if the feature is enabled, it's ugly, I know :)
@@ -729,7 +777,7 @@ public class MCPlugin extends JavaPlugin {
 	 * 
 	 * @param feature the {@link Feature} to register.
 	 * @param configPath the {@link #getConfig() config} path to optionally use
-	 * to decide whether to register the feature or not, can be {@code null}.
+	 * to decide whether to enable the feature or not, can be {@code null}.
 	 * 
 	 * @return {@code true} if {@link Feature#onEnable()} returned {@code true},
 	 * {@code false} otherwise or if <b>feature</b> is {@code null}.
@@ -745,7 +793,34 @@ public class MCPlugin extends JavaPlugin {
 	 * @see #disableFeatures()
 	 */
 	public boolean registerFeature(@Nonnull Feature feature, @Nullable String configPath) {
-		return feature == null ? false : setFeatureStatus(feature, new SimpleEntry<String, Boolean>(configPath, true), true);
+		return feature == null ? false : setFeatureStatus(feature, new SimpleEntry<>(configPath, true), true);
+	}
+
+	/**
+	 * Changes the <b>status</b> of a {@link Feature} to either enabled or
+	 * disabled. Note that for this to work the <b>feature</b> needs to be
+	 * previously {@link #registerFeature(Feature, String) registered} to this {@link MCPlugin}.
+	 * If the specified <b>feature</b> isn't registered, this {@code false} will be
+	 * returned by this method to indicate an error.
+	 * 
+	 * @param feature The {@link Feature} to change the status of, see {@link #getFeature(String)}.
+	 * @param status The new status of the <b>feature</b>, {@code true} to enable it
+	 * and {@code false} to disable it. Note that if the feature is already on the chosen state,
+	 * nothing will happen and {@code true} will be returned.
+	 * 
+	 * @return {@code true} if no errors occurred or if the specified <b>feature</b> was already
+	 * on the selected <b>state</b>, {@code false} in case any error occurs. This is handled
+	 * by the {@link Feature} itself on either {@link Feature#onEnable()} or {@link Feature#onDisable()}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public boolean setFeatureStatus(@Nonnull Feature feature, boolean status) {
+		if (feature == null)
+			return false;
+		SimpleEntry<String, Boolean> info = features.get(feature);
+		if (info == null)
+			return false;
+		return setFeatureStatus(feature, info, status);
 	}
 
 	private boolean setFeatureStatus(Feature feature, SimpleEntry<String, Boolean> info, boolean status) {
