@@ -38,14 +38,14 @@ import net.codersky.mcutils.java.strings.MCStrings;
  * @see #onCommand(CommandSender, String[])
  * @see #onTab(CommandSender, String[])
  * @see #inject(int, MCCommand...)
- * @see #setRestrictedSenderClass(Class)
+ * @see #setSenderClass(Class)
  */
 public abstract class MCCommand<P extends MCPlugin> extends Command implements PluginIdentifiableCommand, TabExecutor {
 
 	private final P plugin;
 	private final HashMap<MCCommand<?>, Integer> subCommands = new HashMap<>();
 
-	private Class<?> restrictedSenderClass = null;
+	private Class<?> senderClass = null;
 
 	/**
 	 * Creates a new instance of a {@link MCCommand} with the
@@ -111,12 +111,12 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	}
 
 	/**
-	 * Sets the restricted {@link CommandSender} class, this means that any
-	 * {@link CommandSender} from the specified <b>senderClass</b> won't be
-	 * able to run or tab complete this command and MCUtils directly won't
+	 * Sets the allowed {@link CommandSender} class, this means that only
+	 * {@link CommandSender senders} from the specified <b>senderClass</b> will be
+	 * able to run or tab complete this command. For other classes MCUtils directly won't
 	 * call {@link #onCommand(CommandSender, String[])} nor {@link #onTab(CommandSender, String[])}
-	 * for that command if the sender class doesn't match, so you don't have to worry about it.
-	 * You can restrict either the {@link Player} class or the {@link ConsoleCommandSender} class
+	 * for that command, so you don't have to worry about {@link ClassCastException}.
+	 * You can allow either the {@link Player} class or the {@link ConsoleCommandSender} class
 	 * to make player or console only commands, using <code>null</code> (The default
 	 * value) will remove any restrictions.
 	 * <p>
@@ -125,11 +125,11 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * have access anyways as the parent command won't allow it.
 	 * <p>
 	 * For command execution, both commands and sub commands work the same way, respecting
-	 * priority, the first command to restrict the sender will send it a custom message specified
+	 * priority, the first command to allow a sender class will send it a custom message specified
 	 * by MCUtils at messages.yml, this message may vary if the sender is a player or the console.
 	 * <p>
 	 * Regarding restricted tab completion, commands and sub commands behave a bit differently, both will
-	 * suggest null to the sender on their own tab completions, however, if the sender is tab completing
+	 * suggest {@code null} to the sender on their own tab completions, however, if the sender is tab completing
 	 * a parent command that has one or more sub commands that don't match the sender class, <b>only</b>
 	 * those sub commands will be removed from the parent suggestions.
 	 * <p>
@@ -145,26 +145,26 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see ConsoleCommandSender#getClass()
 	 */
 	@Nonnull
-	public <T extends CommandSender> MCCommand<P> setRestrictedSenderClass(@Nullable Class<T> senderClass) {
+	public <T extends CommandSender> MCCommand<P> setSenderClass(@Nullable Class<T> senderClass) {
 		if (senderClass == null || !senderClass.equals(CommandSender.class))
-			this.restrictedSenderClass = senderClass;
+			this.senderClass = senderClass;
 		return this;
 	}
 
 	/**
-	 * Checks if <b>sender</b> is restricted to use this command,
-	 * check {@link #setRestrictedSenderClass(Class)} for more information.
+	 * Checks if <b>sender</b> is allowed to use this command,
+	 * check {@link #setSenderClass(Class)} for more information.
 	 * 
 	 * @param sender the sender to check.
 	 * 
-	 * @return true if <b>sender</b>'s class is restricted, false otherwise.
+	 * @return true if <b>sender</b>'s class is allowed, false otherwise.
 	 * 
 	 * @throws NullPointerException if <b>sender</b> is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public final boolean isRestricted(@Nonnull CommandSender sender) {
-		return restrictedSenderClass == null ? false : restrictedSenderClass.isAssignableFrom(sender.getClass());
+	public final boolean isAllowed(@Nonnull CommandSender sender) {
+		return senderClass == null ? false : senderClass.isAssignableFrom(sender.getClass());
 	}
 
 	/** @deprecated In favor of {@link #onCommand(CommandSender, String[])}
@@ -173,7 +173,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	@Override
 	@Internal
 	public final boolean execute(CommandSender sender, String commandLabel, String[] args) {
-		if (isRestricted(sender)) {
+		if (!isAllowed(sender)) {
 			final MessagesFile file = plugin.getMessages();
 			if (file != null)
 				return file.send(sender, sender instanceof Player ? "commands.noPlayer" : "commands.noConsole");
@@ -246,13 +246,13 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	@Nullable
 	@Internal
 	public final List<String> tabComplete(@Nonnull CommandSender sender, @Nonnull String alias, @Nonnull String[] args) {
-		if (isRestricted(sender) || !hasAccess(sender, false))
+		if (!isAllowed(sender) || !hasAccess(sender, false))
 			return null;
 		List<String> tabs = new ArrayList<String>();
 		for (MCCommand<?> subCmd : subCommands.keySet()) {
 			int subCmdPos = subCommands.get(subCmd);
 			if (subCmdPos == args.length - 1) { // One argument before subCmd, we suggest its name.
-				if (!subCmd.isRestricted(sender))
+				if (!subCmd.isAllowed(sender))
 					tabs.add(subCmd.getName());
 				continue;
 			}
@@ -307,7 +307,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * {@link #onTab(CommandSender, String[])} themselves.
 	 * By default, with MCUtils, this method always returns
 	 * true. Note that this access check is only done after
-	 * {@link #isRestricted(CommandSender)} returns false,
+	 * {@link #isAllowed(CommandSender)} returns false,
 	 * so there is no need to implement that here either.
 	 * <p>
 	 * <b>Handling by MCUtils:</b> If this method returns false, MCUtils
