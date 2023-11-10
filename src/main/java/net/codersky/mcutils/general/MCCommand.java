@@ -56,7 +56,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	protected MCCommand(P plugin, @Nonnull String name) {
+	public MCCommand(P plugin, @Nonnull String name) {
 		super(name);
 		this.plugin = plugin;
 	}
@@ -71,7 +71,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	protected MCCommand(P plugin, String name, String... aliases) {
+	public MCCommand(P plugin, String name, String... aliases) {
 		this(plugin, name);
 		setAliases(Arrays.asList(aliases));
 	}
