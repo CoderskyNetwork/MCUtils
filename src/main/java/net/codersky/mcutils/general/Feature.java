@@ -14,6 +14,8 @@ import net.codersky.mcutils.MCPlugin;
  * @see MCPlugin#registerFeature(Feature, String)
  * @see #onEnable()
  * @see #onDisable()
+ * 
+ * @since MCUtils 1.0.0
  */
 public interface Feature {
 
