@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
  *
  * @since MCUtils 1.0.0
  */
+@SuppressWarnings("unchecked")
 public abstract class MCNumbers {
 
 	private static Random random;
@@ -37,6 +38,8 @@ public abstract class MCNumbers {
 	 * @param to the last number of the array.
 	 * 
 	 * @return An <code>int</code> array within the defined range.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
 	public static int[] range(int from, int to) {
@@ -75,6 +78,8 @@ public abstract class MCNumbers {
 	 * @param to the last number of the array.
 	 * 
 	 * @return A <code>long</code> array within the defined range.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
 	public static long[] range(long from, long to) {
@@ -105,6 +110,8 @@ public abstract class MCNumbers {
 	 * every time it gets called, only the first time.
 	 * 
 	 * @return A never null {@link Random} instance.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
 	public static Random random() {
@@ -118,6 +125,8 @@ public abstract class MCNumbers {
 	 * @param two the second number.
 	 * 
 	 * @return Either <b>one</b> or <b>two</b>.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public static int random(int one, int two) {
 		if (one == two)
@@ -132,6 +141,8 @@ public abstract class MCNumbers {
 	 * @param two the second number.
 	 * 
 	 * @return Either <b>one</b> or <b>two</b>.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public static long random(long one, long two) {
 		if (one == two)
@@ -146,6 +157,8 @@ public abstract class MCNumbers {
 	 * @param two the second number.
 	 * 
 	 * @return Either <b>one</b> or <b>two</b>.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public static float random(float one, float two) {
 		if (one == two)
@@ -160,6 +173,8 @@ public abstract class MCNumbers {
 	 * @param two the second number.
 	 * 
 	 * @return Either <b>one</b> or <b>two</b>.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public static double random(double one, double two) {
 		if (one == two)
@@ -174,10 +189,216 @@ public abstract class MCNumbers {
 	 * @param two the second number.
 	 * 
 	 * @return Either <b>one</b> or <b>two</b>.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
 	public static <T extends Object> T random(@Nullable T one, @Nullable T two) {
 		// We don't check equality here to avoid NullPointerExceptions.
 		return random().nextBoolean() ? one : two;
+	}
+
+	/*
+	 * Generic operations
+	 */
+
+	/**
+	 * Sums two generic numbers. Note that <b>x</b>'s type is the one
+	 * that takes priority here, so if you were to sum 1 and 1.1, 2 would
+	 * be returned as both values are converted to {@link Integer}
+	 * (<b>x</b>'s class).
+	 * <p>
+	 * If both <b>x</b> and <b>y</b> are of the same type, the operation
+	 * will be made as expected and you should not be using this method
+	 * but regular operators instead (Unless you are working with generics, of course).
+	 * <p>
+	 * If <b>x</b>'s type is not decimal ({@link Integer} or {@link Long}) but <b>y</b>'s type is
+	 * ({@link Float} or {@link Double}), <b>y</b> will be rounded in order to then cast it to <b>x</b>'s type,
+	 * meaning that if we assume that <b>x</b> is 1 ({@link Integer}) and <b>y</b> is 1.4F ({@link Float}), <b>y</b>'s
+	 * value will be rounded to 1, if <b>y</b> is 1.5F, it will be rounded to 2.
+	 * <p>
+	 * <b>Limitations</b>: {@link Short} and {@link Byte} are currently not supported
+	 * as the <b>x</b> value for this method as it tries to cast to {@link Integer}
+	 * but can't, throwing a {@link ClassCastException}, this exception is prevented by
+	 * returning {@code null}, <b>y</b> on the other hand can be of any {@link Number}
+	 * class.
+	 * 
+	 * @param <N> A class extending {@link Number} such as {@link Integer}, {@link Long},
+	 * {@link Float} or {@link Double}.
+	 * 
+	 * @param x Any number to sum with <b>y</b>, the class of this parameter will take
+	 * priority for casting, {@link Short} and {@link Byte} are not supported on this parameter.
+	 * @param y The number that will be summed to <b>x</b>, this one has no restrictions
+	 * other than not being {@code null}, {@link Short} and {@link Byte} are supported.
+	 * 
+	 * @return The sum of both <b>x</b> and <b>y</b>, without overflowing protection,
+	 * {@code null} if <b>x</b>'s class is either {@link Short} or {@link Byte} only.
+	 * 
+	 * @throws NullPointerException if <b>x</b> or <b>y</b> are {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public static <N extends Number> N sum(@Nonnull N x, @Nonnull N y) {
+		final Class<?> type = x.getClass();
+		if (type.equals(Integer.class))
+			return (N) type.cast(x.intValue() + Math.round(y.floatValue()));
+		else if (type.equals(Long.class))
+			return (N) type.cast(x.longValue() + Math.round(y.doubleValue()));
+		else if (type.equals(Float.class))
+			return (N) type.cast(x.floatValue() + y.floatValue());
+		else if (type.equals(Double.class))
+			return (N) type.cast(x.doubleValue() + y.doubleValue());
+		return null;
+	}
+
+	/**
+	 * Subtracts two generic numbers. Note that <b>x</b>'s type is the one
+	 * that takes priority here, so if you were to subtract 2 and 1.1, 1 would
+	 * be returned as both values are converted to {@link Integer}
+	 * (<b>x</b>'s class).
+	 * <p>
+	 * If both <b>x</b> and <b>y</b> are of the same type, the operation
+	 * will be made as expected and you should not be using this method
+	 * but regular operators instead (Unless you are working with generics, of course).
+	 * <p>
+	 * If <b>x</b>'s type is not decimal ({@link Integer} or {@link Long}) but <b>y</b>'s type is
+	 * ({@link Float} or {@link Double}), <b>y</b> will be rounded in order to then cast it to <b>x</b>'s type,
+	 * meaning that if we assume that <b>x</b> is 1 ({@link Integer}) and <b>y</b> is 1.4F ({@link Float}), <b>y</b>'s
+	 * value will be rounded to 1, if <b>y</b> is 1.5F, it will be rounded to 2.
+	 * <p>
+	 * <b>Limitations</b>: {@link Short} and {@link Byte} are currently not supported
+	 * as the <b>x</b> value for this method as it tries to cast to {@link Integer}
+	 * but can't, throwing a {@link ClassCastException}, this exception is prevented by
+	 * returning {@code null}, <b>y</b> on the other hand can be of any {@link Number}
+	 * class.
+	 * 
+	 * @param <N> A class extending {@link Number} such as {@link Integer}, {@link Long},
+	 * {@link Float} or {@link Double}.
+	 * 
+	 * @param x Any number subtract <b>y</b> of, the class of this parameter will take
+	 * priority for casting, {@link Short} and {@link Byte} are not supported on this parameter.
+	 * @param y The number that will be subtracted from <b>x</b>, this one has no restrictions
+	 * other than not being {@code null}, {@link Short} and {@link Byte} are supported.
+	 * 
+	 * @return <b>x</b> with <b>y</b> subtracted from it, without overflowing protection,
+	 * {@code null} if <b>x</b>'s class is either {@link Short} or {@link Byte} only.
+	 * 
+	 * @throws NullPointerException if <b>x</b> or <b>y</b> are {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public static <N extends Number> N subtract(@Nonnull N x, @Nonnull N y) {
+		final Class<?> type = x.getClass();
+		if (type.equals(Integer.class))
+			return (N) type.cast(x.intValue() - Math.round(y.floatValue()));
+		else if (type.equals(Long.class))
+			return (N) type.cast(x.longValue() - Math.round(y.doubleValue()));
+		else if (type.equals(Float.class))
+			return (N) type.cast(x.floatValue() - y.floatValue());
+		else if (type.equals(Double.class))
+			return (N) type.cast(x.doubleValue() - y.doubleValue());
+		return null;
+	}
+
+	/**
+	 * Multiplies two generic numbers. Note that <b>x</b>'s type is the one
+	 * that takes priority here, so if you were to multiply 2 and 2.1, 4 would
+	 * be returned as both values are converted to {@link Integer}
+	 * (<b>x</b>'s class).
+	 * <p>
+	 * If both <b>x</b> and <b>y</b> are of the same type, the operation
+	 * will be made as expected and you should not be using this method
+	 * but regular operators instead (Unless you are working with generics, of course).
+	 * <p>
+	 * If <b>x</b>'s type is not decimal ({@link Integer} or {@link Long}) but <b>y</b>'s type is
+	 * ({@link Float} or {@link Double}), <b>y</b> will be rounded in order to then cast it to <b>x</b>'s type,
+	 * meaning that if we assume that <b>x</b> is 1 ({@link Integer}) and <b>y</b> is 1.4F ({@link Float}), <b>y</b>'s
+	 * value will be rounded to 1, if <b>y</b> is 1.5F, it will be rounded to 2.
+	 * <p>
+	 * <b>Limitations</b>: {@link Short} and {@link Byte} are currently not supported
+	 * as the <b>x</b> value for this method as it tries to cast to {@link Integer}
+	 * but can't, throwing a {@link ClassCastException}, this exception is prevented by
+	 * returning {@code null}, <b>y</b> on the other hand can be of any {@link Number}
+	 * class.
+	 * 
+	 * @param <N> A class extending {@link Number} such as {@link Integer}, {@link Long},
+	 * {@link Float} or {@link Double}.
+	 * 
+	 * @param x Any number multiply by <b>y</b>, the class of this parameter will take
+	 * priority for casting, {@link Short} and {@link Byte} are not supported on this parameter.
+	 * @param y The number that will be multiplied with <b>x</b>, this one has no restrictions
+	 * other than not being {@code null}, {@link Short} and {@link Byte} are supported.
+	 * 
+	 * @return <b>x</b> multiplied by <b>y</b>, without overflowing protection,
+	 * {@code null} if <b>x</b>'s class is either {@link Short} or {@link Byte} only.
+	 * 
+	 * @throws NullPointerException if <b>x</b> or <b>y</b> are {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public static <N extends Number> N multiply(@Nonnull N x, @Nonnull N y) {
+		final Class<?> type = x.getClass();
+		if (type.equals(Integer.class))
+			return (N) type.cast(x.intValue() * Math.round(y.floatValue()));
+		else if (type.equals(Long.class))
+			return (N) type.cast(x.longValue() * Math.round(y.doubleValue()));
+		else if (type.equals(Float.class))
+			return (N) type.cast(x.floatValue() * y.floatValue());
+		else if (type.equals(Double.class))
+			return (N) type.cast(x.doubleValue() * y.doubleValue());
+		return null;
+	}
+
+	/**
+	 * Divides two generic numbers. Note that <b>x</b>'s type is the one
+	 * that takes priority here, so if you were to divide 2 and 2.1, 1 would
+	 * be returned as both values are converted to {@link Integer}
+	 * (<b>x</b>'s class).
+	 * <p>
+	 * If both <b>x</b> and <b>y</b> are of the same type, the operation
+	 * will be made as expected and you should not be using this method
+	 * but regular operators instead (Unless you are working with generics, of course).
+	 * <p>
+	 * If <b>x</b>'s type is not decimal ({@link Integer} or {@link Long}) but <b>y</b>'s type is
+	 * ({@link Float} or {@link Double}), <b>y</b> will be rounded in order to then cast it to <b>x</b>'s type,
+	 * meaning that if we assume that <b>x</b> is 1 ({@link Integer}) and <b>y</b> is 1.4F ({@link Float}), <b>y</b>'s
+	 * value will be rounded to 1, if <b>y</b> is 1.5F, it will be rounded to 2.
+	 * <p>
+	 * <b>Limitations</b>: {@link Short} and {@link Byte} are currently not supported
+	 * as the <b>x</b> value for this method as it tries to cast to {@link Integer}
+	 * but can't, throwing a {@link ClassCastException}, this exception is prevented by
+	 * returning {@code null}, <b>y</b> on the other hand can be of any {@link Number}
+	 * class.
+	 * 
+	 * @param <N> A class extending {@link Number} such as {@link Integer}, {@link Long},
+	 * {@link Float} or {@link Double}.
+	 * 
+	 * @param x Any number divide by <b>y</b>, the class of this parameter will take
+	 * priority for casting, {@link Short} and {@link Byte} are not supported on this parameter.
+	 * @param y The number that will be used to divide <b>x</b>, this one has no restrictions
+	 * other than not being {@code null}, {@link Short} and {@link Byte} are supported.
+	 * 
+	 * @return <b>x</b> divided by <b>y</b>, without overflowing protection,
+	 * {@code null} if <b>x</b>'s class is either {@link Short} or {@link Byte} only.
+	 * 
+	 * @throws NullPointerException if <b>x</b> or <b>y</b> are {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public static <N extends Number> N divide(@Nonnull N x, @Nonnull N y) {
+		final Class<?> type = x.getClass();
+		if (type.equals(Integer.class))
+			return (N) type.cast(x.intValue() / Math.round(y.floatValue()));
+		else if (type.equals(Long.class))
+			return (N) type.cast(x.longValue() / Math.round(y.doubleValue()));
+		else if (type.equals(Float.class))
+			return (N) type.cast(x.floatValue() / y.floatValue());
+		else if (type.equals(Double.class))
+			return (N) type.cast(x.doubleValue() / y.doubleValue());
+		return null;
 	}
 }
