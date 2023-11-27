@@ -116,7 +116,7 @@ public abstract class MCNumbers {
 	@Nonnull
 	public static Random random() {
 		return random == null ? (random = new Random()) : random;
-	}	
+	}
 
 	/**
 	 * Returns either <b>one</b> or <b>two</b> randomly.
@@ -400,5 +400,29 @@ public abstract class MCNumbers {
 		else if (type.equals(Double.class))
 			return (N) type.cast(x.doubleValue() / y.doubleValue());
 		return null;
+	}
+
+	/*
+	 * Percentage
+	 */
+
+	/**
+	 * Randomly returns {@code true} with a set <b>percent</b>
+	 * rate of success, numbers higher or equal to 100 will
+	 * always return {@code true} while numbers lower or equal
+	 * to 0 will always return {@code false}.
+	 * 
+	 * @param percent the percentage chance of returning {@code true},
+	 * for example, 50, will have a 50% chance of returning {@code true}.
+	 * 
+	 * @return Randomly {@code true} or {@code false}, depending on the
+	 * specified <b>percent</b>.
+	 */
+	public static boolean tryChance(int percent) {
+		if (percent >= 100)
+			return true;
+		if (percent <= 0)
+			return false;
+		return random().nextInt(1, 101) <= percent;
 	}
 }
