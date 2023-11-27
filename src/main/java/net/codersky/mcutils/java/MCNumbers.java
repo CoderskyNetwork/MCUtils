@@ -417,6 +417,8 @@ public abstract class MCNumbers {
 	 * 
 	 * @return Randomly {@code true} or {@code false}, depending on the
 	 * specified <b>percent</b>.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	public static boolean tryChance(int percent) {
 		if (percent >= 100)
@@ -424,5 +426,29 @@ public abstract class MCNumbers {
 		if (percent <= 0)
 			return false;
 		return random().nextInt(1, 101) <= percent;
+	}
+
+	/**
+	 * Randomly returns {@code true} with a set <b>percent</b>
+	 * rate of success, numbers higher or equal to 100 will
+	 * always return {@code true} while numbers lower or equal
+	 * to 0 will always return {@code false}.
+	 * <p>
+	 * Decimal values such as 1.5, 0.1 or even 0.00001 are supported.
+	 * 
+	 * @param percent the percentage chance of returning {@code true},
+	 * for example, 50.0, will have a 50% chance of returning {@code true}.
+	 * 
+	 * @return Randomly {@code true} or {@code false}, depending on the
+	 * specified <b>percent</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static boolean tryChance(float percent) {
+		if (percent >= 100)
+			return true;
+		if (percent <= 0)
+			return false;
+		return random().nextFloat(0, 100) <= percent;
 	}
 }
