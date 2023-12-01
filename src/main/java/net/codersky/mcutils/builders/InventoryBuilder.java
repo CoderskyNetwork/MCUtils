@@ -15,8 +15,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import net.codersky.mcutils.java.MCNumbers;
 import net.codersky.mcutils.java.strings.MCStrings;
+import net.codersky.mcutils.math.MCNumbers;
 
 /**
  * A class made to provide easy an fast
