@@ -1,5 +1,7 @@
 package net.codersky.mcutils.java.tuple;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -67,5 +69,10 @@ public abstract class Triple<F, S, T> extends Pair<F, S> {
 		boolean second = getSecond() == null ? other.getSecond() == null : getSecond().equals(other.getSecond());
 		boolean third = getThird() == null ? other.getThird() == null : getThird().equals(other.getThird());
 		return first && second && third;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getFirst(), getSecond(), getThird());
 	}
 }

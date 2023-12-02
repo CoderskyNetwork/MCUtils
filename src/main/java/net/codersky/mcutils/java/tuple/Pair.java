@@ -1,5 +1,7 @@
 package net.codersky.mcutils.java.tuple;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -99,5 +101,10 @@ public abstract class Pair<F, S> {
 		boolean first = getFirst() == null ? other.getFirst() == null : getFirst().equals(other.getFirst());
 		boolean second = getSecond() == null ? other.getSecond() == null : getSecond().equals(other.getSecond());
 		return first && second;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getFirst(), getSecond());
 	}
 }
