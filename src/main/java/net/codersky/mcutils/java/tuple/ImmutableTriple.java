@@ -1,12 +1,12 @@
 package net.codersky.mcutils.java.tuple;
 
-public class InmutableTriple<F, S, T> extends Triple<F, S, T> {
+public class ImmutableTriple<F, S, T> extends Triple<F, S, T> {
 
 	private final F first;
 	private final S second;
 	private final T third;
 
-	public InmutableTriple(F first, S second, T third) {
+	public ImmutableTriple(F first, S second, T third) {
 		this.first = first;
 		this.second = second;
 		this.third = third;

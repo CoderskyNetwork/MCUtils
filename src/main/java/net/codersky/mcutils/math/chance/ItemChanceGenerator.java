@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import net.codersky.mcutils.java.tuple.InmutablePair;
+import net.codersky.mcutils.java.tuple.ImmutablePair;
 import net.codersky.mcutils.java.tuple.Pair;
 import net.codersky.mcutils.math.MCNumbers;
 
@@ -33,7 +33,7 @@ public class ItemChanceGenerator implements ChanceGenerator<ItemStack> {
 				throw new IllegalArgumentException("Illegal stack size for " + element.getType() + ": " + amounts[i]);
 			else if (chances[i] <= 0)
 				throw new IllegalArgumentException("Impossible chance (<= 0) on index " + i);
-			chanceList.add(new InmutablePair<>(amounts[i], chances[i]));
+			chanceList.add(new ImmutablePair<>(amounts[i], chances[i]));
 		}
 		map.put(element, chanceList);
 		return this;
