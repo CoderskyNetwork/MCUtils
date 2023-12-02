@@ -22,7 +22,7 @@ public class MutablePair<F, S> extends Pair<F, S> {
 	private S second;
 
 	/**
-	 * Constructs a new {@link MmutablePair} that contains
+	 * Constructs a new {@link MutablePair} that contains
 	 * two elements which may be {@code null}.
 	 * 
 	 * @param first the first element to store.
@@ -52,7 +52,7 @@ public class MutablePair<F, S> extends Pair<F, S> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public F setFirst(F first) {
+	public F setFirst(@Nullable F first) {
 		return (this.first = first);
 	}
 
@@ -73,7 +73,7 @@ public class MutablePair<F, S> extends Pair<F, S> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public S setSecond(S second) {
+	public S setSecond(@Nullable S second) {
 		return (this.second = second);
 	}
 }

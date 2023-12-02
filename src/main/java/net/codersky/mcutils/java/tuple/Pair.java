@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 /**
  * A class capable of storing two instance of generic
  * types. Containing a {@link #getFirst() first} and
- * a {@link #getSecond() second} element, elements may
+ * a {@link #getSecond() second} element. Elements may
  * be mutable or immutable depending on the implementation.
  * 
  * @author xDec0de_
