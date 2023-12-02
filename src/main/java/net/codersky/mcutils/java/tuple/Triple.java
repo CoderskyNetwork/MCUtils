@@ -1,18 +1,8 @@
 package net.codersky.mcutils.java.tuple;
 
-public abstract class Triple<F, S, T> {
+public abstract class Triple<F, S, T> extends Pair<F, S> {
 
-	public abstract F getFirst();
-	public abstract S getSecond();
 	public abstract T getThird();
-
-	public boolean isFirstEqual(MutableTriple<F, ?, ?> other) {
-		return getFirst() == null ? other.getFirst() == null : getFirst().equals(other.getFirst());
-	}
-
-	public boolean isSecondEqual(MutableTriple<?, S, ?> other) {
-		return getSecond() == null ? other.getSecond() == null : getSecond().equals(other.getSecond());
-	}
 
 	public boolean isThirdEqual(MutableTriple<?, ?, T> other) {
 		return getThird() == null ? other.getSecond() == null : getThird().equals(other.getThird());
