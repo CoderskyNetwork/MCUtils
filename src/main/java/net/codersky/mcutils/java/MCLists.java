@@ -18,6 +18,8 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
+import net.codersky.mcutils.math.MCNumbers;
+
 /**
  * A class with utilities for lists, we
  * recommend using this class with {@link Arrays}
@@ -313,6 +315,14 @@ public abstract class MCLists {
 	@SafeVarargs
 	public static <T> List<T> remove(List<T> lst, T... elements) {
 		return remove(lst, Arrays.asList(elements));
+	}
+
+	public static <T> List<T> removeDuplicates(List<T> lst) {
+		List<T> result = new ArrayList<>(lst.size());
+		for (T element : lst)
+			if (!result.contains(lst))
+				result.add(element);
+		return result;
 	}
 
 	/*
