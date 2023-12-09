@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -384,6 +385,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public String asLowerString(int arg, @Nonnull String[] args, @Nullable String def) {
 		String original = asString(arg, args, def);
 		return original != null ? original.toLowerCase() : null;
@@ -400,6 +402,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public String asLowerString(int arg, @Nonnull String[] args) {
 		return asLowerString(arg, args, null);
 	}
@@ -416,6 +419,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public String asUpperString(int arg, @Nonnull String[] args, @Nullable String def) {
 		String original = asString(arg, args, def);
 		return original != null ? original.toUpperCase() : null;
@@ -432,6 +436,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public String asUpperString(int arg, @Nonnull String[] args) {
 		return asUpperString(arg, args, null);
 	}
@@ -495,6 +500,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * <b>def</b> if <b>fromArg</b> is out of bounds.
 	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public String asLowerStringRange(int fromArg, @Nonnull String[] args, @Nullable String def) {
 		String range = asStringRange(fromArg, args, def);
 		return range != null ? range.toLowerCase() : null;
@@ -513,6 +519,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * null if <b>fromArg</b> is out of bounds.
 	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public String asLowerStringRange(int fromArg, @Nonnull String[] args) {
 		return asLowerStringRange(fromArg, args, null);
 	}
@@ -531,6 +538,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * <b>def</b> if <b>fromArg</b> is out of bounds.
 	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public String asUpperStringRange(int fromArg, @Nonnull String[] args, @Nullable String def) {
 		String range = asStringRange(fromArg, args, def);
 		return range != null ? range.toUpperCase() : null;
@@ -549,8 +557,42 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * null if <b>fromArg</b> is out of bounds.
 	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public String asUpperStringRange(int fromArg, @Nonnull String[] args) {
 		return asUpperStringRange(fromArg, args, null);
+	}
+
+	/*
+	 * String list ranges
+	 */
+
+	@Nullable
+	public List<String> asStringListRange(int fromArg, @Nonnull String[] args, @Nullable Function<String, String> modifier, @Nullable List<String> def) {
+		if (fromArg > args.length)
+			return def;
+		final List<String> lst = new ArrayList<>(args.length - fromArg);
+		if (modifier != null)
+			for (int i = fromArg + 1; i < args.length; i++)
+				lst.add(modifier.apply(args[i]));
+		else
+			for (int i = fromArg + 1; i < args.length; i++)
+				lst.add(args[i]);
+		return lst;
+	}
+
+	@Nullable
+	public List<String> asStringListRange(int fromArg, @Nonnull String[] args, @Nullable Function<String, String> modifier) {
+		return asStringListRange(fromArg, args, modifier, null);
+	}
+
+	@Nullable
+	public List<String> asStringListRange(int fromArg, @Nonnull String[] args, @Nullable List<String> def) {
+		return asStringListRange(fromArg, args, null, def);
+	}
+
+	@Nullable
+	public List<String> asStringListRange(int fromArg, @Nonnull String[] args) {
+		return asStringListRange(fromArg, args, null, null);
 	}
 
 	/*
