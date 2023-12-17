@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import net.codersky.mcutils.java.strings.MCStrings;
 import net.codersky.mcutils.math.MCNumbers;
@@ -34,7 +35,7 @@ public class InventoryBuilder implements Cloneable {
 	/**
 	 * Tests true if an {@link ItemStack} is null or its type is {@link Material#AIR}
 	 * 
-	 * @see {@link Predicate#negate()} for not empty items.
+	 * @see {@link Predicate#negate()} for non empty items.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -336,6 +337,71 @@ public class InventoryBuilder implements Cloneable {
 	@Nonnull
 	public InventoryBuilder set(@Nullable ItemStack item, int... slots) {
 		return setIf(item, null, slots);
+	}
+
+	/**
+	 * Sets the specified <b>slots</b> of the {@link Inventory} handled
+	 * by this {@link InventoryBuilder} with a new {@link ItemStack}
+	 * made with the set <b>material</b>, <b>amount</b> and <b>displayName</b>.
+	 * Out of bounds slots will be ignored.
+	 * <p>
+	 * <b>Tip</b>: Use {@link MCNumbers#range(int, int)} for slot ranges.
+	 * 
+	 * @param material The {@link Material} of the {@link ItemStack} to use.
+	 * @param amount The amount of the stack.
+	 * @param displayName The display name of the stack, this <b>won't</b> be
+	 * {@link MCStrings#applyColor(String) colored} for performance reasons.
+	 * @param slots the slots to set this item to, any out of bounds slot will
+	 * just be ignored without throwing any exception.
+	 * 
+	 * @return This {@link InventoryBuilder}.
+	 * 
+	 * @throws NullPointerException if <b>material</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #set(Material, String, int...)
+	 * @see #set(ItemStack, int...)
+	 */
+	@Nonnull
+	public InventoryBuilder set(@Nonnull Material material, int amount, @Nullable String displayName, int... slots) {
+		final ItemStack stack = new ItemStack(material, amount);
+		ItemMeta meta = stack.getItemMeta();
+		if (meta == null)
+			meta = Bukkit.getItemFactory().getItemMeta(material);
+		if (displayName == null || meta == null)
+			return set(stack, slots);
+		meta.setDisplayName(displayName);
+		stack.setItemMeta(meta);
+		return set(stack, slots);
+	}
+
+	/**
+	 * Sets the specified <b>slots</b> of the {@link Inventory} handled
+	 * by this {@link InventoryBuilder} with a new {@link ItemStack}
+	 * made with the set <b>material</b> and <b>displayName</b>, the amount
+	 * of the stack will be 1. Out of bounds slots will be ignored.
+	 * <p>
+	 * <b>Tip</b>: Use {@link MCNumbers#range(int, int)} for slot ranges.
+	 * 
+	 * @param material The {@link Material} of the {@link ItemStack} to use.
+	 * @param displayName The display name of the stack, this <b>won't</b> be
+	 * {@link MCStrings#applyColor(String) colored} for performance reasons.
+	 * @param slots the slots to set this item to, any out of bounds slot will
+	 * just be ignored without throwing any exception.
+	 * 
+	 * @return This {@link InventoryBuilder}.
+	 * 
+	 * @throws NullPointerException if <b>material</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #set(Material, int, String, int...)
+	 * @see #set(ItemStack, int...)
+	 */
+	@Nonnull
+	public InventoryBuilder set(@Nonnull Material material, @Nullable String displayName, int... slots) {
+		return set(material, 1, displayName, slots);
 	}
 
 	/**
