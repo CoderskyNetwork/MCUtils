@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -101,6 +102,8 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @return This {@link MCCommand}
 	 * 
 	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getInjectedCommands(int)
 	 */
 	public MCCommand<P> inject(int position, @Nullable MCCommand<?>... commands) {
 		if (commands == null || commands.length == 0)
@@ -109,6 +112,33 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 			if (subCmd != null)
 				subCommands.put(subCmd, position);
 		return this;
+	}
+
+	/**
+	 * Gets a list of {@link MCCommand commands} that have been 
+	 * {@link #inject(int, MCCommand...) injected} to this {@link MCCommand}
+	 * at a specific <b>position</b>. This list of course may be empty
+	 * if no {@link MCCommand commands} have been {@link #inject(int, MCCommand...) injected}
+	 * at said <b>position</b> or if <b>position</b> is < 0.
+	 * 
+	 * @param position the position to get {@link #inject(int, MCCommand...) injected} sub commands from.
+	 * 
+	 * @return A never {@code null} but possibly empty {@link List} of {@link MCCommand commands}
+	 * {@link #inject(int, MCCommand...) injected} to the specified <b>position</b>.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #inject(int, MCCommand...)
+	 */
+	@Nonnull
+	public List<MCCommand<?>> getInjectedCmds(int position) {
+		final List<MCCommand<?>> commands = new ArrayList<>(subCommands.size());
+		if (position < 0)
+			return new ArrayList<>(0);
+		for (Entry<MCCommand<?>, Integer> entry : subCommands.entrySet())
+			if (entry.getValue() == position)
+				commands.add(entry.getKey());
+		return commands;
 	}
 
 	/**
