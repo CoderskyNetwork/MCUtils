@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -362,6 +363,31 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	public boolean hasAccess(@Nonnull CommandSender sender, boolean message) {
 		return true;
+	}
+
+	/*
+	 * Utility methods
+	 */
+
+	/**
+	 * Utility method to map all {@link Bukkit#getOnlinePlayers() online players}.
+	 * This is generally used {@link #onTab(CommandSender, String[])} with
+	 * {@link Player#getName()} as the <b>mapper</b> to get all online player names.
+	 * 
+	 * @param <R> The type of elements of the new {@link List}.
+	 * 
+	 * @param mapper The mapper function that will be applied to {@link Bukkit#getOnlinePlayers()}
+	 * 
+	 * @return A {@link List} consisting of the results of applying the given
+	 * <b>mapper</b> function to the elements of {@link Bukkit#getOnlinePlayers()}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see Stream#map(Function)
+	 */
+	@Nonnull
+	public <R> List<R> mapOnline(@Nonnull Function<? super Player, R> mapper) {
+		return Bukkit.getOnlinePlayers().stream().map(mapper).toList();
 	}
 
 	// ARGUMENT CONVERSION //
