@@ -16,38 +16,39 @@ One thing that is important to note is that MCUtils is currently on the early st
 
 ## Why should I use MCUtils? (Documentation in progress)
 As previously mentioned, MCUtils is designed to make your plugin development process easier and faster, but, what does it actually offer? Well... Here is the current list of features.
+
 - Compatible with both Spigot and PaperMC
 
 - General file registration
-    - [Reload and update](https://mcutils.codersky.net/file-types/messagesfile) all the files registered to your plugin
-    - [FileHolder](https://mcutils.codersky.net/file-types#fileholder-and-fileupdater) interface for any custom file type that you may need to register
-    - [FileUpdater](https://mcutils.codersky.net/file-types#fileholder-and-fileupdater) interface if your FileHolder can be updated
+  - [Reload and update](https://mcutils.codersky.net/file-types/messagesfile) all the files registered to your plugin
+  - [FileHolder](https://mcutils.codersky.net/file-types#fileholder-and-fileupdater) interface for any custom file type that you may need to register
+  - [FileUpdater](https://mcutils.codersky.net/file-types#fileholder-and-fileupdater) interface if your FileHolder can be updated
 
 - Yaml file management
-    - [YmlFile](https://mcutils.codersky.net/file-types/ymlfile) for basic yaml files with reload support
-    - [PluginFile](https://mcutils.codersky.net/file-types/pluginfile) for plugin resource files that can be updated
-    - [MessagesFile](https://mcutils.codersky.net/file-types/messagesfile) to send custom messages easily
+  - [YmlFile](https://mcutils.codersky.net/file-types/ymlfile) for basic yaml files with reload support
+  - [PluginFile](https://mcutils.codersky.net/file-types/pluginfile) for plugin resource files that can be updated
+  - [MessagesFile](https://mcutils.codersky.net/file-types/messagesfile) to send custom messages easily
 
 - Message patterns
-    - [Color patterns](https://mcutils.codersky.net/chat-features/color-patterns)
-    - [Target patterns](https://mcutils.codersky.net/chat-features/target-patterns)
-    - [Event patterns](https://mcutils.codersky.net/chat-features/event-patterns)
+  - [Color patterns](https://mcutils.codersky.net/chat-features/color-patterns)
+  - [Target patterns](https://mcutils.codersky.net/chat-features/target-patterns)
+  - [Event patterns](https://mcutils.codersky.net/chat-features/event-patterns)
 
 - The MCCommand class
-    - Register commands with or without defining them on your plugin.yml file
-    - Get and convert command arguments in one line, without IndexOutOfBounds exceptions
-    - Add sub-commands without doing all the boring logic of it yourself
-    - Restrict commands to be player or console only directly from the constructor
-    - Create your own MCCommand class with custom conditions
+  - Register commands with or without defining them on your plugin.yml file
+  - Get and convert command arguments in one line, without IndexOutOfBounds exceptions
+  - Add sub-commands without doing all the boring logic of it yourself
+  - Restrict commands to be player or console only directly from the constructor
+  - Create your own MCCommand class with custom conditions
 
 - Builders that are easy to use
-    - [ItemBuilder](https://mcutils.codersky.net/items-and-inventories/itembuilder)
-    - SkullBuilder
-    - InventoryBuilder
+  - [ItemBuilder](https://mcutils.codersky.net/items-and-inventories/itembuilder)
+  - SkullBuilder
+  - InventoryBuilder
 
 - GUI handling
-    - GUIHandler
-    - GUI and ActionGUI
+  - GUIHandler
+  - GUI and ActionGUI
 
 - Reflection utilities
 
