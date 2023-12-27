@@ -18,41 +18,41 @@ One thing that is important to note is that MCUtils is currently on the early st
 As previously mentioned, MCUtils is designed to make your plugin development process easier and faster, but, what does it actually offer? Well... Here is the current list of features.
 *   Compatible with both Spigot and PaperMC
 *   General file registration
-    *   [Reload and update](https://mcutils.codersky.net/file-types/messagesfile) all the files registered to your plugin
-    *   [FileHolder](https://mcutils.codersky.net/file-types#fileholder-and-fileupdater) interface - For any custom file type that you may need to register
-    *   [FileUpdater](https://mcutils.codersky.net/file-types#fileholder-and-fileupdater) interface - If your FileHolder can be updated
+    -   [Reload and update](https://mcutils.codersky.net/file-types/messagesfile) all the files registered to your plugin
+    -   [FileHolder](https://mcutils.codersky.net/file-types#fileholder-and-fileupdater) interface \- For any custom file type that you may need to register
+    -   [FileUpdater](https://mcutils.codersky.net/file-types#fileholder-and-fileupdater) interface \- If your FileHolder can be updated
 *   Yaml file management
-    * [YmlFile](https://mcutils.codersky.net/file-types/ymlfile) - For basic yaml files with reload support.
-    * [PluginFile](https://mcutils.codersky.net/file-types/pluginfile) - For plugin resource files that can be updated.
-    * [MessagesFile](https://mcutils.codersky.net/file-types/messagesfile) - To send custom messages easily.
+    - [YmlFile](https://mcutils.codersky.net/file-types/ymlfile) \- For basic yaml files with reload support
+    - [PluginFile](https://mcutils.codersky.net/file-types/pluginfile) \- For plugin resource files that can be updated
+    - [MessagesFile](https://mcutils.codersky.net/file-types/messagesfile) \- To send custom messages easily
 *   [Color patterns](https://mcutils.codersky.net/chat-features/color-patterns)
 *   [Target patterns](https://mcutils.codersky.net/chat-features/target-patterns)
 *   [Event patterns](https://mcutils.codersky.net/chat-features/event-patterns)
 *   The MCCommand class
-    *   Register commands with or without defining them on your plugin.yml file
-    *   Get and convert command arguments in one line, without IndexOutOfBounds exceptions
-    *   Add sub-commands without doing all the boring logic of it yourself
-    *   Restrict commands to be player or console only directly from the constructor
-    *   Create your own MCCommand class with custom conditions
+    -   Register commands with or without defining them on your plugin.yml file
+    -   Get and convert command arguments in one line, without IndexOutOfBounds exceptions
+    -   Add sub-commands without doing all the boring logic of it yourself
+    -   Restrict commands to be player or console only directly from the constructor
+    -   Create your own MCCommand class with custom conditions
 *   Builders that are easy to use
-    *   [ItemBuilder](https://mcutils.codersky.net/items-and-inventories/itembuilder)
-    *   SkullBuilder
+    -   [ItemBuilder](https://mcutils.codersky.net/items-and-inventories/itembuilder)
+    -   SkullBuilder
 *   InventoryBuilder
 *   GUI handling
-    *   GUIHandler
-    *   GUI and ActionGUI
+    -   GUIHandler
+    -   GUI and ActionGUI
 *   Reflection utilities
 *   Regions
-    *   [2D Regions](https://mcutils.codersky.net/regions/2d-regions)
-    *   [3D Regions](https://mcutils.codersky.net/regions/3d-regions)
+    -   [2D Regions](https://mcutils.codersky.net/regions/2d-regions)
+    -   [3D Regions](https://mcutils.codersky.net/regions/3d-regions)
 *   General utilities
-    *    MCStrings
-    *    [Replacers](https://mcutils.codersky.net/chat-features/replacers)
-    *   MCNumbers
-    *   MCLists
+    -   MCStrings
+    -   [Replacers](https://mcutils.codersky.net/chat-features/replacers)
+    -   MCNumbers
+    -   MCLists
 *   Version checkers
-    *   [For the server](https://mcutils.codersky.net/getting-started/checking-server-version)
-    *   For your plugin
+    -   [For the server](https://mcutils.codersky.net/getting-started/checking-server-version)
+    -   For your plugin
 *   World generation
-    *   VoidGenerator
-    *   SingleBiomeProvider
+    -   VoidGenerator
+    -   SingleBiomeProvider
