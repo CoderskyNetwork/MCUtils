@@ -53,19 +53,19 @@ As previously mentioned, MCUtils is designed to make your plugin development pro
 - Reflection utilities
 
 - Regions
-    - [2D Regions](https://mcutils.codersky.net/regions/2d-regions)
-    - [3D Regions](https://mcutils.codersky.net/regions/3d-regions)
+  - [2D Regions](https://mcutils.codersky.net/regions/2d-regions)
+  - [3D Regions](https://mcutils.codersky.net/regions/3d-regions)
 
 - General utilities
-    - MCStrings
-    - [Replacers](https://mcutils.codersky.net/chat-features/replacers)
-    - MCNumbers
-    - MCLists
+  - MCStrings
+  - [Replacers](https://mcutils.codersky.net/chat-features/replacers)
+  - MCNumbers
+  - MCLists
 
 - Version checkers
-    - [For the server](https://mcutils.codersky.net/getting-started/checking-server-version)
-    - For your plugin
+  - [For the server](https://mcutils.codersky.net/getting-started/checking-server-version)
+  - For your plugin
 
 - World generation
-    - VoidGenerator
-    - SingleBiomeProvider
+  - VoidGenerator
+  - SingleBiomeProvider
