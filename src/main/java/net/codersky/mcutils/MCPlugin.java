@@ -196,17 +196,40 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Reloads all files registered to the plugin by
-	 * calling {@link YmlFile#reload()} on them.
+	 * Reloads all {@link #reloadFiles() files} and
+	 * {@link #reloadFeatures() features} registered
+	 * to this {@link MCPlugin}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #reload(List)
+	 * @see #reloadFiles()
+	 * @see #reloadFeatures()
 	 * @see #update()
 	 * @see #update(List)
+	 * 
+	 * @return The amount of errors that occurred while
+	 * reloading files and features. 0 means no errors
+	 * occurred.
 	 */
-	public void reload() {
-		files.forEach(file -> file.reload());
+	public int reload() {
+		return reloadFiles() + reloadFeatures();
+	}
+
+	/**
+	 * Reloads all {@link FileHolder files} registered
+	 * to this {@link MCPlugin}.
+	 * 
+	 * @return The amount of files that failed when
+	 * {@link FileHolder#reload() reloading}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public int reloadFiles() {
+		int failures = 0;
+		for (FileHolder file : files)
+			if (!file.reload())
+				failures++;
+		return failures;
 	}
 
 	/**
