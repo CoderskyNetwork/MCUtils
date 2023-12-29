@@ -15,6 +15,17 @@ import net.codersky.mcutils.java.tuple.ImmutablePair;
 import net.codersky.mcutils.java.tuple.Pair;
 import net.codersky.mcutils.math.MCNumbers;
 
+/**
+ * A {@link ChanceGenerator} made for {@link ItemStack ItemStacks},
+ * providing methods that provide different chances for different
+ * amounts of the same {@link ItemStack} to be generated. If you
+ * don't need this feature, you can use a {@link GenericChanceGenerator}
+ * with {@link ItemStack} as a type.
+ * 
+ * @author xDec0de_
+ *
+ * @since MCUtils 1.0.0
+ */
 public class ItemChanceGenerator implements ChanceGenerator<ItemStack> {
 
 	private final HashMap<ItemStack, List<Pair<Integer, Float>>> map = new HashMap<>();
@@ -27,7 +38,7 @@ public class ItemChanceGenerator implements ChanceGenerator<ItemStack> {
 	public ItemChanceGenerator add(@Nonnull ItemStack element, @Nonnull int[] amounts, @Nonnull float[] chances) {
 		final List<Pair<Integer, Float>> chanceList = new ArrayList<>(amounts.length);
 		if (amounts.length != chances.length)
-			throw new IllegalArgumentException("Amounts length (" + amounts.length + ") is not equal to chances length " + chances.length + ")");
+			throw new IllegalArgumentException("Amounts length (" + amounts.length + ") is not equal to chances length (" + chances.length + ")");
 		for (int i = 0; i < amounts.length; i++) {
 			if (amounts[i] <= 0 || amounts[i] > element.getType().getMaxStackSize())
 				throw new IllegalArgumentException("Illegal stack size for " + element.getType() + ": " + amounts[i]);

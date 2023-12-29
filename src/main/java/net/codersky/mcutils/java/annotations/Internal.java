@@ -2,6 +2,8 @@ package net.codersky.mcutils.java.annotations;
 
 import java.lang.annotation.Documented;
 
+import org.bukkit.event.EventHandler;
+
 /**
  * The annotated method, constructor or field is considered internal and should
  * not be used. This annotation may be added to accessible methods, constructors
