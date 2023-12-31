@@ -451,4 +451,104 @@ public abstract class MCNumbers {
 			return false;
 		return random().nextFloat(0, 100) <= percent;
 	}
+
+	/*
+	 * Limits
+	 */
+
+	/**
+	 * Limits <b>n</b> to a <b>min</b> and a <b>max</b> value.
+	 * <p>
+	 * For performance reasons this method doesn't check if <b>min</b>
+	 * is actually smaller tan <b>max</b>. So using for example <b>min</b>
+	 * with a value of 5, <b>max</b> with a value of 0 and <b>n</b>
+	 * with a value of 3 will return 5, not 3.
+	 * 
+	 * @param n the {@code int} to limit.
+	 * @param min the minimum value allowed for <b>n</b>
+	 * @param max the maximum value allowed for <b>n</b>
+	 * 
+	 * @return <b>min</b> if <b>n</b> is smaller than <b>min</b>,
+	 * <b>max</b> if <b>n</b> is bigger than <b>max</b>. <b>n</b>
+	 * otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static int limit(int n, int min, int max) {
+		if (n < min)
+			return min;
+		return n > max ? max : n;
+	}
+
+	/**
+	 * Limits <b>n</b> to a <b>min</b> and a <b>max</b> value.
+	 * <p>
+	 * For performance reasons this method doesn't check if <b>min</b>
+	 * is actually smaller tan <b>max</b>. So using for example <b>min</b>
+	 * with a value of 5, <b>max</b> with a value of 0 and <b>n</b>
+	 * with a value of 3 will return 5, not 3.
+	 * 
+	 * @param n the {@code long} to limit.
+	 * @param min the minimum value allowed for <b>n</b>
+	 * @param max the maximum value allowed for <b>n</b>
+	 * 
+	 * @return <b>min</b> if <b>n</b> is smaller than <b>min</b>,
+	 * <b>max</b> if <b>n</b> is bigger than <b>max</b>. <b>n</b>
+	 * otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static long limit(long n, long min, long max) {
+		if (n < min)
+			return min;
+		return n > max ? max : n;
+	}
+
+	/**
+	 * Limits <b>n</b> to a <b>min</b> and a <b>max</b> value.
+	 * <p>
+	 * For performance reasons this method doesn't check if <b>min</b>
+	 * is actually smaller tan <b>max</b>. So using for example <b>min</b>
+	 * with a value of 5, <b>max</b> with a value of 0 and <b>n</b>
+	 * with a value of 3 will return 5, not 3.
+	 * 
+	 * @param n the {@code float} to limit.
+	 * @param min the minimum value allowed for <b>n</b>
+	 * @param max the maximum value allowed for <b>n</b>
+	 * 
+	 * @return <b>min</b> if <b>n</b> is smaller than <b>min</b>,
+	 * <b>max</b> if <b>n</b> is bigger than <b>max</b>. <b>n</b>
+	 * otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static float limit(float n, float min, float max) {
+		if (n < min)
+			return min;
+		return n > max ? max : n;
+	}
+
+	/**
+	 * Limits <b>n</b> to a <b>min</b> and a <b>max</b> value.
+	 * <p>
+	 * For performance reasons this method doesn't check if <b>min</b>
+	 * is actually smaller tan <b>max</b>. So using for example <b>min</b>
+	 * with a value of 5, <b>max</b> with a value of 0 and <b>n</b>
+	 * with a value of 3 will return 5, not 3.
+	 * 
+	 * @param n the {@code double} to limit.
+	 * @param min the minimum value allowed for <b>n</b>
+	 * @param max the maximum value allowed for <b>n</b>
+	 * 
+	 * @return <b>min</b> if <b>n</b> is smaller than <b>min</b>,
+	 * <b>max</b> if <b>n</b> is bigger than <b>max</b>. <b>n</b>
+	 * otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static double limit(double n, double min, double max) {
+		if (n < min)
+			return min;
+		return n > max ? max : n;
+	}
 }
