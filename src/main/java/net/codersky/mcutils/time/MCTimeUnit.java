@@ -6,7 +6,6 @@ import javax.annotation.Nonnull;
 
 import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.index.qual.Positive;
 
 /**
  * A similar {@code enum} to {@link TimeUnit}, except it

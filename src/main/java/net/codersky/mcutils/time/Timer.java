@@ -604,6 +604,62 @@ public class Timer implements Replacement, Cloneable {
 	}
 
 	/*
+	 * Tasks
+	 */
+
+	/**
+	 * Schedules a new {@link TimerTask} to execute a {@link Runnable} that will
+	 * use a {@link #clone() clone} of this {@link Timer} as a reference. Meaning
+	 * that if this {@link Timer} has 5 {@link MCTimeUnit#MINUTES minutes} stored
+	 * at the time of calling this method, <b>runnable</b> will run 5 {@link MCTimeUnit#MINUTES minutes}
+	 * from when this method was called. Modifying this {@link Timer} will have no
+	 * effect on the {@link TimerTask} as the task uses a {@link #clone()} as previously mentioned.
+	 * In order to modify the {@link TimerTask} {@link Timer}, you need to use {@link TimerTask#getTimer()}.
+	 * 
+	 * @param plugin the {@link Plugin} that will schedule this task on the
+	 * {@link Bukkit#getScheduler() Bukkit scheduler}.
+	 * @param runnable the {@link Runnable} that will run once the {@link #clone() clone} of
+	 * this {@link Timer} {@link #hasEnded() ends}.
+	 * 
+	 * @return The new {@link TimerTask} that has been scheduled.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #schedule(Plugin, Consumer, Object)
+	 */
+	@Nonnull
+	public TimerTask schedule(@Nonnull Plugin plugin, @Nonnull Runnable runnable) {
+		return new TimerTask(clone()).schedule(plugin, runnable);
+	}
+
+	/**
+	 * Schedules a new {@link TimerTask} to execute a {@link Consumer} that will
+	 * use a {@link #clone() clone} of this {@link Timer} as a reference. Meaning
+	 * that if this {@link Timer} has 5 {@link MCTimeUnit#MINUTES minutes} stored
+	 * at the time of calling this method, <b>runnable</b> will run 5 {@link MCTimeUnit#MINUTES minutes}
+	 * from when this method was called. Modifying this {@link Timer} will have no
+	 * effect on the {@link TimerTask} as the task uses a {@link #clone()} as previously mentioned.
+	 * In order to modify the {@link TimerTask} {@link Timer}, you need to use {@link TimerTask#getTimer()}.
+	 * 
+	 * @param <T> the type of the input to the operation
+	 * @param plugin the {@link Plugin} that will schedule this task on the
+	 * {@link Bukkit#getScheduler() Bukkit scheduler}.
+	 * @param consumer the {@link Consumer} that will run once the {@link #clone() clone} of
+	 * this {@link Timer} {@link #hasEnded() ends}.
+	 * @param obj the object that will be used by the {@link Consumer}.
+	 * 
+	 * @return The new {@link TimerTask} that has been scheduled.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #schedule(Plugin, Runnable)
+	 */
+	@Nonnull
+	public <T> TimerTask schedule(@Nonnull Plugin plugin, @Nonnull Consumer<T> consumer, @Nullable T obj) {
+		return new TimerTask(clone()).schedule(plugin, consumer, obj);
+	}
+
+	/*
 	 * Utility
 	 */
 
