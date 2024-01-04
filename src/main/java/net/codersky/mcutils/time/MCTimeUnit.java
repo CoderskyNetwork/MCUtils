@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 
 import org.bukkit.scheduler.BukkitTask;
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.index.qual.Positive;
 
 /**
@@ -42,7 +43,7 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public long toTicks(@Positive long amount) {
+	public long toTicks(@NonNegative long amount) {
 		if (amount <= 0)
 			return 0;
 		return switch (this) {
@@ -66,7 +67,7 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public long toSeconds(@Positive long amount) {
+	public long toSeconds(@NonNegative long amount) {
 		if (amount <= 0)
 			return 0;
 		return switch (this) {
@@ -90,7 +91,7 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public long toMinutes(@Positive long amount) {
+	public long toMinutes(@NonNegative long amount) {
 		if (amount <= 0)
 			return 0;
 		return switch (this) {
@@ -114,7 +115,7 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public long toHours(@Positive long amount) {
+	public long toHours(@NonNegative long amount) {
 		if (amount <= 0)
 			return 0;
 		return switch (this) {
@@ -139,7 +140,7 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public long toUnit(@Positive long amount, @Nonnull MCTimeUnit unit) {
+	public long toUnit(@NonNegative long amount, @Nonnull MCTimeUnit unit) {
 		if (amount <= 0)
 			return 0;
 		return switch (unit) {
@@ -148,5 +149,20 @@ public enum MCTimeUnit {
 		case MINUTES -> toMinutes(amount);
 		case HOURS -> toHours(amount);
 		};
+	}
+
+	/**
+	 * Creates a new {@link Timer} with the {@link Timer#Timer(MCTimeUnit, int)}
+	 * constructor, using this {@link MCTimeUnit} and the specified <b>amount</b>
+	 * 
+	 * @param amount the amount of this {@link MCTimeUnit} to add to the {@link Timer}.
+	 * 
+	 * @return A new {@link Timer}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public Timer asTimer(@NonNegative int amount) {
+		return new Timer(this, amount);
 	}
 }
