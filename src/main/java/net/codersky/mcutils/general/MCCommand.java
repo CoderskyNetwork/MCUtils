@@ -415,6 +415,30 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 
 	/**
 	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link String}, this
+	 * method will apply <b>modifier</b> to the argument only if one is found and <b>def</b> isn't {@code null}.
+	 * If no argument is found on the <b>arg</b> position and <b>def</b> is {@code null},
+	 * {@code null} will be returned and the <b>modifier</b> won't be applied.
+	 *
+	 * @param modifier A {@link Function} to modify the resulting {@link String} that will be applied
+	 * only if the {@link String} is not {@code null}.
+	 * @param arg the array position of the argument to get, can be out of bounds.
+	 * @param args the array of arguments to use.
+	 * @param def the default value to return if <b>arg</b> is out of bounds.
+	 * 
+	 * @return The argument as a {@link String} if found on the <b>args</b> array, null otherwise.
+	 * 
+	 * @throws NullPointerException if <b>modifier</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public String asString(@Nonnull Function<String, String> modifier, int arg, @Nonnull String[] args, @Nullable String def) {
+		final String result = asString(arg, args, def);
+		return result == null ? null : modifier.apply(result);
+	}
+
+	/**
+	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link String}, this
 	 * method won't do any actual conversion and will just return the argument if found, null if not.
 	 * 
 	 * @param arg the array position of the argument to get, can be out of bounds.
@@ -430,71 +454,25 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	}
 
 	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to a lower case {@link String}.
-	 * 
+	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link String}, this
+	 * method will apply <b>modifier</b> to the argument only if one is found, if no argument is found on
+	 * the <b>arg</b> position, {@code null} will be returned and the <b>modifier</b> won't be applied.
+	 *
+	 * @param modifier A {@link Function} to modify the resulting {@link String} that will be applied
+	 * only if the {@link String} is not {@code null}.
 	 * @param arg the array position of the argument to get, can be out of bounds.
 	 * @param args the array of arguments to use.
-	 * @param def the default value to return if <b>arg</b> is out of bounds.
 	 * 
-	 * @return The argument as a lower case {@link String} if found on the <b>args</b> array, <b>def</b> otherwise.
+	 * @return The argument as a {@link String} if found on the <b>args</b> array, null otherwise.
+	 * 
+	 * @throws NullPointerException if <b>modifier</b> is {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	@Deprecated(forRemoval = true)
-	public String asLowerString(int arg, @Nonnull String[] args, @Nullable String def) {
-		String original = asString(arg, args, def);
-		return original != null ? original.toLowerCase() : null;
-	}
-
-	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to a lower case {@link String}.
-	 * 
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * 
-	 * @return The argument as a lower case {@link String} if found on the <b>args</b> array, null otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	@Deprecated(forRemoval = true)
-	public String asLowerString(int arg, @Nonnull String[] args) {
-		return asLowerString(arg, args, null);
-	}
-
-	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to an upper case {@link String}.
-	 * 
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * @param def the default value to return if <b>arg</b> is out of bounds.
-	 * 
-	 * @return The argument as an upper case {@link String} if found on the <b>args</b> array, <b>def</b> otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	@Deprecated(forRemoval = true)
-	public String asUpperString(int arg, @Nonnull String[] args, @Nullable String def) {
-		String original = asString(arg, args, def);
-		return original != null ? original.toUpperCase() : null;
-	}
-
-	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to an upper case {@link String}.
-	 * 
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * 
-	 * @return The argument as an upper case {@link String} if found on the <b>args</b> array, null otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	@Deprecated(forRemoval = true)
-	public String asUpperString(int arg, @Nonnull String[] args) {
-		return asUpperString(arg, args, null);
+	public String asString(@Nonnull Function<String, String> modifier, int arg, @Nonnull String[] args) {
+		final String result = asString(arg, args);
+		return result == null ? null : modifier.apply(result);
 	}
 
 	/*
@@ -793,7 +771,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	@Nullable
 	public <T extends Enum<T>> T asEnum(int arg, @Nonnull String[] args, @Nullable Class<T> enumClass) {
-		String name = asUpperString(arg, args);
+		String name = asString(String::toUpperCase, arg, args);
 		if (name == null || enumClass == null)
 			return null;
 		return Enums.getIfPresent(enumClass, name).orNull();
@@ -814,7 +792,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	@SuppressWarnings("unchecked")
 	@Nullable
 	public <T extends Enum<T>> T asEnum(int arg, @Nonnull String[] args, @Nullable T def) {
-		String name = asUpperString(arg, args);
+		String name = asString(String::toUpperCase, arg, args);
 		if (name == null || def == null)
 			return def;
 		return (T) Enums.getIfPresent(def.getClass(), name).or(def);
