@@ -25,6 +25,7 @@ import net.codersky.mcutils.java.annotations.Internal;
 public class TimerTask {
 
 	private final Timer timer;
+	private boolean paused = false;
 	private BukkitTask task = null;
 
 	@Internal
@@ -56,6 +57,35 @@ public class TimerTask {
 		task = null;
 	}
 
+	/**
+	 * Checks if this {@link TimerTask} is paused or not.
+	 * 
+	 * @return {@code true} if this {@link TimerTask} is
+	 * paused, {@code false} otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public boolean isPaused() {
+		return paused;
+	}
+
+	/**
+	 * Pauses or unpauses this {@link TimerTask}. Paused
+	 * tasks won't {@link Timer#tick() tick} their
+	 * {@link #getTimer() timer}.
+	 * 
+	 * @param paused Whether to pause or unpause this
+	 * {@link TimerTask}.
+	 * 
+	 * @return This {@link TimerTask}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public TimerTask setPaused(boolean paused) {
+		this.paused = paused;
+		return this;
+	}
+
 	/*
 	 * Scheduler internals
 	 */
@@ -64,7 +94,7 @@ public class TimerTask {
 	@Internal
 	TimerTask schedule(@Nonnull Plugin plugin, @Nonnull Runnable runnable) {
 		task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-			if (!timer.tick().hasEnded())
+			if (paused || !timer.tick().hasEnded())
 				return;
 			runnable.run();
 			cancel();
