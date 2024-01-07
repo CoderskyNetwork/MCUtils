@@ -208,9 +208,11 @@ public class Timer implements Replacement, Cloneable {
 	 */
 
 	/**
-	 * Removes one second from this {@link Timer} in a much more
-	 * optimized way than calling {@link #removeSeconds(int)} with
-	 * 1 second as no multiplications nor divisions are used here.
+	 * Removes one second from this {@link Timer} with more optimization
+	 * than {@link #removeSeconds(int)} as less calculations are done by
+	 * assuming only one second is always removed, even though
+	 * {@link #removeSeconds(int)} calls this method if only 1 second is removed,
+	 * calling this method is still preferred if possible to skip that condition.
 	 * 
 	 * @return This {@link Timer}.
 	 * 
@@ -287,8 +289,8 @@ public class Timer implements Replacement, Cloneable {
 	 * from this {@link Timer}. If the <b>amount</b> to remove is higher
 	 * than {@link #getTotalSeconds()}, the resulting amount will be 0. This method
 	 * will also remove {@link MCTimeUnit#HOURS hours} and {@link MCTimeUnit#MINUTES minutes}
-	 * from the {@link Timer} if
-	 * necessary.
+	 * from the {@link Timer} if necessary. If <b>amount</b> is 1, {@link #tick()} will be
+	 * called instead.
 	 * 
 	 * @param amount the amount of {@link MCTimeUnit#SECONDS seconds} to remove.
 	 * 
@@ -298,6 +300,8 @@ public class Timer implements Replacement, Cloneable {
 	 */
 	@Nonnull
 	public Timer removeSeconds(@NonNegative int amount) {
+		if (amount == 1)
+			return tick();
 		if (amount <= 0)
 			return this;
 		final int totalSecs = time[2] - amount;
