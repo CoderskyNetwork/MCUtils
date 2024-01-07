@@ -20,14 +20,14 @@ import org.checkerframework.checker.index.qual.NonNegative;
  */
 public enum MCTimeUnit {
 
-	/** Represents in-game ticks, which are 20 per second. */
-	TICKS,
-	/** Represents real time seconds (20 ticks per unit). */
-	SECONDS,
+	/** Represents real time hours (72000 ticks per unit). */
+	HOURS,
 	/** Represents real time minutes (1200 ticks per unit). */
 	MINUTES,
-	/** Represents real time hours (72000 ticks per unit). */
-	HOURS;
+	/** Represents real time seconds (20 ticks per unit). */
+	SECONDS,
+	/** Represents in-game ticks, which are 20 per second. */
+	TICKS;
 
 	/**
 	 * Converts any <b>amount</b> of this {@link MCTimeUnit} to
