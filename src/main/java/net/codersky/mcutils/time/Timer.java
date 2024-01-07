@@ -117,6 +117,29 @@ public class Timer implements Replacement, Cloneable {
 	}
 
 	/**
+	 * As the reverse of {@link #tick()}, this method adds one second
+	 * to the {@link Timer} in a faster way than {@link #addSeconds(int)}
+	 * as less calculations are done, even though {@link #addSeconds(int)}
+	 * calls this method if only one second is added.
+	 * 
+	 * @return This {@link Timer}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public Timer add() {
+		if (time[2] == 59) {
+			time[2] = 0;
+			time[1]++;
+		}
+		if (time[1] == 60) {
+			time[1] = 0;
+			time[0]++;
+		}
+		return this;
+	}
+
+	/**
 	 * Adds the specified <b>amount</b> of {@link MCTimeUnit#TICKS ticks} to
 	 * this {@link Timer}. Note that {@link Timer timers} only allow precision
 	 * up to {@link MCTimeUnit#SECONDS seconds}, so this method converts
