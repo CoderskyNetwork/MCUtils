@@ -24,6 +24,7 @@ import net.codersky.mcutils.java.strings.replacers.Replacement;
  * 
  * @see #Timer(int, int, int)
  * @see #toString(CharSequence, boolean)
+ * @see #addOne()
  * @see #add(MCTimeUnit, int)
  * @see #removeOne()
  * @see #remove(MCTimeUnit, int)
@@ -94,29 +95,6 @@ public class Timer implements Replacement, Cloneable {
 	 */
 
 	/**
-	 * Adds time to this {@link Timer} with the corresponding multiplier
-	 * of the specified <b>unit</b>.
-	 * 
-	 * @param unit the {@link MCTimeUnit} to use.
-	 * @param amount the amount of <b>unit</b>s to add.
-	 * 
-	 * @return This {@link Timer}.
-	 * 
-	 * @throws NullPointerException if <b>unit</b> is {@code null}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nonnull
-	public Timer add(@Nonnull MCTimeUnit unit, @NonNegative int amount) {
-		return switch(unit) {
-		case TICKS -> addTicks(amount);
-		case SECONDS -> addSeconds(amount);
-		case MINUTES -> addMinutes(amount);
-		case HOURS -> addHours(amount);
-		};
-	}
-
-	/**
 	 * As the reverse of {@link #removeOne()}, this method adds one second
 	 * to the {@link Timer} in a faster way than {@link #addSeconds(int)}
 	 * as less calculations are done, even though {@link #addSeconds(int)}
@@ -137,6 +115,29 @@ public class Timer implements Replacement, Cloneable {
 			time[0]++;
 		}
 		return this;
+	}
+
+	/**
+	 * Adds time to this {@link Timer} with the corresponding multiplier
+	 * of the specified <b>unit</b>.
+	 * 
+	 * @param unit the {@link MCTimeUnit} to use.
+	 * @param amount the amount of <b>unit</b>s to add.
+	 * 
+	 * @return This {@link Timer}.
+	 * 
+	 * @throws NullPointerException if <b>unit</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public Timer add(@Nonnull MCTimeUnit unit, @NonNegative int amount) {
+		return switch(unit) {
+		case TICKS -> addTicks(amount);
+		case SECONDS -> addSeconds(amount);
+		case MINUTES -> addMinutes(amount);
+		case HOURS -> addHours(amount);
+		};
 	}
 
 	/**
@@ -560,6 +561,36 @@ public class Timer implements Replacement, Cloneable {
 
 	/**
 	 * Converts this {@link Timer} to a {@link String} with the specified
+	 * <b>separator</b> and a minimum {@link MCTimeUnit}.
+	 * 
+	 * @param separator The separator to use between time units, a separator
+	 * of ":" will return, for example 1:30:45.
+	 * @param fill filling set to true means that if the unit is for example
+	 * 9, it will be "filled" to 09 so the length of the string is more consistent.
+	 * @param minUnit the minimum {@link MCTimeUnit} that should be displayed. If the
+	 * {@link Timer} has ended, normally this method would return an empty String. However,
+	 * if this is set to {@link MCTimeUnit#HOURS}, the resulting String would be "00:00:00"
+	 * or "0:0:0" if <b>fill</b> is set to {@code false}.
+	 * 
+	 * @return This {@link Timer} converted to {@link String}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public String toString(@Nullable CharSequence separator, boolean fill, @Nonnull MCTimeUnit minUnit) {
+		final StringBuilder builder = new StringBuilder();
+		System.out.println(minUnit.ordinal());
+		final int unitIndex = minUnit.ordinal();
+		for (int i = 0; i < 3; i++) {
+			if (!builder.isEmpty())
+				appendTime(builder.append(separator), time[i], fill);
+			else if (i >= unitIndex || time[i] != 0)
+				appendTime(builder, time[i], fill);
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * Converts this {@link Timer} to a {@link String} with the specified
 	 * separator.
 	 * 
 	 * @param separator The separator to use between time units, a separator
@@ -573,14 +604,27 @@ public class Timer implements Replacement, Cloneable {
 	 */
 	@Nonnull
 	public String toString(@Nullable CharSequence separator, boolean fill) {
-		final StringBuilder builder = new StringBuilder();
-		for (int unit : time) {
-			if (!builder.isEmpty())
-				appendTime(builder.append(separator), unit, fill);
-			else if (unit != 0)
-				appendTime(builder, unit, fill);
-		}
-		return builder.toString();
+		return toString(separator, fill, MCTimeUnit.HOURS);
+	}
+
+	/**
+	 * Converts this {@link Timer} to a {@link String} with the specified
+	 * <b>separator</b> and a minimum {@link MCTimeUnit}.
+	 * 
+	 * @param separator The separator to use between time units, a separator
+	 * of ":" will return, for example 1:30:45.
+	 * @param minUnit the minimum {@link MCTimeUnit} that should be displayed. If the
+	 * {@link Timer} has ended, normally this method would return an empty String. However,
+	 * if this is set to {@link MCTimeUnit#HOURS}, the resulting String would be "00:00:00"
+	 * or "0:0:0" if <b>fill</b> is set to {@code false}.
+	 * 
+	 * @return This {@link Timer} converted to {@link String}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public String toString(@Nullable CharSequence separator, @Nonnull MCTimeUnit minUnit) {
+		return toString(separator, true, minUnit);
 	}
 
 	/**
@@ -596,12 +640,12 @@ public class Timer implements Replacement, Cloneable {
 	 */
 	@Nonnull
 	public String toString(@Nullable CharSequence separator) {
-		return toString(separator, true);
+		return toString(separator, true, MCTimeUnit.HOURS);
 	}
 
 	/**
-	 * Converts this {@link Timer} to a {@link String} with the specified
-	 * separator. The separator used is ":" ({@link #toString(CharSequence, boolean)}).
+	 * Converts this {@link Timer} to a {@link String}. The separator used is ":"
+	 * ({@link #toString(CharSequence, boolean)}).
 	 * 
 	 * @param fill filling set to true means that if the unit is for example
 	 * 9, it will be "filled" to 09 so the length of the string is more consistent.
@@ -612,13 +656,32 @@ public class Timer implements Replacement, Cloneable {
 	 */
 	@Nonnull
 	public String toString(boolean fill) {
-		return toString(":", fill);
+		return toString(":", fill, MCTimeUnit.HOURS);
+	}
+
+	/**
+	 * Converts this {@link Timer} to a {@link String}. The separator used is ":"
+	 * and <b>fill</b> is set to {@code true}.
+	 * ({@link #toString(CharSequence, boolean, MCTimeUnit)}).
+	 * 
+	 * @param minUnit the minimum {@link MCTimeUnit} that should be displayed. If the
+	 * {@link Timer} has ended, normally this method would return an empty String. However,
+	 * if this is set to {@link MCTimeUnit#HOURS}, the resulting String would be "00:00:00".
+	 * 
+	 * @return This {@link Timer} converted to {@link String}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public String toString(@Nonnull MCTimeUnit minUnit) {
+		return toString(":", true, minUnit);
 	}
 
 	/**
 	 * Converts this {@link Timer} to a {@link String} with the specified
-	 * separator. The separator used is ":" and filling is set to {@code true}
-	 * ({@link #toString(CharSequence, boolean)}).
+	 * separator. The separator used is ":", filling is set to {@code true}
+	 * and the minimum {@link MCTimeUnit} is set to {@link MCTimeUnit#HOURS}.
+	 * ({@link #toString(CharSequence, boolean, MCTimeUnit)}).
 	 * 
 	 * @return This {@link Timer} converted to {@link String}.
 	 * 
@@ -627,7 +690,7 @@ public class Timer implements Replacement, Cloneable {
 	@Nonnull
 	@Override
 	public String toString() {
-		return toString(":", true);
+		return toString(":", true, MCTimeUnit.HOURS);
 	}
 
 	/*
