@@ -25,7 +25,7 @@ import net.codersky.mcutils.java.strings.replacers.Replacement;
  * @see #Timer(int, int, int)
  * @see #toString(CharSequence, boolean)
  * @see #add(MCTimeUnit, int)
- * @see #tick()
+ * @see #removeOne()
  * @see #remove(MCTimeUnit, int)
  * @see #hasEnded()
  * @see #schedule(Plugin, Runnable)
@@ -117,7 +117,7 @@ public class Timer implements Replacement, Cloneable {
 	}
 
 	/**
-	 * As the reverse of {@link #tick()}, this method adds one second
+	 * As the reverse of {@link #removeOne()}, this method adds one second
 	 * to the {@link Timer} in a faster way than {@link #addSeconds(int)}
 	 * as less calculations are done, even though {@link #addSeconds(int)}
 	 * calls this method if only one second is added.
@@ -127,7 +127,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer add() {
+	public Timer addOne() {
 		if (time[2] == 59) {
 			time[2] = 0;
 			time[1]++;
@@ -242,7 +242,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer tick() {
+	public Timer removeOne() {
 		if (time[2] > 0) {
 			time[2]--;
 			return this;
@@ -312,7 +312,7 @@ public class Timer implements Replacement, Cloneable {
 	 * from this {@link Timer}. If the <b>amount</b> to remove is higher
 	 * than {@link #getTotalSeconds()}, the resulting amount will be 0. This method
 	 * will also remove {@link MCTimeUnit#HOURS hours} and {@link MCTimeUnit#MINUTES minutes}
-	 * from the {@link Timer} if necessary. If <b>amount</b> is 1, {@link #tick()} will be
+	 * from the {@link Timer} if necessary. If <b>amount</b> is 1, {@link #removeOne()} will be
 	 * called instead.
 	 * 
 	 * @param amount the amount of {@link MCTimeUnit#SECONDS seconds} to remove.
@@ -324,7 +324,7 @@ public class Timer implements Replacement, Cloneable {
 	@Nonnull
 	public Timer removeSeconds(@NonNegative int amount) {
 		if (amount == 1)
-			return tick();
+			return removeOne();
 		if (amount <= 0)
 			return this;
 		final int totalSecs = time[2] - amount;

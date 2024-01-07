@@ -71,7 +71,7 @@ public class TimerTask {
 
 	/**
 	 * Pauses or unpauses this {@link TimerTask}. Paused
-	 * tasks won't {@link Timer#tick() tick} their
+	 * tasks won't {@link Timer#removeOne() tick} their
 	 * {@link #getTimer() timer}.
 	 * 
 	 * @param paused Whether to pause or unpause this
@@ -94,7 +94,7 @@ public class TimerTask {
 	@Internal
 	TimerTask schedule(@Nonnull Plugin plugin, @Nonnull Runnable runnable) {
 		task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-			if (paused || !timer.tick().hasEnded())
+			if (paused || !timer.removeOne().hasEnded())
 				return;
 			runnable.run();
 			cancel();
