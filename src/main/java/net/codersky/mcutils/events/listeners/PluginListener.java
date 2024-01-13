@@ -1,5 +1,6 @@
 package net.codersky.mcutils.events.listeners;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -49,10 +50,12 @@ public abstract class PluginListener<P extends MCPlugin> implements Listener {
 	 * 
 	 * @param plugin the {@link MCPlugin} that will own this {@link PluginListener}.
 	 * 
+	 * @throws NullPointerException if <b>plugin</b> is {@code null}.
+	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	public PluginListener(@Nonnull P plugin) {
-		this.plugin = plugin;
+		this.plugin = Objects.requireNonNull(plugin);
 	}
 
 	/**
