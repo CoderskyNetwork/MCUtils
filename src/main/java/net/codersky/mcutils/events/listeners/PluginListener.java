@@ -42,10 +42,28 @@ public abstract class PluginListener<P extends MCPlugin> implements Listener {
 
 	private final P plugin;
 
-	public PluginListener(P plugin) {
+	/**
+	 * Instantiates a new {@link PluginListener}, linked to the specified <b>plugin</b>,
+	 * which cannot be {@code null}. Note that this {@link PluginListener} can still
+	 * be registered by other plugins, even though this is really rare.
+	 * 
+	 * @param plugin the {@link MCPlugin} that will own this {@link PluginListener}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public PluginListener(@Nonnull P plugin) {
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Gets the {@link MCPlugin} used to instantiate this {@link PluginListener}.
+	 * This is also normally the {@link MCPlugin plugin} that will register it.
+	 * 
+	 * @return The {@link MCPlugin} used to instantiate this {@link PluginListener}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
 	public P getPlugin() {
 		return plugin;
 	}
