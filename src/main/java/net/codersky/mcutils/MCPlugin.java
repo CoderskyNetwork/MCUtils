@@ -33,6 +33,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import net.codersky.mcutils.files.FileHolder;
 import net.codersky.mcutils.files.FileUpdater;
+import net.codersky.mcutils.files.MessagesFileHolder;
 import net.codersky.mcutils.files.yaml.MessagesFile;
 import net.codersky.mcutils.files.yaml.PluginFile;
 import net.codersky.mcutils.files.yaml.YmlFile;
@@ -171,27 +172,29 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Gets the first {@link MessagesFile} registered by this
+	 * Gets the first {@link MessagesFileHolder} registered to this
 	 * {@link MCPlugin}. Plugins may override this method to
-	 * return their own {@link MessagesFile} type.
+	 * return their own {@link MessagesFileHolder} type.
 	 * <p>
 	 * <b>Performance note</b>: Even though this <b>very</b> insignificant, this
 	 * method does iterate through all the registered {@link FileHolder FileHolders}
-	 * of this {@link MCPlugin} and checks if they are an instance of
-	 * {@link MessagesFile}, so you may want to store the file instead of
-	 * calling this method more than once on a listener or something like that.
+	 * of this {@link MCPlugin} and checks if they implement the {@link MessagesFileHolder}
+	 * interface, so you may want to store the file instead of
+	 * calling this method more than once on a listener or something like that. This would
+	 * also allow you to return directly whatever implementation you are using such
+	 * as {@link MessagesFile}.
 	 * 
-	 * @return The last {@link MessagesFile} registered by this
-	 * {@link MCPlugin}, may be null if no {@link MessagesFile}
+	 * @return The last {@link MessagesFileHolder} registered by this
+	 * {@link MCPlugin}, may be null if no {@link MessagesFileHolder}
 	 * has been registered yet.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public MessagesFile getMessages() {
+	public MessagesFileHolder getMessages() {
 		for (FileHolder holder : files)
-			if (holder instanceof MessagesFile)
-				return (MessagesFile)holder;
+			if (MessagesFileHolder.class.isAssignableFrom(holder.getClass()))
+				return (MessagesFileHolder) holder;
 		return null;
 	}
 
