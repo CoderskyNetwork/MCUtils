@@ -406,6 +406,8 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * 
 	 * @return The argument as a {@link String} if found on the <b>args</b> array, <b>def</b> otherwise.
 	 * 
+	 * @throws NullPointerException if <b>args</b> is {@code null}.
+	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
@@ -735,18 +737,20 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * 
 	 * @param arg the array position of the argument to get, can be out of bounds.
 	 * @param args the array of arguments to use.
-	 * @param def the default value to return if <b>arg</b> is out of bounds or the argument isn't a valid enum constant of the specified class.
+	 * @param enumClass the class of the {@link Enum} to get the constant from.
 	 * 
 	 * @return The argument as an {@link Enum} if found on the <b>args</b> array, null otherwise.
+	 * 
+	 * @throws NullPointerException if <b>args</b> or <b>enumClass</b> are {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see Enums#getIfPresent(Class, String)
 	 */
 	@Nullable
-	public <T extends Enum<T>> T asEnum(int arg, @Nonnull String[] args, @Nullable Class<T> enumClass) {
+	public <T extends Enum<T>> T asEnum(int arg, @Nonnull String[] args, @Nonnull Class<T> enumClass) {
 		final String name = asString(String::toUpperCase, arg, args);
-		if (name == null || enumClass == null)
+		if (name == null)
 			return null;
 		return Enums.getIfPresent(enumClass, name).orNull();
 	}
@@ -756,8 +760,11 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * 
 	 * @param arg the array position of the argument to get, can be out of bounds.
 	 * @param args the array of arguments to use.
+	 * @param def the default value to return if <b>arg</b> is out of bounds or the argument isn't a valid enum constant of the same class.
 	 * 
 	 * @return The argument as an {@link Enum} if found on the <b>args</b> array, <b>def</b> otherwise.
+	 * 
+	 * @throws NullPointerException if <b>args</b> or <b>def</b> are {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
@@ -765,10 +772,8 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	@SuppressWarnings("unchecked")
 	@Nullable
-	public <T extends Enum<T>> T asEnum(int arg, @Nonnull String[] args, @Nullable T def) {
-		final String name = asString(String::toUpperCase, arg, args);
-		if (name == null || def == null)
-			return def;
-		return (T) Enums.getIfPresent(def.getClass(), name).or(def);
+	public <T extends Enum<T>> T asEnum(int arg, @Nonnull String[] args, @Nonnull T def) {
+		final Enum<?> e = asEnum(arg, args, def.getClass());
+		return e == null ? def : (T) e;
 	}
 }
