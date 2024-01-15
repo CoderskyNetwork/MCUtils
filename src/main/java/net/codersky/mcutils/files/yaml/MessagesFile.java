@@ -4,17 +4,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.codersky.mcutils.MCPlugin;
+import net.codersky.mcutils.files.MessagesFileHolder;
 import net.codersky.mcutils.java.strings.MCStrings;
 import net.codersky.mcutils.java.strings.replacers.Replacer;
 
@@ -39,9 +37,10 @@ import net.codersky.mcutils.java.strings.replacers.Replacer;
  * 
  * @author xDec0de_
  */
-public class MessagesFile extends PluginFile {
+public class MessagesFile extends PluginFile implements MessagesFileHolder {
 
-	private Replacer defReplacer;
+	@Nullable
+	private Replacer defReplacer = null;
 
 	/**
 	 * Creates an instance, <b>NOT</b> a file, of a {@link MessagesFile} for the specified <b>plugin</b> and <b>path</b>.
@@ -67,10 +66,10 @@ public class MessagesFile extends PluginFile {
 	 */
 	public MessagesFile(@Nonnull JavaPlugin plugin, @Nullable String path, @Nullable Charset charset) {
 		super(plugin, path, charset);
-		if (!this.contains("commands.noPlayer"))
-			this.addDefault("commands.noPlayer", "&8&l[&4&l!&8&l] &cThis command cannot be executed by players&8.");
-		if (!this.contains("commands.noConsole"))
-			this.addDefault("commands.noConsole", "&8&l[&4&l!&8&l] &cThis command cannot be executed by the console&8.");
+		if (!contains("commands.noPlayer"))
+			addDefault("commands.noPlayer", "&8&l[&4&l!&8&l] &cThis command cannot be executed by players&8.");
+		if (!contains("commands.noConsole"))
+			addDefault("commands.noConsole", "&8&l[&4&l!&8&l] &cThis command cannot be executed by the console&8.");
 	}
 
 	/**
@@ -143,249 +142,42 @@ public class MessagesFile extends PluginFile {
 
 	// Strings //
 
-	/**
-	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
-	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()} to it.
-	 * 
-	 * @param path the path of the String to get from {@link #getPath()}.
-	 * 
-	 * @return The requested colored string, null if no value for the path exists or the path itself is null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
 	@Nullable
 	@Override
-	public String getString(@Nullable String path) {
-		if (path == null)
-			return null;
+	public String getString(@Nonnull String path) {
 		final String str = super.getString(path);
-		final Replacer defRep = this.getDefaultReplacer();
-		return MCStrings.applyColor(defRep == null ? str : defRep.replaceAt(str));
+		return MCStrings.applyColor(defReplacer == null ? str : defReplacer.replaceAt(str));
 	}
 
-	/**
-	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
-	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()}
-	 * to it with <b>replacer</b> being added to {@link #getDefaultReplacer()}.
-	 * 
-	 * @param path the path of the String to get from {@link #getPath()}.
-	 * @param replacer the {@link Replacer} to apply.
-	 * 
-	 * @return The requested colored string, null if no value for the path exists or the path itself is null.
-	 * 
-	 * @throws NullPointerException if <b>replacer</b> is {@code null}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
 	@Nullable
-	public String getString(@Nullable String path, @Nonnull Replacer replacer) {
-		if (path == null)
-			return null;
-		Objects.requireNonNull(replacer, "Replacer cannot be null");
+	@Override
+	public String getString(@Nonnull String path, @Nonnull Replacer rep) {
 		final String str = super.getString(path);
-		final Replacer defRep = this.getDefaultReplacer();
-		return MCStrings.applyColor((defRep == null ? replacer : defRep.add(replacer)).replaceAt(str));
-	}
-
-	/**
-	 * Gets the requested String by path using {@link ConfigurationSection#getString(String)}
-	 * and then applies {@link MCStrings#applyColor(String)} and {@link #getDefaultReplacer()}
-	 * to it with the <b>replacements</b> being added to {@link #getDefaultReplacer()}.
-	 * <p>
-	 * The <b>replacements</b> must not be null and it's size must be even as specified on {@link Replacer#add(String...)}
-	 * 
-	 * @param path the path of the String to get from {@link #getPath()}.
-	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
-	 * 
-	 * @return The requested colored string, null if no value for the path exists or the path itself is null.
-	 * 
-	 * @throws NullPointerException if <b>replacements</b> is null or it's size size % 2 is not equal to 0.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	public String getString(@Nullable String path, @Nonnull Object... replacements) {
-		if (path == null)
-			return null;
-		Objects.requireNonNull(replacements, "Replacements cannot be null");
-		final String str = super.getString(path);
-		final Replacer defRep = this.getDefaultReplacer();
-		return MCStrings.applyColor((defRep == null ? new Replacer(replacements) : defRep.add(replacements)).replaceAt(str));
+		final Replacer finalRep = defReplacer == null ? rep : defReplacer.add(rep);
+		return MCStrings.applyColor(finalRep.replaceAt(str));
 	}
 
 	// Lists //
 
-	/**
-	 * Gets the requested list of strings with {@link MCStrings#applyColor(String)}
-	 * and {@link #getDefaultReplacer()} applied to every string on the list.
-	 * 
-	 * @param path the path of the List to get from {@link #getPath()}.
-	 * 
-	 * @return The requested colored list of strings, an empty list if the path doesn't
-	 * exist or the list itself is empty, null if <b>path</b> is null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
+	private List<String> getReplacedList(@Nonnull String path, @Nullable Replacer replacer) {
+		final List<String> atCfg = super.getStringList(path);
+		if (atCfg == null || atCfg.isEmpty() || replacer == null)
+			return atCfg;
+		final List<String> replaced = new ArrayList<>(atCfg.size());
+		for (String msg : atCfg)
+			replaced.add(replacer.replaceAt(MCStrings.applyColor(msg)));
+		return replaced;
+	}
+
 	@Nullable
 	@Override
 	public List<String> getStringList(@Nullable String path) {
-		if (path == null)
-			return null;
-		final List<String> atCfg = super.getStringList(path);
-		final List<String> res = new ArrayList<>();
-		if (atCfg == null || atCfg.isEmpty())
-			return res; 
-		final Replacer defRep = this.getDefaultReplacer();
-		final Function<String, String> func = defRep == null ? str -> str : str -> defRep.replaceAt(str);
-		for (String str : atCfg)
-			res.add(MCStrings.applyColor(func.apply(str)));
-		return res;
+		return getReplacedList(path, defReplacer);
 	}
 
-	/**
-	 * Gets the requested list of strings with {@link MCStrings#applyColor(String)}
-	 * and {@link #getDefaultReplacer()} joined with <b>replacer</b> applied to every
-	 * string on the list.
-	 * 
-	 * @param path the path of the List to get from {@link #getPath()}.
-	 * @param replacer the {@link Replacer} to apply.
-	 * 
-	 * @return The requested colored list of strings, an empty list if the path doesn't
-	 * exist or the list itself is empty, null if <b>path</b> is null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
 	@Nullable
+	@Override
 	public List<String> getStringList(@Nullable String path, @Nullable Replacer replacer) {
-		if (path == null)
-			return null;
-		if (replacer == null)
-			throw new IllegalArgumentException("Replacer cannot be null.");
-		List<String> atCfg = super.getStringList(path);
-		List<String> res = new ArrayList<>();
-		if (atCfg == null || atCfg.isEmpty())
-			return res; 
-		Replacer rep = getDefaultReplacer() != null ? getDefaultReplacer().add(replacer) : replacer;
-		for (String str : atCfg)
-			res.add(MCStrings.applyColor(rep.replaceAt(str)));
-		return res;
-	}
-
-	/**
-	 * Gets the requested list of strings with {@link MCStrings#applyColor(String)}
-	 * and {@link #getDefaultReplacer()} with added <b>replacements</b> applied to every
-	 * string on the list.
-	 * 
-	 * @param path the path of the List to get from {@link #getPath()}.
-	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
-	 * 
-	 * @return The requested colored list of strings, an empty list if the path doesn't
-	 * exist or the list itself is empty, null if <b>path</b> is null.
-	 * 
-	 * @throws IllegalArgumentException if <b>replacements</b> is null or it's size % 2 is not equal to 0.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	public List<String> getStringList(@Nullable String path, @Nullable Object... replacements) {
-		if (path == null)
-			return null;
-		if (replacements == null)
-			throw new IllegalArgumentException("Replacements cannot be null.");
-		final List<String> atCfg = super.getStringList(path);
-		final List<String> res = new ArrayList<>();
-		if (atCfg == null || atCfg.isEmpty())
-			return res;
-		Replacer rep = defReplacer != null ? this.getDefaultReplacer().add(replacements) : new Replacer(replacements);
-		for (String str : atCfg)
-			res.add(MCStrings.applyColor(rep.replaceAt(str)));
-		return res;
-	}
-
-	/*
-	 * Message sending
-	 */
-
-	/**
-	 * Uses {@link #getList(String)} or {@link #getString(String)} and then sends
-	 * the returned {@link String} or {@link List} of {@link String Strings}
-	 * to the specified <b>target</b>.
-	 * <p>
-	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws IllegalArgumentException if <b>target</b> is null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean send(@Nonnull CommandSender target, @Nullable String path) {
-		List<String> lst = this.getStringList(path);
-		if (lst == null || lst.isEmpty())
-			return MCStrings.sendFormattedMessage(target, this.getString(path));
-		for (String msg : lst)
-			MCStrings.sendFormattedMessage(target, msg);
-		return true;
-	}
-
-	/**
-	 * Uses {@link #getList(String, Replacer)} or {@link #getString(String, Replacer)} and then sends
-	 * the returned {@link String} or {@link List} of {@link String Strings}
-	 * to the specified <b>target</b>.
-	 * <p>
-	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * @param replacer the {@link Replacer} to apply.
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws IllegalArgumentException if <b>target</b> or <b>replacer</b> are null.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Replacer replacer) {
-		List<String> lst = this.getStringList(path, replacer);
-		if (lst == null || lst.isEmpty())
-			return MCStrings.sendFormattedMessage(target, this.getString(path, replacer));
-		for (String msg : lst)
-			MCStrings.sendFormattedMessage(target, msg);
-		return true;
-	}
-
-	/**
-	 * Uses {@link #getList(String, Object...)} or {@link #getString(String, Object...)} and then sends
-	 * the returned {@link String} or {@link List} of {@link String Strings}
-	 * to the specified <b>target</b>.
-	 * <p>
-	 * <b>Formatted messages</b> are supported by this method <i>(See {@link MCStrings#sendFormattedMessage(CommandSender, String)})</i>
-	 * 
-	 * @param target the receiver.
-	 * @param path the path of the message to get from {@link #getPath()}.
-	 * @param replacements the replacements to apply (See {@link Replacer} for more information).
-	 * 
-	 * @return Always true, to make sending messages on commands easier. If you want to check if
-	 * the message will be sent, use {@link #getString(String)} with the message <b>path</b>, the returned
-	 * string must not be null and {@link String#isEmpty()} must return false with it in order to be sent.
-	 * 
-	 * @throws IllegalArgumentException if <b>target</b> or <b>replacements</b> are null or if <b>replacements</b> size % 2 is not equal to 0.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean send(@Nonnull CommandSender target, @Nullable String path, @Nonnull Object... replacements) {
-		List<String> lst = this.getStringList(path, replacements);
-		if (lst == null || lst.isEmpty())
-			return MCStrings.sendFormattedMessage(target, this.getString(path, replacements));
-		for (String msg : lst)
-			MCStrings.sendFormattedMessage(target, msg);
-		return true;
+		return getReplacedList(path, defReplacer == null ? replacer : defReplacer.add(replacer));
 	}
 }
