@@ -65,10 +65,10 @@ public abstract class MCStrings {
 	 * message types such as {@link ActionBar} will be sent as a raw message to the console.
 	 * <p>
 	 * Here is the documentation of every format pattern:
-	 * <p>
-	 * - <a href=https://mcutils.xdec0de.me/chat-features/target-patterns>Target patterns</a>.
-	 * <p>
-	 * - <a href=https://mcutils.xdec0de.me/chat-features/event-patterns>Event patterns</a>.
+	 * <ul>
+	 * <li><a href=https://mcutils.codersky.net/for-server-admins/target-patterns>Target patterns</a>.</li>
+	 * <li><a href=https://mcutils.codersky.net/for-server-admins/event-patterns>Event patterns</a>.</li>
+	 * </ul>
 	 * 
 	 * @param target the {@link CommandSender} that will receive the message, if null, nothing will be done.
 	 * @param str the message to send, if null or empty, nothing will be done.
@@ -87,7 +87,7 @@ public abstract class MCStrings {
 	}
 
 	/**
-	 * Applies <a href=https://mcutils.xdec0de.me/chat-features/event-patterns>Event patterns</a>
+	 * Applies <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>Event patterns</a>
 	 * to the specified string, note that this method won't apply the {@link TargetPattern} nor
 	 * the {@link ActionBar} pattern as both patterns require a target to be used and send the
 	 * message to said target when applied.
@@ -138,16 +138,15 @@ public abstract class MCStrings {
 	}
 
 	/**
-	 * Applies all registered patterns to a <b>string</b>.
-	 * MCUtils registers "classic", "{@link Hex hex}" and 
-	 * "{@link Gradient gradient}" by default, but
-	 * any pattern can be disabled by the user on MCUtil's config.yml.
-	 * <p>
-	 * The "classic" color pattern is just {@link #applyColorChar(char, String)}
-	 * with the famous '&' character.
+	 * Applies all color patterns to a <b>string</b>.
+	 * MCUtils has an up to date <a href=https://mcutils.codersky.net/for-server-admins/color-patterns>documentation</a>
+	 * about color patterns supported, please make sure that the version you are using corresponds with the
+	 * mentioned minimum version of the patterns that you want to use, even though
+	 * most patterns will be available since 1.0.0.
 	 * 
-	 * @param string the string to apply colors.
-	 * @return The string, colored.
+	 * @param string the {@link String} to apply colors to.
+	 * 
+	 * @return The <b>string</b>, colored, {@code null} of the <b>string</b> itself was {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -164,12 +163,12 @@ public abstract class MCStrings {
 	/**
 	 * Applies colors to every string of <b>lst</b>
 	 * using {@link #applyColor(String)}. If <b>lst</b>
-	 * is null, null will be returned.
-	 * null elements on the list will be kept as null.
+	 * is {@code null}, {@code null} will be returned.
+	 * {@code null} elements on the list will be kept as {@code null}.
 	 * 
 	 * @param lst the list to apply colors.
 	 * 
-	 * @return The list, colored.
+	 * @return The list, colored, {@code null} if the list itself was {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -189,7 +188,7 @@ public abstract class MCStrings {
 	 * @param str the {@link CharSequence} to apply color characters to.
 	 * 
 	 * @return A {@link String} from the specified {@link CharSequence} with translated color characters,
-	 * null if <b>str</b> is null.
+	 * {@code null} if <b>str</b> is {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -206,7 +205,7 @@ public abstract class MCStrings {
 	}
 
 	/**
-	 * Strips all vanilla chat formatting from the specified {@link CharSequence}.
+	 * Strips all <b>vanilla</b> chat formatting from the specified {@link CharSequence}.
 	 * that is, color and text formatting, for example, assuming that
 	 * <b>colorChar</b> is '&', this method will remove all occurrences
 	 * of &[a-f], &[0-9], &[k-o] and &r, leaving the string as an uncolored,
@@ -218,7 +217,7 @@ public abstract class MCStrings {
 	 * 
 	 * @param str the string to strip colors.
 	 * 
-	 * @return The string with stripped colors, null if <b>str</b> is null.
+	 * @return The string with stripped colors, {@code null} if <b>str</b> is {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -226,7 +225,7 @@ public abstract class MCStrings {
 		if (str == null)
 			return null;
 		final int length = str.length();
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		for (int i = 0; i < length; i++) {
 			char ch = str.charAt(i);
 			if ((ch == colorChar || ch == ChatColor.COLOR_CHAR) && (i + 1 < length) && isColorChar(str.charAt(i + 1)))
@@ -259,12 +258,12 @@ public abstract class MCStrings {
 
 	/**
 	 * Checks if a string has any content on it. If
-	 * {@link String#isBlank()} returns true or the
-	 * string is null, false will be returned.
+	 * {@link String#isBlank()} returns {@code true} or the
+	 * string is {@code null}, {@code false} will be returned.
 	 * 
 	 * @param str the string to check.
 	 * 
-	 * @return true if the string has content, false otherwise.
+	 * @return {@code true} if the string has content, {@code false} otherwise.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
