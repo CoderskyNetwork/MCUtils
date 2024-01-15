@@ -491,13 +491,15 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * 
 	 * @return A {@link String} of the range of arguments from <b>fromArg</b> to the end of <b>args</b>,
 	 * <b>def</b> if <b>fromArg</b> is out of bounds.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
 	public String asStringRange(int fromArg, @Nonnull String[] args, @Nullable String def) {
 		String str = asString(fromArg, args, null);
 		if (str == null)
 			return def;
-		StringBuffer buff = new StringBuffer().append(str);
+		final StringBuffer buff = new StringBuffer().append(str);
 		for (int i = fromArg + 1; i < args.length; i++)
 			buff.append(' ').append(args[i]);
 		return buff.toString();
@@ -514,6 +516,8 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * 
 	 * @return A {@link String} of the range of arguments from <b>fromArg</b> to the end of <b>args</b>,
 	 * null if <b>fromArg</b> is out of bounds.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
 	public String asStringRange(int fromArg, @Nonnull String[] args) {
@@ -524,76 +528,45 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * Gets a range of arguments starting at <b>fromArg</b> all the way to
 	 * the end of <b>args</b>, then, converts that range of arguments to a
 	 * {@link String}, separating them by a space character, exactly as typed
-	 * by the user that ran the command, finally converting the range to lower case.
+	 * by the user that ran the command. If the range isn't out of bounds, then
+	 * <b>modifier</b> will be applied to the resulting {@link String}.
 	 * 
+	 * @param modifier the {@link Function} to apply to the resulting {@link String}. This will not be applied
+	 * on <b>def</b> upon returning it.
 	 * @param fromArg the array position of the first argument to get a range from, can be out of bounds.
 	 * @param args the array of arguments to use.
 	 * @param def the default value to return if <b>fromArg</b> is out of bounds.
 	 * 
-	 * @return A lower {@link String} of the range of arguments from <b>fromArg</b> to the end of <b>args</b>,
+	 * @return A {@link String} of the range of arguments from <b>fromArg</b> to the end of <b>args</b>,
 	 * <b>def</b> if <b>fromArg</b> is out of bounds.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	@Deprecated(forRemoval = true)
-	public String asLowerStringRange(int fromArg, @Nonnull String[] args, @Nullable String def) {
-		String range = asStringRange(fromArg, args, def);
-		return range != null ? range.toLowerCase() : null;
+	public String asStringRange(@Nonnull Function<String, String> modifier, int fromArg, @Nonnull String[] args, @Nullable String def) {
+		final String range = asStringRange(fromArg, args, def);
+		return range == null ? def : modifier.apply(range);
 	}
 
 	/**
 	 * Gets a range of arguments starting at <b>fromArg</b> all the way to
 	 * the end of <b>args</b>, then, converts that range of arguments to a
 	 * {@link String}, separating them by a space character, exactly as typed
-	 * by the user that ran the command, finally converting the range to lower case.
+	 * by the user that ran the command. If the range isn't out of bounds, then
+	 * <b>modifier</b> will be applied to the resulting {@link String}.
 	 * 
+	 * @param modifier the {@link Function} to apply to the resulting {@link String}.
 	 * @param fromArg the array position of the first argument to get a range from, can be out of bounds.
 	 * @param args the array of arguments to use.
 	 * 
-	 * @return A lower {@link String} of the range of arguments from <b>fromArg</b> to the end of <b>args</b>,
-	 * null if <b>fromArg</b> is out of bounds.
+	 * @return A {@link String} of the range of arguments from <b>fromArg</b> to the end of <b>args</b>,
+	 * {@code null} if <b>fromArg</b> is out of bounds.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	@Deprecated(forRemoval = true)
-	public String asLowerStringRange(int fromArg, @Nonnull String[] args) {
-		return asLowerStringRange(fromArg, args, null);
-	}
-
-	/**
-	 * Gets a range of arguments starting at <b>fromArg</b> all the way to
-	 * the end of <b>args</b>, then, converts that range of arguments to a
-	 * {@link String}, separating them by a space character, exactly as typed
-	 * by the user that ran the command, finally converting the range to upper case.
-	 * 
-	 * @param fromArg the array position of the first argument to get a range from, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * @param def the default value to return if <b>fromArg</b> is out of bounds.
-	 * 
-	 * @return An upper {@link String} of the range of arguments from <b>fromArg</b> to the end of <b>args</b>,
-	 * <b>def</b> if <b>fromArg</b> is out of bounds.
-	 */
-	@Nullable
-	@Deprecated(forRemoval = true)
-	public String asUpperStringRange(int fromArg, @Nonnull String[] args, @Nullable String def) {
-		String range = asStringRange(fromArg, args, def);
-		return range != null ? range.toUpperCase() : null;
-	}
-
-	/**
-	 * Gets a range of arguments starting at <b>fromArg</b> all the way to
-	 * the end of <b>args</b>, then, converts that range of arguments to a
-	 * {@link String}, separating them by a space character, exactly as typed
-	 * by the user that ran the command, finally converting the range to lower case.
-	 * 
-	 * @param fromArg the array position of the first argument to get a range from, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * 
-	 * @return A lower {@link String} of the range of arguments from <b>fromArg</b> to the end of <b>args</b>,
-	 * null if <b>fromArg</b> is out of bounds.
-	 */
-	@Nullable
-	@Deprecated(forRemoval = true)
-	public String asUpperStringRange(int fromArg, @Nonnull String[] args) {
-		return asUpperStringRange(fromArg, args, null);
+	public String asStringRange(@Nonnull Function<String, String> modifier, int fromArg, @Nonnull String[] args) {
+		return asStringRange(modifier, fromArg, args);
 	}
 
 	/*
@@ -601,7 +574,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 
 	@Nullable
-	public List<String> asStringListRange(int fromArg, @Nonnull String[] args, @Nullable Function<String, String> modifier, @Nullable List<String> def) {
+	public List<String> asStringListRange(@Nullable Function<String, String> modifier, int fromArg, @Nonnull String[] args, @Nullable List<String> def) {
 		if (fromArg > args.length)
 			return def;
 		final List<String> lst = new ArrayList<>(args.length - fromArg);
@@ -615,18 +588,18 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	}
 
 	@Nullable
-	public List<String> asStringListRange(int fromArg, @Nonnull String[] args, @Nullable Function<String, String> modifier) {
-		return asStringListRange(fromArg, args, modifier, null);
+	public List<String> asStringListRange(@Nullable Function<String, String> modifier, int fromArg, @Nonnull String[] args) {
+		return asStringListRange(modifier, fromArg, args, null);
 	}
 
 	@Nullable
 	public List<String> asStringListRange(int fromArg, @Nonnull String[] args, @Nullable List<String> def) {
-		return asStringListRange(fromArg, args, null, def);
+		return asStringListRange(null, fromArg, args, def);
 	}
 
 	@Nullable
 	public List<String> asStringListRange(int fromArg, @Nonnull String[] args) {
-		return asStringListRange(fromArg, args, null, null);
+		return asStringListRange(null, fromArg, args, null);
 	}
 
 	/*
@@ -691,7 +664,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	@Nullable
 	public Player asPlayer(int arg, @Nonnull String[] args, @Nullable Player def) {
-		Player online = Bukkit.getPlayerExact(args.length > arg ? args[arg] : null);
+		final Player online = Bukkit.getPlayerExact(args.length > arg ? args[arg] : null);
 		return online == null ? def : online;
 	}
 
@@ -730,7 +703,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	@Nullable
 	public OfflinePlayer asOfflinePlayer(int arg, @Nonnull String[] args, @Nullable OfflinePlayer def) {
 		@SuppressWarnings("deprecation")
-		OfflinePlayer offline = Bukkit.getOfflinePlayer(args.length > arg ? args[arg] : null);
+		final OfflinePlayer offline = Bukkit.getOfflinePlayer(args.length > arg ? args[arg] : null);
 		return offline == null || !offline.hasPlayedBefore() ? def : offline;
 	}
 
@@ -771,7 +744,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	@Nullable
 	public <T extends Enum<T>> T asEnum(int arg, @Nonnull String[] args, @Nullable Class<T> enumClass) {
-		String name = asString(String::toUpperCase, arg, args);
+		final String name = asString(String::toUpperCase, arg, args);
 		if (name == null || enumClass == null)
 			return null;
 		return Enums.getIfPresent(enumClass, name).orNull();
@@ -792,7 +765,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	@SuppressWarnings("unchecked")
 	@Nullable
 	public <T extends Enum<T>> T asEnum(int arg, @Nonnull String[] args, @Nullable T def) {
-		String name = asString(String::toUpperCase, arg, args);
+		final String name = asString(String::toUpperCase, arg, args);
 		if (name == null || def == null)
 			return def;
 		return (T) Enums.getIfPresent(def.getClass(), name).or(def);
