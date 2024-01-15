@@ -438,18 +438,19 @@ public abstract class MCStrings {
 	 * If <b>str</b> can't be parsed for the desired numeric type for whatever reason,
 	 * <b>def</b> will be returned. 
 	 * 
-	 * @param <T> the type of {@link Number} to return
+	 * @param <N> the type of {@link Number} to return
 	 * @param str the {@link CharSequence} to convert.
 	 * @param def the default value to return if <b>str</b> could not be parsed.
 	 * 
 	 * @return Returns a {@link Number} of any (java.lang) number type
 	 * with the value of <b>str</b>, <b>def</b> if <b>str</b> could not be parsed.
 	 */
-	public static <T extends Number> T asNumber(@Nullable CharSequence str, @Nullable T def) {
+	@Nullable
+	public static <N extends Number> N asNumber(@Nullable CharSequence str, @Nullable N def) {
 		if (def == null)
 			return def;
 		@SuppressWarnings("unchecked")
-		final T number = asNumber(str, (Class<T>) def.getClass());
+		final N number = asNumber(str, (Class<N>) def.getClass());
 		return number == null ? def : number;
 	}
 
@@ -464,14 +465,15 @@ public abstract class MCStrings {
 	 * If <b>str</b> can't be parsed for the desired numeric type for whatever reason,
 	 * <code>null</code> will be returned. 
 	 * 
-	 * @param <T> the type of {@link Number} to return
+	 * @param <N> the type of {@link Number} to return
 	 * @param str the {@link CharSequence} to convert.
-	 * @param type the type of number to return.
+	 * @param type the type of {@link Number} to return.
 	 * 
 	 * @return Returns a {@link Number} of any (java.lang) number type
 	 * with the value of <b>str</b>, <code>null</code> if <b>str</b> could not be parsed.
 	 */
-	public static <T extends Number> T asNumber(@Nullable CharSequence str, @Nullable Class<T> type) {
+	@Nullable
+	public static <N extends Number> N asNumber(@Nullable CharSequence str, @Nonnull Class<N> type) {
 		try {
 			if (type.equals(Integer.class))
 				return isInteger(str) ? type.cast(Integer.parseInt(str.toString())) : null;
@@ -489,6 +491,145 @@ public abstract class MCStrings {
 		} catch (NumberFormatException outOfRange) {
 			return null;
 		}
+	}
+
+	/**
+	 * Converts a {@link String} to a {@link Number} with numeric string format support.
+	 * This means that for example "2k" can be converted to 2000. The exact characters
+	 * used as <b>modifiers</b> can be customized. Assuming the <b>modifiers</b> list
+	 * is set to ['k', 'm', 'b'], the 'k' character will have a multiplier of 1000 over
+	 * the resulting number, while 'm' will have a multiplier of 1000000 and so on by
+	 * adding 3 zeros to each element on the list. Results overflowing the specified
+	 * <b>type</b> will return {@code null}.
+	 * 
+	 * @param <N> the type of {@link Number} to return
+	 * 
+	 * @param str the {@link String} to convert.
+	 * @param type the type of {@link Number} to return.
+	 * @param modifiers the modifier characters, in order. You can use the {@link Arrays#asList(Object...)}
+	 * method for this parameter.
+	 * 
+	 * @return The specified <b>str</b>ing converted to a {@link Number} of the desired <b>type</b> if the
+	 * format was correct and the result didn't overflow the <b>type</b>. {@code null} otherwise.
+	 * 
+	 * @throws NullPointerException if <b>type</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #asNumber(CharSequence, Class)
+	 */
+	@Nullable
+	public static <N extends Number> N asNumberFormat(@Nullable String str, @Nonnull Class<N> type, @Nullable List<Character> modifiers) {
+		int len = str == null ? 0 : str.length();
+		if (len <= 1 || modifiers == null)
+			return asNumber(str, type);
+		int mod = modifiers.indexOf(Character.toLowerCase(str.charAt(len - 1))) + 1;
+		if (mod == 0)
+			return asNumber(str, type);
+		mod *= 3;
+		final String numStr = str.substring(0, len - 1);
+		final int decIdx = numStr.indexOf('.');
+		final StringBuilder result = new StringBuilder();
+		len--;
+		if (decIdx == -1) {
+			for (int i = 0; i < mod + len; i++)
+				result.append(i >= len ? '0' : numStr.charAt(i));
+		} else {
+			result.append(numStr.substring(0, decIdx));
+			for (int i = decIdx + 1; i <= decIdx + mod; i++)
+				result.append(i >= len ? '0' : numStr.charAt(i));
+		}
+		return asNumber(result, type);
+	}
+
+	/**
+	 * Converts a {@link String} to a {@link Number} with numeric string format support.
+	 * This means that for example "2k" can be converted to 2000. The exact characters
+	 * used as <b>modifiers</b> can be customized. Assuming the <b>modifiers</b> list
+	 * is set to ['k', 'm', 'b'], the 'k' character will have a multiplier of 1000 over
+	 * the resulting number, while 'm' will have a multiplier of 1000000 and so on by
+	 * adding 3 zeros to each element on the list. Results overflowing the class of
+	 * <b>def</b> will return <b>def</b>.
+	 * 
+	 * @param <N> the type of {@link Number} to return
+	 * 
+	 * @param str the {@link String} to convert.
+	 * @param def the default {@link Number} to return if anything goes wrong. This is also the parameter
+	 * used to guess what {@link Number} class to use.
+	 * @param modifiers the modifier characters, in order. You can use the {@link Arrays#asList(Object...)}
+	 * method for this parameter.
+	 * 
+	 * @return The specified <b>str</b>ing converted to a {@link Number} of the desired <b>type</b> if the
+	 * format was correct and the result didn't overflow the <b>type</b>. {@code null} otherwise.
+	 * 
+	 * @throws NullPointerException if <b>type</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #asNumber(CharSequence, Number)
+	 */
+	@Nullable
+	@SuppressWarnings("unchecked")
+	public static <N extends Number> N asNumberFormat(@Nullable String str, @Nonnull N def, @Nullable List<Character> modifiers) {
+		final Number n = asNumberFormat(str, def.getClass(), modifiers);
+		return n == null ? def : (N) n;
+	}
+
+	/**
+	 * Converts a {@link String} to a {@link Number} with numeric string format support.
+	 * This means that for example "2k" can be converted to 2000. The exact characters
+	 * used as modifiers are set to ['k', 'm', 'b']. So the 'k' character will have a multiplier of 1000 over
+	 * the resulting number, while 'm' will have a multiplier of 1000000 and so on by
+	 * adding 3 zeros to each element on the list. Results overflowing the specified
+	 * <b>type</b> will return {@code null}.
+	 * 
+	 * @param <N> the type of {@link Number} to return
+	 * 
+	 * @param str the {@link String} to convert.
+	 * @param type the type of {@link Number} to return.
+	 * 
+	 * @return The specified <b>str</b>ing converted to a {@link Number} of the desired <b>type</b> if the
+	 * format was correct and the result didn't overflow the <b>type</b>. {@code null} otherwise.
+	 * 
+	 * @throws NullPointerException if <b>def</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #asNumber(CharSequence, Class)
+	 * @see #asNumberFormat(String, Class, List)
+	 */
+	@Nullable
+	public static <N extends Number> N asNumberFormat(@Nullable String str, @Nonnull Class<N> type) {
+		return asNumberFormat(str, type, Arrays.asList('k', 'm', 'b'));
+	}
+
+	/**
+	 * Converts a {@link String} to a {@link Number} with numeric string format support.
+	 * This means that for example "2k" can be converted to 2000. The exact characters
+	 * used as modifiers are set to ['k', 'm', 'b']. So the 'k' character will have a multiplier of 1000 over
+	 * the resulting number, while 'm' will have a multiplier of 1000000 and so on by
+	 * adding 3 zeros to each element on the list. Results overflowing the class of
+	 * <b>def</b> will return <b>def</b>.
+	 * 
+	 * @param <N> the type of {@link Number} to return
+	 * 
+	 * @param str the {@link String} to convert.
+	 * @param def the default {@link Number} to return if anything goes wrong. This is also the parameter
+	 * used to guess what {@link Number} class to use.
+	 * 
+	 * @return The specified <b>str</b>ing converted to a {@link Number} of the type of <b>def</b> if the
+	 * format was correct and the result didn't overflow said type. <b>def</b> otherwise.
+	 * 
+	 * @throws NullPointerException if <b>def</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #asNumber(CharSequence, Number)
+	 * @see #asNumberFormat(String, Number, List)
+	 */
+	@Nullable
+	public static <N extends Number> N asNumberFormat(@Nullable String str, @Nonnull N def) {
+		return asNumberFormat(str, def, Arrays.asList('k', 'm', 'b'));
 	}
 
 	/*
@@ -691,10 +832,10 @@ public abstract class MCStrings {
 	 */
 	@Nullable
 	public static UUID toUUID(@Nullable String uuid) {
-		int len = uuid == null ? 0 : uuid.length();
+		final int len = uuid == null ? 0 : uuid.length();
 		if (len != 36)
 			return null;
-		char[] chars = uuid.toCharArray();
+		final char[] chars = uuid.toCharArray();
 		for (int i = 0; i < len; i++) {
 			char ch = chars[i];
 			if (i == 8 || i == 13 || i == 18 || i == 23) {
