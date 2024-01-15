@@ -570,36 +570,37 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	}
 
 	/*
-	 * String list ranges
+	 * List ranges
 	 */
 
 	@Nullable
-	public List<String> asStringListRange(@Nullable Function<String, String> modifier, int fromArg, @Nonnull String[] args, @Nullable List<String> def) {
+	public <T> List<T> asListRange(@Nonnull Function<String, T> modifier, int fromArg, @Nonnull String[] args, @Nullable List<T> def) {
 		if (fromArg > args.length)
 			return def;
-		final List<String> lst = new ArrayList<>(args.length - fromArg);
-		if (modifier != null)
-			for (int i = fromArg + 1; i < args.length; i++)
-				lst.add(modifier.apply(args[i]));
-		else
-			for (int i = fromArg + 1; i < args.length; i++)
-				lst.add(args[i]);
+		final List<T> lst = new ArrayList<>(args.length - fromArg);
+		for (int i = fromArg + 1; i < args.length; i++)
+			lst.add(modifier.apply(args[i]));
 		return lst;
 	}
 
 	@Nullable
-	public List<String> asStringListRange(@Nullable Function<String, String> modifier, int fromArg, @Nonnull String[] args) {
-		return asStringListRange(modifier, fromArg, args, null);
+	public <T> List<T> asListRange(@Nullable Function<String, T> modifier, int fromArg, @Nonnull String[] args) {
+		return asListRange(modifier, fromArg, args, null);
 	}
 
 	@Nullable
 	public List<String> asStringListRange(int fromArg, @Nonnull String[] args, @Nullable List<String> def) {
-		return asStringListRange(null, fromArg, args, def);
+		if (fromArg > args.length)
+			return def;
+		final List<String> lst = new ArrayList<>(args.length - fromArg);
+		for (int i = fromArg + 1; i < args.length; i++)
+			lst.add(args[i]);
+		return lst;
 	}
 
 	@Nullable
 	public List<String> asStringListRange(int fromArg, @Nonnull String[] args) {
-		return asStringListRange(null, fromArg, args, null);
+		return asStringListRange(fromArg, args, null);
 	}
 
 	/*
