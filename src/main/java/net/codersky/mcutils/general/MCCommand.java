@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import com.google.common.base.Enums;
 
 import net.codersky.mcutils.MCPlugin;
+import net.codersky.mcutils.files.MessagesFileHolder;
 import net.codersky.mcutils.files.yaml.MessagesFile;
 import net.codersky.mcutils.java.MCLists;
 import net.codersky.mcutils.java.annotations.Internal;
@@ -206,7 +207,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	@Internal
 	public final boolean execute(CommandSender sender, String commandLabel, String[] args) {
 		if (!isAllowed(sender)) {
-			final MessagesFile file = plugin.getMessages();
+			final MessagesFileHolder file = plugin.getMessages();
 			if (file != null)
 				return file.send(sender, sender instanceof Player ? "commands.noPlayer" : "commands.noConsole");
 			final StringBuilder msg = new StringBuilder("&8&l[&4&l!&8&l] &cThis command cannot be executed by ");

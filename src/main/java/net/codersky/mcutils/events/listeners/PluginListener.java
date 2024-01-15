@@ -18,7 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.projectiles.ProjectileSource;
 
 import net.codersky.mcutils.MCPlugin;
-import net.codersky.mcutils.files.yaml.MessagesFile;
+import net.codersky.mcutils.files.MessagesFileHolder;
 import net.codersky.mcutils.files.yaml.PluginFile;
 
 /**
@@ -91,13 +91,13 @@ public abstract class PluginListener<P extends MCPlugin> implements Listener {
 	/**
 	 * Shortcut to {@link MCPlugin#getMessages()}.
 	 * 
-	 * @return The <b>config.yml</b> file being used
-	 * by {@link #getPlugin()} as a {@link PluginFile}.
+	 * @return The registered {@link MessagesFileHolder}
+	 * on {@link #getPlugin()}, if any.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public MessagesFile getMessages() {
+	public MessagesFileHolder getMessages() {
 		return plugin.getMessages();
 	}
 
