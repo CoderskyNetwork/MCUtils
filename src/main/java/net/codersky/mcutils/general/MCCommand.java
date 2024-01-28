@@ -197,7 +197,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	public final boolean isAllowed(@Nonnull CommandSender sender) {
-		return senderClass == null ? false : senderClass.isAssignableFrom(sender.getClass());
+		return senderClass == null ? true : senderClass.isAssignableFrom(sender.getClass());
 	}
 
 	/** @deprecated In favor of {@link #onCommand(CommandSender, String[])}
