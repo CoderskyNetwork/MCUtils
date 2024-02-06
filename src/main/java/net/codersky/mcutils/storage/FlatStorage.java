@@ -36,18 +36,24 @@ public class FlatStorage extends StorageHandler {
 
 	public FlatStorage(@Nonnull String path) {
 		this.file = new File(path.endsWith(".mcufs") ? path : path + ".mcufs");
-		try {
-			file.getParentFile().mkdirs();
-			file.createNewFile();
-			load();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/*
 	 * Utility
 	 */
+
+	private boolean create() {
+		if (file.exists())
+			return true;
+		try {
+			file.getParentFile().mkdirs();
+			file.createNewFile();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	@Nonnull
 	public final File asFile() {
@@ -64,6 +70,8 @@ public class FlatStorage extends StorageHandler {
 
 	@Override
 	public boolean save() {
+		if (!create())
+			return false;
 		int errors = 0;
 		try {
 			final FileWriter writer = new FileWriter(file);
@@ -167,6 +175,8 @@ public class FlatStorage extends StorageHandler {
 
 	@Override
 	public boolean load() {
+		if (!create())
+			return false;
 		try {
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			String line;
