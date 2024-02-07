@@ -34,6 +34,12 @@ public class FlatStorage extends StorageHandler {
 
 	private final File file;
 
+	public FlatStorage(@Nonnull File file) {
+		if (!file.getName().endsWith(".mcufs"))
+			throw new IllegalArgumentException("FlatStorage only accepts files with the \".mcufs\" extension.");
+		this.file = file;
+	}
+
 	public FlatStorage(@Nonnull String path) {
 		this.file = new File(path.endsWith(".mcufs") ? path : path + ".mcufs");
 	}
