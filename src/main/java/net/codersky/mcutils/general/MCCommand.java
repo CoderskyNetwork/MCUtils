@@ -207,12 +207,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	@Internal
 	public final boolean execute(CommandSender sender, String commandLabel, String[] args) {
 		if (!isAllowed(sender)) {
-			final MessagesFileHolder file = plugin.getMessages();
-			if (file != null)
-				return file.send(sender, sender instanceof Player ? "commands.noPlayer" : "commands.noConsole");
-			final StringBuilder msg = new StringBuilder("&8&l[&4&l!&8&l] &cThis command cannot be executed by ");
-			msg.append(sender instanceof Player ? "players&8." : "the console&8.");
-			sender.sendMessage(MCStrings.applyColor(msg.toString()));
+			sendInvalidSenderMsg(sender);
 			return true;
 		} else if (!hasAccess(sender, true))
 			return true;
@@ -225,6 +220,17 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 			}
 		}
 		return onCommand(sender, args);
+	}
+
+	protected void sendInvalidSenderMsg(CommandSender sender) {
+		final MessagesFileHolder file = plugin.getMessages();
+		if (file != null) {
+			file.send(sender, sender instanceof Player ? "commands.noPlayer" : "commands.noConsole");
+			return;
+		}
+		final StringBuilder msg = new StringBuilder("&8&l[&4&l!&8&l] &cThis command cannot be executed by ");
+		msg.append(sender instanceof Player ? "players&8." : "the console&8.");
+		sender.sendMessage(MCStrings.applyColor(msg.toString()));
 	}
 
 	/** @deprecated In favor of {@link #onCommand(CommandSender, String[])}
