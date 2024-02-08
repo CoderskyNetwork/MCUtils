@@ -19,7 +19,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import net.codersky.mcutils.MCPlugin;
 import net.codersky.mcutils.files.FileUpdater;
-import net.codersky.mcutils.java.MCLists;
 
 /**
  * 
@@ -150,15 +149,15 @@ public class PluginFile extends YmlFile implements FileUpdater {
 				updated.load(copyInputStreamToFile(plugin.getDataFolder() + "/" + path, plugin.getResource(path)));
 			else
 				return log("&8[&4"+pluginName+"&8] > &cCould not update &6" + path + "&8: &4File not found", false);
-			Set<String> oldKeys = ignores ? MCLists.filter(str -> !ignored.contains(str), this.getKeys(true)) : this.getKeys(true);
-			Set<String> updKeys = ignores ? MCLists.filter(str -> !ignored.contains(str), updated.getKeys(true)) : updated.getKeys(true);
+			final Set<String> oldKeys = this.getKeys(true);
+			final Set<String> updKeys = updated.getKeys(true);
 			for (String oldPath : oldKeys)
-				if(!updKeys.contains(oldPath)) {
+				if (!updKeys.contains(oldPath) && (!ignores || !isIgnored(oldPath, ignored))) {
 					this.set(oldPath, null);
 					changes++;
 				}
 			for (String updPath : updKeys)
-				if(!oldKeys.contains(updPath)) {
+				if (!oldKeys.contains(updPath) && (!ignores || !isIgnored(updPath, ignored))) {
 					this.set(updPath, updated.get(updPath));
 					changes++;
 				}
@@ -169,6 +168,13 @@ public class PluginFile extends YmlFile implements FileUpdater {
 		} catch(InvalidConfigurationException | IOException ex) {
 			return log("&8[&4"+pluginName+"&8] > &cCould not update &6" + path + "&8: &4"+ex.getMessage(), false);
 		}
+	}
+
+	private boolean isIgnored(String path, List<String> ignored) {
+		for (String ignoredPath : ignored)
+			if (path.startsWith(ignoredPath))
+				return true;
+		return false;
 	}
 
 	private boolean log(String str, boolean ret) {
