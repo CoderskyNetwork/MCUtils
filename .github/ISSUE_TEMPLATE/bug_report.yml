@@ -60,14 +60,14 @@ body:
   - type: textarea
     attributes:
       label: Steps to reproduce
-      description: This may include a video, screenshots, or detailed instructions to help reconstruct the issue.
+      description: This may include a video, screenshots or detailed instructions to help to reproduce the issue.
       placeholder: Just get a player and do player.sendMessage(MCStrings.applyColor("#F00Hello"));
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: Additional iformation
+      label: Additional information
       description: Anything that may help us solve the issue faster, such as a theory on why this is happening
       placeholder: This may be caused because the '#' character is appended to the StringBuilder when checking if the format is present.
     validations:
