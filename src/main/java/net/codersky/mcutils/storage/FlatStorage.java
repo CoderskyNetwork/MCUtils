@@ -135,13 +135,13 @@ public class FlatStorage extends StorageHandler {
 		if (first instanceof CharSequence)
 			listAppend(key, builder.append('s'), (List<CharSequence>) lst);
 		else if (first instanceof Character)
-			listAppend(key, builder.append('c'), (List<Character>) lst, c -> c == '\n' ? "\\n" : c.toString());
+			listAppend(key, builder.append('c'), (List<Character>) lst, true, c -> c == '\n' ? "\\n" : c.toString());
 		else if (first instanceof Boolean)
-			listAppend(key, builder.append('b'), (List<Boolean>) lst, b -> b ? "t" : "f");
+			listAppend(key, builder.append('b'), (List<Boolean>) lst, false, b -> b ? "t" : "f");
 		else if (first instanceof UUID)
-			listAppend(key, builder.append('u'), (List<UUID>) lst, u -> u.toString());
+			listAppend(key, builder.append('u'), (List<UUID>) lst, true, u -> u.toString());
 		else if (first instanceof Number) // Number identification character is upper case.
-			listAppend(key, builder.append(first.getClass().getSimpleName().charAt(0)), (List<Number>) lst, n -> n.toString());
+			listAppend(key, builder.append(first.getClass().getSimpleName().charAt(0)), (List<Number>) lst, true, n -> n.toString());
 		else {
 			System.err.println("Unsupported list data of type " + first.getClass().getName());
 			return null;
@@ -149,21 +149,20 @@ public class FlatStorage extends StorageHandler {
 		return builder.append('\n').toString();
 	}
 
-	private <T> String listAppend(String key, StringBuilder builder, List<T> lst, Function<T, String> modifier) {
+	private <T> String listAppend(String key, StringBuilder builder, List<T> lst, boolean separate, Function<T, String> modifier) {
 		builder.append(key).append(':');
 		final int size = lst.size() - 1;
 		for (int lstI = 0; lstI <= size; lstI++) {
 			builder.append(modifier.apply(lst.get(lstI)));
-			if (lstI != size)
+			if (separate && lstI != size)
 				builder.append(',');
 		}
 		// Result will be *?(key):(value), "*?" is appended on toWrite, with ? being the char of the list type.
 		return builder.toString();
 	}
 
-	// *s(key):(value)
 	private String listAppend(String key, StringBuilder builder, List<CharSequence> lst) {
-		return listAppend(key, builder, lst, seq -> {
+		return listAppend(key, builder, lst, true, seq -> {
 			final int len = seq.length();
 			final StringBuilder seqBuilder = new StringBuilder(len);
 			// ',' chars inside strings will be marked with a '\' to avoid breaking load logic.
@@ -214,7 +213,7 @@ public class FlatStorage extends StorageHandler {
 		return switch (type) {
 		case 's' -> set(key, value);
 		case 'c' -> set(key, value.equals("\\n") ? '\n' : value.charAt(0));
-		case 'b' -> set(key, value.charAt(0) == 't' ? true : false);
+		case 'b' -> set(key, value.charAt(0) == 't');
 		case 'u' -> set(key, MCStrings.toUUID(value));
 		case 'B' -> set(key, Byte.parseByte(value));
 		case 'S' -> set(key, Short.parseShort(value));
@@ -230,9 +229,9 @@ public class FlatStorage extends StorageHandler {
 
 	private boolean loadLstFromLine(final char type, final String key, final String value) {
 		return switch (type) {
-		case 's' -> loadList(key, value);
+		case 's' -> loadStringList(key, value);
 		case 'c' -> loadList(key, value, s -> s.equals("\\n") ? '\n' : s.charAt(0));
-		case 'b' -> loadList(key, value, s -> s.charAt(0) == 't' ? true : false);
+		case 'b' -> loadBoolList(key, value);
 		case 'u' -> loadList(key, value, s -> MCStrings.toUUID(s));
 		case 'B' -> loadList(key, value, s -> Byte.parseByte(s));
 		case 'S' -> loadList(key, value, s -> Short.parseShort(s));
@@ -263,7 +262,7 @@ public class FlatStorage extends StorageHandler {
 
 	// Specific method for strings to handle the '\' character to avoid counting
 	// Strings that contain commas as different strings.
-	private boolean loadList(final String key, final String lstStr) {
+	private boolean loadStringList(final String key, final String lstStr) {
 		final int len = lstStr.length();
 		final LinkedList<String> result = new LinkedList<>();
 		StringBuilder element = new StringBuilder();
@@ -279,6 +278,15 @@ public class FlatStorage extends StorageHandler {
 				element.append(ch);
 		}
 		result.add(element.toString());
+		set(key, result);
+		return true;
+	}
+
+	private boolean loadBoolList(final String key, final String lstStr) {
+		final int len = lstStr.length();
+		final LinkedList<Boolean> result = new LinkedList<>();
+		for (int i = 0; i < len; i++)
+			result.add(lstStr.charAt(i) == 't');
 		set(key, result);
 		return true;
 	}
