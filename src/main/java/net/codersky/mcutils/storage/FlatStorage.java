@@ -135,7 +135,7 @@ public class FlatStorage extends StorageHandler {
 		if (first instanceof CharSequence)
 			listAppend(key, builder.append('s'), (List<CharSequence>) lst);
 		else if (first instanceof Character)
-			listAppend(key, builder.append('c'), (List<Character>) lst, true, c -> c == '\n' ? "\\n" : c.toString());
+			listAppend(key, builder.append('c'), (List<Character>) lst, false, c -> c == '\n' ? "\\n" : c.toString());
 		else if (first instanceof Boolean)
 			listAppend(key, builder.append('b'), (List<Boolean>) lst, false, b -> b ? "t" : "f");
 		else if (first instanceof UUID)
@@ -230,7 +230,7 @@ public class FlatStorage extends StorageHandler {
 	private boolean loadLstFromLine(final char type, final String key, final String value) {
 		return switch (type) {
 		case 's' -> loadStringList(key, value);
-		case 'c' -> loadList(key, value, s -> s.equals("\\n") ? '\n' : s.charAt(0));
+		case 'c' -> loadCharList(key, value);
 		case 'b' -> loadBoolList(key, value);
 		case 'u' -> loadList(key, value, s -> MCStrings.toUUID(s));
 		case 'B' -> loadList(key, value, s -> Byte.parseByte(s));
@@ -282,6 +282,24 @@ public class FlatStorage extends StorageHandler {
 		return true;
 	}
 
+	// Specific method for characters, as characters don't use a separator
+	// But the '\n' character is stored as two characters.
+	private boolean loadCharList(final String key, final String lstStr) {
+		final int len = lstStr.length();
+		final LinkedList<Character> result = new LinkedList<>();
+		for (int i = 0; i < len; i++) {
+			final char ch = lstStr.charAt(i);
+			if (ch == '\\' && len > i && lstStr.charAt(i + 1) == 'n') {
+				result.add('\n');
+				i++;
+			} else
+				result.add(ch);
+		}
+		set(key, result);
+		return true;
+	}
+
+	// Specific method for booleans, as booleans don't need a separator.
 	private boolean loadBoolList(final String key, final String lstStr) {
 		final int len = lstStr.length();
 		final LinkedList<Boolean> result = new LinkedList<>();
