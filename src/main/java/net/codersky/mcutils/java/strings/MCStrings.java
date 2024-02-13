@@ -271,6 +271,28 @@ public abstract class MCStrings {
 		return str != null && !str.isBlank();
 	}
 
+	/**
+	 * Checks if a {@link CharSequence} has any content on it. This will
+	 * return {@code false} if the <b>seq</b>uence is {@code null}, empty
+	 * or contains only {@link Character#isWhitespace(char) whitespace}
+	 * characters, {@code true} otherwise.
+	 * 
+	 * @param seq the {@link CharSequence} to check.
+	 * 
+	 * @return {@code true} if the <b>seq</b>uence has content, {@code false} otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static boolean hasContent(@Nullable CharSequence seq) {
+		if (seq == null)
+			return false;
+		final int len = seq.length();
+		for (int i = 0; i < len; i++)
+			if (!Character.isWhitespace(seq.charAt(i)))
+				return true;
+		return false;
+	}
+
 	/*
 	 * To string conversion
 	 */
