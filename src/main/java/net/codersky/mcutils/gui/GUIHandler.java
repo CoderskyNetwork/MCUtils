@@ -174,6 +174,7 @@ public class GUIHandler implements Listener {
 		return false;
 	}
 
+
 	/**
 	 * Closes the {@link GUI} a <b>player</b> is currently viewing, if any.
 	 * Note that some {@link GUI GUIs} may refuse to close the {@link Inventory}
@@ -195,13 +196,47 @@ public class GUIHandler implements Listener {
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #closeAll(boolean)
-	 * @see #closeAll(boolean, List)
+	 * @see #closeGUI(Player, boolean)
 	 * @see #getOpenedGUI(Player)
+	 * @see #closeAll(boolean)
+	 * @see #closeAll(Event, boolean)
+	 * @see #closeAll(Event, boolean, List)
+	 * @see #closeAll(boolean, List)
 	 */
 	public boolean closeGUI(@Nonnull Player player, @Nullable Event event, boolean force) {
 		final GUI gui = getOpenedGUI(player);
 		return gui == null ? true : close(player, gui, event, force);
+	}
+
+	/**
+	 * Closes the {@link GUI} a <b>player</b> is currently viewing, if any.
+	 * Note that some {@link GUI GUIs} may refuse to close the {@link Inventory}
+	 * by returning {@code false} on their {@link GUI#onClose(Player, Event)}
+	 * method (Event will be {@code null}). However, you can bypass this
+	 * restriction and close the {@link Inventory} anyway by setting
+	 * <b>force</b> to {@code true}.
+	 * 
+	 * @param player the {@link Player} that will have its {@link GUI} closed.
+	 * @param force whether to ignore the {@link GUI#onClose(Player, Event)} method
+	 * and close the {@link Inventory} anyway.
+	 * 
+	 * @return {@code true} if the {@link GUI} has been closed successfully or the
+	 * <b>player</b> wasn't viewing a {@link GUI} to begin with. {@code false} if
+	 * the {@link GUI} refused to close and <b>force</b> was set to {@code false}.
+	 * Setting <b>force</b> to {@code true} will make this method always return
+	 * {@code true}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #closeGUI(Player, Event, boolean)
+	 * @see #getOpenedGUI(Player)
+	 * @see #closeAll(boolean)
+	 * @see #closeAll(Event, boolean)
+	 * @see #closeAll(Event, boolean, List)
+	 * @see #closeAll(boolean, List)
+	 */
+	public boolean closeGUI(@Nonnull Player player, boolean force) {
+		return closeGUI(player, null, force);
 	}
 
 	/**
@@ -221,8 +256,11 @@ public class GUIHandler implements Listener {
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
+	 * @see #closeAll(boolean)
+	 * @see #closeAll(Event, boolean, List)
 	 * @see #closeAll(boolean, List)
 	 * @see #closeGUI(Player, boolean)
+	 * @see #closeGUI(Player, Event, boolean)
 	 */
 	@Nonnull
 	public GUIHandler closeAll(@Nullable Event event, boolean force) {
@@ -232,6 +270,33 @@ public class GUIHandler implements Listener {
 				close(on, opened, event, force);
 		}
 		return this;
+	}
+
+	/**
+	 * Closes the {@link Inventory} of all online players that are
+	 * currently viewing any {@link GUI} that has been opened by this {@link GUIHandler}.
+	 * Note that some {@link GUI GUIs} may refuse to close the {@link Inventory}
+	 * by returning {@code false} on their {@link GUI#onClose(Player, Event)}
+	 * method (Event will be {@code null}). However, you can bypass this
+	 * restriction and close the {@link Inventory} anyway by setting
+	 * <b>force</b> to {@code true}.
+	 * 
+	 * @param force whether to ignore the {@link GUI#onClose(Player, Event)} method
+	 * and close the {@link Inventory} anyway.
+	 * 
+	 * @return This {@link GUIHandler}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #closeAll(Event, boolean)
+	 * @see #closeAll(Event, boolean, List)
+	 * @see #closeAll(boolean, List)
+	 * @see #closeGUI(Player, boolean)
+	 * @see #closeGUI(Player, Event, boolean)
+	 */
+	@Nonnull
+	public GUIHandler closeAll(boolean force) {
+		return closeAll(null, force);
 	}
 
 	/**
@@ -255,7 +320,10 @@ public class GUIHandler implements Listener {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #closeAll(boolean)
+	 * @see #closeAll(Event, boolean)
+	 * @see #closeAll(boolean, List)
 	 * @see #closeGUI(Player, boolean)
+	 * @see #closeGUI(Player, Event, boolean)
 	 */
 	@Nonnull
 	public GUIHandler closeAll(@Nullable Event event, boolean force, @Nonnull List<GUI> guis) {
@@ -265,6 +333,36 @@ public class GUIHandler implements Listener {
 				close(on, opened, event, force);
 		}
 		return this;
+	}
+
+	/**
+	 * Closes the {@link Inventory} of all online players that are
+	 * currently viewing any of the specified <b>guis</b>. Note
+	 * that some <b>guis</b> may refuse to close the {@link Inventory}
+	 * by returning {@code false} on their {@link GUI#onClose(Player, Event)}
+	 * method (Event will be {@code null}) However, you can bypass this
+	 * restriction and close the {@link Inventory} anyway by setting
+	 * <b>force</b> to {@code true}.
+	 * 
+	 * @param force whether to ignore the {@link GUI#onClose(Player, Event)} method
+	 * and close the {@link Inventory} anyway.
+	 * @param guis the list of {@link GUIs} to close. {@link GUI GUIs} that haven't
+	 * been opened by this {@link GUIHandler} will be ignored as {@link #getOpenedGUI(Player)}
+	 * will return {@code null}.
+	 * 
+	 * @return This {@link GUIHandler}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #closeAll(boolean)
+	 * @see #closeAll(Event, boolean)
+	 * @see #closeAll(Event, boolean, List)
+	 * @see #closeGUI(Player, boolean)
+	 * @see #closeGUI(Player, Event, boolean)
+	 */
+	@Nonnull
+	public GUIHandler closeAll(boolean force, @Nonnull List<GUI> guis) {
+		return closeAll(null, force, guis);
 	}
 
 	/*
