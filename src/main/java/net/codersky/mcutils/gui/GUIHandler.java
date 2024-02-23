@@ -1,8 +1,6 @@
 package net.codersky.mcutils.gui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -16,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -25,7 +24,6 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.scheduler.BukkitTask;
 
 import net.codersky.mcutils.MCPlugin;
-import net.codersky.mcutils.java.MCLists;
 import net.codersky.mcutils.java.annotations.Internal;
 
 /**
@@ -41,7 +39,7 @@ import net.codersky.mcutils.java.annotations.Internal;
  * @see #registerGUI(GUI)
  * @see #registerGUIs(GUI...)
  * @see #unregisterGUIs()
- * @see #unregisterGUIs(GUI...)
+ * @see #closeAll(GUI...)
  */
 public class GUIHandler implements Listener {
 
@@ -52,7 +50,7 @@ public class GUIHandler implements Listener {
 	 * Creates a new {@link GUIHandler} for the specified
 	 * <b>plugin</b>. Using this constructor should generally
 	 * be avoided as {@link MCPlugin#getGUIHandler()} already
-	 * creates and register a new {@link GUIHandler} for you.
+	 * creates and registers a new {@link GUIHandler} for you.
 	 * However, if you want to create some sort of global
 	 * {@link GUIHandler} for multiple plugins, then you may
 	 * find this constructor useful.
@@ -95,7 +93,7 @@ public class GUIHandler implements Listener {
 	 * @return true if an {@link Inventory} was returned by {@link GUI#onOpen(Player, Event)}
 	 * so it could be opened to the <b>target</b>, false otherwise.
 	 * 
-	 * @throws NullPointerException if <b>target</b> is {@code null}.
+	 * @throws NullPointerException if <b>gui</b> or <b>target</b> are {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -103,6 +101,10 @@ public class GUIHandler implements Listener {
 		final Inventory inv = gui.onOpen(Objects.requireNonNull(target, "target is null"), event);
 		if (inv == null)
 			return false;
+		if (!guis.containsKey(gui))
+			guis.put(gui, new ArrayList<>());
+		else
+			guis.get(gui).add(target.getUniqueId());
 		target.openInventory(inv);
 		return true;
 	}
@@ -113,21 +115,22 @@ public class GUIHandler implements Listener {
 
 	/**
 	 * Gets the {@link GUI} that has been opened to a <b>player</b>,
-	 * if any, this method will return {@code null} if the
+	 * if any. This method will return {@code null} if the
 	 * player doesn't have a {@link GUI} opened. Note that
-	 * this is only able to track {@link GUI GUIs} handled
+	 * this is only able to track {@link GUI GUIs} opened
 	 * by this {@link GUIHandler}.
 	 * 
-	 * @param player the {@link Player} to check, can be {@code null},
-	 * {@code null} will be returned always in that case.
+	 * @param player the {@link Player} to check, cannot be {@code null}.
 	 * 
 	 * @return The {@link GUI} that has been opened to a <b>player</b>
+	 * 
+	 * @throws NullPointerException if <b>player</b> is {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
 	public GUI getOpenedGUI(@Nullable Player player) {
-		return player == null ? null : getOpenedGUI(player.getUniqueId());
+		return getOpenedGUI(player.getUniqueId());
 	}
 
 	/**
@@ -146,9 +149,7 @@ public class GUIHandler implements Listener {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public GUI getOpenedGUI(@Nullable UUID playerUUID) {
-		if (playerUUID == null)
-			return null;
+	public GUI getOpenedGUI(@Nonnull UUID playerUUID) {
 		for (Entry<GUI, List<UUID>> entry : guis.entrySet())
 			if (entry.getValue().contains(playerUUID))
 				return entry.getKey();
@@ -156,122 +157,113 @@ public class GUIHandler implements Listener {
 	}
 
 	/*
-	 * GUI registration
+	 * GUI closing
 	 */
 
-	/**
-	 * Registers a {@link GUI} to this {@link GUIHandler},
-	 * returning the registered <b>gui</b>.
-	 * If <b>gui</b> is {@code null}, nothing will be
-	 * done and {@code null} will be returned.
-	 * 
-	 * @param <G> Must implement {@link GUI}.
-	 * @param gui the {@link GUI} to register.
-	 * 
-	 * @return The registered {@link GUI} or {@code null} if
-	 * <b>gui</b> is {@code null}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #registerGUIs(GUI...)
-	 */
-	@Nullable
-	public <G extends GUI> G registerGUI(@Nullable G gui) {
-		if (gui != null)
-			guis.put(gui, new ArrayList<>());
-		return gui;
-	}
-
-	/**
-	 * Registers any number of {@link GUI GUIs} to this
-	 * {@link GUIHandler} at the cost of returning this
-	 * {@link GUIHandler} instead of a {@link GUI} as
-	 * {@link #registerGUI(GUI)} does.
-	 * 
-	 * @param guis the {@link GUI GUIs} to register, if
-	 * {@code null} or empty, nothing will be done.
-	 * 
-	 * @return This {@link GUIHandler}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #registerGUI(GUI)
-	 */
-	@Nonnull
-	public GUIHandler registerGUIs(@Nullable GUI... guis) {
-		if (guis != null)
-			for (GUI gui : guis)
-				this.guis.put(gui, new ArrayList<>());
-		return this;
-	}
-
-	/**
-	 * Unregisters <b>ALL</b> {@link GUI GUIs} that have
-	 * been previously registered to this {@link GUIHandler}.
-	 * Note that this method doesn't close any inventory if
-	 * a {@link Player} has a {@link GUI} opened but the
-	 * {@link Player} will be able to interact with the {@link GUI}
-	 * as if it was a regular {@link Inventory}, so be careful
-	 * about when and how you use this method. You can of course
-	 * avoid this problem with <b>forceClose</b>.
-	 * 
-	 * @param forceClose whether we should close unregistered {@link GUI GUIs}
-	 * to any {@link Player} currently viewing any of them. This won't call
-	 * {@link GUI#onClose(Player, Event)} as {@link GUI GUIs} will be unregistered
-	 * before closing.
-	 * 
-	 * @return This {@link GUIHandler}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #unregisterGUIs(GUI...)
-	 * @see #closeAll()
-	 */
-	@Nonnull
-	public GUIHandler unregisterGUIs(boolean forceClose) {
-		final Collection<? extends Player> toClose = forceClose ? MCLists.filter(on -> getOpenedGUI(on) != null, Bukkit.getOnlinePlayers()) : null;
-		this.guis.clear();
-		if (toClose != null)
-			toClose.forEach(Player::closeInventory);
-		return this;
-	}
-
-	/**
-	 * Unregisters all of the specified <b>guis</b> from
-	 * this {@link GUIHandler}, if any {@link GUI} is {@code null}
-	 * or not present on this {@link GUIHandler}, it will be skipped.
-	 * For more details please read {@link #unregisterGUIs()}.
-	 * 
-	 * @param forceClose whether we should close unregistered {@link GUI GUIs}
-	 * to any {@link Player} currently viewing any of them. This won't call
-	 * {@link GUI#onClose(Player, Event)} as the specified <b>guis</b>
-	 * will be unregistered before closing.
-	 * @param guis the list of {@link GUI GUIs} to unregister, if
-	 * {@code null}, nothing will be done.
-	 * 
-	 * @return This {@link GUIHandler}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #unregisterGUIs()
-	 * @see #closeAll(GUI...)
-	 */
-	@Nonnull
-	public GUIHandler unregisterGUIs(boolean forceClose, @Nullable GUI... guis) {
-		if (guis == null || guis.length == 0)
-			return this;
-		final List<GUI> toUnregister = Arrays.asList(guis);
-		final List<Player> toClose = forceClose ? new ArrayList<>(Bukkit.getOnlinePlayers().size()) : null;
-		if (forceClose) {
-			for (Player on : Bukkit.getOnlinePlayers()) {
-				final GUI opened = getOpenedGUI(on);
-				if (opened != null && toUnregister.contains(opened))
-					toClose.add(on);
-			}
+	private boolean close(@Nonnull Player player, @Nonnull GUI gui, @Nullable Event event, boolean force) {
+		if (gui.onClose(player, event) || force) {
+			if (event == null || !event.getClass().equals(InventoryCloseEvent.class))
+				player.closeInventory();
+			// viewers is never null as methods use #getOpenedGUI(Player) first.
+			final List<UUID> viewers = guis.get(gui);
+			viewers.remove(player.getUniqueId());
+			if (viewers.isEmpty())
+				guis.remove(gui);
+			return true;
 		}
-		toUnregister.forEach(gui -> this.guis.remove(gui));
-		if (toClose != null)
-			toClose.forEach(Player::closeInventory);
+		return false;
+	}
+
+	/**
+	 * Closes the {@link GUI} a <b>player</b> is currently viewing, if any.
+	 * Note that some {@link GUI GUIs} may refuse to close the {@link Inventory}
+	 * by returning {@code false} on their {@link GUI#onClose(Player, Event)}
+	 * method (Event will be <b>event</b>). However, you can bypass this
+	 * restriction and close the {@link Inventory} anyway by setting
+	 * <b>force</b> to {@code true}.
+	 * 
+	 * @param player the {@link Player} that will have its {@link GUI} closed.
+	 * @param event the {@link Event} that caused this, can be {@code null}.
+	 * @param force whether to ignore the {@link GUI#onClose(Player, Event)} method
+	 * and close the {@link Inventory} anyway.
+	 * 
+	 * @return {@code true} if the {@link GUI} has been closed successfully or the
+	 * <b>player</b> wasn't viewing a {@link GUI} to begin with. {@code false} if
+	 * the {@link GUI} refused to close and <b>force</b> was set to {@code false}.
+	 * Setting <b>force</b> to {@code true} will make this method always return
+	 * {@code true}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #closeAll(boolean)
+	 * @see #closeAll(boolean, List)
+	 * @see #getOpenedGUI(Player)
+	 */
+	public boolean closeGUI(@Nonnull Player player, @Nullable Event event, boolean force) {
+		final GUI gui = getOpenedGUI(player);
+		return gui == null ? true : close(player, gui, event, force);
+	}
+
+	/**
+	 * Closes the {@link Inventory} of all online players that are
+	 * currently viewing any {@link GUI} that has been opened by this {@link GUIHandler}.
+	 * Note that some {@link GUI GUIs} may refuse to close the {@link Inventory}
+	 * by returning {@code false} on their {@link GUI#onClose(Player, Event)}
+	 * method (Event will be <b>event</b>). However, you can bypass this
+	 * restriction and close the {@link Inventory} anyway by setting
+	 * <b>force</b> to {@code true}.
+	 * 
+	 * @param event the {@link Event} that caused this, can be {@code null}.
+	 * @param force whether to ignore the {@link GUI#onClose(Player, Event)} method
+	 * and close the {@link Inventory} anyway.
+	 * 
+	 * @return This {@link GUIHandler}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #closeAll(boolean, List)
+	 * @see #closeGUI(Player, boolean)
+	 */
+	@Nonnull
+	public GUIHandler closeAll(@Nullable Event event, boolean force) {
+		for (Player on : Bukkit.getOnlinePlayers()) {
+			final GUI opened = getOpenedGUI(on);
+			if (opened != null)
+				close(on, opened, event, force);
+		}
+		return this;
+	}
+
+	/**
+	 * Closes the {@link Inventory} of all online players that are
+	 * currently viewing any of the specified <b>guis</b>. Note
+	 * that some <b>guis</b> may refuse to close the {@link Inventory}
+	 * by returning {@code false} on their {@link GUI#onClose(Player, Event)}
+	 * method (Event will be <b>event</b>). However, you can bypass this
+	 * restriction and close the {@link Inventory} anyway by setting
+	 * <b>force</b> to {@code true}.
+	 * 
+	 * @param event the {@link Event} that caused this, can be {@code null}.
+	 * @param force whether to ignore the {@link GUI#onClose(Player, Event)} method
+	 * and close the {@link Inventory} anyway.
+	 * @param guis the list of {@link GUIs} to close. {@link GUI GUIs} that haven't
+	 * been opened by this {@link GUIHandler} will be ignored as {@link #getOpenedGUI(Player)}
+	 * will return {@code null}.
+	 * 
+	 * @return This {@link GUIHandler}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #closeAll(boolean)
+	 * @see #closeGUI(Player, boolean)
+	 */
+	@Nonnull
+	public GUIHandler closeAll(@Nullable Event event, boolean force, @Nonnull List<GUI> guis) {
+		for (Player on : Bukkit.getOnlinePlayers()) {
+			final GUI opened = getOpenedGUI(on);
+			if (opened != null && guis.contains(opened))
+				close(on, opened, event, force);
+		}
 		return this;
 	}
 
@@ -279,84 +271,25 @@ public class GUIHandler implements Listener {
 	 * GUI handling
 	 */
 
-	/**
-	 * Convenience method to close the {@link Inventory} of
-	 * all online {@link Player players} that are currently viewing
-	 * any {@link GUI} that is handled by this {@link GUIHandler}.
-	 * Be aware that this may be cancelled by any {@link GUI} if
-	 * {@link GUI#onClose(Player, Event)} returns false.
-	 * 
-	 * @return This {@link GUIHandler}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #closeAll(GUI...)
-	 * @see #unregisterGUIs()
-	 */
-	@Nonnull
-	public GUIHandler closeAll() {
-		for (Player on : Bukkit.getOnlinePlayers())
-			if (getOpenedGUI(on) != null)
-				on.closeInventory();
-		return this;
-	}
-
-	/**
-	 * Convenience method to close the {@link Inventory} of
-	 * all online {@link Player players} that are currently viewing
-	 * any of the specified <b>guis</b>. Note that only the {@link GUI GUIs}
-	 * handled by this {@link GUIHandler} will be closed as {@link #getOpenedGUI(Player)}
-	 * is used to check if a {@link Player} is currently viewing a {@link GUI}.
-	 * Be aware that this may be cancelled by any {@link GUI} if
-	 * {@link GUI#onClose(Player, Event)} returns false.
-	 * 
-	 * @param guis the list of {@link GUI GUIs} to close, note that
-	 * {@link GUI GUIs} that are {@code null} or not handled by this
-	 * {@link GUIHandler} will be ignored.
-	 * 
-	 * @return This {@link GUIHandler}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #closeAll()
-	 * @see #unregisterGUIs(GUI...)
-	 */
-	@Nonnull
-	public GUIHandler closeAll(@Nullable GUI... guis) {
-		if (guis == null || guis.length == 0)
-			return this;
-		final List<GUI> toClose = Arrays.asList(guis);
-		for (Player on : Bukkit.getOnlinePlayers()) {
-			final GUI opened = getOpenedGUI(on);
-			if (opened != null && toClose.contains(opened))
-				on.closeInventory();
-		}
-		return this;
-	}
-
 	@Internal
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onClose(InventoryCloseEvent event) {
-		final Player player = (Player)event.getPlayer();
+		final Player player = (Player) event.getPlayer();
 		final GUI gui = getOpenedGUI(player);
-		if (gui == null)
-			return;
-		if (gui.onClose(player, event))
-			guis.get(gui).remove(player.getUniqueId());
-		else
+		if (gui != null && !close(player, gui, event, false))
 			Bukkit.getScheduler().runTaskLater(plugin, () -> player.openInventory(event.getInventory()), 1);
 	}
 
 	@Internal
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onClick(InventoryClickEvent event) {
 		if (event.isCancelled())
 			return;
 		final Player clicker = (Player) event.getWhoClicked();
-		GUI iGui = getOpenedGUI(clicker);
+		final GUI iGui = getOpenedGUI(clicker);
 		if (iGui == null)
 			return;
-		InventoryView view = clicker.getOpenInventory();
+		final InventoryView view = clicker.getOpenInventory();
 		Inventory clicked = event.getClickedInventory();
 		if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)
 			clicked = clicked.equals(view.getTopInventory()) ? view.getBottomInventory() : view.getTopInventory();
@@ -366,8 +299,8 @@ public class GUIHandler implements Listener {
 		}
 		if (!(iGui instanceof ActionGUI))
 			return;
-		ActionGUI gui = (ActionGUI)iGui;
-		List<GUIAction> actions = gui.getActions(event.getSlot());
+		final ActionGUI gui = (ActionGUI) iGui;
+		final List<GUIAction> actions = gui.getActions(event.getSlot());
 		if (actions != null)
 			actions.forEach(action -> action.click((Player)event.getWhoClicked(), event));
 	}
