@@ -1,6 +1,7 @@
 package net.codersky.mcutils.gui;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,40 +15,35 @@ import org.bukkit.inventory.InventoryView;
 /**
  * An implementation of {@link GUIAction} that adds
  * conditions in order to be executed, hence the name
- * C(onditional)GUIAction, even though the class name isn't
- * very descriptive, it's shorted in favor of a shorter implementation.
+ * ConditionalGUIAction.
  * 
  * @author xDec0de_
  *
  * @since MCUtils 1.0.0
  */
-public class CGUIAction implements GUIAction {
+public class ConditionalGUIAction implements GUIAction {
 
-	final GUIAction simpleAction;
-	final GUIPosition position;
-	final ArrayList<ClickType> clickTypes;
+	private final GUIAction simpleAction;
+	private final GUIPosition position;
+	private final ArrayList<ClickType> clickTypes;
 
 	/**
-	 * Creates a new {@link CGUIAction} with the specified {@link GUIPosition} and {@link ClickType}s.
+	 * Creates a new {@link ConditionalGUIAction} with the specified {@link GUIPosition} and {@link ClickType}s.
 	 * 
 	 * @param position the position that will trigger this <b>action</b>.
 	 * @param action the action to trigger if conditions are met.
 	 * @param types the click types that will trigger this <b>action</b>, if no types are specified,
 	 * every click type will trigger the <b>action</b>.
 	 * 
-	 * @throws IllegalArgumentException if <b>position</b> or <b>action</b> are null.
+	 * @throws NullPointerException if <b>position</b>, <b>action</b> or <b>types</b> are {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #CGUIAction(GUIAction, ClickType...)
+	 * @see #ConditionalGUIAction(GUIAction, ClickType...)
 	 */
-	public CGUIAction(@Nonnull GUIPosition position, @Nonnull GUIAction action, @Nullable ClickType... types) {
-		if (position == null)
-			throw new IllegalArgumentException("GUI position cannot be null.");
-		if (action == null)
-			throw new IllegalArgumentException("GUI action cannot be null.");
-		this.position = position;
-		this.simpleAction = action;
+	public ConditionalGUIAction(@Nonnull GUIPosition position, @Nonnull GUIAction action, @Nullable ClickType... types) {
+		this.position = Objects.requireNonNull(position);
+		this.simpleAction = Objects.requireNonNull(action);
 		this.clickTypes = new ArrayList<>(types.length);
 		if (types != null)
 			for (ClickType type : types)
@@ -55,20 +51,20 @@ public class CGUIAction implements GUIAction {
 	}
 
 	/**
-	 * Creates a new {@link CGUIAction} with the specified {@link ClickType}s.
+	 * Creates a new {@link ConditionalGUIAction} with the specified {@link ClickType}s.
 	 * The {@link GUIPosition} will be {@link GUIPosition#TOP}.
 	 * 
 	 * @param action the action to trigger if conditions are met.
 	 * @param types the click types that will trigger this <b>action</b>, if no types are specified,
 	 * every click type will trigger the <b>action</b>.
 	 * 
-	 * @throws IllegalArgumentException if <b>action</b> is null.
+	 * @throws NullPointerException if <b>action</b> or <b>types</b> are {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #CGUIAction(GUIPosition, GUIAction, ClickType...)
+	 * @see #ConditionalGUIAction(GUIPosition, GUIAction, ClickType...)
 	 */
-	public CGUIAction(@Nonnull GUIAction action, @Nullable ClickType... types) {
+	public ConditionalGUIAction(@Nonnull GUIAction action, @Nullable ClickType... types) {
 		this(GUIPosition.TOP, action, types);
 	}
 
@@ -90,6 +86,7 @@ public class CGUIAction implements GUIAction {
 	 * @see #BOTH
 	 */
 	public enum GUIPosition {
+
 		/**
 		 * Represents the top {@link Inventory} of an {@link InventoryView}.
 		 * 
@@ -98,23 +95,21 @@ public class CGUIAction implements GUIAction {
 		TOP {
 			@Override
 			boolean matches(InventoryClickEvent event) {
-				if (event.getClickedInventory() == null)
-					return false;
-				return event.getClickedInventory().equals(event.getView().getTopInventory());
+				final Inventory clicked = event.getClickedInventory();
+				return clicked == null ? false : clicked.equals(event.getView().getTopInventory());
 			}
 		},
 
 		/**
-		 * Represents the bottom inventory of an {@link InventoryView}.
+		 * Represents the bottom {@link Inventory} of an {@link InventoryView}.
 		 * 
 		 * @since MCUtils 1.0.0
 		 */
 		BOTTOM {
 			@Override
 			boolean matches(InventoryClickEvent event) {
-				if (event.getClickedInventory() == null)
-					return false;
-				return event.getClickedInventory().equals(event.getView().getBottomInventory());
+				final Inventory clicked = event.getClickedInventory();
+				return clicked == null ? false : clicked.equals(event.getView().getBottomInventory());
 			}
 		},
 
