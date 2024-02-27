@@ -384,22 +384,14 @@ public class GUIHandler implements Listener {
 		if (event.isCancelled())
 			return;
 		final Player clicker = (Player) event.getWhoClicked();
-		final GUI iGui = getOpenedGUI(clicker);
-		if (iGui == null)
+		final GUI gui = getOpenedGUI(clicker);
+		if (gui == null)
 			return;
 		final InventoryView view = clicker.getOpenInventory();
 		Inventory clicked = event.getClickedInventory();
-		if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)
+		if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) // Clicked should not be null here.
 			clicked = clicked.equals(view.getTopInventory()) ? view.getBottomInventory() : view.getTopInventory();
-		if (clicked == null || !iGui.onClick(clicker, clicked, event.getAction(), event.getSlot())) {
-			event.setCancelled(true);
-			return;
-		}
-		if (!(iGui instanceof ActionGUI))
-			return;
-		final ActionGUI gui = (ActionGUI) iGui;
-		final List<GUIAction> actions = gui.getActions(event.getSlot());
-		if (actions != null)
-			actions.forEach(action -> action.click((Player)event.getWhoClicked(), event));
+		if (clicked != null)
+			event.setCancelled(gui.onClick(clicker, clicked, event));
 	}
 }

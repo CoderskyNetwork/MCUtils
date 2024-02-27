@@ -7,9 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 /**
- * Represents a registrable action to be handled
- * when an {@link InventoryClickEvent} gets triggered
- * on a {@link ActionGUI}.
+ * Represents an action that can be added to a
+ * {@link GUIActionMap} to easily handle clicks
+ * on a {@link GUI}.
  * 
  * @author xDec0de_
  *
