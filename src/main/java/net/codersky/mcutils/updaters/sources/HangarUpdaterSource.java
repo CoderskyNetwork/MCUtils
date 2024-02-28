@@ -27,7 +27,29 @@ import net.codersky.mcutils.updaters.UpdaterSource;
 public class HangarUpdaterSource implements UpdaterSource {
 
 	private final String project;
-	private final HangarChannel channel;
+	private final String channel;
+
+	/**
+	 * Creates a new {@link HangarUpdaterSource} capable of checking
+	 * for updates on <a href="https://hangar.papermc.io/">hangar.papermc.io</a>.
+	 * 
+	 * @param project the project to get versions from. For example, let's say you
+	 * have a plugin called "Test" and your username is Steve, your url should look
+	 * like (https://hangar.papermc.io/Steve/Test), then the project String must be
+	 * "Steve/Test".
+	 * @param channel the channel that will be used to get updates from, some common
+	 * update channels are predefined on {@link HangarChannel}.
+	 * 
+	 * @throws NullPointerException if <b>project</b> or <b>channel</b> are {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #HangarUpdaterSource(String, HangarChannel)
+	 */
+	public HangarUpdaterSource(@Nonnull String project, @Nonnull String channel) {
+		this.project = Objects.requireNonNull(project);
+		this.channel = Objects.requireNonNull(channel);
+	}
 
 	/**
 	 * Creates a new {@link HangarUpdaterSource} capable of checking
@@ -42,10 +64,11 @@ public class HangarUpdaterSource implements UpdaterSource {
 	 * @throws NullPointerException if <b>project</b> or <b>channel</b> are {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #HangarUpdaterSource(String, String)
 	 */
 	public HangarUpdaterSource(@Nonnull String project, @Nonnull HangarChannel channel) {
-		this.project = Objects.requireNonNull(project);
-		this.channel = Objects.requireNonNull(channel);
+		this(project, channel.toUrlName());
 	}
 
 	/**
@@ -63,14 +86,14 @@ public class HangarUpdaterSource implements UpdaterSource {
 	}
 
 	/**
-	 * Gets the {@link HangarChannel} that is being used to check
+	 * Gets the channel that is being used to check
 	 * for updates.
 	 * 
-	 * @return The {@link HangarChannel} that is being used to check
+	 * @return The channel that is being used to check
 	 * for updates.
 	 */
 	@Nonnull
-	public HangarChannel getChannel() {
+	public String getChannel() {
 		return channel;
 	}
 
@@ -87,7 +110,7 @@ public class HangarUpdaterSource implements UpdaterSource {
 	@Override
 	public String getLatestVersion() {
 		try {
-			final InputStream inputStream = new URL("https://hangar.papermc.io/api/v1/projects/" + project + "/latest?channel=" + channel.toUrlName()).openStream();
+			final InputStream inputStream = new URL("https://hangar.papermc.io/api/v1/projects/" + project + "/latest?channel=" + channel).openStream();
 			final Scanner scanner = new Scanner(inputStream);
 			String ver = null;
 			if (scanner.hasNext())
@@ -100,7 +123,7 @@ public class HangarUpdaterSource implements UpdaterSource {
 	}
 
 	/**
-	 * Enum containing all available version channels on Hangar.
+	 * Enum containing common version channels on Hangar.
 	 * 
 	 * @author xDec0de_
 	 * 
@@ -114,6 +137,8 @@ public class HangarUpdaterSource implements UpdaterSource {
 
 		/**Alpha channel, for alpha versions of plugins.*/
 		ALPHA,
+		/**Beta channel, for beta versions of plugins.*/
+		BETA,
 		/**Snapshot channel, for snapshots of plugins.*/
 		SNAPSHOT,
 		/**Release channel, for full stable relases of plugins.*/

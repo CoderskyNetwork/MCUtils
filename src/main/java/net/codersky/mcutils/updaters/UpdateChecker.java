@@ -178,6 +178,29 @@ public class UpdateChecker {
 	 * have a plugin called "Test" and your username is Steve, your url should look
 	 * like (https://hangar.papermc.io/Steve/Test), then the project String must be
 	 * "Steve/Test".
+	 * @param channel the channel that will be used to get updates from, some common
+	 * update channels are predefined on {@link HangarChannel}.
+	 * 
+	 * @throws NullPointerException if <b>project</b> or <b>channel</b> are {@code null}.
+	 * 
+	 * @return This {@link UpdateChecker}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #addHangarSource(String, HangarChannel)
+	 */
+	@Nonnull
+	public UpdateChecker addHangarSource(@Nonnull String project, @Nonnull String channel) {
+		return addSource(new HangarUpdaterSource(project, channel));
+	}
+
+	/**
+	 * Adds a new {@link HangarUpdaterSource} to this {@link UpdateChecker}.
+	 * 
+	 * @param project the project to get versions from. For example, let's say you
+	 * have a plugin called "Test" and your username is Steve, your url should look
+	 * like (https://hangar.papermc.io/Steve/Test), then the project String must be
+	 * "Steve/Test".
 	 * @param channel the {@link HangarChannel} that will be used to get updates from.
 	 * 
 	 * @throws NullPointerException if <b>project</b> or <b>channel</b> are {@code null}.
@@ -185,9 +208,11 @@ public class UpdateChecker {
 	 * @return This {@link UpdateChecker}.
 	 * 
 	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #addHangarSource(String, String)
 	 */
 	@Nonnull
 	public UpdateChecker addHangarSource(@Nonnull String project, @Nonnull HangarChannel channel) {
-		return addSource(new HangarUpdaterSource(project, channel));
+		return addHangarSource(project, channel.toUrlName());
 	}
 }
