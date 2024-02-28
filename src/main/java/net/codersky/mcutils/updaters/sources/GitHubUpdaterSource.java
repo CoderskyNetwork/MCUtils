@@ -1,13 +1,19 @@
 package net.codersky.mcutils.updaters.sources;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.URL;
+import java.util.Date;
 import java.util.Objects;
-import java.util.Scanner;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.checkerframework.checker.index.qual.Positive;
+
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 
 import net.codersky.mcutils.updaters.UpdaterSource;
 
@@ -25,6 +31,12 @@ import net.codersky.mcutils.updaters.UpdaterSource;
 public class GitHubUpdaterSource implements UpdaterSource {
 
 	private final String repo;
+	private final boolean useName;
+
+	public GitHubUpdaterSource(@Nonnull String repo, boolean useName) {
+		this.repo = Objects.requireNonNull(repo);
+		this.useName = useName;
+	}
 
 	/**
 	 * Creates a new {@link GitHubUpdaterSource} capable of checking
@@ -39,7 +51,7 @@ public class GitHubUpdaterSource implements UpdaterSource {
 	 * @since MCUtils 1.0.0
 	 */
 	public GitHubUpdaterSource(@Nonnull String repo) {
-		this.repo = Objects.requireNonNull(repo);
+		this(repo, false);
 	}
 
 	/**
@@ -68,19 +80,136 @@ public class GitHubUpdaterSource implements UpdaterSource {
 	@Nullable
 	@Override
 	public String getLatestVersion() {
+		final BasicReleaseInfo data = getBasicReleaseInfo();
+		return useName ? data.getName() : data.getTag();
+	}
+
+	/*
+	 * Release data (Gson)
+	 */
+
+	public <T> T getData(Type typeOfT) {
 		try {
-			final InputStream inputStream = new URL("https://api.github.com/repos/" + repo + "/releases").openStream();
-			final Scanner scanner = new Scanner(inputStream);
-			String ver = null;
-			if (scanner.hasNext())
-				ver = scanner.next();
-			scanner.close();
-			if (ver == null)
-				return null;
-			final int start = ver.indexOf("\"name\":\"") + 8;
-			return ver.substring(start, ver.indexOf('"', start));
-		} catch (IOException ex) {
+			final JsonReader reader = new JsonReader(new InputStreamReader(new URL("https://api.github.com/repos/" + repo + "/releases").openStream()));
+			reader.beginArray();
+			final T data = new Gson().fromJson(reader, typeOfT);
+			reader.close(); // Should close every stream according to the javadoc.
+			return data;
+		} catch (IOException e) {
 			return null;
+		}
+	}
+
+	public BasicReleaseInfo getBasicReleaseInfo() {
+		return getData(BasicReleaseInfo.class);
+	}
+
+	public class BasicReleaseInfo {
+
+		private String name;
+		private String tag_name;
+
+		@Nonnull
+		public String getName() {
+			return name;
+		}
+
+		@Nonnull
+		public String getTag() {
+			return tag_name;
+		}
+	}
+
+	@Nullable
+	public ReleaseInfo getReleaseInfo() {
+		return getData(ReleaseInfo.class);
+	}
+
+	public class ReleaseInfo {
+
+		String html_url;
+		long id;
+		AuthorInfo author;
+		String name;
+		String tag_name;
+		Date created_at;
+		Date published_at;
+		boolean draft;
+		boolean prerelease;
+		String body;
+
+		@Nonnull
+		public String getHtmlUrl() {
+			return html_url;
+		}
+
+		@Positive
+		public long getId() {
+			return id;
+		}
+
+		public AuthorInfo getAuthor() {
+			return author;
+		}
+
+		@Nonnull
+		public String getName() {
+			return name;
+		}
+
+		@Nonnull
+		public String getTag() {
+			return tag_name;
+		}
+
+		@Nonnull
+		public Date getDateCreated() {
+			return created_at;
+		}
+
+		@Nonnull
+		public Date getDatePublished() {
+			return published_at;
+		}
+
+		public boolean isDraft() {
+			return draft;
+		}
+
+		public boolean isPreRelease() {
+			return prerelease;
+		}
+
+		@Nonnull
+		public String getBody() {
+			return body;
+		}
+
+		public class AuthorInfo {
+
+			String login;
+			long id;
+			String avatar_url;
+			String html_url;
+
+			@Nonnull
+			public String getLogin() {
+				return login;
+			}
+
+			@Positive
+			public long getId() {
+				return id;
+			}
+
+			public String getAvatarUrl() {
+				return avatar_url;
+			}
+
+			@Nonnull
+			public String getHtmlUrl() {
+				return html_url;
+			}
 		}
 	}
 }
