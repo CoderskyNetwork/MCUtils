@@ -125,13 +125,11 @@ public class GitHubUpdaterSource implements UpdaterSource {
 		return getData(ReleaseInfo.class);
 	}
 
-	public class ReleaseInfo {
+	public class ReleaseInfo extends BasicReleaseInfo {
 
 		String html_url;
 		long id;
 		AuthorInfo author;
-		String name;
-		String tag_name;
 		Date created_at;
 		Date published_at;
 		boolean draft;
@@ -150,16 +148,6 @@ public class GitHubUpdaterSource implements UpdaterSource {
 
 		public AuthorInfo getAuthor() {
 			return author;
-		}
-
-		@Nonnull
-		public String getName() {
-			return name;
-		}
-
-		@Nonnull
-		public String getTag() {
-			return tag_name;
 		}
 
 		@Nonnull
