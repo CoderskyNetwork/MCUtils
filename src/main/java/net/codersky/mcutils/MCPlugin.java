@@ -1,20 +1,14 @@
 package net.codersky.mcutils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Scanner;
-import java.util.function.Consumer;
 
-import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,7 +23,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import net.codersky.mcutils.files.FileHolder;
 import net.codersky.mcutils.files.FileUpdater;
@@ -337,38 +330,6 @@ public class MCPlugin extends JavaPlugin {
 			}
 		}
 		return versions[0] >= versions[1];
-	}
-
-	/**
-	 * <b>WARNING:</b> This method does <i>NOT</i> run asynchronously by itself, it's recommended to do so by using:
-	 * {@link BukkitScheduler#runTaskAsynchronously(org.bukkit.plugin.Plugin, Consumer)}
-	 * <p><p>
-	 * Gets the latest version of a resource (Premium resources are supported too) using SpigotMC's API.
-	 * The version can take some time to update after a new resource update.
-	 * 
-	 * @param resourceId the ID of the resource to retrieve, the ID can be found at your resource url:
-	 * <i>{@literal https://www.spigotmc.org/resources/<name>.<ID IS HERE>/}</i>
-	 * 
-	 * @return The latest available version name at SpigotMC with the specified <b>resourceId</b>,
-	 * may be null if no resource with that id exists or any I/O exception occurs.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see Bukkit#getScheduler()
-	 * @see BukkitScheduler#runTaskAsynchronously(org.bukkit.plugin.Plugin, Consumer)
-	 */
-	public String getLatestVersion(@Nonnegative int resourceId) {
-		try {
-			InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId).openStream();
-			Scanner scanner = new Scanner(inputStream);
-			String ver = null;
-			if (scanner.hasNext())
-				ver = scanner.next();
-			scanner.close();
-			return ver;
-		} catch (IOException ex) {
-			return null;
-		}
 	}
 
 	/**
