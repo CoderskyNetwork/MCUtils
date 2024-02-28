@@ -3,6 +3,7 @@ package net.codersky.mcutils.updaters.sources;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Scanner;
 
 import javax.annotation.Nonnull;
@@ -38,7 +39,7 @@ public class GitHubUpdaterSource implements UpdaterSource {
 	 * @since MCUtils 1.0.0
 	 */
 	public GitHubUpdaterSource(@Nonnull String repo) {
-		this.repo = repo;
+		this.repo = Objects.requireNonNull(repo);
 	}
 
 	/**

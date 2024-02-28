@@ -14,6 +14,8 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.checkerframework.checker.index.qual.Positive;
 
 import net.codersky.mcutils.updaters.sources.GitHubUpdaterSource;
+import net.codersky.mcutils.updaters.sources.HangarUpdaterSource;
+import net.codersky.mcutils.updaters.sources.HangarUpdaterSource.HangarChannel;
 import net.codersky.mcutils.updaters.sources.SpigotUpdaterSource;
 
 /**
@@ -167,5 +169,25 @@ public class UpdateChecker {
 	@Nonnull
 	public UpdateChecker addGitHubSource(@Nonnull String repo) {
 		return addSource(new GitHubUpdaterSource(repo));
+	}
+
+	/**
+	 * Adds a new {@link HangarUpdaterSource} to this {@link UpdateChecker}.
+	 * 
+	 * @param project the project to get versions from. For example, let's say you
+	 * have a plugin called "Test" and your username is Steve, your url should look
+	 * like (https://hangar.papermc.io/Steve/Test), then the project String must be
+	 * "Steve/Test".
+	 * @param channel the {@link HangarChannel} that will be used to get updates from.
+	 * 
+	 * @throws NullPointerException if <b>project</b> or <b>channel</b> are {@code null}.
+	 * 
+	 * @return This {@link UpdateChecker}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public UpdateChecker addHangarSource(@Nonnull String project, @Nonnull HangarChannel channel) {
+		return addSource(new HangarUpdaterSource(project, channel));
 	}
 }
