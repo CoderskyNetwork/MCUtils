@@ -13,6 +13,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.checkerframework.checker.index.qual.Positive;
 
+import net.codersky.mcutils.updaters.sources.GitHubUpdaterSource;
 import net.codersky.mcutils.updaters.sources.SpigotUpdaterSource;
 
 /**
@@ -107,6 +108,10 @@ public class UpdateChecker {
 		return latest.equals(source);
 	}
 
+	/*
+	 * Source addition
+	 */
+
 	/**
 	 * Adds a new {@link UpdaterSource} to this {@link UpdateChecker}.
 	 * The <b>source</b> to be added cannot be {@code null}.
@@ -132,7 +137,6 @@ public class UpdateChecker {
 	/**
 	 * Adds a new {@link SpigotUpdaterSource} to this {@link UpdateChecker}.
 	 * 
-	 * 
 	 * @param resourceId the resource id of the plugin to check on Spigot.
 	 * Resource ids must be positive numbers.
 	 * 
@@ -145,5 +149,23 @@ public class UpdateChecker {
 	@Nonnull
 	public UpdateChecker addSpigotSource(@Positive long resourceId) {
 		return addSource(new SpigotUpdaterSource(resourceId));
+	}
+
+	/**
+	 * Adds a new {@link GitHubUpdaterSource} to this {@link UpdateChecker}.
+	 * 
+	 * @param repo the repository to get releases from. For example, for the
+	 * MCUtils repository (https://github.com/CoderskyNetwork/MCUtils), the
+	 * String must be "CoderskyNetwork/MCUtils".
+	 * 
+	 * @throws NullPointerException if <b>repo</b> is {@code null}.
+	 * 
+	 * @return This {@link UpdateChecker}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public UpdateChecker addGitHubSource(@Nonnull String repo) {
+		return addSource(new GitHubUpdaterSource(repo));
 	}
 }
