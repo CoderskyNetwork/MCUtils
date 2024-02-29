@@ -69,7 +69,7 @@ public class SpigotUpdaterSource implements UpdaterSource {
 
 	@Nullable
 	@Override
-	public String getLatestVersion() {
+	public SpigotVersionInfo getLatestVersion() {
 		try {
 			final InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId).openStream();
 			final Scanner scanner = new Scanner(inputStream);
@@ -77,9 +77,24 @@ public class SpigotUpdaterSource implements UpdaterSource {
 			if (scanner.hasNext())
 				ver = scanner.next();
 			scanner.close();
-			return ver;
+			return ver == null ? null : new SpigotVersionInfo(this, ver);
 		} catch (IOException ex) {
 			return null;
+		}
+	}
+
+	public class SpigotVersionInfo extends VersionInfo {
+
+		private final String name;
+
+		SpigotVersionInfo(SpigotUpdaterSource source, String name) {
+			this.source = source;
+			this.name = name;
+		}
+
+		@Override
+		public String getVersion() {
+			return name;
 		}
 	}
 }

@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.codersky.mcutils.updaters.sources.SpigotUpdaterSource;
+import net.codersky.mcutils.updaters.sources.VersionInfo;
 
 /**
  * Interface used for sources that
@@ -42,5 +43,5 @@ public interface UpdaterSource {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String getLatestVersion();
+	public VersionInfo getLatestVersion();
 }

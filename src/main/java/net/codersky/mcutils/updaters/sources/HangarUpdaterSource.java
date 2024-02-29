@@ -2,12 +2,17 @@ package net.codersky.mcutils.updaters.sources;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Scanner;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 
 import net.codersky.mcutils.updaters.UpdaterSource;
 
@@ -108,7 +113,21 @@ public class HangarUpdaterSource implements UpdaterSource {
 
 	@Nullable
 	@Override
-	public String getLatestVersion() {
+	public HangarVersionInfo getLatestVersion() {
+		try {
+			final String url = "https://hangar.papermc.io/api/v1/projects/" + project + "/versions/" + getLatestVersionName();
+			final JsonReader reader = new JsonReader(new InputStreamReader(new URL(url).openStream()));
+			final HangarVersionInfo info = new Gson().fromJson(reader, HangarVersionInfo.class);
+			info.source = this;
+			reader.close(); // Should close every stream according to the javadoc.
+			return info;
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	@Nullable
+	public String getLatestVersionName() {
 		try {
 			final InputStream inputStream = new URL("https://hangar.papermc.io/api/v1/projects/" + project + "/latest?channel=" + channel).openStream();
 			final Scanner scanner = new Scanner(inputStream);
@@ -151,6 +170,108 @@ public class HangarUpdaterSource implements UpdaterSource {
 			for (int i = 1; i < len; i++)
 				name.setCharAt(i, Character.toLowerCase(name.charAt(i)));
 			return name.toString();
+		}
+	}
+
+	public class HangarVersionInfo extends VersionInfo {
+
+		Date createdAt;
+		String name;
+		String description;
+		String author;
+		String reviewState;
+		Downloads downloads;
+		FormattedVersions platformDependenciesFormatted;
+
+		@Nonnull
+		public String getProject() {
+			return ((HangarUpdaterSource) getSource()).getProject();
+		}
+
+		@Nonnull
+		@Override
+		public String getVersion() {
+			return name;
+		}
+
+		@Nonnull
+		public Date getCreationDate() {
+			return createdAt;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public String getAuthor() {
+			return author;
+		}
+
+		public String getReviewState() {
+			return reviewState;
+		}
+
+		public String getDownloadUrl() {
+			return "https://hangar.papermc.io/" + getProject() + "/versions/" + getVersion();
+		}
+
+		/*
+		 * Download URLs
+		 */
+
+		// List<DownloadInfo> downloads; didn't work, so...
+		private class Downloads {
+			DownloadInfo PAPER;
+			DownloadInfo WATERFALL;
+			DownloadInfo VELOCITY;
+		}
+		
+		private class DownloadInfo {
+			String downloadUrl;
+			String externalUrl;
+		}
+
+		private String getUrl(DownloadInfo info) {
+			if (info == null)
+				return null;
+			return info.downloadUrl != null ? info.downloadUrl : info.externalUrl;
+		}
+
+		@Nullable
+		public String getPaperDownloadUrl() {
+			return getUrl(downloads.PAPER);
+		}
+
+		@Nullable
+		public String getWaterfallDownloadUrl() {
+			return getUrl(downloads.WATERFALL);
+		}
+
+		@Nullable
+		public String getVelocityDownloadUrl() {
+			return getUrl(downloads.VELOCITY);
+		}
+
+		/*
+		 * Platform versions
+		 */
+
+		private class FormattedVersions {
+			String PAPER;
+			String WATERFALL;
+			String VELOCITY;
+		}
+
+		public String getPaperVersions() {
+			return platformDependenciesFormatted.PAPER;
+		}
+
+		public String getWaterfallVersions() {
+			return platformDependenciesFormatted.WATERFALL;
+		}
+
+		public String getVelocityVersions() {
+			return platformDependenciesFormatted.VELOCITY;
 		}
 	}
 }

@@ -1,11 +1,14 @@
-package net.codersky.mcutils.updaters;
+package net.codersky.mcutils.updaters.sources;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.codersky.mcutils.updaters.UpdateChecker;
+import net.codersky.mcutils.updaters.UpdaterSource;
+
 /**
- * A class that represents version information generated
- * by an {@link UpdaterChecker}. 
+ * An interface that represents version information generated
+ * by an {@link UpdaterSource}.
  * 
  * @since MCUtils 1.0.0
  * 
@@ -13,15 +16,11 @@ import javax.annotation.Nullable;
  *
  * @see UpdateChecker#getLatestVersion()
  */
-public class VersionInfo {
+public abstract class VersionInfo {
 
-	private final UpdaterSource source;
-	private final String version;
+	protected UpdaterSource source;
 
-	VersionInfo(@Nullable  UpdaterSource source, @Nonnull String version) {
-		this.source = source;
-		this.version = version;
-	}
+	VersionInfo() {}
 
 	/**
 	 * The {@link UpdaterSource} that provided this info.
@@ -34,7 +33,7 @@ public class VersionInfo {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public UpdaterSource getSource() {
+	public final UpdaterSource getSource() {
 		return source;
 	}
 
@@ -46,7 +45,5 @@ public class VersionInfo {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public String getVersion() {
-		return version;
-	}
+	public abstract String getVersion();
 }

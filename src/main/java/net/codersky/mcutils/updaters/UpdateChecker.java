@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.checkerframework.checker.index.qual.Positive;
@@ -17,6 +16,7 @@ import net.codersky.mcutils.updaters.sources.GitHubUpdaterSource;
 import net.codersky.mcutils.updaters.sources.HangarUpdaterSource;
 import net.codersky.mcutils.updaters.sources.HangarUpdaterSource.HangarChannel;
 import net.codersky.mcutils.updaters.sources.SpigotUpdaterSource;
+import net.codersky.mcutils.updaters.sources.VersionInfo;
 
 /**
  * A class used to easily check for plugin updates from
@@ -59,25 +59,25 @@ public class UpdateChecker {
 	 * are provided by any {@link UpdaterSource updater sources} that have been
 	 * {@link #addSource(UpdaterSource) added} to this checker.
 	 * <p><p>
-	 * The returned {@link VersionInfo} may return a {@code null} {@link UpdaterSource},
-	 * on its {@link VersionInfo#getSource()} method, that means that there is <b>NOT</b>
-	 * an available update, {@link VersionInfo#getVersion()} will be the same as the
-	 * current version of the plugin.
+	 * The returned {@link VersionInfo} may be {@code null}, that means that there isn't
+	 * an update available.
 	 * 
 	 * @return A {@link VersionInfo} object containing the latest known version
-	 * of the {@link Plugin} that instantiated this {@link UpdateChecker}.
+	 * of the {@link Plugin} that instantiated this {@link UpdateChecker}. {@code null}
+	 * if no newer version has been found.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@Nullable
 	public final VersionInfo getLatestVersion() {
-		VersionInfo latest = new VersionInfo(null, currentVersion);
+		VersionInfo latest = null;
 		for (UpdaterSource source : sources) {
-			final String sourceVer = source.getLatestVersion();
+			final VersionInfo sourceVer = source.getLatestVersion();
 			if (sourceVer == null)
-				Bukkit.getLogger().log(Level.WARNING, "The " + source.getName() + " updater source returned null, meaning that it failed.");
-			else if (isNewer(latest.getVersion(), sourceVer))
-				latest = new VersionInfo(source, sourceVer);
+				continue;
+			final String current = latest == null ? currentVersion : latest.getVersion();
+			if (isNewer(current, sourceVer.getVersion()))
+				latest = sourceVer;
 		}
 		return latest;
 	}

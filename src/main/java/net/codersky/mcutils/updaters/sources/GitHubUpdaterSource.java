@@ -2,8 +2,6 @@ package net.codersky.mcutils.updaters.sources;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.Date;
 import java.util.Objects;
@@ -105,77 +103,45 @@ public class GitHubUpdaterSource implements UpdaterSource {
 
 	@Nullable
 	@Override
-	public String getLatestVersion() {
-		final BasicReleaseInfo data = getBasicReleaseInfo();
-		return useName ? data.getName() : data.getTag();
-	}
-
-	/*
-	 * Release data (Gson)
-	 */
-
-	/**
-	 * Gets custom data by using {@link Gson#fromJson(Reader, Type)}. If you don't know how
-	 * to use this method, just stick to {@link #getReleaseInfo()} or {@link #getBasicReleaseInfo()},
-	 * this method exists for uses that know how to use Gson and want to fetch data that is
-	 * provided by GitHub but is not included on the {@link ReleaseInfo} class that MCUtils provides.
-	 * 
-	 * @param <T> the type of the desired object.
-	 * 
-	 * @param typeOfT The specific genericized type of src (See {@link Gson#fromJson(Reader, Type)}).
-	 * 
-	 * @return An object of type {@code T}. {@code null} if any error occurs.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #getBasicReleaseInfo()
-	 * @see #getReleaseInfo()
-	 */
-	@Nullable
-	public <T> T getData(Type typeOfT) {
+	public GitHubVersionInfo getLatestVersion() {
 		try {
 			final JsonReader reader = new JsonReader(new InputStreamReader(new URL("https://api.github.com/repos/" + repo + "/releases").openStream()));
 			reader.beginArray();
-			final T data = new Gson().fromJson(reader, typeOfT);
+			final GitHubVersionInfo info = new Gson().fromJson(reader, GitHubVersionInfo.class);
+			info.source = this;
 			reader.close(); // Should close every stream according to the javadoc.
-			return data;
+			return info;
 		} catch (IOException e) {
 			return null;
 		}
 	}
 
 	/**
-	 * Gets a {@link BasicReleaseInfo} object from this GitHub source.
-	 * This method exists to reduce memory usage and only provides the
-	 * essential information for version checkers, if you want more
-	 * information about the release, use {@link #getReleaseInfo()}.
-	 * 
-	 * @return A {@link BasicReleaseInfo} object from this GitHub source,
-	 * {@code null} if any error occurs.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #getReleaseInfo()
-	 * @see #getData(Type)
-	 */
-	@Nullable
-	public BasicReleaseInfo getBasicReleaseInfo() {
-		return getData(BasicReleaseInfo.class);
-	}
-
-	/**
-	 * A very basic version of {@link ReleaseInfo} that only
-	 * contains the release name and tag, lowering memory
-	 * usage on {@link GitHubUpdaterSource#getLatestVersion()}.
+	 * Class that provides full information about a GitHub release.
 	 * 
 	 * @author xDec0de_
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	public class BasicReleaseInfo {
+	public class GitHubVersionInfo extends VersionInfo {
 
 		private String name;
 		private String tag_name;
+		String html_url;
+		long id;
+		AuthorInfo author;
+		Date created_at;
+		Date published_at;
+		boolean draft;
+		boolean prerelease;
+		String body;
+
+		@Nonnull
+		@Override
+		public String getVersion() {
+			final GitHubUpdaterSource source = (GitHubUpdaterSource) getSource();
+			return source.useName ? name : tag_name;
+		}
 
 		/**
 		 * Gets the name of this release.
@@ -200,44 +166,6 @@ public class GitHubUpdaterSource implements UpdaterSource {
 		public String getTag() {
 			return tag_name;
 		}
-	}
-
-	/**
-	 * Gets a full {@link ReleaseInfo} object from this GitHub source.
-	 * This method provides a lot of information about the release that
-	 * you may not want to use, if you only want to get the release name
-	 * or tag, use {@link GitHubUpdaterSource#getBasicReleaseInfo()}.
-	 * 
-	 * @return A {@link BasicReleaseInfo} object from this GitHub source,
-	 * {@code null} if any error occurs.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #getReleaseInfo()
-	 * @see #getData(Type)
-	 */
-	@Nullable
-	public ReleaseInfo getReleaseInfo() {
-		return getData(ReleaseInfo.class);
-	}
-
-	/**
-	 * Class that provides full information about a GitHub release.
-	 * 
-	 * @author xDec0de_
-	 *
-	 * @since MCUtils 1.0.0
-	 */
-	public class ReleaseInfo extends BasicReleaseInfo {
-
-		String html_url;
-		long id;
-		AuthorInfo author;
-		Date created_at;
-		Date published_at;
-		boolean draft;
-		boolean prerelease;
-		String body;
 
 		/**
 		 * Gets the html url String of this release, a link to the release page.
@@ -341,7 +269,7 @@ public class GitHubUpdaterSource implements UpdaterSource {
 		 * @author xDec0de_
 		 * 
 		 * @see GitHubUpdaterSource
-		 * @see ReleaseInfo
+		 * @see GitHubVersionInfo
 		 */
 		public class AuthorInfo {
 
