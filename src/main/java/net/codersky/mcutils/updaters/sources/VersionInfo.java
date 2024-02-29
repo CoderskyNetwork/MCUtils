@@ -5,6 +5,8 @@ import javax.annotation.Nullable;
 
 import net.codersky.mcutils.updaters.UpdateChecker;
 import net.codersky.mcutils.updaters.UpdaterSource;
+import net.codersky.mcutils.updaters.sources.SpigetUpdaterSource.SpigetVersionInfo;
+import net.codersky.mcutils.updaters.sources.SpigotUpdaterSource.SpigotVersionInfo;
 
 /**
  * An interface that represents version information generated
@@ -46,4 +48,19 @@ public abstract class VersionInfo {
 	 */
 	@Nonnull
 	public abstract String getVersion();
+
+	/**
+	 * Gets the download url of this version. This method
+	 * is allowed to point to any page that contains a
+	 * download link to the latest version of the plugin,
+	 * for example, {@link SpigotVersionInfo} and
+	 * {@link SpigetVersionInfo} point to the list of versions
+	 * of the plugin instead of the latest version.
+	 * 
+	 * @return The download url of this version.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public abstract String getVersionUrl();
 }

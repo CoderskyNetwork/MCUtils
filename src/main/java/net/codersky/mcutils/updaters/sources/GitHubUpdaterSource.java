@@ -146,6 +146,12 @@ public class GitHubUpdaterSource implements UpdaterSource {
 			return source.useName ? name : tag_name;
 		}
 
+		@Nonnull
+		@Override
+		public String getVersionUrl() {
+			return html_url;
+		}
+
 		/**
 		 * Gets the name of this release.
 		 * 
@@ -168,18 +174,6 @@ public class GitHubUpdaterSource implements UpdaterSource {
 		@Nonnull
 		public String getTag() {
 			return tag_name;
-		}
-
-		/**
-		 * Gets the html url String of this release, a link to the release page.
-		 * 
-		 * @return The html url String of this release.
-		 * 
-		 * @since MCUtils 1.0.0
-		 */
-		@Nonnull
-		public String getHtmlUrl() {
-			return html_url;
 		}
 
 		/**

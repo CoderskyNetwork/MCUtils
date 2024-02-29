@@ -197,6 +197,12 @@ public class HangarUpdaterSource implements UpdaterSource {
 		}
 
 		@Nonnull
+		@Override
+		public String getVersionUrl() {
+			return "https://hangar.papermc.io/" + getProject() + "/versions/" + getVersion();
+		}
+
+		@Nonnull
 		public Date getCreationDate() {
 			return createdAt;
 		}
@@ -214,11 +220,6 @@ public class HangarUpdaterSource implements UpdaterSource {
 		@Nonnull
 		public String getReviewState() {
 			return reviewState;
-		}
-
-		@Nonnull
-		public String getDownloadUrl() {
-			return "https://hangar.papermc.io/" + getProject() + "/versions/" + getVersion();
 		}
 
 		/*

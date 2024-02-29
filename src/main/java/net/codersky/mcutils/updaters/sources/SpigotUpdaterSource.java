@@ -113,13 +113,23 @@ public class SpigotUpdaterSource implements UpdaterSource {
 		}
 
 		@Nonnull
-		public String getResourceUrl() {
-			return "https://www.spigotmc.org/resources/" + getResourceId();
+		@Override
+		public String getVersionUrl() {
+			return getResourceUrl() + "/updates";
 		}
 
+		/**
+		 * Gets the url of the resource that this version
+		 * belongs to.
+		 * 
+		 * @return The url of the resource that this version
+		 * belongs to.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
 		@Nonnull
-		public String getUpdatesUrl() {
-			return getResourceUrl() + "/updates";
+		public String getResourceUrl() {
+			return "https://www.spigotmc.org/resources/" + getResourceId();
 		}
 
 		/**
