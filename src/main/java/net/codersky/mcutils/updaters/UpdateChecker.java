@@ -15,8 +15,10 @@ import org.checkerframework.checker.index.qual.Positive;
 import net.codersky.mcutils.updaters.sources.GitHubUpdaterSource;
 import net.codersky.mcutils.updaters.sources.HangarUpdaterSource;
 import net.codersky.mcutils.updaters.sources.HangarUpdaterSource.HangarChannel;
+import net.codersky.mcutils.updaters.sources.SpigetUpdaterSource;
 import net.codersky.mcutils.updaters.sources.SpigotUpdaterSource;
 import net.codersky.mcutils.updaters.sources.VersionInfo;
+import net.codersky.mcutils.updaters.sources.GitHubUpdaterSource.GitHubVersionInfo;
 
 /**
  * A class used to easily check for plugin updates from
@@ -154,7 +156,29 @@ public class UpdateChecker {
 	}
 
 	/**
+	 * Adds a new {@link SpigetUpdaterSource} to this {@link UpdateChecker}.
+	 * 
+	 * @param resourceId the resource id of the plugin to check on Spiget.
+	 * Resource ids must be positive numbers.
+	 * 
+	 * @throws IllegalArgumentException if <b>resourceId</b> is minor or equal to zero.
+	 * 
+	 * @return This {@link UpdateChecker}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public UpdateChecker addSpigetSource(@Positive long resourceId) {
+		return addSource(new SpigetUpdaterSource(resourceId));
+	}
+
+	/**
 	 * Adds a new {@link GitHubUpdaterSource} to this {@link UpdateChecker}.
+	 * <p><p>
+	 * This method will use the tag of the release as a version,
+	 * this only affects to {@link #getLatestVersion()} as 
+	 * {@link GitHubVersionInfo#getVersion()} will return either the version
+	 * tag or name depending on this.
 	 * 
 	 * @param repo the repository to get releases from. For example, for the
 	 * MCUtils repository (https://github.com/CoderskyNetwork/MCUtils), the
@@ -169,6 +193,29 @@ public class UpdateChecker {
 	@Nonnull
 	public UpdateChecker addGitHubSource(@Nonnull String repo) {
 		return addSource(new GitHubUpdaterSource(repo));
+	}
+
+	/**
+	 * Adds a new {@link GitHubUpdaterSource} to this {@link UpdateChecker}.
+	 * 
+	 * @param repo the repository to get releases from. For example, for the
+	 * MCUtils repository (https://github.com/CoderskyNetwork/MCUtils), the
+	 * String must be "CoderskyNetwork/MCUtils".
+	 * @param useName {@link GitHubUpdaterSource} uses the release tag
+	 * by default. Setting this to {@code true} will use the release name,
+	 * this only affects to {@link #getLatestVersion()} as 
+	 * {@link GitHubVersionInfo#getVersion()} will return either the version
+	 * tag or name depending on this.
+	 * 
+	 * @throws NullPointerException if <b>repo</b> is {@code null}.
+	 * 
+	 * @return This {@link UpdateChecker}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public UpdateChecker addGitHubSource(@Nonnull String repo, boolean useName) {
+		return addSource(new GitHubUpdaterSource(repo, useName));
 	}
 
 	/**
