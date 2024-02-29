@@ -22,6 +22,7 @@ import net.codersky.mcutils.updaters.UpdaterSource;
  * 
  * @see #SpigotUpdaterSource(long)
  * @see #getResourceId()
+ * @see #getLatestVersion()
  */
 public class SpigotUpdaterSource implements UpdaterSource {
 

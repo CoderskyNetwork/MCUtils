@@ -90,7 +90,7 @@ public class SpigetUpdaterSource implements UpdaterSource {
 	}
 
 	/**
-	 * Class that provides full information about a Spiget plugin version.
+	 * Class that provides information about a Spiget plugin version.
 	 * 
 	 * @author xDec0de_
 	 *

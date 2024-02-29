@@ -27,8 +27,7 @@ import net.codersky.mcutils.updaters.UpdaterSource;
  * @see #GitHubUpdaterSource(String)
  * @see #GitHubUpdaterSource(String, boolean)
  * @see #getRepository()
- * @see #getReleaseInfo()
- * @see #getBasicReleaseInfo()
+ * @see #getLatestVersion()
  */
 public class GitHubUpdaterSource implements UpdaterSource {
 
@@ -44,7 +43,9 @@ public class GitHubUpdaterSource implements UpdaterSource {
 	 * String must be "CoderskyNetwork/MCUtils".
 	 * @param useName {@link GitHubUpdaterSource} uses the release tag
 	 * by default. Setting this to {@code true} will use the release name,
-	 * this only affects to {@link #getLatestVersion()}.
+	 * this only affects to {@link #getLatestVersion()} as 
+	 * {@link GitHubVersionInfo#getVersion()} will return either the version
+	 * tag or name depending on this.
 	 * 
 	 * @throws NullPointerException if <b>repo</b> is {@code null}.
 	 * 
@@ -62,7 +63,9 @@ public class GitHubUpdaterSource implements UpdaterSource {
 	 * for updates on <a href="https://api.github.com/">api.github.com</a>.
 	 * <p><p>
 	 * This constructor will use the tag of the release as a version,
-	 * this only affects to {@link #getLatestVersion()}.
+	 * this only affects to {@link #getLatestVersion()} as 
+	 * {@link GitHubVersionInfo#getVersion()} will return either the version
+	 * tag or name depending on this.
 	 * 
 	 * @param repo the repository to get releases from. For example, for the
 	 * MCUtils repository (https://github.com/CoderskyNetwork/MCUtils), the
@@ -117,7 +120,7 @@ public class GitHubUpdaterSource implements UpdaterSource {
 	}
 
 	/**
-	 * Class that provides full information about a GitHub release.
+	 * Class that provides information about a GitHub release.
 	 * 
 	 * @author xDec0de_
 	 *

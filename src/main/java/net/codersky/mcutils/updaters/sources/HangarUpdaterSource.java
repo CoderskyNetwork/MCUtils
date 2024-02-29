@@ -28,6 +28,7 @@ import net.codersky.mcutils.updaters.UpdaterSource;
  * @see #getProject()
  * @see #getChannel()
  * @see HangarChannel
+ * @see #getLatestVersion()
  */
 public class HangarUpdaterSource implements UpdaterSource {
 
@@ -149,6 +150,7 @@ public class HangarUpdaterSource implements UpdaterSource {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #ALPHA
+	 * @see #BETA
 	 * @see #SNAPSHOT
 	 * @see #RELEASE
 	 */
@@ -199,18 +201,22 @@ public class HangarUpdaterSource implements UpdaterSource {
 			return createdAt;
 		}
 
+		@Nonnull
 		public String getDescription() {
 			return description;
 		}
 
+		@Nonnull
 		public String getAuthor() {
 			return author;
 		}
 
+		@Nonnull
 		public String getReviewState() {
 			return reviewState;
 		}
 
+		@Nonnull
 		public String getDownloadUrl() {
 			return "https://hangar.papermc.io/" + getProject() + "/versions/" + getVersion();
 		}
