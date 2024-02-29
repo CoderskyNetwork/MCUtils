@@ -175,6 +175,13 @@ public class HangarUpdaterSource implements UpdaterSource {
 		}
 	}
 
+	/**
+	 * Class that provides information about a Hangar plugin version.
+	 * 
+	 * @author xDec0de_
+	 *
+	 * @since MCUtils 1.0.0
+	 */
 	public class HangarVersionInfo extends VersionInfo {
 
 		Date createdAt;
@@ -185,6 +192,13 @@ public class HangarUpdaterSource implements UpdaterSource {
 		Downloads downloads;
 		FormattedVersions platformDependenciesFormatted;
 
+		/**
+		 * Gets the project that belongs to this version.
+		 * 
+		 * @return The project that belongs to this version.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
 		@Nonnull
 		public String getProject() {
 			return ((HangarUpdaterSource) getSource()).getProject();
@@ -202,21 +216,49 @@ public class HangarUpdaterSource implements UpdaterSource {
 			return "https://hangar.papermc.io/" + getProject() + "/versions/" + getVersion();
 		}
 
+		/**
+		 * Gets the release date of this version.
+		 * 
+		 * @return The release date of this version.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
 		@Nonnull
 		public Date getCreationDate() {
 			return createdAt;
 		}
 
+		/**
+		 * Gets the description of this version.
+		 * 
+		 * @return The description of this version.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
 		@Nonnull
 		public String getDescription() {
 			return description;
 		}
 
+		/**
+		 * Gets the author name of this version.
+		 * 
+		 * @return The author name of this version.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
 		@Nonnull
 		public String getAuthor() {
 			return author;
 		}
 
+		/**
+		 * Gets the review state of this version.
+		 * 
+		 * @return The review state of this version.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
 		@Nonnull
 		public String getReviewState() {
 			return reviewState;
@@ -244,16 +286,46 @@ public class HangarUpdaterSource implements UpdaterSource {
 			return info.downloadUrl != null ? info.downloadUrl : info.externalUrl;
 		}
 
+		/**
+		 * Gets the paper download url of this version.
+		 * <p><p>
+		 * Note that some resources may not support paper.
+		 * 
+		 * @return The paper download url of this version, {@code null}
+		 * if the resource doesn't support paper.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
 		@Nullable
 		public String getPaperDownloadUrl() {
 			return getUrl(downloads.PAPER);
 		}
 
+		/**
+		 * Gets the waterfall download url of this version.
+		 * <p><p>
+		 * Note that some resources may not support waterfall.
+		 * 
+		 * @return The waterfall download url of this version, {@code null}
+		 * if the resource doesn't support waterfall.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
 		@Nullable
 		public String getWaterfallDownloadUrl() {
 			return getUrl(downloads.WATERFALL);
 		}
 
+		/**
+		 * Gets the velocity download url of this version.
+		 * <p><p>
+		 * Note that some resources may not support velocity.
+		 * 
+		 * @return The velocity download url of this version, {@code null}
+		 * if the resource doesn't support velocity.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
 		@Nullable
 		public String getVelocityDownloadUrl() {
 			return getUrl(downloads.VELOCITY);
@@ -269,14 +341,71 @@ public class HangarUpdaterSource implements UpdaterSource {
 			String VELOCITY;
 		}
 
+		/**
+		 * Gets the Minecraft versions that are supported
+		 * by the paper version of this resource. This is
+		 * generally provided as a range, so a resource that supports all
+		 * versions from 1.10 to 1.20 could return "1.10-1.20",
+		 * while a resource that only supports 1.20 may return
+		 * "1.20", but some resources return a more specific version
+		 * list separated by commas such as "1.8, 1.9.4, 1.10.2".
+		 * This can also be mixed with some versions separated by commas
+		 * and other versions provided as ranges.
+		 * <p><p>
+		 * Note that some resources may not support paper.
+		 * 
+		 * @return The paper download url of this version, {@code null}
+		 * if the resource doesn't support paper.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
+		@Nullable
 		public String getPaperVersions() {
 			return platformDependenciesFormatted.PAPER;
 		}
 
+		/**
+		 * Gets the Minecraft versions that are supported
+		 * by the waterfall version of this resource. This is
+		 * generally provided as a range, so a resource that supports all
+		 * versions from 1.10 to 1.20 could return "1.10-1.20",
+		 * while a resource that only supports 1.20 may return
+		 * "1.20", but some resources return a more specific version
+		 * list separated by commas such as "1.8, 1.9.4, 1.10.2".
+		 * This can also be mixed with some versions separated by commas
+		 * and other versions provided as ranges.
+		 * <p><p>
+		 * Note that some resources may not support waterfall.
+		 * 
+		 * @return The waterfall download url of this version, {@code null}
+		 * if the resource doesn't support waterfall.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
+		@Nullable
 		public String getWaterfallVersions() {
 			return platformDependenciesFormatted.WATERFALL;
 		}
 
+		/**
+		 * Gets the Minecraft versions that are supported
+		 * by the velocity version of this resource. This is
+		 * generally provided as a range, so a resource that supports all
+		 * versions from 3.2.0 to 3.3.0 could return "3.2.0-3.3.0",
+		 * while a resource that only supports 3.3.0 may return
+		 * "3.3.0", but some resources return a more specific version
+		 * list separated by commas such as "3.1.1, 3.2.0, 3.3.0".
+		 * This can also be mixed with some versions separated by commas
+		 * and other versions provided as ranges.
+		 * <p><p>
+		 * Note that some resources may not support velocity.
+		 * 
+		 * @return The velocity download url of this version, {@code null}
+		 * if the resource doesn't support velocity.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
+		@Nullable
 		public String getVelocityVersions() {
 			return platformDependenciesFormatted.VELOCITY;
 		}

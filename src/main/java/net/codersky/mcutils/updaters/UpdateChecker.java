@@ -13,12 +13,12 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.checkerframework.checker.index.qual.Positive;
 
 import net.codersky.mcutils.updaters.sources.GitHubUpdaterSource;
+import net.codersky.mcutils.updaters.sources.GitHubUpdaterSource.GitHubVersionInfo;
 import net.codersky.mcutils.updaters.sources.HangarUpdaterSource;
 import net.codersky.mcutils.updaters.sources.HangarUpdaterSource.HangarChannel;
 import net.codersky.mcutils.updaters.sources.SpigetUpdaterSource;
 import net.codersky.mcutils.updaters.sources.SpigotUpdaterSource;
 import net.codersky.mcutils.updaters.sources.VersionInfo;
-import net.codersky.mcutils.updaters.sources.GitHubUpdaterSource.GitHubVersionInfo;
 
 /**
  * A class used to easily check for plugin updates from
