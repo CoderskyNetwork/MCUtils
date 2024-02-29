@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -16,20 +17,18 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
 import net.codersky.mcutils.updaters.UpdaterSource;
-import net.codersky.mcutils.updaters.sources.HangarUpdaterSource.HangarChannel;
 
 /**
  * {@link UpdaterSource} implementation for
- * <a href="https://hangar.papermc.io/">hangar.papermc.io</a>
+ * <a href="https://api.spiget.org/">api.spiget.org</a>
  * 
  * @since MCUtils 1.0.0
  * 
  * @author xDec0de_
  * 
- * @see #HangarUpdaterSource(String, HangarChannel)
- * @see #getProject()
- * @see #getChannel()
- * @see HangarChannel
+ * @see #SpigetUpdaterSource(long)
+ * @see #getResourceId()
+ * @see #getLatestVersion()
  */
 public class SpigetUpdaterSource implements UpdaterSource {
 
@@ -90,6 +89,13 @@ public class SpigetUpdaterSource implements UpdaterSource {
 		}
 	}
 
+	/**
+	 * Class that provides full information about a Spiget plugin version.
+	 * 
+	 * @author xDec0de_
+	 *
+	 * @since MCUtils 1.0.0
+	 */
 	public class SpigetVersionInfo extends VersionInfo {
 
 		String name;
@@ -106,31 +112,87 @@ public class SpigetUpdaterSource implements UpdaterSource {
 			return name;
 		}
 
+		/**
+		 * Gets the {@link UUID} of this version.
+		 * 
+		 * @return The {@link UUID} of this version.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
 		@Nonnull
 		public UUID getUUID() {
 			return uuid;
 		}
 
+		/**
+		 * Gets the amount of downloads of this version.
+		 * 
+		 * @return The amount of downloads of this version.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
+		@Nonnegative
 		public int getDownloads() {
 			return downloads;
 		}
 
+		/**
+		 * Gets the amount of ratings this version has.
+		 * 
+		 * @return The amount of ratings this version has.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
+		@Nonnegative
 		public int getRatingCount() {
 			return rating.count;
 		}
 
+		/**
+		 * Gets the average rating of this version, ranges
+		 * from 0 to 5.
+		 * 
+		 * @return The average rating of this version.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
+		@Nonnegative
 		public float getRatingAverage() {
 			return rating.average;
 		}
 
+		/**
+		 * Gets the release {@link Date} of this version.
+		 * 
+		 * @return The release {@link Date} of this version.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
+		@Nonnull
 		public Date getDate() {
 			return Date.from(Instant.ofEpochSecond(releaseDate));
 		}
 
+		/**
+		 * Gets the resource id this version belongs to.
+		 * 
+		 * @return The resource id this version belongs to.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
+		@Positive
 		public long getResourceId() {
 			return ((SpigetUpdaterSource) getSource()).getResourceId();
 		}
 
+		/**
+		 * Gets the id of this version.
+		 * 
+		 * @return The id of this version.
+		 * 
+		 * @since MCUtils 1.0.0
+		 */
+		@Positive
 		public long getVersionId() {
 			return id;
 		}
