@@ -11,6 +11,7 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.checkerframework.checker.index.qual.Positive;
 
 import com.google.gson.Gson;
@@ -76,7 +77,9 @@ public class SpigetUpdaterSource implements UpdaterSource {
 
 	@Nullable
 	@Override
-	public SpigetVersionInfo getLatestVersion() {
+	public SpigetVersionInfo getLatestVersion(boolean warnSync) {
+		if (warnSync && Bukkit.isPrimaryThread())
+			Bukkit.getLogger().warning("Getting latest version of Spiget resource " + resourceId + " on the main thread, possible performance issue.");
 		try {
 			final String url = "https://api.spiget.org/v2/resources/" + resourceId + "/versions/latest";
 			final JsonReader reader = new JsonReader(new InputStreamReader(new URL(url).openStream()));

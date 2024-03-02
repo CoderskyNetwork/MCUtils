@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.checkerframework.checker.index.qual.Positive;
 
@@ -32,6 +33,7 @@ import net.codersky.mcutils.updaters.sources.VersionInfo;
  * @see #isNewer(String, String)
  * @see #addSource(UpdaterSource)
  * @see #getLatestVersion()
+ * @see #getLatestVersion(boolean)
  */
 public class UpdateChecker {
 
@@ -64,17 +66,25 @@ public class UpdateChecker {
 	 * The returned {@link VersionInfo} may be {@code null}, that means that there isn't
 	 * an update available.
 	 * 
+	 * @param warnSync whether to warn or not about this method being
+	 * called on Bukkit's main thread. Only set this to
+	 * {@code false} if you are 100% sure that calling this
+	 * method synchronously won't affect server performance
+	 * (For example, at {@link JavaPlugin#onEnable()}).
+	 * 
 	 * @return A {@link VersionInfo} object containing the latest known version
 	 * of the {@link Plugin} that instantiated this {@link UpdateChecker}. {@code null}
 	 * if no newer version has been found.
 	 * 
 	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getLatestVersion()
 	 */
 	@Nullable
-	public final VersionInfo getLatestVersion() {
+	public final VersionInfo getLatestVersion(boolean warnSync) {
 		VersionInfo latest = null;
 		for (UpdaterSource source : sources) {
-			final VersionInfo sourceVer = source.getLatestVersion();
+			final VersionInfo sourceVer = source.getLatestVersion(warnSync);
 			if (sourceVer == null)
 				continue;
 			final String current = latest == null ? currentVersion : latest.getVersion();
@@ -82,6 +92,34 @@ public class UpdateChecker {
 				latest = sourceVer;
 		}
 		return latest;
+	}
+
+	/**
+	 * <b>WARNING:</b> This method does <i>NOT</i> run asynchronously by itself,
+	 * it is recommended to do so by using
+	 * {@link BukkitScheduler#runTaskAsynchronously(Plugin, Consumer)}, in fact
+	 * this method will send a warning if you run it synchronously as explained
+	 * on {@link UpdaterSource#getLatestVersion()}.
+	 * <p><p>
+	 * Provides a {@link VersionInfo} object containing the latest known version
+	 * of the {@link Plugin} that instantiated this {@link UpdateChecker}. Versions
+	 * are provided by any {@link UpdaterSource updater sources} that have been
+	 * {@link #addSource(UpdaterSource) added} to this checker.
+	 * <p><p>
+	 * The returned {@link VersionInfo} may be {@code null}, that means that there isn't
+	 * an update available.
+	 * 
+	 * @return A {@link VersionInfo} object containing the latest known version
+	 * of the {@link Plugin} that instantiated this {@link UpdateChecker}. {@code null}
+	 * if no newer version has been found.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getLatestVersion(boolean)
+	 */
+	@Nullable
+	public final VersionInfo getLatestVersion() {
+		return getLatestVersion(true);
 	}
 
 	/**

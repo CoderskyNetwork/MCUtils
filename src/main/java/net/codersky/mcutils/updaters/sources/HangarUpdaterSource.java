@@ -11,6 +11,8 @@ import java.util.Scanner;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
+
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
@@ -114,7 +116,9 @@ public class HangarUpdaterSource implements UpdaterSource {
 
 	@Nullable
 	@Override
-	public HangarVersionInfo getLatestVersion() {
+	public HangarVersionInfo getLatestVersion(boolean warnSync) {
+		if (warnSync && Bukkit.isPrimaryThread())
+			Bukkit.getLogger().warning("Getting latest version of Hanger project " + project + " on the main thread, possible performance issue.");
 		try {
 			final String url = "https://hangar.papermc.io/api/v1/projects/" + project + "/versions/" + getLatestVersionName();
 			final JsonReader reader = new JsonReader(new InputStreamReader(new URL(url).openStream()));

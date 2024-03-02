@@ -9,6 +9,7 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.checkerframework.checker.index.qual.Positive;
 
 import com.google.gson.Gson;
@@ -74,7 +75,9 @@ public class SpigotUpdaterSource implements UpdaterSource {
 
 	@Nullable
 	@Override
-	public SpigotVersionInfo getLatestVersion() {
+	public SpigotVersionInfo getLatestVersion(boolean warnSync) {
+		if (warnSync && Bukkit.isPrimaryThread())
+			Bukkit.getLogger().warning("Getting latest version of Spigot resource " + resourceId + " on the main thread, possible performance issue.");
 		try {
 			final String url = "https://api.spigotmc.org/simple/0.2/index.php?action=getResource&id=" + resourceId;
 			final JsonReader reader = new JsonReader(new InputStreamReader(new URL(url).openStream()));

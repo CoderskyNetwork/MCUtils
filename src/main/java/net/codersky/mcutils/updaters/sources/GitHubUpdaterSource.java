@@ -9,6 +9,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.checkerframework.checker.index.qual.Positive;
 
 import com.google.gson.Gson;
@@ -106,7 +107,9 @@ public class GitHubUpdaterSource implements UpdaterSource {
 
 	@Nullable
 	@Override
-	public GitHubVersionInfo getLatestVersion() {
+	public GitHubVersionInfo getLatestVersion(boolean warnSync) {
+		if (warnSync && Bukkit.isPrimaryThread())
+			Bukkit.getLogger().warning("Getting latest version of GitHub repository " + repo + " on the main thread, possible performance issue.");
 		try {
 			final JsonReader reader = new JsonReader(new InputStreamReader(new URL("https://api.github.com/repos/" + repo + "/releases").openStream()));
 			reader.beginArray();
