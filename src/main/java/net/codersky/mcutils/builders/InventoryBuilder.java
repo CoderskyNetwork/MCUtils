@@ -259,7 +259,7 @@ public class InventoryBuilder implements Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	public int[] getSlots() {
-		return MCNumbers.range(0, getSize());
+		return MCNumbers.range(0, getSize() - 1);
 	}
 
 	/*
