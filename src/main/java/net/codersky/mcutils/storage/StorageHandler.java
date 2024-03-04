@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -40,6 +41,10 @@ public abstract class StorageHandler {
 		for (T element : iterable)
 			lst.add(element);
 		return lst;
+	}
+
+	public Set<String> getKeys() {
+		return keys.keySet();
 	}
 
 	// Utility generic getter //
