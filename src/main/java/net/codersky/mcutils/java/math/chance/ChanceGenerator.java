@@ -1,4 +1,4 @@
-package net.codersky.mcutils.math.chance;
+package net.codersky.mcutils.java.math.chance;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
-import net.codersky.mcutils.math.MCNumbers;
+import net.codersky.mcutils.java.math.MCNumbers;
 
 /**
  * A class with utilities for lists, we

@@ -1,4 +1,4 @@
-package net.codersky.mcutils.math.chance;
+package net.codersky.mcutils.java.math.chance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 
-import net.codersky.mcutils.math.MCNumbers;
+import net.codersky.mcutils.java.math.MCNumbers;
 
 /**
  * A very basic {@link ChanceGenerator} for generic element types.

@@ -1,4 +1,4 @@
-package net.codersky.mcutils.math.chance;
+package net.codersky.mcutils.java.math.chance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,9 +11,9 @@ import javax.annotation.Nonnull;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import net.codersky.mcutils.java.math.MCNumbers;
 import net.codersky.mcutils.java.tuple.ImmutablePair;
 import net.codersky.mcutils.java.tuple.Pair;
-import net.codersky.mcutils.math.MCNumbers;
 
 /**
  * A {@link ChanceGenerator} made for {@link ItemStack ItemStacks},

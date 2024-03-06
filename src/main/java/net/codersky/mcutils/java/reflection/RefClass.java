@@ -1,4 +1,4 @@
-package net.codersky.mcutils.reflection;
+package net.codersky.mcutils.java.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

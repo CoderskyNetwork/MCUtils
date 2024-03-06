@@ -1,4 +1,4 @@
-package net.codersky.mcutils.math;
+package net.codersky.mcutils.java.math;
 
 import java.util.Random;
 

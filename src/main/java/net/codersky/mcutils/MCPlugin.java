@@ -34,8 +34,8 @@ import net.codersky.mcutils.general.Feature;
 import net.codersky.mcutils.general.MCCommand;
 import net.codersky.mcutils.gui.GUI;
 import net.codersky.mcutils.gui.GUIHandler;
+import net.codersky.mcutils.java.reflection.RefObject;
 import net.codersky.mcutils.java.strings.MCStrings;
-import net.codersky.mcutils.reflection.RefObject;
 import net.codersky.mcutils.worldgen.SingleBiomeProvider;
 import net.codersky.mcutils.worldgen.VoidGenerator;
 
