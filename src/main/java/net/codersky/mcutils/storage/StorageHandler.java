@@ -1,8 +1,8 @@
 package net.codersky.mcutils.storage;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -10,6 +10,8 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.codersky.mcutils.java.MCLists;
 
 public abstract class StorageHandler {
 
@@ -19,35 +21,180 @@ public abstract class StorageHandler {
 
 	public abstract boolean load();
 
-	@SuppressWarnings("unchecked")
-	public <T extends Object> T set(String key, T value) {
-		if (value == null)
-			keys.remove(key);
-		else if (Iterable.class.isAssignableFrom(value.getClass())) {
-			final LinkedList<T> lst = toLinkedList((Iterable<T>)value);
-			if (lst != null && !lst.isEmpty())
-				keys.put(key, lst);
-			else
-				keys.remove(key);
-		} else
-			keys.put(key, value);
-		return value;
-	}
-
-	private <T extends Object> LinkedList<T> toLinkedList(@Nonnull Iterable<T> iterable) {
-		if (iterable instanceof LinkedList)
-			return (LinkedList<T>) iterable;
-		final LinkedList<T> lst = new LinkedList<>();
-		for (T element : iterable)
-			lst.add(element);
-		return lst;
-	}
-
+	@Nonnull
 	public Set<String> getKeys() {
 		return keys.keySet();
 	}
 
-	// Utility generic getter //
+	/*
+	 * Setters
+	 */
+
+	// Utility //
+
+	@Nullable
+	protected <T extends Object> T set(@Nonnull String key, @Nullable T value) {
+		if (value == null)
+			keys.remove(Objects.requireNonNull(key));
+		else
+			keys.put(Objects.requireNonNull(key), value);
+		return value;
+	}
+
+	@Nullable
+	protected <T extends Object> List<T> setList(@Nonnull String key, @Nullable List<T> list) {
+		if (list == null || list.isEmpty())
+			keys.remove(Objects.requireNonNull(key));
+		else {
+			final ArrayList<T> lst = list instanceof ArrayList ? (ArrayList<T>) list : new ArrayList<T>(list);
+			keys.put(Objects.requireNonNull(key), lst);
+		}
+		return list;
+	}
+
+	// Strings //
+
+	@Nullable
+	public String setString(@Nonnull String key, @Nullable String value) {
+		return set(key, value);
+	}
+
+	@Nullable
+	public List<String> setStrings(@Nonnull String key, @Nullable List<String> value) {
+		return setList(key, value);
+	}
+
+	// Chars //
+
+	@Nullable
+	public Character setChar(@Nonnull String key, @Nullable Character value) {
+		return set(key, value);
+	}
+
+	@Nullable
+	public List<Character> setChars(@Nonnull String key, @Nullable List<Character> value) {
+		return set(key, value);
+	}
+
+	// Booleans //
+
+	@Nullable
+	public Boolean setBoolean(@Nonnull String key, @Nullable Boolean value) {
+		return set(key, value);
+	}
+
+	@Nullable
+	public List<Boolean> setBooleans(@Nonnull String key, @Nullable List<Boolean> value) {
+		return set(key, value);
+	}
+
+	// UUID //
+
+	@Nullable
+	public UUID setUUID(@Nonnull String key, @Nullable UUID value) {
+		return set(key, value);
+	}
+
+	@Nullable
+	public List<UUID> setUUIDs(@Nonnull String key, @Nullable List<UUID> value) {
+		return set(key, value);
+	}
+
+	// Bytes //
+
+	@Nullable
+	public Byte setByte(@Nonnull String key, @Nullable Byte value) {
+		return set(key, value);
+	}
+
+	@Nullable
+	public List<Byte> setBytes(@Nonnull String key, List<Byte> value) {
+		return set(key, value);
+	}
+
+	// Shorts //
+
+	@Nullable
+	public Short setShort(@Nonnull String key, @Nullable Short value) {
+		return set(key, value);
+	}
+
+	@Nullable
+	public List<Short> setShorts(@Nonnull String key, @Nullable List<Short> value) {
+		return set(key, value);
+	}
+
+	// Integers //
+
+	@Nullable
+	public Integer setInt(@Nonnull String key, @Nullable Integer value) {
+		return set(key, value);
+	}
+
+	@Nullable
+	public List<Integer> setInts(@Nonnull String key, @Nullable List<Integer> value) {
+		return set(key, value);
+	}
+
+	// Longs //
+
+	@Nullable
+	public Long setLong(@Nonnull String key, @Nullable Long value) {
+		return set(key, value);
+	}
+
+	@Nullable
+	public List<Long> setLongs(@Nonnull String key, @Nullable List<Long> value) {
+		return set(key, value);
+	}
+
+	// Floats //
+
+	@Nullable
+	public Float setFloat(@Nonnull String key, @Nullable Float value) {
+		return set(key, value);
+	}
+
+	@Nullable
+	public List<Float> setFloats(@Nonnull String key, @Nullable List<Float> value) {
+		return set(key, value);
+	}
+
+	// Doubles //
+
+	@Nullable
+	public Double setDouble(@Nonnull String key, @Nullable Double value) {
+		return set(key, value);
+	}
+
+	@Nullable
+	public List<Double> setDoubles(@Nonnull String key, @Nullable List<Double> value) {
+		return setList(key, value);
+	}
+
+	/*
+	 * Setters by conversion
+	 */
+	
+	// Date //
+
+	@Nullable
+	public Date setDate(@Nonnull String key, @Nullable Date value) {
+		set(key, value == null ? null : value.toInstant().toEpochMilli());
+		return value;
+	}
+
+	@Nullable
+	public List<Date> setDates(@Nonnull String key, @Nullable List<Date> value) {
+		setList(key, value == null ? null : MCLists.map(date -> date.toInstant().toEpochMilli(), value));
+		return value;
+	}
+
+	/*
+	 * Getters
+	 */
+
+	// Utility //
 
 	@SuppressWarnings("unchecked")
 	protected <T extends Object> T get(@Nonnull String key, @Nonnull Class<?> type, @Nullable T def) {
@@ -55,129 +202,256 @@ public abstract class StorageHandler {
 		return (obj != null && obj.getClass().equals(type)) ? (T) obj : def;
 	}
 
+	protected <T> List<T> getList(@Nonnull String key, @Nullable List<T> def) {
+		return get(key, ArrayList.class, def);
+	}
+
 	// Strings //
 
-	public String getString(String key, String def) {
+	@Nullable
+	public String getString(@Nonnull String key, @Nullable String def) {
 		return get(key, String.class, def);
 	}
 
-	public String getString(String key) {
+	@Nullable
+	public String getString(@Nonnull String key) {
 		return getString(key, null);
 	}
 
+	@Nullable
+	public List<String> getStrings(@Nonnull String key, @Nullable List<String> def) {
+		return getList(key, def);
+	}
+
+	@Nullable
+	public List<String> getStrings(@Nonnull String key) {
+		return getStrings(key, null);
+	}
+
 	// Chars //
-	
-	public char getChar(String key, char def) {
+
+	@Nullable
+	public Character getChar(String key, @Nullable Character def) {
 		return get(key, Character.class, def);
 	}
-	
-	public char getChar(String key) {
-		return getChar(key, '\0');
+
+	@Nullable
+	public Character getChar(String key) {
+		return getChar(key, null);
+	}
+
+	@Nullable
+	public List<Character> getChars(String key, @Nullable List<Character> def) {
+		return getList(key, def);
+	}
+
+	@Nullable
+	public List<Character> getChars(String key) {
+		return getChars(key, null);
 	}
 
 	// Booleans //
-	
-	public boolean getBoolean(String key, boolean def) {
+
+	@Nullable
+	public Boolean getBoolean(String key, @Nullable Boolean def) {
 		return get(key, Boolean.class, def);
 	}
-	
-	public boolean getBoolean(String key) {
-		return getBoolean(key, false);
+
+	@Nullable
+	public Boolean getBoolean(String key) {
+		return getBoolean(key, null);
+	}
+
+	@Nullable
+	public List<Boolean> getBooleans(String key, @Nullable List<Boolean> def) {
+		return getList(key, def);
+	}
+
+	@Nullable
+	public List<Boolean> getBooleans(String key) {
+		return getBooleans(key, null);
 	}
 
 	// UUID //
-	
-	public UUID getUUID(String key, UUID def) {
+
+	@Nullable
+	public UUID getUUID(@Nonnull String key, @Nullable UUID def) {
 		return get(key, UUID.class, def);
 	}
-	
-	public UUID getUUID(String key) {
+
+	@Nullable
+	public UUID getUUID(@Nonnull String key) {
 		return getUUID(key, null);
+	}
+
+	@Nullable
+	public List<UUID> getUUIDs(@Nonnull String key, @Nullable List<UUID> def) {
+		return getList(key, def);
+	}
+
+	@Nullable
+	public List<UUID> getUUIDs(@Nonnull String key) {
+		return getUUIDs(key, null);
 	}
 
 	// Bytes //
 
-	public byte getByte(String key, byte def) {
+	@Nullable
+	public Byte getByte(@Nonnull String key, @Nullable Byte def) {
 		return get(key, Byte.class, def);
 	}
 
-	public byte getByte(String key) {
-		return getByte(key, (byte) 0);
+	@Nullable
+	public Byte getByte(@Nonnull String key) {
+		return getByte(key, null);
 	}
-	
+
+	@Nullable
+	public List<Byte> getBytes(@Nonnull String key, @Nullable List<Byte> def) {
+		return getList(key, def);
+	}
+
+	@Nullable
+	public List<Byte> getBytes(@Nonnull String key) {
+		return getBytes(key, null);
+	}
+
 	// Shorts //
-	
-	public short getShort(String key, short def) {
+
+	@Nullable
+	public Short getShort(@Nonnull String key, @Nullable Short def) {
 		return get(key, Short.class, def);
 	}
-	
-	public short getShort(String key) {
-		return getShort(key, (short) 0);
+
+	@Nullable
+	public Short getShort(@Nonnull String key) {
+		return getShort(key, null);
+	}
+
+	@Nullable
+	public List<Short> getShorts(@Nonnull String key, @Nullable List<Short> def) {
+		return getList(key, def);
+	}
+
+	@Nullable
+	public List<Short> getShorts(@Nonnull String key) {
+		return getShorts(key, null);
 	}
 
 	// Integers //
-	
-	public int getInt(String key, int def) {
+
+	@Nullable
+	public Integer getInt(@Nonnull String key, @Nullable Integer def) {
 		return get(key, Integer.class, def);
 	}
-	
-	public int getInt(String key) {
-		return getInt(key, 0);
+
+	@Nullable
+	public Integer getInt(@Nonnull String key) {
+		return getInt(key, null);
+	}
+
+	@Nullable
+	public List<Integer> getInts(@Nonnull String key, @Nullable List<Integer> def) {
+		return getList(key, def);
+	}
+
+	@Nullable
+	public List<Integer> getInts(@Nonnull String key) {
+		return getInts(key, null);
 	}
 
 	// Longs //
 
-	public long getLong(String key, long def) {
+	@Nullable
+	public Long getLong(@Nonnull String key, @Nullable Long def) {
 		return get(key, Long.class, def);
 	}
 
-	public long getLong(String key) {
-		return getLong(key, 0);
+	@Nullable
+	public Long getLong(@Nonnull String key) {
+		return getLong(key, null);
+	}
+
+	@Nullable
+	public List<Long> getLongs(@Nonnull String key, @Nullable List<Long> def) {
+		return getList(key, def);
+	}
+
+	@Nullable
+	public List<Long> getLongs(@Nonnull String key) {
+		return getLongs(key, null);
 	}
 
 	// Floats //
 
-	public float getFloat(String key, float def) {
+	@Nullable
+	public Float getFloat(@Nonnull String key, @Nullable Float def) {
 		return get(key, Float.class, def);
 	}
 
-	public float getFloat(String key) {
-		return getFloat(key, 0.0f);
+	@Nullable
+	public Float getFloat(@Nonnull String key) {
+		return getFloat(key, null);
+	}
+
+	@Nullable
+	public List<Float> getFloats(@Nonnull String key, @Nullable List<Float> def) {
+		return getList(key, def);
+	}
+
+	@Nullable
+	public List<Float> getFloats(@Nonnull String key) {
+		return getFloats(key, null);
 	}
 
 	// Doubles //
 
-	public double getDouble(String key, double def) {
+	@Nullable
+	public Double getDouble(@Nonnull String key, @Nullable Double def) {
 		return get(key, Double.class, def);
 	}
 
-	public double getDouble(String key) {
-		return getDouble(key, 0.0d);
+	@Nullable
+	public Double getDouble(@Nonnull String key) {
+		return getDouble(key, null);
 	}
 
-	// Lists //
-
-	public <T> List<T> getList(String key, List<T> def) {
-		return get(key, LinkedList.class, def);
+	@Nullable
+	public List<Double> getDoubles(@Nonnull String key, @Nullable List<Double> def) {
+		return getList(key, def);
 	}
 
-	public <T> List<T> getList(String key) {
-		return getList(key, null);
+	@Nullable
+	public List<Double> getDoubles(@Nonnull String key) {
+		return getDoubles(key, null);
 	}
 
 	/*
-	 * Additional getters by conversion
+	 * Getters by conversion
 	 */
 
 	// Date //
 
-	public Date getDate(String key, Date def) {
-		long millis = getLong(key, -1);
-		return millis == -1 ? def : new Date(millis);
+	@Nullable
+	public Date getDate(@Nonnull String key, @Nullable Date def) {
+		final Long millis = getLong(key);
+		return millis == null ? def : new Date(millis);
 	}
 
-	public Date getDate(String key) {
+	@Nullable
+	public Date getDate(@Nonnull String key) {
 		return getDate(key, null);
+	}
+
+	@Nullable
+	public List<Date> getDates(@Nonnull String key, @Nullable List<Date> def) {
+		final List<Long> longs = getLongs(key);
+		return longs == null ? def : MCLists.map(millis -> new Date(millis), longs);
+	}
+
+	@Nullable
+	public List<Date> getDates(@Nonnull String key) {
+		return getDates(key, null);
 	}
 
 	/*
