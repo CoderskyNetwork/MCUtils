@@ -199,7 +199,7 @@ public abstract class StorageHandler {
 	 */
 	@Nullable
 	public List<Character> setChars(@Nonnull String key, @Nullable List<Character> value) {
-		return set(key, value);
+		return setList(key, value);
 	}
 
 	// Booleans //
@@ -238,7 +238,7 @@ public abstract class StorageHandler {
 	 */
 	@Nullable
 	public List<Boolean> setBooleans(@Nonnull String key, @Nullable List<Boolean> value) {
-		return set(key, value);
+		return setList(key, value);
 	}
 
 	// UUID //
@@ -277,7 +277,7 @@ public abstract class StorageHandler {
 	 */
 	@Nullable
 	public List<UUID> setUUIDs(@Nonnull String key, @Nullable List<UUID> value) {
-		return set(key, value);
+		return setList(key, value);
 	}
 
 	// Bytes //
@@ -316,7 +316,7 @@ public abstract class StorageHandler {
 	 */
 	@Nullable
 	public List<Byte> setBytes(@Nonnull String key, List<Byte> value) {
-		return set(key, value);
+		return setList(key, value);
 	}
 
 	// Shorts //
@@ -355,7 +355,7 @@ public abstract class StorageHandler {
 	 */
 	@Nullable
 	public List<Short> setShorts(@Nonnull String key, @Nullable List<Short> value) {
-		return set(key, value);
+		return setList(key, value);
 	}
 
 	// Integers //
@@ -394,7 +394,7 @@ public abstract class StorageHandler {
 	 */
 	@Nullable
 	public List<Integer> setInts(@Nonnull String key, @Nullable List<Integer> value) {
-		return set(key, value);
+		return setList(key, value);
 	}
 
 	// Longs //
@@ -433,7 +433,7 @@ public abstract class StorageHandler {
 	 */
 	@Nullable
 	public List<Long> setLongs(@Nonnull String key, @Nullable List<Long> value) {
-		return set(key, value);
+		return setList(key, value);
 	}
 
 	// Floats //
@@ -472,7 +472,7 @@ public abstract class StorageHandler {
 	 */
 	@Nullable
 	public List<Float> setFloats(@Nonnull String key, @Nullable List<Float> value) {
-		return set(key, value);
+		return setList(key, value);
 	}
 
 	// Doubles //
