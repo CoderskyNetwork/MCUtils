@@ -1,10 +1,7 @@
 package net.codersky.mcutils.events;
 
-import javax.annotation.Nonnull;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 
 /**
@@ -22,14 +19,19 @@ import org.bukkit.plugin.PluginManager;
  *     }
  * 
  *     &#64;Nonnull
+ *     &#64;Override
+ *     public HandlerList getHandlers() {
+ *         return handlers;
+ *     }
+ * 
+ *     &#64;Nonnull
  *     public static HandlerList getHandlerList() {
  *         return handlers;
  *     }
  * }
  * </pre>
  * And that's it, now you can add constructor parameters and whatever
- * getters or setters your events may need, the {@link #getHandlers()}
- * method will return {@link #getHandlerList()}.
+ * getters or setters your events may need.
  * 
  * @author xDec0de_
  *
@@ -73,15 +75,5 @@ public abstract class MCEvent extends Event {
 	public MCEvent call() {
 		Bukkit.getPluginManager().callEvent(this);
 		return this;
-	}
-
-	@Nonnull
-	public HandlerList getHandlers() {
-		return getHandlerList();
-	}
-
-	@Nonnull
-	public static HandlerList getHandlerList() {
-		throw new UnsupportedOperationException("Called #getHandlerList on a MCEvent that doesn't implement it.");
 	}
 }
