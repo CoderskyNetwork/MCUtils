@@ -1,7 +1,5 @@
 package net.codersky.mcutils.events;
 
-import java.util.logging.Level;
-
 import javax.annotation.Nonnull;
 
 import org.bukkit.Bukkit;
@@ -17,15 +15,10 @@ import org.bukkit.plugin.PluginManager;
  * <pre>
  * public class TestEvent extends MCEvent {
  * 
- *     private final HandlerList handlers = new HandlerList();
+ *     private final static HandlerList handlers = new HandlerList();
  * 
  *     public TestEvent() {
  *         super(true); // This makes the event asynchronous.
- *     }
- * 
- *     &#64;Nonnull
- *     public HandlerList getHandlers() {
- *         return handlers;
  *     }
  * 
  *     &#64;Nonnull
@@ -35,7 +28,8 @@ import org.bukkit.plugin.PluginManager;
  * }
  * </pre>
  * And that's it, now you can add constructor parameters and whatever
- * getters or setters your events may need.
+ * getters or setters your events may need, the {@link #getHandlers()}
+ * method will return {@link #getHandlerList()}.
  * 
  * @author xDec0de_
  *
@@ -57,7 +51,7 @@ public abstract class MCEvent extends Event {
 	}
 
 	/**
-	 * This constructor is used to explicitly declare an event as synchronousor asynchronous.
+	 * This constructor is used to explicitly declare an event as synchronous or asynchronous.
 	 * 
 	 * @param isAsync true indicates the event will fire asynchronously,
 	 * false by default from default constructor.
@@ -82,8 +76,12 @@ public abstract class MCEvent extends Event {
 	}
 
 	@Nonnull
+	public HandlerList getHandlers() {
+		return getHandlerList();
+	}
+
+	@Nonnull
 	public static HandlerList getHandlerList() {
-		Bukkit.getLogger().log(Level.SEVERE, "Called #getHandlerList on a MCEvent that doesn't implement it.");
-		throw new IllegalStateException("Called #getHandlerList on a MCEvent that doesn't implement it.");
+		throw new UnsupportedOperationException("Called #getHandlerList on a MCEvent that doesn't implement it.");
 	}
 }

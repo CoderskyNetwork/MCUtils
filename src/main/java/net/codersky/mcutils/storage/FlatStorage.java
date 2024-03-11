@@ -70,14 +70,6 @@ public class FlatStorage extends StorageHandler {
 		return file.exists();
 	}
 
-	public static void main(String[] args) {
-		FlatStorage fs = new FlatStorage("C:\\Users\\xDec0de_\\Desktop\\test.mcufs");
-		fs.set("str", "This \n will \n break \n the \n file.");
-		fs.save();
-		//fs.load();
-		//System.out.println(fs.getString("str"));
-	}
-
 	/*
 	 * Saving
 	 */
