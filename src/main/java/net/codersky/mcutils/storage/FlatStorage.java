@@ -70,6 +70,14 @@ public class FlatStorage extends StorageHandler {
 		return file.exists();
 	}
 
+	public static void main(String[] args) {
+		FlatStorage fs = new FlatStorage("C:\\Users\\xDec0de_\\Desktop\\test.mcufs");
+		fs.set("str", "This \n will \n break \n the \n file.");
+		fs.save();
+		//fs.load();
+		//System.out.println(fs.getString("str"));
+	}
+
 	/*
 	 * Saving
 	 */
@@ -83,9 +91,12 @@ public class FlatStorage extends StorageHandler {
 			final FileWriter writer = new FileWriter(file);
 			for (Entry<String, Object> entry : keys.entrySet()) {
 				final String toWrite;
-				if (entry.getValue() instanceof List)
-					toWrite = toWrite(entry.getKey(), (List<?>) entry.getValue());
-				else
+				if (entry.getValue() instanceof List) {
+					final List<?> lst = (List<?>) entry.getValue();
+					if (lst.isEmpty())
+						continue;
+					toWrite = toWrite(entry.getKey(), lst);
+				} else
 					toWrite = toWrite(entry.getKey(), entry.getValue());
 				if (toWrite != null)
 					writer.write(toWrite);
@@ -107,7 +118,7 @@ public class FlatStorage extends StorageHandler {
 	private String toWrite(String key, Object value) {
 		final StringBuilder builder = new StringBuilder();
 		if (value instanceof CharSequence)
-			builder.append('s').append(key).append(':').append(value.toString());
+			builder.append('s').append(key).append(':').append(value.toString().replace("\n", "\\n"));
 		else if (value instanceof Character)
 			builder.append('c').append(key).append(':').append(((char) value) == '\n' ? "\\n" : (char) value);
 		else if (value instanceof Boolean)
@@ -168,7 +179,12 @@ public class FlatStorage extends StorageHandler {
 			// ',' chars inside strings will be marked with a '\' to avoid breaking load logic.
 			for (int seqI = 0; seqI < len; seqI++) {
 				final char ch = seq.charAt(seqI);
-				seqBuilder.append(ch == ',' ? "\\," : ch);
+				if (ch == ',')
+					seqBuilder.append("\\,");
+				else if (ch == '\n')
+					seqBuilder.append("\\n");
+				else
+					seqBuilder.append(ch);
 			}
 			return seqBuilder.toString();
 		});
@@ -211,7 +227,7 @@ public class FlatStorage extends StorageHandler {
 
 	private boolean loadObjFromLine(final char type, final String key, final String value) {
 		return switch (type) {
-		case 's' -> set(key, value);
+		case 's' -> set(key, value.replace("\\n", "\n"));
 		case 'c' -> set(key, value.equals("\\n") ? '\n' : value.charAt(0));
 		case 'b' -> set(key, value.charAt(0) == 't');
 		case 'u' -> set(key, MCStrings.toUUID(value));
@@ -261,15 +277,19 @@ public class FlatStorage extends StorageHandler {
 	}
 
 	// Specific method for strings to handle the '\' character to avoid counting
-	// Strings that contain commas as different strings.
+	// Strings that contain commas as different strings. Also handles the '\n' character.
 	private boolean loadStringList(final String key, final String lstStr) {
 		final int len = lstStr.length();
 		final LinkedList<String> result = new LinkedList<>();
 		StringBuilder element = new StringBuilder();
 		for (int i = 0; i < len; i++) {
 			final char ch = lstStr.charAt(i);
-			if (ch == '\\' && i != len + 1 && lstStr.charAt(i + 1) == ',') {
-				element.append(',');
+			if (ch == '\\' && len > i) {
+				final char next = lstStr.charAt(i + 1);
+				if (next == ',')
+					element.append(',');
+				else if (ch == 'n')
+					element.append('\n');
 				i++;
 			} else if (ch == ',') {
 				result.add(element.toString());
