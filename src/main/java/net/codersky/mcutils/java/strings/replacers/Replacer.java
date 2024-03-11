@@ -153,23 +153,21 @@ public class Replacer {
 		return applyNumSupport(res).toString();
 	}
 
-	private StringBuilder applyNumSupport(StringBuilder res) {
+	private static StringBuilder applyNumSupport(StringBuilder res) {
 		int start = 0;
-		final int resLen = res.length();
-		while (start < resLen) {
-			int open = res.indexOf("<", start);
-			int close = res.indexOf(">", open);
-			if (open == -1 || close == -1)
+		while (start < res.length()) {
+			final int open = res.indexOf("<", start);
+			final int close = res.indexOf(">", open);
+			if (open == -1 || close == -1 || open > close)
 				break;
-			String[] parts = res.substring(open + 1, close).split(":");
+			final String[] parts = res.substring(open + 1, close).split(":");
 			if (parts.length != 3) {
 				start = close + 1;
 				continue;
 			}
-			final String numStr = parts[0].startsWith("+") || parts[0].startsWith("-") ? parts[0].substring(1) : parts[0];
-			if (MCStrings.isNumeric(numStr)) {
-				int num = Integer.parseInt(numStr);
-				String replacement = num == 1 ? parts[1] : parts[2];
+			if (MCStrings.isNumeric(parts[0])) {
+				final int value = Integer.parseInt(parts[0]);
+				final String replacement = value == 1 || value == -1 ? parts[1] : parts[2];
 				res.replace(open, close + 1, replacement);
 				start = open + replacement.length();
 			} else
