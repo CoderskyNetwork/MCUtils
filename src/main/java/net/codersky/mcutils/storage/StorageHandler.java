@@ -79,6 +79,10 @@ public abstract class StorageHandler {
 	 */
 	public abstract boolean load();
 
+	/*
+	 * Key access
+	 */
+
 	/**
 	 * Gets the {@link Set} of keys that are currently
 	 * cached on this {@link StorageHandler}. This set
@@ -92,10 +96,53 @@ public abstract class StorageHandler {
 	 * cached on this {@link StorageHandler}.
 	 * 
 	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #removeKey(String)
+	 * @see #containsKey(String)
 	 */
 	@Nonnull
 	public Set<String> getKeys() {
 		return keys.keySet();
+	}
+
+	/**
+	 * Checks if this storage contains the specified <b>key</b>.
+	 * 
+	 * @param key the key to check for.
+	 * 
+	 * @return {@code true} if the <b>key</b> was found,
+	 * {@code false} otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getKeys()
+	 * @see #removeKey(String)
+	 */
+	public boolean containsKey(@Nonnull String key) {
+		return keys.containsKey(Objects.requireNonNull(key));
+	}
+
+	/**
+	 * Checks if this storage contains the specified
+	 * <b>key</b>, then removes it.
+	 * 
+	 * @param key the key to remove.
+	 * 
+	 * @return {@code true} if the <b>key</b> was found
+	 * and hence could be removed, {@code false} otherwise.
+	 * 
+	 * @throws NullPointerException if <b>key</b> is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getKeys()
+	 * @see #containsKey(String)
+	 */
+	public boolean removeKey(@Nonnull String key) {
+		if (containsKey(key))
+			return false;
+		keys.remove(key);
+		return true;
 	}
 
 	/*
