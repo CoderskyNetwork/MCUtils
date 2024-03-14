@@ -19,6 +19,8 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import com.google.common.base.Enums;
 
@@ -28,6 +30,7 @@ import net.codersky.mcutils.files.yaml.MessagesFile;
 import net.codersky.mcutils.java.MCLists;
 import net.codersky.mcutils.java.annotations.Internal;
 import net.codersky.mcutils.java.strings.MCStrings;
+import net.codersky.mcutils.storage.StorageHandler;
 
 /**
  * A class used to represent a command that can
@@ -396,6 +399,54 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	public <R> List<R> mapOnline(@Nonnull Function<? super Player, R> mapper) {
 		return Bukkit.getOnlinePlayers().stream().map(mapper).toList();
 	}
+
+	/**
+	 * <b>Asynchronous tasks should never access any API in Bukkit. Great care
+	 * should be taken to assure the thread-safety of asynchronous tasks.</b>
+	 * <p>
+	 * Shortcut to {@link BukkitScheduler#runTaskAsynchronously(Plugin, Runnable)}.
+	 * Additionally, this method won't create a new task if the thread
+	 * that it has been called from already isn't the
+	 * {@link Bukkit#isPrimaryThread() primary thread} (Already asynchronous).
+	 * <p>
+	 * Keep in mind that creating new threads can be expensive. Use this only
+	 * for commands that really need asynchronous execution such as commands
+	 * that may need to open a connection, do not use this if you are only fetching
+	 * data from a cached storage such as any {@link StorageHandler}. Also, messages
+	 * can be safely sent to players and the console asynchronously.
+	 * 
+	 * @param task the task to run.
+	 * 
+	 * @throws IllegalArgumentException if <b>task</b> is {@code null}
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void runAsync(@Nonnull Runnable task) {
+		if (Bukkit.isPrimaryThread())
+			Bukkit.getScheduler().runTaskAsynchronously(plugin, task);
+		else
+			task.run();
+	}
+
+	/**
+	 * Shortcut to {@link BukkitScheduler#runTask(Plugin, Runnable)}.
+	 * Additionally, this method won't create a new task if the thread
+	 * that it has been called from already is the
+	 * {@link Bukkit#isPrimaryThread() primary thread} (Already synchronous).
+	 * 
+	 * @param task the task to run.
+	 * 
+	 * @throws IllegalArgumentException if <b>task</b> is {@code null}
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void runSync(@Nonnull Runnable task) {
+		if (Bukkit.isPrimaryThread())
+			task.run();
+		else
+			Bukkit.getScheduler().runTask(plugin, task);
+	}
+
 
 	// ARGUMENT CONVERSION //
 

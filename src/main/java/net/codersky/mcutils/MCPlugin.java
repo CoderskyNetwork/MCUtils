@@ -141,7 +141,7 @@ public class MCPlugin extends JavaPlugin {
 	 * has been registered. {@link MCPlugin MCPlugins} may override this
 	 * method to return their config file if it uses another name.
 	 * <p>
-	 * <b>Performance note</b>: Even though this <b>very</b> insignificant, this
+	 * <b>Performance note</b>: Even though this is <b>very</b> insignificant, this
 	 * method does iterate through all the registered {@link FileHolder FileHolders}
 	 * of this {@link MCPlugin} and checks if they are an instance of
 	 * {@link PluginFile} and are named "config.yml", so you may want to store the file instead of
@@ -169,7 +169,7 @@ public class MCPlugin extends JavaPlugin {
 	 * {@link MCPlugin}. Plugins may override this method to
 	 * return their own {@link MessagesFileHolder} type.
 	 * <p>
-	 * <b>Performance note</b>: Even though this <b>very</b> insignificant, this
+	 * <b>Performance note</b>: Even though this is <b>very</b> insignificant, this
 	 * method does iterate through all the registered {@link FileHolder FileHolders}
 	 * of this {@link MCPlugin} and checks if they implement the {@link MessagesFileHolder}
 	 * interface, so you may want to store the file instead of
