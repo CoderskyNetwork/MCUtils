@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -451,6 +452,63 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	// ARGUMENT CONVERSION //
 
 	/*
+	 * Generic
+	 */
+
+	/**
+	 * Converts the specified {@code arg} of the {@code args} array to a any object by using the
+	 * {@code converter} {@link Function}. Returning {@code def} if no argument is found at the
+	 * {@code arg} position or if {@code converter} returns {@code null}.
+	 * 
+	 * @param <T> the type of the result of the {@code converter} {@link Function}.
+	 * @param arg the array position of the argument to get, can be out of bounds.
+	 * @param args the array of arguments to use.
+	 * @param def the default value to return if {@code arg} is out of bounds or
+	 * {@code converter} returns {@code null}.
+	 * @param converter the {@link Function} that will convert the {@link String}
+	 * found at the specified {@code arg} position. The {@link String} passed
+	 * to the {@link Function} will <b>never</b> be {@code null}.
+	 * 
+	 * @return The argument as converted by {@code converter} if found on the {@code args} array
+	 * and {@code converter} doesn't return {@code null}. {@code def} otherwise.
+	 * 
+	 * @throws NullPointerException if {@code args} or {@code converter} are {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public <T> T asGeneric(@Nonnegative int arg, @Nonnull String[] args, @Nullable T def, @Nonnull Function<String, T> converter) {
+		if (args.length <= arg)
+			return def;
+		final T converted = converter.apply(args[arg]);
+		return converted == null ? def : converted;
+	}
+
+	/**
+	 * Converts the specified {@code arg} of the {@code args} array to a any object by using the
+	 * {@code converter} {@link Function}. Returning {@code null} if no argument is found at the
+	 * {@code arg} position or if {@code converter} returns {@code null}.
+	 * 
+	 * @param <T> the type of the result of the {@code converter} {@link Function}.
+	 * @param arg the array position of the argument to get, can be out of bounds.
+	 * @param args the array of arguments to use.
+	 * @param converter the {@link Function} that will convert the {@link String}
+	 * found at the specified {@code arg} position. The {@link String} passed
+	 * to the {@link Function} will <b>never</b> be {@code null}.
+	 * 
+	 * @return The argument as converted by {@code converter} if found
+	 * on the {@code args} array, {@code null} otherwise.
+	 * 
+	 * @throws NullPointerException if {@code args} or {@code converter} are {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	public <T> T asGeneric(@Nonnegative int arg, @Nonnull String[] args, @Nonnull Function<String, T> converter) {
+		return args.length > arg ? converter.apply(args[arg]) : null;
+	}
+
+	/*
 	 * Strings 
 	 */
 
@@ -469,7 +527,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asString(int arg, @Nonnull String[] args, @Nullable String def) {
+	public String asString(@Nonnegative int arg, @Nonnull String[] args, @Nullable String def) {
 		return args.length > arg ? args[arg] : def;
 	}
 
@@ -492,7 +550,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asString(@Nonnull Function<String, String> modifier, int arg, @Nonnull String[] args, @Nullable String def) {
+	public String asString(@Nonnull Function<String, String> modifier, @Nonnegative int arg, @Nonnull String[] args, @Nullable String def) {
 		final String result = asString(arg, args, def);
 		return result == null ? null : modifier.apply(result);
 	}
@@ -509,7 +567,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asString(int arg, @Nonnull String[] args) {
+	public String asString(@Nonnegative int arg, @Nonnull String[] args) {
 		return asString(arg, args, null);
 	}
 
@@ -530,7 +588,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asString(@Nonnull Function<String, String> modifier, int arg, @Nonnull String[] args) {
+	public String asString(@Nonnull Function<String, String> modifier, @Nonnegative int arg, @Nonnull String[] args) {
 		final String result = asString(arg, args);
 		return result == null ? null : modifier.apply(result);
 	}
@@ -555,7 +613,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asStringRange(int fromArg, @Nonnull String[] args, @Nullable String def) {
+	public String asStringRange(@Nonnegative int fromArg, @Nonnull String[] args, @Nullable String def) {
 		String str = asString(fromArg, args, null);
 		if (str == null)
 			return def;
@@ -580,7 +638,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asStringRange(int fromArg, @Nonnull String[] args) {
+	public String asStringRange(@Nonnegative int fromArg, @Nonnull String[] args) {
 		return asStringRange(fromArg, args, null);
 	}
 
@@ -603,7 +661,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asStringRange(@Nonnull Function<String, String> modifier, int fromArg, @Nonnull String[] args, @Nullable String def) {
+	public String asStringRange(@Nonnull Function<String, String> modifier, @Nonnegative int fromArg, @Nonnull String[] args, @Nullable String def) {
 		final String range = asStringRange(fromArg, args, def);
 		return range == null ? def : modifier.apply(range);
 	}
@@ -625,7 +683,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asStringRange(@Nonnull Function<String, String> modifier, int fromArg, @Nonnull String[] args) {
+	public String asStringRange(@Nonnull Function<String, String> modifier, @Nonnegative int fromArg, @Nonnull String[] args) {
 		return asStringRange(modifier, fromArg, args);
 	}
 
@@ -634,7 +692,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 
 	@Nullable
-	public <T> List<T> asListRange(@Nonnull Function<String, T> modifier, int fromArg, @Nonnull String[] args, @Nullable List<T> def) {
+	public <T> List<T> asListRange(@Nonnull Function<String, T> modifier, @Nonnegative int fromArg, @Nonnull String[] args, @Nullable List<T> def) {
 		if (fromArg > args.length)
 			return def;
 		final List<T> lst = new ArrayList<>(args.length - fromArg);
@@ -644,12 +702,12 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	}
 
 	@Nullable
-	public <T> List<T> asListRange(@Nullable Function<String, T> modifier, int fromArg, @Nonnull String[] args) {
+	public <T> List<T> asListRange(@Nullable Function<String, T> modifier, @Nonnegative int fromArg, @Nonnull String[] args) {
 		return asListRange(modifier, fromArg, args, null);
 	}
 
 	@Nullable
-	public List<String> asStringListRange(int fromArg, @Nonnull String[] args, @Nullable List<String> def) {
+	public List<String> asStringListRange(@Nonnegative int fromArg, @Nonnull String[] args, @Nullable List<String> def) {
 		if (fromArg > args.length)
 			return def;
 		final List<String> lst = new ArrayList<>(args.length - fromArg);
@@ -659,7 +717,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	}
 
 	@Nullable
-	public List<String> asStringListRange(int fromArg, @Nonnull String[] args) {
+	public List<String> asStringListRange(@Nonnegative int fromArg, @Nonnull String[] args) {
 		return asStringListRange(fromArg, args, null);
 	}
 
@@ -683,8 +741,8 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see MCStrings#asNumber(CharSequence, Number)
 	 */
 	@Nullable
-	public <T extends Number> T asNumber(int arg, @Nonnull String[] args, @Nullable T def) {
-		return args.length > arg ? MCStrings.asNumber(args[arg], def) : def;
+	public <T extends Number> T asNumber(@Nonnegative int arg, @Nonnull String[] args, @Nullable T def) {
+		return asGeneric(arg, args, def, str -> MCStrings.asNumber(str, def));
 	}
 
 	/**
@@ -701,8 +759,8 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * 
 	 * @see MCStrings#asNumber(CharSequence, Class)
 	 */
-	public <T extends Number> T asNumber(int arg, @Nonnull String[] args, Class<T> type) {
-		return args.length > arg ? MCStrings.asNumber(args[arg], type) : null;
+	public <T extends Number> T asNumber(@Nonnegative int arg, @Nonnull String[] args, Class<T> type) {
+		return asGeneric(arg, args, str -> MCStrings.asNumber(str, type));
 	}
 
 	/*
@@ -724,9 +782,8 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see Bukkit#getPlayerExact(String)
 	 */
 	@Nullable
-	public Player asPlayer(int arg, @Nonnull String[] args, @Nullable Player def) {
-		final Player online = Bukkit.getPlayerExact(args.length > arg ? args[arg] : null);
-		return online == null ? def : online;
+	public Player asPlayer(@Nonnegative int arg, @Nonnull String[] args, @Nullable Player def) {
+		return asGeneric(arg, args, def, str -> Bukkit.getPlayerExact(str));
 	}
 
 	/**
@@ -743,8 +800,8 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see Bukkit#getPlayerExact(String)
 	 */
 	@Nullable
-	public Player asPlayer(int arg, @Nonnull String[] args) {
-		return asPlayer(arg, args, null);
+	public Player asPlayer(@Nonnegative int arg, @Nonnull String[] args) {
+		return asGeneric(arg, args, str -> Bukkit.getPlayerExact(str));
 	}
 
 	/**
@@ -762,7 +819,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see Bukkit#getOfflinePlayer(String)
 	 */
 	@Nullable
-	public OfflinePlayer asOfflinePlayer(int arg, @Nonnull String[] args, @Nullable OfflinePlayer def) {
+	public OfflinePlayer asOfflinePlayer(@Nonnegative int arg, @Nonnull String[] args, @Nullable OfflinePlayer def) {
 		@SuppressWarnings("deprecation")
 		final OfflinePlayer offline = Bukkit.getOfflinePlayer(args.length > arg ? args[arg] : null);
 		return offline == null || !offline.hasPlayedBefore() ? def : offline;
@@ -782,7 +839,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see Bukkit#getOfflinePlayer(String)
 	 */
 	@Nullable
-	public OfflinePlayer asOfflinePlayer(int arg, @Nonnull String[] args) {
+	public OfflinePlayer asOfflinePlayer(@Nonnegative int arg, @Nonnull String[] args) {
 		return asOfflinePlayer(arg, args, null);
 	}
 
@@ -806,11 +863,8 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see Enums#getIfPresent(Class, String)
 	 */
 	@Nullable
-	public <T extends Enum<T>> T asEnum(int arg, @Nonnull String[] args, @Nonnull Class<T> enumClass) {
-		final String name = asString(String::toUpperCase, arg, args);
-		if (name == null)
-			return null;
-		return Enums.getIfPresent(enumClass, name).orNull();
+	public <T extends Enum<T>> T asEnum(@Nonnegative int arg, @Nonnull String[] args, @Nonnull Class<T> enumClass) {
+		return asGeneric(arg, args, str -> Enums.getIfPresent(enumClass, str).orNull());
 	}
 
 	/**
@@ -830,7 +884,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	@SuppressWarnings("unchecked")
 	@Nullable
-	public <T extends Enum<T>> T asEnum(int arg, @Nonnull String[] args, @Nonnull T def) {
+	public <T extends Enum<T>> T asEnum(@Nonnegative int arg, @Nonnull String[] args, @Nonnull T def) {
 		final Enum<?> e = asEnum(arg, args, def.getClass());
 		return e == null ? def : (T) e;
 	}
