@@ -3,12 +3,12 @@ package net.codersky.mcutils.time;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.checkerframework.checker.index.qual.NonNegative;
 
 import net.codersky.mcutils.java.strings.replacers.Replacement;
 
@@ -47,7 +47,7 @@ public class Timer implements Replacement, Cloneable {
 	 * 
 	 * @throws NullPointerException if <b>unit</b> is {@code null}.
 	 */
-	public Timer(@Nonnull MCTimeUnit unit, @NonNegative int amount) {
+	public Timer(@Nonnull MCTimeUnit unit, @Nonnegative int amount) {
 		add(unit, amount);
 	}
 
@@ -131,7 +131,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer add(@Nonnull MCTimeUnit unit, @NonNegative int amount) {
+	public Timer add(@Nonnull MCTimeUnit unit, @Nonnegative int amount) {
 		return switch(unit) {
 		case TICKS -> addTicks(amount);
 		case SECONDS -> addSeconds(amount);
@@ -154,7 +154,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer addTicks(@NonNegative int amount) {
+	public Timer addTicks(@Nonnegative int amount) {
 		return addSeconds(amount / 20);
 	}
 
@@ -170,7 +170,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer addSeconds(@NonNegative int amount) {
+	public Timer addSeconds(@Nonnegative int amount) {
 		if (amount <= 0)
 			return this;
 		final int totalSecs = amount + time[2];
@@ -195,7 +195,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer addMinutes(@NonNegative int amount) {
+	public Timer addMinutes(@Nonnegative int amount) {
 		if (amount <= 0)
 			return this;
 		final int totalMins = amount + time[1];
@@ -221,7 +221,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer addHours(@NonNegative int amount) {
+	public Timer addHours(@Nonnegative int amount) {
 		if (amount > 0)
 			time[0] += amount;
 		return this;
@@ -280,7 +280,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @see #removeHours(int)
 	 */
 	@Nonnull
-	public Timer remove(@Nonnull MCTimeUnit unit, @NonNegative int amount) {
+	public Timer remove(@Nonnull MCTimeUnit unit, @Nonnegative int amount) {
 		return switch(unit) {
 		case TICKS -> removeTicks(amount); 
 		case SECONDS -> removeSeconds(amount); 
@@ -304,7 +304,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer removeTicks(@NonNegative int amount) {
+	public Timer removeTicks(@Nonnegative int amount) {
 		return removeSeconds(amount / 20);
 	}
 
@@ -323,7 +323,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer removeSeconds(@NonNegative int amount) {
+	public Timer removeSeconds(@Nonnegative int amount) {
 		if (amount == 1)
 			return removeOne();
 		if (amount <= 0)
@@ -351,7 +351,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer removeMinutes(@NonNegative int amount) {
+	public Timer removeMinutes(@Nonnegative int amount) {
 		if (amount <= 0)
 			return this;
 		final int totalMins = time[1] - amount;
@@ -375,7 +375,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer removeHours(@NonNegative int amount) {
+	public Timer removeHours(@Nonnegative int amount) {
 		final int totalHours = time[1] - amount;
 		time[2] = totalHours < 0 ? 0 : totalHours;
 		return this;
@@ -397,7 +397,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer setSeconds(@NonNegative int amount) {
+	public Timer setSeconds(@Nonnegative int amount) {
 		if (amount >= 0 && amount < 60)
 			time[2] = amount;
 		return this;
@@ -415,7 +415,7 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer setMinutes(@NonNegative int amount) {
+	public Timer setMinutes(@Nonnegative int amount) {
 		if (amount >= 0 && amount < 60)
 			time[1] = amount;
 		return this;
@@ -434,10 +434,26 @@ public class Timer implements Replacement, Cloneable {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Timer setHours(@NonNegative int amount) {
+	public Timer setHours(@Nonnegative int amount) {
 		if (amount >= 0 && amount < 60)
 			time[0] = amount;
 		return this;
+	}
+
+	/**
+	 * Sets the time of this {@link Timer} to an specific amount on
+	 * every {@link MCTimeUnit} that this {@link Timer} stores.
+	 * 
+	 * @param hours the amount of {@link MCTimeUnit#HOURS hours} to set ({@link #setHours(int)})
+	 * @param minutes the amount of {@link MCTimeUnit#MINUTES minutes} to set ({@link #setMinutes(int)})
+	 * @param seconds the amount of {@link MCTimeUnit#SECONDS seconds} to set ({@link #setSeconds(int)})
+	 * 
+	 * @return This {@link Timer}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public Timer setTime(@Nonnegative int hours, @Nonnegative int minutes, @Nonnegative int seconds) {
+		return setHours(hours).setMinutes(minutes).setSeconds(seconds);
 	}
 
 	/*
