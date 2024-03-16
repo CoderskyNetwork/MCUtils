@@ -492,6 +492,43 @@ public class Timer implements Replacement, Cloneable {
 	}
 
 	/**
+	 * Gets the amount of {@link MCTimeUnit#SECONDS seconds} stored on this
+	 * {@link Timer} as a {@link String}. Filling is set to {@code true}
+	 * on this method (See {@link #getStrSeconds(boolean)})
+	 * 
+	 * @return The amount of {@link MCTimeUnit#SECONDS seconds} stored on this
+	 * {@link Timer} as a {@link String}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getStrSeconds(boolean)
+	 */
+	@Nonnull
+	public String getStrSeconds() {
+		return time[2] <= 9 ? "0" + time[2] : String.valueOf(time[2]);
+	}
+
+	/**
+	 * Gets the amount of {@link MCTimeUnit#SECONDS seconds} stored on this
+	 * {@link Timer} as a {@link String}.
+	 * 
+	 * @param fill filling set to true means that if the unit is for example
+	 * 9, it will be "filled" to 09 so the length of the string is more consistent.
+	 * 
+	 * @return The amount of {@link MCTimeUnit#SECONDS seconds} stored on this
+	 * {@link Timer} as a {@link String}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getStrSeconds()
+	 */
+	@Nonnull
+	public String getStrSeconds(boolean fill) {
+		return fill ? getStrSeconds() : String.valueOf(time[2]);
+	}
+
+
+	/**
 	 * Gets the total amount of {@link MCTimeUnit#SECONDS seconds} stored on this
 	 * {@link Timer}. That means this method will also take into account
 	 * {@link MCTimeUnit#HOURS hours} and {@link MCTimeUnit#MINUTES minutes}
@@ -521,6 +558,42 @@ public class Timer implements Replacement, Cloneable {
 	}
 
 	/**
+	 * Gets the amount of {@link MCTimeUnit#MINUTES minutes} stored on this
+	 * {@link Timer} as a {@link String}. Filling is set to {@code true}
+	 * on this method (See {@link #getStrMinutes(boolean)})
+	 * 
+	 * @return The amount of {@link MCTimeUnit#MINUTES minutes} stored on this
+	 * {@link Timer} as a {@link String}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getStrMinutes(boolean)
+	 */
+	@Nonnull
+	public String getStrMinutes() {
+		return time[1] <= 9 ? "0" + time[1] : String.valueOf(time[1]);
+	}
+
+	/**
+	 * Gets the amount of {@link MCTimeUnit#MINUTES minutes} stored on this
+	 * {@link Timer} as a {@link String}.
+	 * 
+	 * @param fill filling set to true means that if the unit is for example
+	 * 9, it will be "filled" to 09 so the length of the string is more consistent.
+	 * 
+	 * @return The amount of {@link MCTimeUnit#MINUTES minutes} stored on this
+	 * {@link Timer} as a {@link String}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getStrMinutes()
+	 */
+	@Nonnull
+	public String getStrMinutes(boolean fill) {
+		return fill ? getStrMinutes() : String.valueOf(time[1]);
+	}
+
+	/**
 	 * Gets the total amount of {@link MCTimeUnit#MINUTES minutes} stored on this
 	 * {@link Timer}. That means this method will also take into account
 	 * {@link MCTimeUnit#HOURS hours} stored on this {@link Timer}.
@@ -545,6 +618,42 @@ public class Timer implements Replacement, Cloneable {
 	 */
 	public int getHours() {
 		return time[0];
+	}
+
+	/**
+	 * Gets the amount of {@link MCTimeUnit#HOURS hours} stored on this
+	 * {@link Timer} as a {@link String}. Filling is set to {@code false}
+	 * on this method (See {@link #getStrHours(boolean)})
+	 * 
+	 * @return The amount of {@link MCTimeUnit#HOURS hours} stored on this
+	 * {@link Timer} as a {@link String}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getStrHours(boolean)
+	 */
+	@Nonnull
+	public String getStrHours() {
+		return String.valueOf(time[0]);
+	}
+
+	/**
+	 * Gets the amount of {@link MCTimeUnit#HOURS hours} stored on this
+	 * {@link Timer} as a {@link String}.
+	 * 
+	 * @param fill filling set to true means that if the unit is for example
+	 * 9, it will be "filled" to 09 so the length of the string is more consistent.
+	 * 
+	 * @return The amount of {@link MCTimeUnit#HOURS hours} stored on this
+	 * {@link Timer} as a {@link String}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getStrHours()
+	 */
+	@Nonnull
+	public String getStrHours(boolean fill) {
+		return fill && time[0] <= 9 ? "0" + time[0] : getStrHours();
 	}
 
 	/*
@@ -594,7 +703,6 @@ public class Timer implements Replacement, Cloneable {
 	 */
 	public String toString(@Nullable CharSequence separator, boolean fill, @Nonnull MCTimeUnit minUnit) {
 		final StringBuilder builder = new StringBuilder();
-		System.out.println(minUnit.ordinal());
 		final int unitIndex = minUnit.ordinal();
 		for (int i = 0; i < 3; i++) {
 			if (!builder.isEmpty())
