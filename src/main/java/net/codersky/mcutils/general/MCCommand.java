@@ -848,15 +848,19 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 
 	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to an {@link Enum}.
+	 * Converts the specified {@code arg} of the {@code args} array to an {@link Enum}.
+	 * <p>
+	 * The argument is converted {@link String#toUpperCase() to upper case} as enum
+	 * constants must be upper case, so you don't have to check if the argument is
+	 * upper case or not.
 	 * 
 	 * @param arg the array position of the argument to get, can be out of bounds.
 	 * @param args the array of arguments to use.
 	 * @param enumClass the class of the {@link Enum} to get the constant from.
 	 * 
-	 * @return The argument as an {@link Enum} if found on the <b>args</b> array, null otherwise.
+	 * @return The argument as an {@link Enum} if found on the {@code args} array, null otherwise.
 	 * 
-	 * @throws NullPointerException if <b>args</b> or <b>enumClass</b> are {@code null}.
+	 * @throws NullPointerException if {@code args} or {@code enumClass} are {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
@@ -864,19 +868,24 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	@Nullable
 	public <T extends Enum<T>> T asEnum(@Nonnegative int arg, @Nonnull String[] args, @Nonnull Class<T> enumClass) {
-		return asGeneric(arg, args, str -> Enums.getIfPresent(enumClass, str).orNull());
+		return asGeneric(arg, args, str -> Enums.getIfPresent(enumClass, str.toUpperCase()).orNull());
 	}
 
 	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to an {@link Enum}.
+	 * Converts the specified {@code arg} of the {@code args} array to an {@link Enum}.
+	 * <p>
+	 * The argument is converted {@link String#toUpperCase() to upper case} as enum
+	 * constants must be upper case, so you don't have to check if the argument is
+	 * upper case or not.
 	 * 
 	 * @param arg the array position of the argument to get, can be out of bounds.
 	 * @param args the array of arguments to use.
-	 * @param def the default value to return if <b>arg</b> is out of bounds or the argument isn't a valid enum constant of the same class.
+	 * @param def the default value to return if {@code arg} is out of bounds or the argument 
+	 * isn't a valid enum constant of the same class.
 	 * 
-	 * @return The argument as an {@link Enum} if found on the <b>args</b> array, <b>def</b> otherwise.
+	 * @return The argument as an {@link Enum} if found on the {@code args} array, {@code def} otherwise.
 	 * 
-	 * @throws NullPointerException if <b>args</b> or <b>def</b> are {@code null}.
+	 * @throws NullPointerException if {@code args} or {@code def} are {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
