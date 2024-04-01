@@ -295,7 +295,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 		for (MCCommand<?> subCmd : subCommands.keySet()) {
 			int subCmdPos = subCommands.get(subCmd);
 			if (subCmdPos == args.length - 1) { // One argument before subCmd, we suggest its name.
-				if (!subCmd.isAllowed(sender))
+				if (subCmd.isAllowed(sender))
 					tabs.add(subCmd.getName());
 				continue;
 			}
