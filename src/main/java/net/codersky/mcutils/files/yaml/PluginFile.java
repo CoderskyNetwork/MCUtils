@@ -1,13 +1,13 @@
 package net.codersky.mcutils.files.yaml;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -86,6 +86,18 @@ public class PluginFile extends YmlFile implements FileUpdater {
 	}
 
 	/**
+	 * Gets the {@link JavaPlugin} that initialized this file.
+	 * 
+	 * @return The {@link JavaPlugin} that initialized this file.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public JavaPlugin getPlugin() {
+		return plugin;
+	}
+
+	/**
 	 * Creates this file, the file MUST be present
 	 * on the plugin's jar file as a resource.
 	 * This is required in order to copy the file from
@@ -106,22 +118,35 @@ public class PluginFile extends YmlFile implements FileUpdater {
 	public boolean create() {
 		file.getParentFile().mkdirs();
 		if (!file.exists())
-			plugin.saveResource(this.getPath(), false);
-		return this.reload();
+			plugin.saveResource(getPath(), false);
+		return reload();
 	}
 
-	private File copyInputStreamToFile(String path, InputStream inputStream) {
-		File file = new File(path);
-		try (FileOutputStream outputStream = new FileOutputStream(file)) {
-			int read;
-			byte[] bytes = new byte[1024];
-			while ((read = inputStream.read(bytes)) != -1)
-				outputStream.write(bytes, 0, read);
-			return file;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+	// Update //
+
+	private int updateSet(Set<String> loopKeys, Set<String> condKeys, List<String> ignored, Function<String, Object> action) {
+		int changes = 0;
+		for (String key : loopKeys) {
+			if (!condKeys.contains(key) && !isIgnored(key, ignored)) {
+				this.set(key, action.apply(key));
+				changes++;
+			}
 		}
+		return changes;
+	}
+	
+	private boolean isIgnored(String path, List<String> ignored) {
+		if (ignored == null)
+			return false;
+		for (String ignoredPath : ignored)
+			if (path.startsWith(ignoredPath))
+				return true;
+		return false;
+	}
+	
+	private boolean log(String str, boolean ret) {
+		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', str));
+		return ret;
 	}
 
 	/**
@@ -140,57 +165,23 @@ public class PluginFile extends YmlFile implements FileUpdater {
 	 */
 	public boolean update(@Nullable List<String> ignored) {
 		final String pluginName = plugin.getName();
-		final String path = this.getPath();
-		final boolean ignores = ignored != null && !ignored.isEmpty();
 		int changes = 0;
 		try {
-			final CharsetYamlConfiguration updated = new CharsetYamlConfiguration(this.getCharset());
-			if (plugin.getResource(path) != null)
-				updated.load(copyInputStreamToFile(plugin.getDataFolder() + "/" + path, plugin.getResource(path)));
-			else
-				return log("&8[&4"+pluginName+"&8] > &cCould not update &6" + path + "&8: &4File not found", false);
+			final InputStream updateStream = plugin.getResource(getPath());
+			if (updateStream == null)
+				return log("&8[&4" + pluginName + "&8] > &cCould not update &6" + getPath() + "&8: &4File not found", false);
+			final CharsetYamlConfiguration updated = new CharsetYamlConfiguration(getCharset());
+			updated.load(new InputStreamReader(updateStream));
 			final Set<String> oldKeys = this.getKeys(true);
 			final Set<String> updKeys = updated.getKeys(true);
-			for (String oldPath : oldKeys)
-				if (!updKeys.contains(oldPath) && (!ignores || !isIgnored(oldPath, ignored))) {
-					this.set(oldPath, null);
-					changes++;
-				}
-			for (String updPath : updKeys)
-				if (!oldKeys.contains(updPath) && (!ignores || !isIgnored(updPath, ignored))) {
-					this.set(updPath, updated.get(updPath));
-					changes++;
-				}
+			changes += updateSet(oldKeys, updKeys, ignored, key -> null);
+			changes += updateSet(updKeys, oldKeys, ignored, key -> updated.get(key));
 			if (changes == 0)
 				return true;
-			this.save(plugin.getDataFolder() + "/" + path);
-			return log("&8[&6"+pluginName+"&8] &6" + path + " &7has been updated to &ev"+plugin.getDescription().getVersion()+"&7 with &b"+changes+" &7changes.", true);
-		} catch(InvalidConfigurationException | IOException ex) {
-			return log("&8[&4"+pluginName+"&8] > &cCould not update &6" + path + "&8: &4"+ex.getMessage(), false);
+			this.save(plugin.getDataFolder() + "/" + getPath());
+			return log("&8[&6" + pluginName + "&8] &6" + getPath() + " &7has been updated with &b" + changes + " &7changes", true);
+		} catch (IOException | InvalidConfigurationException ex) {
+			return log("&8[&4" + pluginName + "&8] &cCould not update &6" + getPath() + "&8: &4"+ex.getMessage(), false);
 		}
-	}
-
-	private boolean isIgnored(String path, List<String> ignored) {
-		for (String ignoredPath : ignored)
-			if (path.startsWith(ignoredPath))
-				return true;
-		return false;
-	}
-
-	private boolean log(String str, boolean ret) {
-		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', str));
-		return ret;
-	}
-
-	/**
-	 * Gets the {@link JavaPlugin} that initialized this file.
-	 * 
-	 * @return The {@link JavaPlugin} that initialized this file.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nonnull
-	public JavaPlugin getPlugin() {
-		return plugin;
 	}
 }

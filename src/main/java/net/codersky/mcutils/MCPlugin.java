@@ -59,21 +59,21 @@ public class MCPlugin extends JavaPlugin {
 	/**
 	 * Registers a new {@link FileHolder} to this plugin, if the file doesn't exist it will be created.
 	 * <p>
-	 * The <b>recommended</b> registration order of files is: config.yml as {@link PluginFile}, any
+	 * The <b>recommended</b> registration order of files is: A config.yml {@link PluginFile}, any
 	 * {@link MessagesFile} and then any other files you may need, this is done so {@link #getConfig()}
-	 * and {@link #getMessages()} perform the faster as they iterate over {@link #getFiles()}.
+	 * and {@link #getMessages()} perform faster as they iterate over {@link #getFiles()}.
 	 * 
 	 * @param <T> must implement {@link FileHolder}
 	 * @param file the file to be registered, {@link T#create()} will be called to ensure that the file exists.
 	 * 
-	 * @since MCUtils 1.0.0
+	 * @return The registered file, the {@code file} parameter.
 	 * 
-	 * @return The registered file, the <b>file</b> parameter.
+	 * @throws NullPointerException if {@code file} is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
 	public <T extends FileHolder> T registerFile(@Nonnull T file) {
-		if (file == null)
-			return null;
 		file.create();
 		files.add(file);
 		return file;

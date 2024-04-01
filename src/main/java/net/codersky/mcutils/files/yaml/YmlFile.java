@@ -103,7 +103,7 @@ public class YmlFile extends CharsetYamlConfiguration implements FileHolder {
 			e.printStackTrace();
 			return false;
 		}
-		return this.reload();
+		return reload();
 	}
 
 	/**
