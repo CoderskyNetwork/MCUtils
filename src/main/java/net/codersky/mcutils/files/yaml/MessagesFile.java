@@ -2,7 +2,6 @@ package net.codersky.mcutils.files.yaml;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -13,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import net.codersky.mcutils.MCPlugin;
 import net.codersky.mcutils.files.MessagesFileHolder;
+import net.codersky.mcutils.java.MCLists;
 import net.codersky.mcutils.java.strings.MCStrings;
 import net.codersky.mcutils.java.strings.replacers.Replacer;
 
@@ -114,18 +114,18 @@ public class MessagesFile extends PluginFile implements MessagesFileHolder {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #getDefaultReplacer()
-	 * @see #setNumSupport(boolean)
-	 * @see Replacer#setNumSupport(boolean)
 	 */
 	public void setDefaultReplacer(@Nullable Replacer replacer) {
 		this.defReplacer = replacer;
 	}
 
 	/**
-	 * Gets the default {@link Replacer} being used by this file.
+	 * Gets a {@link Replacer#clone() clone} of the default {@link Replacer}
+	 * being used by this file.
 	 * 
-	 * @return The default {@link Replacer}, null if no {@link Replacer} has been
-	 * specified or if it has been explicitly set to null.
+	 * @return A {@link Replacer#clone() clone} of The default {@link Replacer},
+	 * {@code null} if no {@link Replacer} has been specified or if it has been
+	 * explicitly set to {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
@@ -146,27 +146,32 @@ public class MessagesFile extends PluginFile implements MessagesFileHolder {
 	@Override
 	public String getString(@Nonnull String path) {
 		final String str = super.getString(path);
-		return MCStrings.applyColor(defReplacer == null ? str : defReplacer.replaceAt(str));
+		return MCStrings.applyColor(defReplacer == null ? str : getDefaultReplacer().replaceAt(str));
 	}
 
 	@Nullable
 	@Override
 	public String getString(@Nonnull String path, @Nonnull Replacer rep) {
 		final String str = super.getString(path);
-		final Replacer finalRep = defReplacer == null ? rep : defReplacer.add(rep);
+		final Replacer finalRep = defReplacer == null ? rep : getDefaultReplacer().add(rep);
+		return MCStrings.applyColor(finalRep.replaceAt(str));
+	}
+
+	@Nullable
+	@Override
+	public String getString(@Nonnull String path, @Nonnull Object... replacements) {
+		final String str = super.getString(path);
+		final Replacer finalRep = defReplacer == null ? new Replacer(replacements) : getDefaultReplacer().add(replacements);
 		return MCStrings.applyColor(finalRep.replaceAt(str));
 	}
 
 	// Lists //
 
 	private List<String> getReplacedList(@Nonnull String path, @Nullable Replacer replacer) {
-		final List<String> atCfg = super.getStringList(path);
-		if (atCfg == null || atCfg.isEmpty() || replacer == null)
-			return atCfg;
-		final List<String> replaced = new ArrayList<>(atCfg.size());
-		for (String msg : atCfg)
-			replaced.add(replacer.replaceAt(MCStrings.applyColor(msg)));
-		return replaced;
+		final List<String> lst = super.getStringList(path);
+		if (lst.isEmpty())
+			return null;
+		return replacer == null ? lst : MCLists.map(msg -> replacer.replaceAt(MCStrings.applyColor(msg)), lst);
 	}
 
 	@Nullable
@@ -178,6 +183,12 @@ public class MessagesFile extends PluginFile implements MessagesFileHolder {
 	@Nullable
 	@Override
 	public List<String> getStringList(@Nullable String path, @Nullable Replacer replacer) {
-		return getReplacedList(path, defReplacer == null ? replacer : defReplacer.add(replacer));
+		return getReplacedList(path, defReplacer == null ? replacer : defReplacer.clone().add(replacer));
+	}
+
+	@Nullable
+	@Override
+	public List<String> getStringList(@Nullable String path, @Nonnull Object... replacements) {
+		return getReplacedList(path, new Replacer(replacements));
 	}
 }
