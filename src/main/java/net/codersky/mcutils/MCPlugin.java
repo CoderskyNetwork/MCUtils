@@ -57,6 +57,79 @@ public class MCPlugin extends JavaPlugin {
 	private GUIHandler guiHandler;
 
 	/**
+	 * Gets the version of MCUtils that this {@link MCPlugin}
+	 * is using.
+	 * 
+	 * @return The version of MCUtils that this {@link MCPlugin}
+	 * is using.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public final String getMCUtilsVersion() {
+		return "1.0.0"; // Keep it the same as the project version from pom.xml
+	}
+
+	/**
+	 * Gets the user-friendly name of the server version, for example, <i>"1.19.3"</i>.
+	 * 
+	 * @return The current server version.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public static String getServerVersion() {
+		String ver = Bukkit.getBukkitVersion();
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < ver.length(); i++) {
+			char c = ver.charAt(i);
+			if (c == '-')
+				break;
+			builder.append(c);
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * Checks if the server supports the specified <b>version</b>.
+	 * Supported formats are <i>"X.X"</i> and <i>"X.X.X"</i>.
+	 * <br><br>
+	 * <b>Note about 1.7.10</b>:
+	 * <br>
+	 * Because of the way this method works, if the server is running on
+	 * 1.7.10 and you check if the server supports 1.7.9, the result will
+	 * be false, that is because 1.7.10 gets translated to 17.1f, which is
+	 * lower to 17.9f, this is the only version with this issue and this is
+	 * highly unlikely to be fixed as this version is currently unsupported.
+	 * 
+	 * @param version the server version to check, for example, <i>"1.19"</i>.
+	 * 
+	 * @return true if the server version is higher or equal to the specified
+	 * <b>version</b>, false otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public static boolean serverSupports(@Nonnull String version) {
+		if (version == null || version.isBlank())
+			return false;
+		float[] versions = new float[2]; // Convert to float, so 1.19.3 would be 119.3
+		String server = getServerVersion();
+		for (int v = 0; v <= 1; v++) {
+			String ver = v == 0 ? server : version;
+			int points = 0;
+			for (int i = 0; i < ver.length(); i++) {
+				char c = ver.charAt(i);
+				if (c == '.')
+					points++;
+				else if (c >= '0' && c <= '9')
+					versions[v] = points >= 2 ? versions[v] + ((c - '0') / 10.0f) : (versions[v] * 10) + (c - '0');
+			}
+		}
+		return versions[0] >= versions[1];
+	}
+
+	/**
 	 * Registers a new {@link FileHolder} to this plugin, if the file doesn't exist it will be created.
 	 * <p>
 	 * The <b>recommended</b> registration order of files is: A config.yml {@link PluginFile}, any
@@ -274,65 +347,6 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Gets the user-friendly name of the server version, for example, <i>"1.19.3"</i>.
-	 * 
-	 * @return The current server version.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nonnull
-	public static String getServerVersion() {
-		String ver = Bukkit.getBukkitVersion();
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < ver.length(); i++) {
-			char c = ver.charAt(i);
-			if (c == '-')
-				break;
-			builder.append(c);
-		}
-		return builder.toString();
-	}
-
-	/**
-	 * Checks if the server supports the specified <b>version</b>.
-	 * Supported formats are <i>"X.X"</i> and <i>"X.X.X"</i>.
-	 * <br><br>
-	 * <b>Note about 1.7.10</b>:
-	 * <br>
-	 * Because of the way this method works, if the server is running on
-	 * 1.7.10 and you check if the server supports 1.7.9, the result will
-	 * be false, that is because 1.7.10 gets translated to 17.1f, which is
-	 * lower to 17.9f, this is the only version with this issue and this is
-	 * highly unlikely to be fixed as this version is currently unsupported.
-	 * 
-	 * @param version the server version to check, for example, <i>"1.19"</i>.
-	 * 
-	 * @return true if the server version is higher or equal to the specified
-	 * <b>version</b>, false otherwise.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nonnull
-	public static boolean serverSupports(@Nonnull String version) {
-		if (version == null || version.isBlank())
-			return false;
-		float[] versions = new float[2]; // Convert to float, so 1.19.3 would be 119.3
-		String server = getServerVersion();
-		for (int v = 0; v <= 1; v++) {
-			String ver = v == 0 ? server : version;
-			int points = 0;
-			for (int i = 0; i < ver.length(); i++) {
-				char c = ver.charAt(i);
-				if (c == '.')
-					points++;
-				else if (c >= '0' && c <= '9')
-					versions[v] = points >= 2 ? versions[v] + ((c - '0') / 10.0f) : (versions[v] * 10) + (c - '0');
-			}
-		}
-		return versions[0] >= versions[1];
-	}
-
-	/**
 	 * Sends <b>strings</b> to the console.
 	 * 
 	 * @param stings the strings to send.
@@ -449,10 +463,11 @@ public class MCPlugin extends JavaPlugin {
 			final RefObject mapObj = new RefObject(getServer()).invoke("getCommandMap");
 			final SimpleCommandMap commandMap = mapObj == null ? null : ((SimpleCommandMap)mapObj.getInstance());
 			if (commandMap == null) { // Method removed for some reason, notify about it.
-				logCol("&8[&6" + getName() + "&8] &cCould not register &e" + command.getName() + " &ccommands, please inform about this&8.",
-						" &8- &7MCUtils is at fault here (If outdated), do not contact &e" + getName() + "&7's author(s)&8.",
+				logCol("&8[&6" + getName() + "&8] &cCould not register the &e" + command.getName() + " &ccommand, please inform about this&8.",
+						" &8- &7MCUtils is at fault here, do not contact &e" + getName() + "&7's author(s)&8.",
 						" &8- &7Contact&8: &espigotmc.org/members/xdec0de_.178174/ &7or Discord &9@xdec0de_",
-						" &8- &7Server info&8: &b" + getServer().getName() + " " + getServerVersion());
+						" &8- &7Server info&8: &b" + getServer().getName() + " " + getServerVersion(),
+						" &8- &7Using MCUtils version &bv" + getMCUtilsVersion());
 				Bukkit.getPluginManager().disablePlugin(this);
 			} else
 				commandMap.register(getName(), command);
@@ -502,9 +517,10 @@ public class MCPlugin extends JavaPlugin {
 		final SimpleCommandMap commandMap = mapObj == null ? null : ((SimpleCommandMap)mapObj.getInstance());
 		if (commandMap == null) { // Method removed for some reason, notify about it.
 			logCol("&8[&6" + getName() + "&8] &cCould not register &e" + remaining.size() + " &ccommands, please inform about this&8.",
-					" &8- &7MCUtils is at fault here (If outdated), do not contact &e" + getName() + "&7's author(s)&8.",
+					" &8- &7MCUtils is at fault here, do not contact &e" + getName() + "&7's author(s)&8.",
 					" &8- &7Contact&8: &espigotmc.org/members/xdec0de_.178174/ &7or Discord &9@xdec0de_",
-					" &8- &7Server info&8: &b" + getServer().getName() + " " + getServerVersion());
+					" &8- &7Server info&8: &b" + getServer().getName() + " " + getServerVersion(),
+					" &8- &7Using MCUtils version &bv" + getMCUtilsVersion());
 			Bukkit.getPluginManager().disablePlugin(this);
 		} else
 			commandMap.registerAll(getName(), remaining);

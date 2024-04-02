@@ -4,8 +4,8 @@
 	<groupId>net.codersky</groupId>
 	<artifactId>MCUtils</artifactId>
 	
-	<version>1.0.0</version>
 	<name>MCUtils</name>
+	<version>1.0.0</version> <!-- Keep it the same as MCPlugin#getMCUtilsVersion -->
 	<description>An open source collection of utilities for Spigot plugins designed to make your life easier</description>
 
 	<properties>
