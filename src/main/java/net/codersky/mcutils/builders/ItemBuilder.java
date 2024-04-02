@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -52,31 +53,55 @@ public class ItemBuilder implements Cloneable {
 	 * 
 	 * @param material the {@link Material} of the new {@link ItemStack} to create.
 	 * 
-	 * @throws IllegalArgumentException if <b>material</b> is null.
+	 * @throws NullPointerException if {@code material} is {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	public ItemBuilder(@Nonnull Material material) {
-		if (material == null)
-			throw new IllegalArgumentException("Material cannot be null.");
-		this.item = new ItemStack(material);
+		this.item = new ItemStack(Objects.requireNonNull(material));
 		this.meta = Bukkit.getItemFactory().getItemMeta(material);
 	}
 
 	/**
-	 * Creates a new {@link ItemBuilder} with a clone of the specified {@link ItemStack}.
+	 * Creates a new {@link ItemBuilder} with the specified {@link ItemStack}.
 	 * 
-	 * @param stack the {@link ItemStack} to clone.
+	 * @param stack the {@link ItemStack} to use.
 	 * 
-	 * @throws IllegalArgumentException if <b>stack</b> is null.
+	 * @param clone whether to {@link ItemStack#clone() clone} the {@code stack} and its
+	 * {@link ItemMeta} or not.
+	 * 
+	 * @throws IllegalArgumentException if {@code stack} is {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #ItemBuilder(ItemStack)
 	 */
-	public ItemBuilder(@Nonnull ItemStack stack) {
+	public ItemBuilder(@Nonnull ItemStack stack, boolean clone) {
 		if (stack == null)
 			throw new IllegalArgumentException("Stack cannot be null.");
-		this.item = stack.clone();
-		this.meta = item.hasItemMeta() ? item.getItemMeta().clone() : Bukkit.getItemFactory().getItemMeta(stack.getType());
+		if (clone) {
+			this.item = stack.clone();
+			this.meta = item.hasItemMeta() ? item.getItemMeta().clone() : Bukkit.getItemFactory().getItemMeta(stack.getType());
+		} else {
+			this.item = stack;
+			this.meta = item.hasItemMeta() ? item.getItemMeta() : Bukkit.getItemFactory().getItemMeta(stack.getType());
+		}
+	}
+
+	/**
+	 * Creates a new {@link ItemBuilder} with the specified {@link ItemStack},
+	 * {@link ItemStack#clone() cloning} it.
+	 * 
+	 * @param stack the {@link ItemStack} to {@link ItemStack#clone() clone} and use.
+	 * 
+	 * @throws IllegalArgumentException if {@code stack} is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #ItemBuilder(ItemStack, boolean)
+	 */
+	public ItemBuilder(@Nonnull ItemStack stack) {
+		this(stack, false);
 	}
 
 	@Nonnull
@@ -111,7 +136,9 @@ public class ItemBuilder implements Cloneable {
 		return item;
 	}
 
-	// STACK MODIFIERS //
+	/*
+	 * ITEMSTACK MODIFIERS
+	 */
 
 	// Amount //
 
@@ -139,7 +166,7 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	/**
-	 * Adds <b>amount</b> to the current amount the {@link ItemStack} being
+	 * Adds {@code amount} to the current amount the {@link ItemStack} being
 	 * used by this {@link ItemBuilder} has and calls {@link #setAmount(int)}
 	 * with said amount.
 	 * 
@@ -157,7 +184,7 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	/**
-	 * Removes <b>amount</b> from the current amount the {@link ItemStack} being
+	 * Removes {@code amount} from the current amount the {@link ItemStack} being
 	 * used by this {@link ItemBuilder} has and calls {@link #setAmount(int)}
 	 * with said amount.
 	 * 
@@ -205,7 +232,7 @@ public class ItemBuilder implements Cloneable {
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
-	 * @throws IllegalArgumentException if <b>ench</b> is null, or not applicable.
+	 * @throws IllegalArgumentException if {@code ench} is null, or not applicable.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
@@ -225,7 +252,7 @@ public class ItemBuilder implements Cloneable {
 	 * <p>
 	 * This method is the same as calling {@link #addEnchantment(Enchantment, int)} for each element of the map.
 	 * 
-	 * @param enchantments
+	 * @param enchantments the {@link Map} of {@link Enchantment enchantments} to add.
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
@@ -403,7 +430,7 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	/**
-	 * Adds the specified <b>lines</b> to the lore of the
+	 * Adds the specified {@code lines} to the lore of the
 	 * {@link ItemMeta} being used by this {@link ItemBuilder},
 	 * applying colors to them by using {@link MCStrings#applyColor(String)}.
 	 * 
@@ -424,7 +451,7 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	/**
-	 * Adds the specified <b>lines</b> to the lore of the
+	 * Adds the specified {@code lines} to the lore of the
 	 * {@link ItemMeta} being used by this {@link ItemBuilder},
 	 * applying colors to them by using {@link MCStrings#applyColor(String)}.
 	 * 
@@ -512,9 +539,9 @@ public class ItemBuilder implements Cloneable {
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
-	 * @throws NullPointerException if the <b>key</b> is null.
-	 * @throws NullPointerException if the <b>type</b> is null.
-	 * @throws NullPointerException if the <b>value</b> is null. Removing a tag should
+	 * @throws NullPointerException if the {@code key} is null.
+	 * @throws NullPointerException if the {@code type} is null.
+	 * @throws NullPointerException if the {@code value} is null. Removing a tag should
 	 * be done using {@link #removePersistentData(NamespacedKey)}.
 	 * @throws IllegalArgumentException if no suitable adapter is found for
 	 * the {@link PersistentDataType#getPrimitiveType()}
@@ -528,14 +555,14 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	/**
-	 * Removes a custom <b>key</b> from the {@link PersistentDataHolder} instance
+	 * Removes a custom {@code key} from the {@link PersistentDataHolder} instance
 	 * of the {@link ItemMeta} being used by this {@link ItemBuilder}.
 	 * 
 	 * @param key the key to remove.
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
-	 * @throws NullPointerException if the provided <b>key</b> is null.
+	 * @throws NullPointerException if the provided {@code key} is null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -561,8 +588,8 @@ public class ItemBuilder implements Cloneable {
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
-	 * @throws NullPointerException if either <b>attribute</b> or <b>modifier</b> are null.
-	 * @throws IllegalArgumentException if <b>modifier</b> already exists.
+	 * @throws NullPointerException if either {@code attribute} or {@code modifier} are null.
+	 * @throws IllegalArgumentException if {@code modifier} already exists.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -601,7 +628,7 @@ public class ItemBuilder implements Cloneable {
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
-	 * @throws NullPointerException if either <b>attribute</b> or <b>modifier</b> are null.
+	 * @throws NullPointerException if either {@code attribute} or {@code modifier} are null.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -689,7 +716,7 @@ public class ItemBuilder implements Cloneable {
 	 * CustomModelData is an integer that may be associated client side with a
 	 * custom item model.
 	 * 
-	 * @param data the data to set, or null to clear.
+	 * @param data the data to set, or {@code null} to clear.
 	 * 
 	 * @return This {@link ItemBuilder}.
 	 * 
