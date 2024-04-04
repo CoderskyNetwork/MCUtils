@@ -430,6 +430,18 @@ public class MCPlugin extends JavaPlugin {
 		return this;
 	}
 
+	private SimpleCommandMap getCommandMap() {
+		final RefObject map = new RefObject(getServer()).invoke("getCommandMap");
+		if (map != null)
+			return (SimpleCommandMap) map.getInstance();
+		logCol(	"&8[&6" + getName() + "&8] &cCould get the command map, please inform about this&8.",
+				" &8- &7MCUtils is at fault here, do not contact &e" + getName() + "&7's author(s)&8.",
+				" &8- &7Contact&8: &espigotmc.org/members/xdec0de_.178174/ &7or Discord &9@xdec0de_",
+				" &8- &7Server info&8: &b" + getServer().getName() + " " + getServerVersion(),
+				" &8- &7Using MCUtils version &bv" + getMCUtilsVersion());
+		return null;
+	}
+
 	/**
 	 * Registers the specified <b>command</b>, allowing it to be executed.
 	 * <p>
@@ -460,16 +472,10 @@ public class MCPlugin extends JavaPlugin {
 			return null;
 		final PluginCommand plCommand = getCommand(command.getName());
 		if (plCommand == null) { // Not in plugin.yml, attempt to register via SimpleCommandMap...
-			final RefObject mapObj = new RefObject(getServer()).invoke("getCommandMap");
-			final SimpleCommandMap commandMap = mapObj == null ? null : ((SimpleCommandMap)mapObj.getInstance());
-			if (commandMap == null) { // Method removed for some reason, notify about it.
-				logCol("&8[&6" + getName() + "&8] &cCould not register the &e" + command.getName() + " &ccommand, please inform about this&8.",
-						" &8- &7MCUtils is at fault here, do not contact &e" + getName() + "&7's author(s)&8.",
-						" &8- &7Contact&8: &espigotmc.org/members/xdec0de_.178174/ &7or Discord &9@xdec0de_",
-						" &8- &7Server info&8: &b" + getServer().getName() + " " + getServerVersion(),
-						" &8- &7Using MCUtils version &bv" + getMCUtilsVersion());
+			final SimpleCommandMap commandMap = getCommandMap();
+			if (commandMap == null)
 				Bukkit.getPluginManager().disablePlugin(this);
-			} else
+			else
 				commandMap.register(getName(), command);
 		} else
 			plCommand.setExecutor(command);
@@ -513,16 +519,10 @@ public class MCPlugin extends JavaPlugin {
 		}
 		if (remaining.size() == 0)
 			return this;
-		final RefObject mapObj = new RefObject(getServer()).invoke("getCommandMap");
-		final SimpleCommandMap commandMap = mapObj == null ? null : ((SimpleCommandMap)mapObj.getInstance());
-		if (commandMap == null) { // Method removed for some reason, notify about it.
-			logCol("&8[&6" + getName() + "&8] &cCould not register &e" + remaining.size() + " &ccommands, please inform about this&8.",
-					" &8- &7MCUtils is at fault here, do not contact &e" + getName() + "&7's author(s)&8.",
-					" &8- &7Contact&8: &espigotmc.org/members/xdec0de_.178174/ &7or Discord &9@xdec0de_",
-					" &8- &7Server info&8: &b" + getServer().getName() + " " + getServerVersion(),
-					" &8- &7Using MCUtils version &bv" + getMCUtilsVersion());
+		final SimpleCommandMap commandMap = getCommandMap();
+		if (commandMap == null)
 			Bukkit.getPluginManager().disablePlugin(this);
-		} else
+		else
 			commandMap.registerAll(getName(), remaining);
 		return this;
 	}
