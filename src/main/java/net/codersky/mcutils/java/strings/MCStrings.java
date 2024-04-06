@@ -18,10 +18,9 @@ import org.bukkit.command.CommandSender;
 import net.codersky.mcutils.java.MCLists;
 import net.codersky.mcutils.java.strings.builders.Click;
 import net.codersky.mcutils.java.strings.builders.Hover;
-import net.codersky.mcutils.java.strings.pattern.ColorPattern;
 import net.codersky.mcutils.java.strings.pattern.FormatPattern;
-import net.codersky.mcutils.java.strings.pattern.color.Gradient;
-import net.codersky.mcutils.java.strings.pattern.color.Hex;
+import net.codersky.mcutils.java.strings.pattern.color.GradientColorPattern;
+import net.codersky.mcutils.java.strings.pattern.color.HexColorPattern;
 import net.codersky.mcutils.java.strings.pattern.format.ActionBar;
 import net.codersky.mcutils.java.strings.pattern.format.TargetPattern;
 import net.codersky.mcutils.java.strings.replacers.Replacer;
@@ -45,15 +44,18 @@ import net.md_5.bungee.api.chat.TextComponent;
  */
 public abstract class MCStrings {
 
-	protected static final LinkedList<ColorPattern> colorPatterns = new LinkedList<>();
-	protected static final LinkedList<FormatPattern> formatPatterns = new LinkedList<>();
+	/** {@code static} instance of {@link GradientColorPattern}, used to apply gradients only. */
+	public static final GradientColorPattern GRADIENT_COLOR_PATTERN = new GradientColorPattern();
 
+	/** {@code static} instance of {@link HexColorPattern}, used to apply hexadecimal colors only. */
+	public static final HexColorPattern HEX_COLOR_PATTERN = new HexColorPattern();
+
+	// Format & actions //
+
+	protected static final LinkedList<FormatPattern> formatPatterns = new LinkedList<>();
 	private static final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
 	static {
-		colorPatterns.add(new Gradient());
-		colorPatterns.add(new Hex());
-		colorPatterns.add((str, simple) -> applyColorChar('&', str));
 		formatPatterns.add(new ActionBar());
 		formatPatterns.add(new TargetPattern());
 	}
@@ -153,10 +155,9 @@ public abstract class MCStrings {
 	public static String applyColor(@Nullable String string) {
 		if (string == null)
 			return null;
-		String res = string;
-		for (ColorPattern pattern : colorPatterns)
-			res = pattern.process(res, true);
-		return res;
+		String colored = applyColorChar('&', string);
+		colored = HEX_COLOR_PATTERN.process(colored, true);
+		return GRADIENT_COLOR_PATTERN.process(colored, true);
 	}
 
 	/**

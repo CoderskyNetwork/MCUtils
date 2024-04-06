@@ -27,11 +27,13 @@ public interface ColorPattern {
 	 * step to support a three-character hexadecimal color pattern, for example "#FFF".
 	 * If this color pattern doesn't support simple mode this setting won't have any effect.
 	 * 
-	 * @param string the string to which this pattern should be applied to.
-	 * @param simple whether to use the simple color pattern or not.
+	 * @param string the string to which this pattern should be applied to, this string
+	 * must not be modified by the implementation, a new string must be returned with the
+	 * required modifications done to it.
+	 * @param simple whether to use the simple color pattern or not, if applicable. 
 	 * 
-	 * @return The new string with applied pattern.
+	 * @return The new string with the pattern applied to it.
 	 */
 	@Nullable
-	String process(@Nullable String string, boolean simple);
+	String process(@Nullable final String string, boolean simple);
 }

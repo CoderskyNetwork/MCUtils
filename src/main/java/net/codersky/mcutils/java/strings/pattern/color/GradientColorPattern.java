@@ -23,7 +23,7 @@ import net.md_5.bungee.api.ChatColor;
  * 
  * @since MCUtils 1.0.0
  */
-public class Gradient implements ColorPattern {
+public class GradientColorPattern implements ColorPattern {
 
 	private final Pattern pattern = Pattern.compile("<#([0-9A-Fa-f]{6})(.*?)#([0-9A-Fa-f]{6})>");
 	private final Pattern simplePattern = Pattern.compile("<#([0-9A-Fa-f]{3})(.*?)#([0-9A-Fa-f]{3})>");
@@ -34,7 +34,7 @@ public class Gradient implements ColorPattern {
 	 * If the <b>string</b> is null, null will be returned.
 	 * <p>
 	 * The gradient color pattern supports a "simple" mode, that also applies
-	 * a three-character pattern <i>(See {@link Gradient})</i> useful when string length matters..
+	 * a three-character pattern <i>(See {@link GradientColorPattern})</i> useful when string length matters..
 	 *
 	 * @param string the string to which gradients should be applied to.
 	 * @param simple whether to apply the simple pattern or not.
@@ -106,7 +106,7 @@ public class Gradient implements ColorPattern {
 
 	/**
 	 * Applies the specified list of <b>colors</b> to <b>source</b>,
-	 * this method is designed for patterns like {@link Gradient}.
+	 * this method is designed for patterns like {@link GradientColorPattern}.
 	 * 
 	 * @param source the string to apply colors.
 	 * @param colors the colors to apply.
