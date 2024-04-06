@@ -31,7 +31,7 @@ import net.codersky.mcutils.java.strings.replacers.Replacer;
  * <p>
  * <b>Formatted messages</b>: This feature is always enabled and you
  * don't need to do anything for it to work, all messages will be sent using
- * {@link MCStrings#sendFormattedMessage(CommandSender, String)}.
+ * {@link MCStrings#sendMessage(CommandSender, String)}.
  * 
  * @since MCUtils 1.0.0
  * 

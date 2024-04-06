@@ -7,11 +7,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity.Spigot;
 
 import net.codersky.mcutils.java.strings.MCStrings;
-import net.codersky.mcutils.java.strings.pattern.FormatPattern;
+import net.codersky.mcutils.java.strings.pattern.TargetPattern;
 
 import org.bukkit.entity.Player;
 
-public class TargetPattern implements FormatPattern {
+public class PlayerConsoleTargetPattern implements TargetPattern {
 
 	@Nullable
 	public String process(@Nonnull CommandSender target, @Nullable String message) {

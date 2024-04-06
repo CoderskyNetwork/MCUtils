@@ -195,7 +195,7 @@ public interface MessagesFileHolder {
 	 * @since MCUtils 1.0.0
 	 */
 	default public boolean send(@Nonnull CommandSender target, @Nonnull String path) {
-		return runOn(path, msg -> MCStrings.sendFormattedMessage(target, msg));
+		return runOn(path, msg -> MCStrings.sendMessage(target, msg));
 	}
 
 	/**
@@ -217,7 +217,7 @@ public interface MessagesFileHolder {
 	 * @since MCUtils 1.0.0
 	 */
 	default public boolean send(@Nonnull CommandSender target, @Nonnull String path, @Nonnull Replacer replacer) {
-		return runOn(path, msg -> MCStrings.sendFormattedMessage(target, replacer.replaceAt(msg)));
+		return runOn(path, msg -> MCStrings.sendMessage(target, replacer.replaceAt(msg)));
 	}
 
 	/**

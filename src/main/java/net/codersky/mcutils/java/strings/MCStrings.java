@@ -18,11 +18,11 @@ import org.bukkit.command.CommandSender;
 import net.codersky.mcutils.java.MCLists;
 import net.codersky.mcutils.java.strings.builders.Click;
 import net.codersky.mcutils.java.strings.builders.Hover;
-import net.codersky.mcutils.java.strings.pattern.FormatPattern;
+import net.codersky.mcutils.java.strings.pattern.TargetPattern;
 import net.codersky.mcutils.java.strings.pattern.color.GradientColorPattern;
 import net.codersky.mcutils.java.strings.pattern.color.HexColorPattern;
-import net.codersky.mcutils.java.strings.pattern.format.ActionBar;
-import net.codersky.mcutils.java.strings.pattern.format.TargetPattern;
+import net.codersky.mcutils.java.strings.pattern.format.ActionBarTargetPattern;
+import net.codersky.mcutils.java.strings.pattern.format.PlayerConsoleTargetPattern;
 import net.codersky.mcutils.java.strings.replacers.Replacer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -50,20 +50,24 @@ public abstract class MCStrings {
 	/** {@code static} instance of {@link HexColorPattern}, used to apply hexadecimal colors only. */
 	public static final HexColorPattern HEX_COLOR_PATTERN = new HexColorPattern();
 
-	// Format & actions //
+	// Receiver & actions //
 
-	protected static final LinkedList<FormatPattern> formatPatterns = new LinkedList<>();
+	protected static final LinkedList<TargetPattern> receiverPatterns = new LinkedList<>();
 	private static final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
 	static {
-		formatPatterns.add(new ActionBar());
-		formatPatterns.add(new TargetPattern());
+		receiverPatterns.add(new ActionBarTargetPattern());
+		receiverPatterns.add(new PlayerConsoleTargetPattern());
 	}
+
+	/*
+	 * Receiver patterns
+	 */
 
 	/**
 	 * Sends <b>str</b> to <b>target</b> using the dynamic message format. This feature
 	 * allows administrators to choose how and where a message will be sent, player specific
-	 * message types such as {@link ActionBar} will be sent as a raw message to the console.
+	 * message types such as {@link ActionBarTargetPattern} will be sent as a raw message to the console.
 	 * <p>
 	 * Here is the documentation of every format pattern:
 	 * <ul>
@@ -78,19 +82,23 @@ public abstract class MCStrings {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public static boolean sendFormattedMessage(@Nullable CommandSender target, @Nullable String str) {
+	public static boolean sendMessage(@Nullable CommandSender target, @Nullable String str) {
 		if (target == null || str == null || str.isEmpty())
 			return true;
 		String toChat = str;
-		for (FormatPattern pattern : formatPatterns)
+		for (TargetPattern pattern : receiverPatterns)
 			toChat = pattern.process(target, toChat);
 		return true;
 	}
 
+	/*
+	 * Event patterns
+	 */
+
 	/**
 	 * Applies <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>Event patterns</a>
-	 * to the specified string, note that this method won't apply the {@link TargetPattern} nor
-	 * the {@link ActionBar} pattern as both patterns require a target to be used and send the
+	 * to the specified string, note that this method won't apply the {@link PlayerReceiverPattern} nor
+	 * the {@link ActionBarTargetPattern} pattern as both patterns require a target to be used and send the
 	 * message to said target when applied.
 	 * 
 	 * @param str the string that will have the events applied.
@@ -137,6 +145,10 @@ public abstract class MCStrings {
 		}
 		return content;
 	}
+
+	/*
+	 * String color methods
+	 */
 
 	/**
 	 * Applies all color patterns to a <b>string</b>.
@@ -725,8 +737,8 @@ public abstract class MCStrings {
 	 * <p>
 	 * You can see an example of this method being used on MCUtils here:
 	 * <ul>
-	 * <li>{@link ActionBar#process(CommandSender, String)}</li>
-	 * <li>{@link TargetPattern#process(CommandSender, String)}</li>
+	 * <li>{@link ActionBarTargetPattern#process(CommandSender, String)}</li>
+	 * <li>{@link PlayerReceiverPattern#process(CommandSender, String)}</li>
 	 * </ul>
 	 * 
 	 * @param src the source string to use.
@@ -767,8 +779,8 @@ public abstract class MCStrings {
 	 * <p>
 	 * You can see an example of this method being used on MCUtils here:
 	 * <ul>
-	 * <li>{@link ActionBar#process(CommandSender, String)}</li>
-	 * <li>{@link TargetPattern#process(CommandSender, String)}</li>
+	 * <li>{@link ActionBarTargetPattern#process(CommandSender, String)}</li>
+	 * <li>{@link PlayerReceiverPattern#process(CommandSender, String)}</li>
 	 * </ul>
 	 * 
 	 * @param src the source string to use.

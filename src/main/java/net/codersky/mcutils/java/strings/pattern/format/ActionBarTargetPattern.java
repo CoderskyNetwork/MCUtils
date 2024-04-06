@@ -8,11 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Player.Spigot;
 
 import net.codersky.mcutils.java.strings.MCStrings;
-import net.codersky.mcutils.java.strings.pattern.FormatPattern;
+import net.codersky.mcutils.java.strings.pattern.TargetPattern;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class ActionBar implements FormatPattern {
+public class ActionBarTargetPattern implements TargetPattern {
 
 	@Nullable
 	public String process(@Nonnull CommandSender target, @Nullable String message) {
