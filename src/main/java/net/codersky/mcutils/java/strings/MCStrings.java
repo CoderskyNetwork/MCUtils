@@ -52,7 +52,6 @@ public abstract class MCStrings {
 
 	static {
 		colorPatterns.add(new Gradient());
-		colorPatterns.add(new Gradient());
 		colorPatterns.add(new Hex());
 		colorPatterns.add((str, simple) -> applyColorChar('&', str));
 		formatPatterns.add(new ActionBar());
