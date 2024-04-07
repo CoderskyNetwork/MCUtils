@@ -168,10 +168,11 @@ public interface MessagesFileHolder {
 	 */
 
 	private boolean runOn(@Nonnull String path, @Nonnull Function<String, Boolean> action) {
-		final String msg = getString(path);
-		if (msg != null)
-			return msg == null ? true : action.apply(msg);
 		final List<String> lst = getStringList(path);
+		if (lst == null) {
+			final String msg = getString(path);
+			return msg == null ? true : action.apply(msg);
+		}
 		for (final String lstMsg : lst)
 			action.apply(lstMsg);
 		return true;
