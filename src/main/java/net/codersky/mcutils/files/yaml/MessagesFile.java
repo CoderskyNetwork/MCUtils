@@ -171,7 +171,9 @@ public class MessagesFile extends PluginFile implements MessagesFileHolder {
 		final List<String> lst = super.getStringList(path);
 		if (lst.isEmpty())
 			return null;
-		return replacer == null ? lst : MCLists.map(msg -> replacer.replaceAt(MCStrings.applyColor(msg)), lst);
+		if (replacer == null)
+			return MCStrings.applyColor(lst);
+		return MCLists.map(msg -> replacer.replaceAt(MCStrings.applyColor(msg)), lst);
 	}
 
 	@Nullable
