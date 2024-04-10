@@ -18,7 +18,7 @@ import net.codersky.mcutils.java.strings.MCStrings;
  * make sure that the amount of strings added to the replacer are <b>even</b>, otherwise, an {@link IllegalArgumentException} will be thrown.
  * <p>
  * <b>Numeric support:</b>
- * <br>
+ * <p>
  * This feature is always enabled with Replacers and adds the possibility to apply different replacements
  * depending on numeric values, don't worry about performance, the impact isn't noticeable unless you are
  * parsing millions of strings as this doesn't use regular expressions. Here is a common example on how to use it:
@@ -39,13 +39,17 @@ public class Replacer {
 	private final ArrayList<String> replaceList = new ArrayList<>();
 
 	/**
-	 * Creates a replacer to replace parts of a string with other strings, if you want to use the same replacements for multiple strings, you should 
-	 * create a {@link Replacer} variable and apply it to as many strings as you want to <b>avoid creating multiple instances of the same replacements</b>, also, 
-	 * make sure that the amount of strings added to the {@link Replacer} are <b>even</b>, otherwise, an {@link IllegalArgumentException} will be thrown.
+	 * Creates a replacer to replace parts of a string with other strings,
+	 * if you want to use the same replacements for multiple strings, you should 
+	 * create a {@link Replacer} variable and apply it to as many strings as you
+	 * want to <b>avoid creating multiple instances of the same replacements</b>,
+	 * also,  make sure that the amount of strings added to the {@link Replacer}
+	 * are <b>even</b>, otherwise, an {@link IllegalArgumentException} will be thrown.
 	 * 
 	 * @param replacements the new strings to be replaced, the format is <i>"str1", "obj1", "str2", "obj2"...</i>
 	 * 
-	 * @throws IllegalArgumentException if <b>replacements</b> is null or the amount of strings is not even, more technically, if replacements
+	 * @throws IllegalArgumentException if {@code replacements} is {@code null} or the amount of
+	 * objects is not even, more technically, if {@code replacements}
 	 * size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
@@ -60,11 +64,12 @@ public class Replacer {
 	}
 
 	/**
-	 * Adds new replacements to an existing replacer, the amount of replacements must also be even, note that existing replacements
-	 * will be added to the list but the new replacer won't overwrite them. Because of the way replacements work, only the first
-	 * replacement added for a string will take effect if there is another replacement added to said string later on.
-	 * If <b>replacements</b> is null, nothing will be done.<br><br>
-	 * 
+	 * Adds new {@code replacements} to an existing {@link Replacer}. the amount of replacements must also be even
+	 * note that existing replacements will be added to the list but the new replacer won't overwrite them.
+	 * Because of the way replacements work, only the first replacement added for a string will take effect
+	 * if there is another replacement added to said string later on. If {@code replacements} is {@code null},
+	 * nothing will be done.
+	 * <p>
 	 * Example: text is <i>"Replace %test%"</i>, we add <i>"%test%", "Hello"</i> and <i>"%test%", "World"</i>. The
 	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%test%</i> will take effect.
 	 * 
@@ -72,7 +77,9 @@ public class Replacer {
 	 * 
 	 * @return This {@link Replacer} with the new <b>replacements</b> added to it.
 	 * 
-	 * @throws IllegalArgumentException if the amount of replacements is not even, more technically, if <code>replacements.length</code> % 2 is not equal to 0.
+	 * @throws IllegalArgumentException if {@code replacements} is {@code null} or the amount of
+	 * objects is not even, more technically, if {@code replacements}
+	 * size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
@@ -84,7 +91,7 @@ public class Replacer {
 		if (replacements == null)
 			return this;
 		if (replacements.length % 2 != 0)
-			throw new IllegalArgumentException(replacements[replacements.length -1] + "does not have a replacer! Add one more element to the replacer.");
+			throw new IllegalArgumentException(replacements[replacements.length -1] + "does not have a replacer! Add one more element.");
 		for (Object replacement : replacements) {
 			if (replacement instanceof Replacement)
 				replaceList.add(((Replacement)replacement).asReplacement());

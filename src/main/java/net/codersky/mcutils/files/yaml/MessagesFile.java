@@ -109,14 +109,67 @@ public class MessagesFile extends PluginFile implements MessagesFileHolder {
 	 * message, the default {@link Replacer} is null by default.
 	 * 
 	 * @param replacer the default {@link Replacer} to be used on this {@link MessagesFile}.
-	 * @param numSupport whether to use numeric support or not (See {@link #setNumSupport(boolean)}).
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #getDefaultReplacer()
+	 * @see #setDefaultObjReplacer(Object...)
+	 * @see #setDefaultPathReplacer(String...)
 	 */
 	public void setDefaultReplacer(@Nullable Replacer replacer) {
 		this.defReplacer = replacer;
+	}
+
+	/**
+	 * Creates a new {@link Replacer} with the specified {@code replacements} and
+	 * sets it as the default {@link Replacer} to use on this {@link MessagesFile}.
+	 * 
+	 * @param replacements the replacements to use for the new {@link Replacer}.
+	 * 
+	 * @throws IllegalArgumentException if {@code replacements} is {@code null} or the amount of
+	 * objects is not even, more technically, if {@code replacements}
+	 * size % 2 is not equal to 0 as specified by {@link Replacer#Replacer(Object...)}
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getDefaultReplacer()
+	 * @see #setDefaultReplacer(Replacer)
+	 * @see #setDefaultPathReplacer(String...)
+	 */
+	public void setDefaultObjReplacer(@Nonnull Object... replacements) {
+		setDefaultReplacer(new Replacer(replacements));
+	}
+
+	/**
+	 * Creates a new {@link Replacer} with the specified {@code replacements} and
+	 * sets it as the default {@link Replacer} to use on this {@link MessagesFile}.
+	 * <p>
+	 * The difference between this method and {@link #setDefaultObjReplacer(Object...)}
+	 * is that this method will get strings from this file for the replacements, so the
+	 * replacements must be paths, take the following code as an example:
+	 * <p>
+	 * {@code setDefaultPathReplacer("%err%", "error");}
+	 * <p>
+	 * This default {@link Replacer} will replace every occurrence of "%error%" on the file
+	 * with the string found at the "error" path of the file, not the literal string "error".
+	 * 
+	 * @param replacements the replacements to use for the new {@link Replacer}.
+	 * 
+	 * @throws IllegalArgumentException if {@code replacements} is {@code null} or the amount of
+	 * objects is not even, more technically, if {@code replacements}
+	 * size % 2 is not equal to 0 as specified by {@link Replacer#Replacer(Object...)}
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #getDefaultReplacer()
+	 * @see #setDefaultReplacer(Replacer)
+	 * @see #setDefaultObjReplacer(Object...)
+	 */
+	public void setDefaultPathReplacer(@Nonnull String... replacements) {
+		final String[] rep = new String[replacements.length];
+		for (int i = 1; i < rep.length; i +=2)
+			rep[i] = getString(rep[i]);
+		this.defReplacer = new Replacer((Object[]) rep);
 	}
 
 	/**
