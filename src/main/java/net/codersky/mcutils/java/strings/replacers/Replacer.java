@@ -238,4 +238,10 @@ public class Replacer {
 	public Object[] getReplacements() {
 		return replaceList.toArray();
 	}
+
+	@Nonnull
+	@Override
+	public String toString() {
+		return "Replacer" + replaceList.toString();
+	}
 }
