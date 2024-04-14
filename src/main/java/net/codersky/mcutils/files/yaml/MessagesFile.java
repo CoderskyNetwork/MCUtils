@@ -166,10 +166,12 @@ public class MessagesFile extends PluginFile implements MessagesFileHolder {
 	 * @see #setDefaultObjReplacer(Object...)
 	 */
 	public void setDefaultPathReplacer(@Nonnull String... replacements) {
-		final String[] rep = new String[replacements.length];
-		for (int i = 1; i < rep.length; i +=2)
-			rep[i] = getString(rep[i]);
-		this.defReplacer = new Replacer((Object[]) rep);
+		final Object[] rep = new String[replacements.length];
+		for (int i = 0; i < replacements.length; i ++) {
+			final String element = i % 2 == 0 ? replacements[i] : getString(replacements[i]);
+			rep[i] = element == null ? "null" : element;
+		}
+		this.defReplacer = new Replacer(rep);
 	}
 
 	/**
