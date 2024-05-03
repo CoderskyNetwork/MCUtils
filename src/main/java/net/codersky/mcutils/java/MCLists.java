@@ -342,6 +342,19 @@ public abstract class MCLists {
 		return get(collection, condition, null);
 	}
 
+	@Nullable
+	public static <E> E get(@Nonnull E[] array, @Nonnull Predicate<E> condition, @Nullable E def) {
+		for (E element : array)
+			if (condition.test(element))
+				return element;
+		return def;
+	}
+
+	@Nullable
+	public static <E> E get(@Nonnull E[] array, @Nonnull Predicate<E> condition) {
+		return get(array, condition, null);
+	}
+
 	/*
 	 * Randoms
 	 */
