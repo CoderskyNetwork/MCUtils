@@ -430,7 +430,24 @@ public class MCPlugin extends JavaPlugin {
 		return this;
 	}
 
-	private SimpleCommandMap getCommandMap() {
+	/**
+	 * Gets the {@link SimpleCommandMap} instance stored on the {@link #getServer() server}.
+	 * <b>Reflection is used</b> in order to get this instance by accessing the
+	 * {@code public} getCommandMap method found on CraftServer, this means that this method
+	 * will stop working if said method is removed or changed, even though using it should be
+	 * safe as this method hasn't changed in a very long time.
+	 * <p>
+	 * <b>Note</b>: In case {@code null} is returned this method prints an error message to
+	 * the console to notify administrators that the command map could not be obtained, specifying
+	 * that this error is caused by MCUtils and not by your plugin.
+	 * 
+	 * @return The {@link SimpleCommandMap} instance stored on the {@link #getServer() server},
+	 * {@code null} if any error occurs.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	protected SimpleCommandMap getCommandMap() {
 		final RefObject map = new RefObject(getServer()).invoke("getCommandMap");
 		if (map != null)
 			return (SimpleCommandMap) map.getInstance();
@@ -443,11 +460,11 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Registers the specified <b>command</b>, allowing it to be executed.
+	 * Registers the specified {@code command}, allowing it to be executed.
 	 * <p>
 	 * <b>Important note</b>: MCUtils registers commands in a pretty unusual
-	 * way, if the names of the commands you are trying to register are present
-	 * on your <b>plugin.yml</b>, MCUtils will just register them the "traditional"
+	 * way. If the name of the command you are trying to register is present
+	 * on your <b>plugin.yml</b>, MCUtils will just register it the "traditional"
 	 * way, if not, it will use some reflection to register it through CraftBukkit's
 	 * getCommandMap (Respecting encapsulation!), meaning that you can register commands without adding them
 	 * to your <b>plugin.yml</b>. <i>However</i>, this may break on future versions
@@ -461,9 +478,9 @@ public class MCPlugin extends JavaPlugin {
 	 * make sure to update MCUtils if that ever happens (This will be notified as an important update).
 	 * 
 	 * @param <P> must extend {@link MCPlugin}
-	 * @param command the command to register.
+	 * @param command the {@link MCCommand command} to register.
 	 * 
-	 * @return The specified <b>command</b>.
+	 * @return The specified {@code command}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
@@ -483,11 +500,11 @@ public class MCPlugin extends JavaPlugin {
 	}
 
 	/**
-	 * Registers the specified <b>command</b>, allowing them to be executed.
+	 * Registers the specified {@code commands}, allowing them to be executed.
 	 * <p>
 	 * <b>Important note</b>: MCUtils registers commands in a pretty unusual
-	 * way, if the names of the commands you are trying to register are present
-	 * on your <b>plugin.yml</b>, MCUtils will just register them the "traditional"
+	 * way. If the name of the command you are trying to register is present
+	 * on your <b>plugin.yml</b>, MCUtils will just register it the "traditional"
 	 * way, if not, it will use some reflection to register it through CraftBukkit's
 	 * getCommandMap (Respecting encapsulation!), meaning that you can register commands without adding them
 	 * to your <b>plugin.yml</b>. <i>However</i>, this may break on future versions
@@ -500,7 +517,8 @@ public class MCPlugin extends JavaPlugin {
 	 * to make a check there if they were to change it, but we are aware of it, so no worries, just
 	 * make sure to update MCUtils if that ever happens (This will be notified as an important update).
 	 * 
-	 * @param commands the commands to register.
+	 * @param <P> must extend {@link MCPlugin}
+	 * @param commands the list of {@link MCCommand commands} to register.
 	 * 
 	 * @return This {@link MCPlugin}.
 	 * 
