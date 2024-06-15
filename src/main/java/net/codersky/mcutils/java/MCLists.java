@@ -401,4 +401,27 @@ public abstract class MCLists {
 			return null;
 		return size == 1 ? list.get(0) : list.get(MCNumbers.random().nextInt(size));
 	}
+
+	/**
+	 * Gets a random element from the specified {@code array},
+	 * note that a new {@link Random} instance is not being
+	 * created every time this method is called as it uses {@link MCNumbers#random()}.
+	 * If the length of {@code array} is equal to 1, no randomization
+	 * will be done and the first and only element of the {@code array} will be returned.
+	 * 
+	 * @param <E> the type of elements in the {@code array}
+	 * @param array the array to use.
+	 * 
+	 * @return A random element from the specified {@code array} or
+	 * {@code null} if the {@code array} length is 0.
+	 * 
+	 * @throws NullPointerException if {@code array} is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public static <E> E getRandomFrom(@Nonnull E[] array) {
+		if (array.length == 0)
+			return null;
+		return array.length == 1 ? array[0] : array[MCNumbers.random().nextInt(array.length)];
+	}
 }
