@@ -330,16 +330,16 @@ public abstract class MCLists {
 	 */
 
 	@Nullable
-	public static <E> E get(@Nonnull Collection<E> collection, @Nonnull Predicate<E> condition, @Nullable E def) {
-		for (E element : collection)
+	public static <E> E get(@Nonnull Iterable<E> iterable, @Nonnull Predicate<E> condition, @Nullable E def) {
+		for (E element : iterable)
 			if (condition.test(element))
 				return element;
 		return def;
 	}
 
 	@Nullable
-	public static <E> E get(@Nonnull Collection<E> collection, @Nonnull Predicate<E> condition) {
-		return get(collection, condition, null);
+	public static <E> E get(@Nonnull Iterable<E> iterable, @Nonnull Predicate<E> condition) {
+		return get(iterable, condition, null);
 	}
 
 	@Nullable
