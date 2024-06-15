@@ -430,6 +430,22 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	/**
+	 * Clears the lore of the {@link ItemMeta} being used
+	 * by this {@link ItemBuilder}. This method exists becasue
+	 * calling either {@link #setLore(String...)} or {@link #setLore(List)}
+	 * with a {@code null} parameter is ambiguous.
+	 * 
+	 * @return This {@link ItemBuilder}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	public ItemBuilder clearLore() {
+		meta.setLore(null);
+		return this;
+	}
+
+	/**
 	 * Adds the specified {@code lines} to the lore of the
 	 * {@link ItemMeta} being used by this {@link ItemBuilder},
 	 * applying colors to them by using {@link MCStrings#applyColor(String)}.
