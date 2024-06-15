@@ -378,25 +378,27 @@ public abstract class MCLists {
 	 */
 
 	/**
-	 * Gets a random element from the specified <b>list</b>,
+	 * Gets a random element from the specified {@code list},
 	 * note that a new {@link Random} instance is not being
-	 * created every time this method is called but only the first,
-	 * as this method uses {@link MCNumbers#random()}.
-	 * If the size of <b>list</b> is equal to 1, no randomization
-	 * will be done and the first and only element
-	 * of the list will be returned.
+	 * created every time this method is called as it uses {@link MCNumbers#random()}.
+	 * If the size of {@code list} is equal to 1, no randomization
+	 * will be done and the first and only element of the {@code list} will be returned.
 	 * 
-	 * @param <E> the type of elements in the <b>list</b>
+	 * @param <E> the type of elements in the {@code list}
 	 * @param list the {@link List} to use.
 	 * 
-	 * @return A random element from the specified <b>list</b> or
-	 * null if the <b>list</b> was null.
+	 * @return A random element from the specified {@code list} or
+	 * {@code null} if the {@code list} is {@link List#isEmpty() empty}.
+	 * 
+	 * @throws NullPointerException if {@code list} is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public static <E> E getRandomFrom(@Nullable List<E> list) {
-		if (list == null)
-			return null;
+	public static <E> E getRandomFrom(@Nonnull List<E> list) {
 		final int size = list.size();
+		if (size == 0)
+			return null;
 		return size == 1 ? list.get(0) : list.get(MCNumbers.random().nextInt(size));
 	}
 }
