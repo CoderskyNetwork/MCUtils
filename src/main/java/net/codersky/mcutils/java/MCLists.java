@@ -326,6 +326,24 @@ public abstract class MCLists {
 	}
 
 	/*
+	 * Contains
+	 */
+
+	public static <E> boolean contains(@Nonnull Iterable<E> iterable, @Nonnull Predicate<E> condition) {
+		for (E element : iterable)
+			if (condition.test(element))
+				return true;
+		return false;
+	}
+
+	public static <E> boolean contains(@Nonnull E[] array, @Nonnull Predicate<E> condition) {
+		for (E element : array)
+			if (condition.test(element))
+				return true;
+		return false;
+	}
+
+	/*
 	 * Getters
 	 */
 
