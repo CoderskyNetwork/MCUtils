@@ -12,6 +12,8 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.primitives.Bytes;
+
 import net.codersky.mcutils.java.MCLists;
 
 /**
@@ -106,20 +108,42 @@ public abstract class StorageHandler {
 	}
 
 	/**
-	 * Checks if this storage contains the specified <b>key</b>.
+	 * Checks if this storage contains the specified {@code key}.
 	 * 
 	 * @param key the key to check for.
 	 * 
-	 * @return {@code true} if the <b>key</b> was found,
+	 * @return {@code true} if the {@code key} was found,
 	 * {@code false} otherwise.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
+	 * @see #containsKeys(String...)
 	 * @see #getKeys()
 	 * @see #removeKey(String)
 	 */
 	public boolean containsKey(@Nonnull String key) {
 		return keys.containsKey(Objects.requireNonNull(key));
+	}
+
+	/**
+	 * Checks if this storage contains <b>all</b> the specified {@code keys}.
+	 * 
+	 * @param keys the keys to check for.
+	 * 
+	 * @return {@code true} if all the {@code keys} were found,
+	 * {@code false} otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #containsKey(String)
+	 * @see #getKeys()
+	 * @see #removeKey(String)
+	 */
+	public boolean containsKeys(@Nonnull String... keys) {
+		for (String key : keys)
+			if (!this.keys.containsKey(key))
+				return false;
+		return true;
 	}
 
 	/**
