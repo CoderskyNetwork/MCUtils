@@ -169,6 +169,17 @@ public abstract class StorageHandler {
 		return true;
 	}
 
+	/**
+	 * Clears this {@link StorageHandler}, removing any <b>cached</b> content
+	 * from it, meaning that the data could still be recovered with {@link #load()}
+	 * if {@link #save()} isn't called first.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public void clear() {
+		keys.clear();
+	}
+
 	/*
 	 * Setters
 	 */
