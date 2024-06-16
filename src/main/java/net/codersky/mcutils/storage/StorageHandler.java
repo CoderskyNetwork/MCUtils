@@ -401,6 +401,11 @@ public abstract class StorageHandler {
 		return setList(key, value);
 	}
 
+	@Nullable
+	public List<Byte> setBytes(@Nonnull String key, byte[] value) {
+		return setList(key, Bytes.asList(value));
+	}
+
 	// Shorts //
 
 	/**
