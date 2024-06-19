@@ -168,8 +168,8 @@ public abstract class MCStrings {
 		if (string == null)
 			return null;
 		String colored = applyColorChar('&', string);
-		colored = HEX_COLOR_PATTERN.process(colored, true);
-		return GRADIENT_COLOR_PATTERN.process(colored, true);
+		colored = GRADIENT_COLOR_PATTERN.process(colored, true);
+		return HEX_COLOR_PATTERN.process(colored, true);
 	}
 
 	/**
