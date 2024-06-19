@@ -392,6 +392,6 @@ public class GUIHandler implements Listener {
 		if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) // Clicked should not be null here.
 			clicked = clicked.equals(view.getTopInventory()) ? view.getBottomInventory() : view.getTopInventory();
 		if (clicked != null)
-			event.setCancelled(gui.onClick(clicker, clicked, event));
+			event.setCancelled(!gui.onClick(clicker, clicked, event));
 	}
 }
