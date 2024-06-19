@@ -235,8 +235,8 @@ public class Replacer {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nonnull
-	public Object[] getReplacements() {
-		return replaceList.toArray();
+	public List<String> getReplacements() {
+		return new ArrayList<>(replaceList);
 	}
 
 	@Nonnull
