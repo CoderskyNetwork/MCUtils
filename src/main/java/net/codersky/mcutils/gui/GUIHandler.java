@@ -1,6 +1,5 @@
 package net.codersky.mcutils.gui;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -24,6 +23,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.scheduler.BukkitTask;
 
 import net.codersky.mcutils.MCPlugin;
+import net.codersky.mcutils.java.MCLists;
 import net.codersky.mcutils.java.annotations.Internal;
 
 /**
@@ -102,7 +102,7 @@ public class GUIHandler implements Listener {
 		if (inv == null)
 			return false;
 		if (!guis.containsKey(gui))
-			guis.put(gui, new ArrayList<>());
+			guis.put(gui, MCLists.asList(target.getUniqueId()));
 		else
 			guis.get(gui).add(target.getUniqueId());
 		target.openInventory(inv);
