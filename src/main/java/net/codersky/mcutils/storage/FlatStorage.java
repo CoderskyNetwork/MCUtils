@@ -66,6 +66,10 @@ public class FlatStorage extends StorageHandler {
 		return file;
 	}
 
+	public boolean rename(@Nonnull String name) {
+		return file.renameTo(new File(file.getParent() + (name.endsWith(".mcufs") ? name : name + ".mcufs")));
+	}
+
 	public final boolean exists() {
 		return file.exists();
 	}
