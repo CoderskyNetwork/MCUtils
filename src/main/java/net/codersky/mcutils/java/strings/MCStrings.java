@@ -851,26 +851,33 @@ public abstract class MCStrings {
 	 * an {@link IllegalArgumentException} is <b>not</b> the safest approach, use
 	 * this method for safe {@link String} to {@link UUID} conversion.
 	 * <p>
-	 * This method won't consider uuids without '-' characeters,
-	 * those will be considered regular strings.
+	 * This method will also convert {@link UUID}s without '-' characters, this is
+	 * because the Mojang's API may provide {@link UUID}s in said format.
 	 * <p>
-	 * Additionally, this method only allows full player {@link UUID}s,
-	 * as {@link UUID#fromString(String)} will accept, for example
-	 * "1-1-1-1-1" as "00000001-0001-0001-0001-000000000001"
+	 * Additionally, this method only allows full player {@link UUID}s, that is,
+	 * strings which length is either 36 or 36. {@link UUID#fromString(String)}
+	 * accepts, for example 1-1-1-1-1" as "00000001-0001-0001-0001-000000000001",
+	 * this method doesn't, as it is designed for player {@link UUID}s.
 	 * 
 	 * @param uuid the {@link String} to be converted to {@link UUID}
 	 * 
-	 * @return A {@link UUID} by the specified <b>uuid</b> String,
+	 * @return A {@link UUID} by the specified {@code uuid} String,
 	 * null if the string doesn't have a valid {@link UUID} format.
 	 */
 	@Nullable
 	public static UUID toUUID(@Nullable String uuid) {
 		final int len = uuid == null ? 0 : uuid.length();
-		if (len != 36)
-			return null;
+		if (len == 36)
+			return parseFullUUID(uuid);
+		if (len == 32)
+			return parseSmallUUID(uuid);
+		return null;
+	}
+
+	private static UUID parseFullUUID(String uuid) {
 		final char[] chars = uuid.toCharArray();
-		for (int i = 0; i < len; i++) {
-			char ch = chars[i];
+		for (int i = 0; i < 36; i++) {
+			final char ch = chars[i];
 			if (i == 8 || i == 13 || i == 18 || i == 23) {
 				if (ch != '-')
 					return null;
@@ -878,5 +885,22 @@ public abstract class MCStrings {
 				return null;
 		}
 		return UUID.fromString(uuid);
+	}
+
+	private static UUID parseSmallUUID(String uuid) {
+		final StringBuilder builder = new StringBuilder(36);
+		final char[] chars = uuid.toCharArray();
+		for (int i = 0, j = 0; i < 36; i++) {
+			if (i == 8 || i == 13 || i == 18 || i == 23)
+				builder.append('-');
+			else {
+				final char ch = chars[j];
+				if (!(ch >= '0' && ch <= '9') && !(ch >= 'a' && ch <= 'f') && !(ch >= 'A' && ch <= 'F'))
+					return null;
+				builder.append(ch);
+				j++;
+			}
+		}
+		return UUID.fromString(builder.toString());
 	}
 }
