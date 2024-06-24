@@ -1,14 +1,14 @@
 package net.codersky.mcutils.java.strings;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,13 +16,11 @@ import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 
 import net.codersky.mcutils.java.MCLists;
-import net.codersky.mcutils.java.strings.builders.Click;
-import net.codersky.mcutils.java.strings.builders.Hover;
 import net.codersky.mcutils.java.strings.pattern.TargetPattern;
 import net.codersky.mcutils.java.strings.pattern.color.GradientColorPattern;
 import net.codersky.mcutils.java.strings.pattern.color.HexColorPattern;
-import net.codersky.mcutils.java.strings.pattern.format.ActionBarTargetPattern;
-import net.codersky.mcutils.java.strings.pattern.format.PlayerConsoleTargetPattern;
+import net.codersky.mcutils.java.strings.pattern.target.ActionBarTargetPattern;
+import net.codersky.mcutils.java.strings.pattern.target.PlayerConsoleTargetPattern;
 import net.codersky.mcutils.java.strings.replacers.Replacer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -31,6 +29,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 /**
  * A string utility class, also contains
@@ -50,10 +49,7 @@ public abstract class MCStrings {
 	/** {@code static} instance of {@link HexColorPattern}, used to apply hexadecimal colors only. */
 	public static final HexColorPattern HEX_COLOR_PATTERN = new HexColorPattern();
 
-	// Receiver & actions //
-
 	protected static final LinkedList<TargetPattern> receiverPatterns = new LinkedList<>();
-	private static final Pattern actionPattern = Pattern.compile("<(.*?)>(.*?)[/]>");
 
 	static {
 		receiverPatterns.add(new ActionBarTargetPattern());
@@ -95,55 +91,95 @@ public abstract class MCStrings {
 	 * Event patterns
 	 */
 
+	// Apply //
+
 	/**
-	 * Applies <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>Event patterns</a>
-	 * to the specified string, note that this method won't apply the {@link PlayerReceiverPattern} nor
-	 * the {@link ActionBarTargetPattern} pattern as both patterns require a target to be used and send the
-	 * message to said target when applied.
+	 * Applies <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
+	 * to the specified {@link String}. Note that this method won't apply
+	 * <a href=https://mcutils.codersky.net/for-server-admins/target-patterns>target patterns</a> as
+	 * those patterns require a target to filter the messages, same happens with
+	 * <a href=https://mcutils.codersky.net/for-server-admins/color-patterns>color patterns</a>, except
+	 * this time it is because you may want to send messages without colors or you may already have
+	 * {@link #applyColor(String) applied} color to the {@link String}.
 	 * 
-	 * @param str the string that will have the events applied.
+	 * @param str the {@link String} that will have the events applied, if the {@link String} doesn't
+	 * contain the '<' character, the method will just convert the {@link String} to a {@link BaseComponent}
+	 * array using {@link TextComponent#fromLegacyText(String)}.
 	 * 
-	 * @return A {@link BaseComponent} array with the events applied to it,
-	 * {@link TextComponent#toLegacyText()} will be used on <b>str</b> if no event was applied,
-	 * null if <b>str</b> is null or empty.
+	 * @return A {@link BaseComponent} array with all found
+	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
+	 * applied to it.
+	 * 
+	 * @throws NullPointerException if {@code str} is {@code null}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	@Nullable
-	public static BaseComponent[] applyEventPatterns(@Nullable String str) {
-		if (str == null || str.isEmpty())
-			return null;
-		// Group 1: event args, Group 2: event text.
-		ComponentBuilder res = new ComponentBuilder();
-		Matcher matcher = actionPattern.matcher(str);
-		int prevEnd = 0;
-		while (matcher.find()) {
-			final String prev = str.substring(prevEnd, matcher.start());
-			final String[] args = matcher.group(1).split(";");
-			if (args.length == 0 || args.length % 2 != 0)
-				return null;
-			res.append(TextComponent.fromLegacyText(prev), FormatRetention.FORMATTING).append(getAppliedContent(matcher.group(2), args));
-			prevEnd = matcher.end();
-		}
-		return prevEnd != 0 ? res.append(TextComponent.fromLegacyText(str.substring(prevEnd))).create() : TextComponent.fromLegacyText(str);
+	@Nonnull
+	public static BaseComponent[] applyEventPatterns(@Nonnull String str) {
+		final FormatRetention ret = FormatRetention.FORMATTING;
+		final ComponentBuilder builder = new ComponentBuilder();
+		return searchEventPatterns(str, txt -> builder.append(txt, ret), (event, txt) -> applyEvents(builder, event, txt)) ?
+				builder.create() : TextComponent.fromLegacyText(str);
 	}
 
-	private static BaseComponent[] getAppliedContent(String text, String[] args) {
-		BaseComponent[] content = TextComponent.fromLegacyText(text);
-		for (int i = 0; i < args.length; i += 2) {
-			content = switch (args[i].toLowerCase()) {
-			case "text", "show_text" -> new Hover(HoverEvent.Action.SHOW_TEXT, args[i + 1]).apply(content);
-			case "item", "show_item" -> new Hover(HoverEvent.Action.SHOW_ITEM, args[i + 1]).apply(content);
-			case "entity", "show_entity" -> new Hover(HoverEvent.Action.SHOW_ENTITY, args[i + 1]).apply(content);
-			case "url", "open_url" -> new Click(ClickEvent.Action.OPEN_URL, args[i + 1]).apply(content);
-			case "file", "open_file" -> new Click(ClickEvent.Action.OPEN_FILE, args[i + 1]).apply(content);
-			case "run", "run_cmd", "run_command" -> new Click(ClickEvent.Action.RUN_COMMAND, args[i + 1]).apply(content);
-			case "suggest", "suggest_cmd", "suggest_command" -> new Click(ClickEvent.Action.SUGGEST_COMMAND, args[i + 1]).apply(content);
-			case "copy", "copy_to_clipboard" -> new Click(ClickEvent.Action.COPY_TO_CLIPBOARD, args[i + 1]).apply(content);
-			default -> content;
+	private static void applyEvents(ComponentBuilder builder, String eventData, String text) {
+		final List<String> eventList = splitEvents(eventData);
+		final int safeLen = eventList.size() - 1;
+		builder.append(text, FormatRetention.FORMATTING);
+		for (int i = 0; i < safeLen; i += 2) {
+			switch (eventList.get(i).toLowerCase()) {
+			case "text", "show_text" -> builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(eventList.get(i + 1))));
+			case "url", "open_url" -> builder.event(new ClickEvent(ClickEvent.Action.OPEN_URL, eventList.get(i + 1)));
+			case "file", "open_file" -> builder.event(new ClickEvent(ClickEvent.Action.OPEN_FILE, eventList.get(i + 1)));
+			case "run", "run_cmd", "run_command" -> builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, eventList.get(i + 1)));
+			case "suggest", "suggest_cmd", "suggest_command" -> builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, eventList.get(i + 1)));
+			case "copy", "copy_to_clipboard" -> builder.event(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, eventList.get(i + 1)));
 			};
 		}
-		return content;
+	}
+
+	// Utility method to split events ignoring string literals, for example
+	// text;"x;y;z" will be split as ["text", "x;y;z"]
+	private static List<String> splitEvents(String eventData) {
+		final List<String> eventList = new ArrayList<>();
+		boolean literal = false;
+		StringBuilder current = new StringBuilder();
+		for (int i = 0; i < eventData.length(); i++) {
+			final char ch = eventData.charAt(i);
+			if (ch == '"')
+				literal = !literal;
+			else if (ch == ';' && !literal) {
+				eventList.add(current.toString());
+				current = new StringBuilder();
+			} else
+				current.append(ch);
+		}
+		if (!current.isEmpty())
+			eventList.add(current.toString());
+		return eventList;
+	}
+
+	// Search utility //
+
+	private static boolean searchEventPatterns(String str, Consumer<String> append, BiConsumer<String, String> replace) {
+		final int first = str.indexOf('<');
+		if (first == -1)
+			return false;
+		int lastAppend = 0;
+		for (int start = first; start != -1; start = str.indexOf('<', start + 1)) {
+			final int eventEnd = str.indexOf('>', start);
+			if (eventEnd == -1)
+				continue;
+			final int textEnd = str.indexOf("\\>", eventEnd);
+			if (textEnd == -1)
+				continue;
+			append.accept(str.substring(lastAppend, start));
+			replace.accept(str.substring(start + 1, eventEnd), str.substring(eventEnd + 1, textEnd));
+			lastAppend = textEnd + 2;
+		}
+		if (lastAppend != str.length())
+			append.accept(str.substring(lastAppend));
+		return true;
 	}
 
 	/*

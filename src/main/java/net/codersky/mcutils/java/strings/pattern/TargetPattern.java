@@ -7,8 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import net.codersky.mcutils.java.strings.pattern.format.ActionBarTargetPattern;
-import net.codersky.mcutils.java.strings.pattern.format.PlayerConsoleTargetPattern;
+import net.codersky.mcutils.java.strings.pattern.target.ActionBarTargetPattern;
+import net.codersky.mcutils.java.strings.pattern.target.PlayerConsoleTargetPattern;
 
 /**
  * Represents a color pattern which can used to filter parts of a message that

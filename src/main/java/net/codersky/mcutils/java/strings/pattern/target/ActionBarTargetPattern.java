@@ -1,4 +1,4 @@
-package net.codersky.mcutils.java.strings.pattern.format;
+package net.codersky.mcutils.java.strings.pattern.target;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
