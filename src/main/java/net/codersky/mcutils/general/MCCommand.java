@@ -51,9 +51,9 @@ import net.codersky.mcutils.storage.StorageHandler;
 public abstract class MCCommand<P extends MCPlugin> extends Command implements PluginIdentifiableCommand, TabExecutor {
 
 	private final P plugin;
-	private final HashMap<MCCommand<?>, Integer> subCommands = new HashMap<>();
-
 	private Class<?> senderClass = null;
+	private boolean removeEvents = true;
+	private final HashMap<MCCommand<?>, Integer> subCommands = new HashMap<>();
 
 	/**
 	 * Creates a new instance of a {@link MCCommand} with the
@@ -93,6 +93,121 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	public final P getPlugin() {
 		return plugin;
 	}
+
+	/*
+	 * Methods to modify MCCommand behavior
+	 */
+
+	// Sender class //
+
+	/**
+	 * Checks if <b>sender</b> is allowed to use this command,
+	 * check {@link #setSenderClass(Class)} for more information.
+	 * 
+	 * @param sender the sender to check.
+	 * 
+	 * @return true if <b>sender</b>'s class is allowed, false otherwise.
+	 * 
+	 * @throws NullPointerException if <b>sender</b> is null.
+	 * 
+	 * @since MCUtils 1.0.0
+	 */
+	public final boolean isAllowed(@Nonnull CommandSender sender) {
+		return senderClass == null ? true : senderClass.isAssignableFrom(sender.getClass());
+	}
+
+	/**
+	 * Sets the allowed {@link CommandSender} class, this means that only
+	 * {@link CommandSender senders} from the specified <b>senderClass</b> will be
+	 * able to run or tab complete this command. For other classes MCUtils directly won't
+	 * call {@link #onCommand(CommandSender, String[])} nor {@link #onTab(CommandSender, String[])}
+	 * for that command, so you don't have to worry about {@link ClassCastException}.
+	 * You can allow either the {@link Player} class or the {@link ConsoleCommandSender} class
+	 * to make player or console only commands, using <code>null</code> (The default
+	 * value) will remove any restrictions.
+	 * <p>
+	 * Note that the parent command will always take priority with this, meaning that if the
+	 * sender has access to a sub command but not to the parent command, the sender won't
+	 * have access anyways as the parent command won't allow it.
+	 * <p>
+	 * For command execution, both commands and sub commands work the same way, respecting
+	 * priority, the first command to allow a sender class will send it a custom message specified
+	 * by MCUtils at messages.yml, this message may vary if the sender is a player or the console.
+	 * <p>
+	 * Regarding restricted tab completion, commands and sub commands behave a bit differently, both will
+	 * suggest {@code null} to the sender on their own tab completions, however, if the sender is tab completing
+	 * a parent command that has one or more sub commands that don't match the sender class, <b>only</b>
+	 * those sub commands will be removed from the parent suggestions.
+	 * <p>
+	 * As additional information, using the {@link CommandSender} class itself won't have any effect
+	 * as that would make the command impossible to use.
+	 * 
+	 * @param <T> Must be {@link Player} or {@link ConsoleCommandSender}
+	 * @param senderClass the class to restrict from using this command.
+	 * 
+	 * @return This {@link MCCommand}
+	 * 
+	 * @see Player#getClass()
+	 * @see ConsoleCommandSender#getClass()
+	 */
+	@Nonnull
+	public <T extends CommandSender> MCCommand<P> setSenderClass(@Nullable Class<T> senderClass) {
+		if (senderClass == null || !senderClass.equals(CommandSender.class))
+			this.senderClass = senderClass;
+		return this;
+	}
+
+	// Event pattern removal //
+
+	/**
+	 * Returns whether this {@link MCCommand} removes
+	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
+	 * from string getters or not. This is enabled by default and it is recommended.
+	 * <p>
+	 * Keep in mind that this doesn't modify the {@code args} {@link String} array from the
+	 * {@link #onCommand(CommandSender, String[])} and {@link #onTab(CommandSender, String[])}
+	 * methods but instead affects string getter methods such as {@link #asString(int, String[])},
+	 * methods that convert arguments to other objects such as {@link #asNumber(int, String[], Class)}
+	 * remain unaffected because they don't have this issue.
+	 * 
+	 * @return Returns whether this {@link MCCommand} removes
+	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
+	 * from string getters or not.
+	 * 
+	 * @sinc MCUtils 1.0.0
+	 * 
+	 * @see #setEventPatternRemoval(boolean)
+	 */
+	public boolean removesEventPatterns() {
+		return this.removeEvents;
+	}
+
+	/**
+	 * Sets whether this {@link MCCommand} removes
+	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
+	 * from string getters or not. This is enabled by default and it is recommended.
+	 * <p>
+	 * Keep in mind that this doesn't modify the {@code args} {@link String} array from the
+	 * {@link #onCommand(CommandSender, String[])} and {@link #onTab(CommandSender, String[])}
+	 * methods but instead affects string getter methods such as {@link #asString(int, String[])},
+	 * methods that convert arguments to other objects such as {@link #asNumber(int, String[], Class)}
+	 * remain unaffected because they don't have this issue.
+	 * 
+	 * @param removeEvents whether to enable this feature or not.
+	 * 
+	 * @return This {@link MCCommand}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #removesEventPatterns()
+	 */
+	@Nonnull
+	public MCCommand<P> setEventPatternRemoval(boolean removeEvents) {
+		this.removeEvents = removeEvents;
+		return this;
+	}
+
+	// Sub-commands //
 
 	/**
 	 * Inject the specified <b>commands</b> to a certain argument <b>position</b>
@@ -147,61 +262,84 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 		return commands;
 	}
 
-	/**
-	 * Sets the allowed {@link CommandSender} class, this means that only
-	 * {@link CommandSender senders} from the specified <b>senderClass</b> will be
-	 * able to run or tab complete this command. For other classes MCUtils directly won't
-	 * call {@link #onCommand(CommandSender, String[])} nor {@link #onTab(CommandSender, String[])}
-	 * for that command, so you don't have to worry about {@link ClassCastException}.
-	 * You can allow either the {@link Player} class or the {@link ConsoleCommandSender} class
-	 * to make player or console only commands, using <code>null</code> (The default
-	 * value) will remove any restrictions.
-	 * <p>
-	 * Note that the parent command will always take priority with this, meaning that if the
-	 * sender has access to a sub command but not to the parent command, the sender won't
-	 * have access anyways as the parent command won't allow it.
-	 * <p>
-	 * For command execution, both commands and sub commands work the same way, respecting
-	 * priority, the first command to allow a sender class will send it a custom message specified
-	 * by MCUtils at messages.yml, this message may vary if the sender is a player or the console.
-	 * <p>
-	 * Regarding restricted tab completion, commands and sub commands behave a bit differently, both will
-	 * suggest {@code null} to the sender on their own tab completions, however, if the sender is tab completing
-	 * a parent command that has one or more sub commands that don't match the sender class, <b>only</b>
-	 * those sub commands will be removed from the parent suggestions.
-	 * <p>
-	 * As additional information, using the {@link CommandSender} class itself won't have any effect
-	 * as that would make the command impossible to use.
-	 * 
-	 * @param <T> Must be {@link Player} or {@link ConsoleCommandSender}
-	 * @param senderClass the class to restrict from using this command.
-	 * 
-	 * @return This {@link MCCommand}
-	 * 
-	 * @see Player#getClass()
-	 * @see ConsoleCommandSender#getClass()
+	/*
+	 * Command execution
 	 */
-	@Nonnull
-	public <T extends CommandSender> MCCommand<P> setSenderClass(@Nullable Class<T> senderClass) {
-		if (senderClass == null || !senderClass.equals(CommandSender.class))
-			this.senderClass = senderClass;
-		return this;
-	}
+
+	// Custom access //
 
 	/**
-	 * Checks if <b>sender</b> is allowed to use this command,
-	 * check {@link #setSenderClass(Class)} for more information.
+	 * A custom access check for other classes that may extend
+	 * {@link MCCommand} or {@link MCSubCommand}, allowing them
+	 * to filter senders with custom rules without having to
+	 * code {@link #onCommand(CommandSender, String[])} and
+	 * {@link #onTab(CommandSender, String[])} themselves.
+	 * By default, with MCUtils, this method always returns
+	 * true. Note that this access check is only done after
+	 * {@link #isAllowed(CommandSender)} returns false,
+	 * so there is no need to implement that here either.
+	 * <p>
+	 * <b>Handling by MCUtils:</b> If this method returns false, MCUtils
+	 * will return null when tab completing and will do nothing
+	 * as if the command was never sent on command. You can identify
+	 * whether the <b>sender</b> is tab completing or sending the
+	 * command with the <b>message</b> parameter to send any needed
+	 * message if the sender isn't allowed to run the command.
 	 * 
-	 * @param sender the sender to check.
+	 * @param sender the {@link CommandSender} to check.
+	 * @param message whether a message should be sent to
+	 * the <b>sender</b>. This will be false {@link #onTab(CommandSender, String[])}
+	 * and will be true {@link #onCommand(CommandSender, String[])},
+	 * as MCUtils won't send any message to the <b>sender</b>.
 	 * 
-	 * @return true if <b>sender</b>'s class is allowed, false otherwise.
-	 * 
-	 * @throws NullPointerException if <b>sender</b> is null.
+	 * @return Always true by default, classes other than
+	 * {@link MCCommand} and {@link MCSubCommand} should
+	 * change this.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public final boolean isAllowed(@Nonnull CommandSender sender) {
-		return senderClass == null ? true : senderClass.isAssignableFrom(sender.getClass());
+	public boolean hasAccess(@Nonnull CommandSender sender, boolean message) {
+		return true;
+	}
+
+	// onCommand methods //
+
+	/**
+	 * Called automatically when a {@link CommandSender} executes this command,
+	 * note that {@link MessagesFile}'s "send methods" will always return true
+	 * so you can send a custom message to the sender if the command was used
+	 * incorrectly and keep your code clean at the same time.
+	 * 
+	 * @param sender the {@link CommandSender} that sent this command, can be
+	 * the server {@link ConsoleCommandSender console} itself or a {@link Player}.
+	 * @param args the arguments used on this command <b>not</b> including the command
+	 * name, may be empty if no arguments were specified.
+	 * 
+	 * @return Should always be true if you want to send custom error messages handled
+	 * by a {@link MessagesFile}, returning false will fallback to the usage message
+	 * for this command specified at plugin.yml or just the command name if no message
+	 * is specified there.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #onTab(CommandSender, String[])
+	 * @see MessagesFile#send(CommandSender, String)
+	 * @see #asString(int, String[])
+	 * @see #asInt(int, String[])
+	 * @see #asPlayer(int, String[])
+	 * @see #asOfflinePlayer(int, String[])
+	 * @see #asEnum(int, String[], Class)
+	 */
+	@Nullable
+	public abstract boolean onCommand(@Nonnull CommandSender sender, @Nonnull String[] args);
+
+	/** @deprecated In favor of {@link #onCommand(CommandSender, String[])}
+	 * @hidden */
+	@Deprecated
+	@Override
+	@Internal
+	public final boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		return execute(sender, label, args);
 	}
 
 	/** @deprecated In favor of {@link #onCommand(CommandSender, String[])}
@@ -237,35 +375,23 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 		sender.sendMessage(MCStrings.applyColor(msg.toString()));
 	}
 
-	/** @deprecated In favor of {@link #onCommand(CommandSender, String[])}
-	 * @hidden */
-	@Deprecated
-	@Override
-	@Internal
-	public final boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		return execute(sender, label, args);
-	}
+	// Tab complete handling //
 
 	/**
-	 * Called automatically when a {@link CommandSender} executes this command,
-	 * note that {@link MessagesFile}'s "send methods" will always return true
-	 * so you can send a custom message to the sender if the command was used
-	 * incorrectly and keep your code clean at the same time.
+	 * Called automatically when a {@link CommandSender} tab completes this command.
 	 * 
 	 * @param sender the {@link CommandSender} that sent this command, can be
 	 * the server {@link ConsoleCommandSender console} itself or a {@link Player}.
 	 * @param args the arguments used on this command <b>not</b> including the command
 	 * name, may be empty if no arguments were specified.
 	 * 
-	 * @return Should always be true if you want to send custom error messages handled
-	 * by a {@link MessagesFile}, returning false will fallback to the usage message
-	 * for this command specified at plugin.yml or just the command name if no message
-	 * is specified there.
+	 * @return The list of suggestions to display to the <b>sender</b>, can be null but
+	 * some servers, depending on configuration, will suggest online player names if null
+	 * is returned.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #onTab(CommandSender, String[])
-	 * @see MessagesFile#send(CommandSender, String)
+	 * @see #onCommand(CommandSender, String[])
 	 * @see #asString(int, String[])
 	 * @see #asInt(int, String[])
 	 * @see #asPlayer(int, String[])
@@ -273,7 +399,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 * @see #asEnum(int, String[], Class)
 	 */
 	@Nullable
-	public abstract boolean onCommand(@Nonnull CommandSender sender, @Nonnull String[] args);
+	public abstract List<String> onTab(@Nonnull CommandSender sender, @Nonnull String[] args);
 
 	/** @deprecated In favor of {@link #onTab(CommandSender, String[])}
 	 * @hidden */
@@ -316,64 +442,6 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 			return tabs;
 		String argLow = arg.toLowerCase();
 		return MCLists.filter(tab -> tab.toLowerCase().startsWith(argLow), tabs);
-	}
-
-	/**
-	 * Called automatically when a {@link CommandSender} tab completes this command.
-	 * 
-	 * @param sender the {@link CommandSender} that sent this command, can be
-	 * the server {@link ConsoleCommandSender console} itself or a {@link Player}.
-	 * @param args the arguments used on this command <b>not</b> including the command
-	 * name, may be empty if no arguments were specified.
-	 * 
-	 * @return The list of suggestions to display to the <b>sender</b>, can be null but
-	 * some servers, depending on configuration, will suggest online player names if null
-	 * is returned.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #onCommand(CommandSender, String[])
-	 * @see #asString(int, String[])
-	 * @see #asInt(int, String[])
-	 * @see #asPlayer(int, String[])
-	 * @see #asOfflinePlayer(int, String[])
-	 * @see #asEnum(int, String[], Class)
-	 */
-	@Nullable
-	public abstract List<String> onTab(@Nonnull CommandSender sender, @Nonnull String[] args);
-
-	/**
-	 * A custom access check for other classes that may extend
-	 * {@link MCCommand} or {@link MCSubCommand}, allowing them
-	 * to filter senders with custom rules without having to
-	 * code {@link #onCommand(CommandSender, String[])} and
-	 * {@link #onTab(CommandSender, String[])} themselves.
-	 * By default, with MCUtils, this method always returns
-	 * true. Note that this access check is only done after
-	 * {@link #isAllowed(CommandSender)} returns false,
-	 * so there is no need to implement that here either.
-	 * <p>
-	 * <b>Handling by MCUtils:</b> If this method returns false, MCUtils
-	 * will return null when tab completing and will do nothing
-	 * as if the command was never sent on command. You can identify
-	 * whether the <b>sender</b> is tab completing or sending the
-	 * command with the <b>message</b> parameter to send any needed
-	 * message if the sender isn't allowed to run the command.
-	 * 
-	 * @param sender the {@link CommandSender} to check.
-	 * @param message whether a message should be sent to
-	 * the <b>sender</b>. This will be false {@link #onTab(CommandSender, String[])}
-	 * and will be true {@link #onCommand(CommandSender, String[])},
-	 * as MCUtils won't send any message to the <b>sender</b>.
-	 * 
-	 * @return Always true by default, classes other than
-	 * {@link MCCommand} and {@link MCSubCommand} should
-	 * change this.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public boolean hasAccess(@Nonnull CommandSender sender, boolean message) {
-		return true;
 	}
 
 	/*
@@ -528,7 +596,8 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 	 */
 	@Nullable
 	public String asString(@Nonnegative int arg, @Nonnull String[] args, @Nullable String def) {
-		return args.length > arg ? args[arg] : def;
+		final String result = args.length > arg ? args[arg] : def;
+		return result != null && removeEvents ? MCStrings.removeEventPatterns(result, true) : def;
 	}
 
 	/**
@@ -619,7 +688,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 			return def;
 		final StringBuffer buff = new StringBuffer().append(str);
 		for (int i = fromArg + 1; i < args.length; i++)
-			buff.append(' ').append(args[i]);
+			buff.append(' ').append(removeEvents ? MCStrings.removeEventPatterns(args[i], true) : args[i]);
 		return buff.toString();
 	}
 
@@ -712,7 +781,7 @@ public abstract class MCCommand<P extends MCPlugin> extends Command implements P
 			return def;
 		final List<String> lst = new ArrayList<>(args.length - fromArg);
 		for (int i = fromArg + 1; i < args.length; i++)
-			lst.add(args[i]);
+			lst.add(removeEvents ? MCStrings.removeEventPatterns(args[i], true) : args[i]);
 		return lst;
 	}
 
