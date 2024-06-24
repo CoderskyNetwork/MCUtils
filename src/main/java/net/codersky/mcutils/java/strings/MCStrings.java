@@ -91,6 +91,76 @@ public abstract class MCStrings {
 	 * Event patterns
 	 */
 
+	// Remove //
+
+	/**
+	 * Removes all <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
+	 * from the specified {@link String}. This can be used to prevent users from using event patterns
+	 * on unintended places, this is recommended to be used when getting user input that may be sent on
+	 * a chat message later on. This method will just return {@code str} if the '<' character
+	 * isn't found on {@code str}.
+	 * <p>
+	 * Strict mode is disabled on this method, see {@link #removeEventPatterns(String, boolean)}.
+	 * 
+	 * @param str the {@link String} to remove
+	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a> from.
+	 * 
+	 * @return The specified {@link String} with all
+	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a> removed from it.
+	 * 
+	 * @throws NullPointerException if {@code str} is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #removeEventPatterns(String, boolean)
+	 */
+	@Nonnull
+	public static String removeEventPatterns(@Nonnull String str) {
+		return removeEventPatterns(str, false);
+	}
+
+	/**
+	 * Removes all <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
+	 * from the specified {@link String}. This can be used to prevent users from using event patterns
+	 * on unintended places, this is recommended to be used when getting user input that may be sent on
+	 * a chat message later on. This method will just return {@code str} if the '<' character
+	 * isn't found on {@code str}.
+	 * 
+	 * @param str the {@link String} to remove
+	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a> from.
+	 * @param strict whether to enable strict mode or not. Strict mode checks if valid event patterns
+	 * are actually present on {@code str}, not using strict mode will skip this check so "&#60random text>text\>"
+	 * would be replaced with "text"
+	 * 
+	 * @return The specified {@link String} with all
+	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a> removed from it.
+	 * 
+	 * @throws NullPointerException if {@code str} is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #removeEventPatterns(String)
+	 */
+	@Nonnull
+	public static String removeEventPatterns(@Nonnull String str, boolean strict) {
+		final StringBuilder builder = new StringBuilder();
+		if (!strict)
+			return searchEventPatterns(str, txt -> builder.append(txt), (event, txt) -> builder.append(txt)) ? builder.toString() : str;
+		return searchEventPatterns(str, txt -> builder.append(txt), (event, txt) -> {
+			final List<String> ids = Arrays.asList("url", "open_url", "file", "open_file", "run", "run_cmd",
+					"run_command", "suggest", "suggest_cmd","suggest_command", "copy", "copy_to_clipboard");
+			final List<String> eventList = splitEvents(event);
+			final int safeLen = eventList.size() - 1;
+			for (int i = 0; i < safeLen; i += 2) {
+				if (ids.contains(eventList.get(i).toLowerCase())) {
+					builder.append(txt);
+					return;
+				}
+			}
+			builder.append("<" + event + ">" + txt + "\\>");
+		}) ? builder.toString() : str;
+	}
+
 	// Apply //
 
 	/**
