@@ -21,18 +21,10 @@ import com.google.common.collect.Lists;
 import net.codersky.mcutils.java.math.MCNumbers;
 
 /**
- * A class with utilities for lists, we
- * recommend using this class with {@link Arrays}
- * and {@link Lists}, it is unlikely that we will
- * ever add methods that already exist on those classes,
- * unless we want to expand a method such as {@link #asList(Object...)},
- * which is present on {@link Arrays} but offers more parameters
- * on this class.
- * 
- * @author xDec0de_
- *
- * @since MCUtils 1.0.0
+ * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+ * class will be removed before 1.0.0 releases</b>
  */
+@Deprecated(forRemoval = true)
 public abstract class MCLists {
 
 	/*
@@ -40,20 +32,12 @@ public abstract class MCLists {
 	 */
 
 	/**
-	 * Creates a modifiable list of any number of <b>elements</b>.
-	 * If <b>elements</b> is null, an empty list will be returned.
-	 * The capacity of the returned list will be the length of <b>elements</b>.
-	 * 
-	 * @param <E> the type of elements of the new {@link List}.
-	 * @param elements the elements of the new {@link List}.
-	 * 
-	 * @return A never null, modifiable list with the specified <b>elements</b>,
-	 * an empty list if <b>elements</b> is null.
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
 	 */
 	@Nonnull
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <E> List<E> asList(E... elements) {
 		if (elements == null)
 			return new ArrayList<E>(0);
@@ -64,21 +48,12 @@ public abstract class MCLists {
 	}
 
 	/**
-	 * Creates a modifiable list from any number of <b>arrays</b>.
-	 * If <b>arrays</b> is null, an empty list will be returned.
-	 * Note that this method doesn't create a list of arrays but
-	 * a list of the <b>elements of all arrays</b>.
-	 * 
-	 * @param <E> the type of elements of the new {@link List}.
-	 * @param arrays the arrays that will be added to the new {@link List}.
-	 * 
-	 * @return A never null, modifiable list with the specified <b>elements</b>,
-	 * an empty list if <b>elements</b> is null.
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
 	 */
 	@Nonnull
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <E> List<E> asList(E[]... arrays) {
 		if (arrays == null)
 			return new ArrayList<E>(0);
@@ -92,19 +67,12 @@ public abstract class MCLists {
 	}
 
 	/**
-	 * Creates a modifiable list of any number of <b>iterators</b>.
-	 * 
-	 * @param <E> the type of elements of the {@link Iterator}.
-	 * @param iterators the {@link Iterator iterators} to use.
-	 * 
-	 * @return Any number of <b>iterators</b> as a {@link ArrayList list}.
-	 * 
-	 * @throws NullPointerException if any {@link Iterator} from <b>iterators</b> is null.
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
 	 */
 	@Nonnull
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <E> List<E> asList(@Nonnull Iterator<E>... iterators) {
 		if (iterators == null)
 			return new ArrayList<E>(0);
@@ -116,25 +84,12 @@ public abstract class MCLists {
 	}
 
 	/**
-	 * Creates a modifiable list from the specified <b>array</b>,
-	 * then, adds any additional <b>elements</b> to it.
-	 * 
-	 * @param <E> the type of elements of the new {@link List}.
-	 * 
-	 * @param array the base array to use for the list, if null, only
-	 * <b>elements</b> will be added to the list, although we recommend
-	 * just using {@link #asList(Object...)} in that case.
-	 * @param elements any other elements to add to the list, if null,
-	 * the list will only contain the elements of <b>arr</b>.
-	 * 
-	 * @return A list with all the elements of the specified <b>array</b>
-	 * and any other <b>elements</b> added to it, empty if both <b>array</b>
-	 * and <b>elements</b> are null or empty.
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
 	 */
 	@Nonnull
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <E> List<E> asList(@Nullable E[] array, @Nullable E... elements) {
 		final List<E> result = new ArrayList<E>();
 		if (array != null)
@@ -151,21 +106,12 @@ public abstract class MCLists {
 	 */
 
 	/**
-	 * Adds all the specified <b>elements</b> to the specified <b>list</b>.
-	 * 
-	 * @param <E> the type of elements of <b>list</b>.
-	 * @param list the base list to use.
-	 * @param elements the elements to add to the new list.
-	 * 
-	 * @return A <b>new</b> modifiable {@link ArrayList list} with the specified
-	 * <b>elements</b> added to it, if <b>list</b> is null, null will be returned.
-	 * 
-	 * @throws UnsupportedOperationException if the add operation is not supported by <b>list</b>
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
 	 */
 	@Nullable
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <E> List<E> add(@Nonnull List<E> list, @Nullable E... elements) {
 		if (list == null)
 			return null;
@@ -177,20 +123,11 @@ public abstract class MCLists {
 	}
 
 	/**
-	 * Adds all the elements of the specified <b>arrays</b> to the specified <b>list</b>.
-	 * 
-	 * @param <E> the type of elements of <b>list</b>.
-	 * @param list the base list to use.
-	 * @param arrays the arrays to get the elements to add to the new list.
-	 * 
-	 * @return A <b>new</b> modifiable {@link ArrayList list} with the elements of all
-	 * <b>arrays</b> added to it, if <b>list</b> is null, null will be returned.
-	 * 
-	 * @throws UnsupportedOperationException if the add operation is not supported by <b>list</b>
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
 	 */
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <E> List<E> add(@Nonnull List<E> list, @Nullable E[]... arrays) {
 		if (list == null)
 			return null;
@@ -203,23 +140,12 @@ public abstract class MCLists {
 	}
 
 	/**
-	 * Adds all the elements of the specified <b>collections</b> to the
-	 * specified <b>list</b>. If you only want to add one {@link Collection},
-	 * then {@link List#addAll(Collection)} is recommended over this method.
-	 * 
-	 * @param <E> the type of elements of <b>list</b>.
-	 * @param list the base list to use.
-	 * @param collections the collections to get the elements to add to the new list.
-	 * 
-	 * @return A <b>new</b> modifiable {@link ArrayList list} with the elements of all
-	 * <b>collections</b> added to it, if <b>list</b> is null, null will be returned.
-	 * 
-	 * @throws UnsupportedOperationException if the add operation is not supported by <b>list</b>
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
 	 */
 	@Nullable
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <E> List<E> add(@Nonnull List<E> list, @Nonnull Collection<E>... collections) {
 		if (list == null)
 			return null;
@@ -234,19 +160,39 @@ public abstract class MCLists {
 	 * Filtering
 	 */
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
+	@Deprecated(forRemoval = true)
 	public static <T> Collection<T> filter(Predicate<T> predicate, Collection<T> collections) {
 		return collections.stream().filter(predicate).toList();
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
+	@Deprecated(forRemoval = true)
 	public static <T> Set<T> filter(Predicate<T> predicate, Set<T> collections) {
 		return collections.stream().filter(predicate).collect(Collectors.toSet());
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
+	@Deprecated(forRemoval = true)
 	public static <T> List<T> filter(Predicate<T> predicate, List<T> lst) {
 		return lst.stream().filter(predicate).toList();
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <T> List<T> filter(Predicate<T> predicate, T... elements) {
 		return filter(predicate, asList(elements));
 	}
@@ -256,23 +202,11 @@ public abstract class MCLists {
 	 */
 
 	/**
-	 * This method doesn't use {@link Stream Streams} as you may expect but
-	 * instead iterates over all <b>lists</b> and applies <b>function</b> to every
-	 * element of them, adding the results to a new {@link ArrayList list}, returning
-	 * that new modifiable {@link ArrayList list}.
-	 * 
-	 * @param <T> the type of the input to the mapper {@link Function}.
-	 * @param <R> the type of the result of the mapper {@link Function}.
-	 * @param mapper the {@link Function} used to map the elements of all <b>lists</b>.
-	 * @param lists the lists to be mapped for the new list.
-	 * 
-	 * @return
-	 * 
-	 * @throws NullPointerException If <b>mapper</b> or <b>lists</b> are null. Also this exception
-	 * may be thrown if <b>mapper</b> doesn't accept null parameters but any element of the specified
-	 * <b>lists</b> contains a null element, this last case is <b>NOT</b> controlled by MCUtils.
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
 	 */
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <R, T> List<R> map(@Nonnull Function<T, R> mapper, @Nonnull List<T>... lists) {
 		List<R> result = new ArrayList<>();
 		for (List<T> list : lists)
@@ -281,6 +215,11 @@ public abstract class MCLists {
 		return result;
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
+	@Deprecated(forRemoval = true)
 	public static <R, T> List<R> map(@Nonnull Function<T, R> mapper, @Nonnull Collection<T> collection) {
 		List<R> result = new ArrayList<>();
 		for (T element : collection)
@@ -288,6 +227,11 @@ public abstract class MCLists {
 		return result;
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
+	@Deprecated(forRemoval = true)
 	public static <R, T> Set<R> map(@Nonnull Function<T, R> mapper, @Nonnull Set<T> set) {
 		Set<R> result = new HashSet<>();
 		for (T element : set)
@@ -295,7 +239,12 @@ public abstract class MCLists {
 		return result;
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <R, T> List<R> map(@Nonnull Function<T, R> mapper, @Nonnull T... elements) {
 		return map(mapper, asList(elements));
 	}
@@ -304,6 +253,11 @@ public abstract class MCLists {
 	 * Removing
 	 */
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
+	@Deprecated(forRemoval = true)
 	public static <T> List<T> remove(List<T> lst, List<T> elements) {
 		if (elements == null)
 			return lst;
@@ -312,11 +266,17 @@ public abstract class MCLists {
 		return lst;
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
 	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	public static <T> List<T> remove(List<T> lst, T... elements) {
 		return remove(lst, Arrays.asList(elements));
 	}
 
+	@Deprecated(forRemoval = true)
 	public static <T> List<T> removeDuplicates(List<T> lst) {
 		List<T> result = new ArrayList<>(lst.size());
 		for (T element : lst)
@@ -329,6 +289,11 @@ public abstract class MCLists {
 	 * Contains
 	 */
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
+	@Deprecated(forRemoval = true)
 	public static <E> boolean contains(@Nonnull Iterable<E> iterable, @Nonnull Predicate<E> condition) {
 		for (E element : iterable)
 			if (condition.test(element))
@@ -336,6 +301,11 @@ public abstract class MCLists {
 		return false;
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
+	@Deprecated(forRemoval = true)
 	public static <E> boolean contains(@Nonnull E[] array, @Nonnull Predicate<E> condition) {
 		for (E element : array)
 			if (condition.test(element))
@@ -347,7 +317,12 @@ public abstract class MCLists {
 	 * Getters
 	 */
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public static <E> E get(@Nonnull Iterable<E> iterable, @Nonnull Predicate<E> condition, @Nullable E def) {
 		for (E element : iterable)
 			if (condition.test(element))
@@ -355,12 +330,22 @@ public abstract class MCLists {
 		return def;
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public static <E> E get(@Nonnull Iterable<E> iterable, @Nonnull Predicate<E> condition) {
 		return get(iterable, condition, null);
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public static <E> E get(@Nonnull E[] array, @Nonnull Predicate<E> condition, @Nullable E def) {
 		for (E element : array)
 			if (condition.test(element))
@@ -368,7 +353,12 @@ public abstract class MCLists {
 		return def;
 	}
 
+	/**
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
+	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public static <E> E get(@Nonnull E[] array, @Nonnull Predicate<E> condition) {
 		return get(array, condition, null);
 	}
@@ -378,23 +368,11 @@ public abstract class MCLists {
 	 */
 
 	/**
-	 * Gets a random element from the specified {@code list},
-	 * note that a new {@link Random} instance is not being
-	 * created every time this method is called as it uses {@link MCNumbers#random()}.
-	 * If the size of {@code list} is equal to 1, no randomization
-	 * will be done and the first and only element of the {@code list} will be returned.
-	 * 
-	 * @param <E> the type of elements in the {@code list}
-	 * @param list the {@link List} to use.
-	 * 
-	 * @return A random element from the specified {@code list} or
-	 * {@code null} if the {@code list} is {@link List#isEmpty() empty}.
-	 * 
-	 * @throws NullPointerException if {@code list} is {@code null}.
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
 	 */
 	@Nullable
+	@Deprecated(forRemoval = true)
 	public static <E> E getRandomFrom(@Nonnull List<E> list) {
 		final int size = list.size();
 		if (size == 0)
@@ -403,22 +381,10 @@ public abstract class MCLists {
 	}
 
 	/**
-	 * Gets a random element from the specified {@code array},
-	 * note that a new {@link Random} instance is not being
-	 * created every time this method is called as it uses {@link MCNumbers#random()}.
-	 * If the length of {@code array} is equal to 1, no randomization
-	 * will be done and the first and only element of the {@code array} will be returned.
-	 * 
-	 * @param <E> the type of elements in the {@code array}
-	 * @param array the array to use.
-	 * 
-	 * @return A random element from the specified {@code array} or
-	 * {@code null} if the {@code array} length is 0.
-	 * 
-	 * @throws NullPointerException if {@code array} is {@code null}.
-	 * 
-	 * @since MCUtils 1.0.0
+	 * @deprecated <b>Use {@link MCCollections}, a more flexible alternative. This
+	 * class will be removed before 1.0.0 releases</b>
 	 */
+	@Deprecated(forRemoval = true)
 	public static <E> E getRandomFrom(@Nonnull E[] array) {
 		if (array.length == 0)
 			return null;
