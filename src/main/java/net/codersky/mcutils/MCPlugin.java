@@ -45,16 +45,16 @@ import net.codersky.mcutils.worldgen.VoidGenerator;
  * @since MCUtils 1.0.0
  * 
  * @author xDec0de_
- * 
- * @see #getMCPlugin(Class)
+ *
  * @see #registerFile(String, Class)
- * @see #reload(List)
  */
-public class MCPlugin extends JavaPlugin {
+public abstract class MCPlugin extends JavaPlugin {
 
 	private final LinkedList<FileHolder> files = new LinkedList<>();
 	private final HashMap<Feature, SimpleEntry<String, Boolean>> features = new HashMap<>();
-	private GUIHandler guiHandler;
+	private GUIHandler guiHandler = null;
+
+	public abstract void onEnable();
 
 	/**
 	 * Gets the version of MCUtils that this {@link MCPlugin}
@@ -183,7 +183,7 @@ public class MCPlugin extends JavaPlugin {
 			Constructor<T> constructor = type.getConstructor(JavaPlugin.class, String.class);
 			return registerFile(constructor.newInstance(this, path));
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			logException(e, "&8[&4MCUtils&8] &cAn error occured while registering &e"+path+".yml &cfrom &6"+getName()+"&8:");
+			logException(e, "&8[&4MCUtils&8] &cAn error occurred while registering &e"+path+".yml &cfrom &6"+getName()+"&8:");
 			return null;
 		}
 	}
@@ -309,7 +309,6 @@ public class MCPlugin extends JavaPlugin {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #reload()
-	 * @see #reload(List)
 	 * @see #update(List)
 	 */
 	public MCPlugin update() {
@@ -336,7 +335,6 @@ public class MCPlugin extends JavaPlugin {
 	 * @since MCUtils 1.0.0
 	 * 
 	 * @see #reload()
-	 * @see #reload(List)
 	 * @see #update()
 	 */
 	public void update(@Nullable List<String> updateIgnored) {
@@ -370,7 +368,7 @@ public class MCPlugin extends JavaPlugin {
 	 * @since MCUtils 1.0.0
 	 */
 	public boolean logCol(@Nullable String... strings) {
-		for (String str : strings)
+        for (String str : strings)
 			Bukkit.getConsoleSender().sendMessage(MCStrings.applyColor(str));
 		return true;
 	}
@@ -516,8 +514,7 @@ public class MCPlugin extends JavaPlugin {
 	 * many plugins use. Paper has deprecated SimpleCommandMap for removal as of 1.20 though, so we may need
 	 * to make a check there if they were to change it, but we are aware of it, so no worries, just
 	 * make sure to update MCUtils if that ever happens (This will be notified as an important update).
-	 * 
-	 * @param <P> must extend {@link MCPlugin}
+	 *
 	 * @param commands the list of {@link MCCommand commands} to register.
 	 * 
 	 * @return This {@link MCPlugin}.
@@ -608,7 +605,7 @@ public class MCPlugin extends JavaPlugin {
 	 * <b>name</b> and world <b>generator</b>.
 	 * 
 	 * @param name the name of the new {@link World}.
-	 * @param generator the {@link WorldGenerator} of the new {@link World}.
+	 * @param generator the {@link ChunkGenerator} of the new {@link World}.
 	 * 
 	 * @return The newly created or loaded {@link World}, {@code null}
 	 * if <b>name</b> is {@code null}.
@@ -629,7 +626,7 @@ public class MCPlugin extends JavaPlugin {
 	 * <b>name</b>, world <b>generator</b> and <b>biomeProvider</b>.
 	 * 
 	 * @param name the name of the new {@link World}.
-	 * @param generator the {@link WorldGenerator} of the new {@link World}. If
+	 * @param generator the {@link ChunkGenerator} of the new {@link World}. If
 	 * {@code null}, the "natural" generator for the {@link World} will be used.
 	 * @param biomeProvider the {@link BiomeProvider} of the new {@link World}.
 	 * If {@code null}, the {@link BiomeProvider} of the <b>generator</b> will be used,
