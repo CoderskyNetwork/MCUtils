@@ -4,9 +4,13 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
+import net.codersky.mcutils.events.CancellableMCEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import net.codersky.mcutils.events.MCEvent;
+import org.bukkit.event.Event;
+import org.bukkit.plugin.PluginManager;
 
 /**
  * A simple type of {@link MCEvent} that
@@ -61,5 +65,21 @@ public abstract class MCPlayerEvent extends MCEvent {
 	@Nonnull
 	public Player getPlayer() {
 		return player;
+	}
+
+	/**
+	 * Calls this {@link MCPlayerEvent}, a shortcut to
+	 * {@link PluginManager#callEvent(Event)} that returns this
+	 * {@link MCPlayerEvent} to be used further instead of {@code void}.
+	 *
+	 * @return This {@link MCPlayerEvent}.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	@Override
+	public MCPlayerEvent call() {
+		Bukkit.getPluginManager().callEvent(this);
+		return this;
 	}
 }

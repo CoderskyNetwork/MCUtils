@@ -1,8 +1,11 @@
 package net.codersky.mcutils.events;
 
+import net.codersky.mcutils.events.player.MCPlayerEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
+
+import javax.annotation.Nonnull;
 
 /**
  * A very simple {@link Event} class that provides a {@link #call()}
@@ -67,11 +70,13 @@ public abstract class MCEvent extends Event {
 	}
 
 	/**
-	 * Calls this {@link MCEvent}, a shortcut of
-	 * {@link PluginManager#callEvent(Event)}.
+	 * Calls this {@link MCEvent}, a shortcut to
+	 * {@link PluginManager#callEvent(Event)} that returns this
+	 * {@link MCEvent} to be used further instead of {@code void}.
 	 * 
 	 * @return This {@link MCEvent}.
 	 */
+	@Nonnull
 	public MCEvent call() {
 		Bukkit.getPluginManager().callEvent(this);
 		return this;

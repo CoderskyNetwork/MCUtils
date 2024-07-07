@@ -1,9 +1,15 @@
 package net.codersky.mcutils.events.player;
 
+import net.codersky.mcutils.events.CancellableMCEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 
 import net.codersky.mcutils.events.MCEvent;
+import org.bukkit.event.Event;
+import org.bukkit.plugin.PluginManager;
+
+import javax.annotation.Nonnull;
 
 /**
  * A simple type of {@link MCPlayerEvent} that
@@ -40,5 +46,21 @@ public abstract class CancellableMCPlayerEvent extends MCPlayerEvent implements 
 	@Override
 	public void setCancelled(boolean cancel) {
 		this.cancelled = cancel;
+	}
+
+	/**
+	 * Calls this {@link CancellableMCPlayerEvent}, a shortcut to
+	 * {@link PluginManager#callEvent(Event)} that returns this
+	 * {@link CancellableMCPlayerEvent} to be used further instead of {@code void}.
+	 *
+	 * @return This {@link CancellableMCPlayerEvent}.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	@Nonnull
+	@Override
+	public CancellableMCPlayerEvent call() {
+		Bukkit.getPluginManager().callEvent(this);
+		return this;
 	}
 }
