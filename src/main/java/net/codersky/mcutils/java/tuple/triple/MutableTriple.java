@@ -1,10 +1,10 @@
-package net.codersky.mcutils.java.tuple;
+package net.codersky.mcutils.java.tuple.triple;
 
 import javax.annotation.Nullable;
 
 /**
- * An extension of {@link Triple} that allows changing the
- * values of the stored elements, if you need this elements
+ * An implementation of {@link Triple} that allows changing the
+ * values of the stored elements, if you need these elements
  * to be final, use {@link ImmutableTriple}.
  * 
  * @author xDec0de_
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
  * 
  * @see ImmutableTriple
  */
-public class MutableTriple<F, S, T> extends Triple<F, S, T> {
+public class MutableTriple<F, S, T> implements Triple<F, S, T> {
 
 	private F first;
 	private S second;

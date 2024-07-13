@@ -1,9 +1,9 @@
-package net.codersky.mcutils.java.tuple;
+package net.codersky.mcutils.java.tuple.pair;
 
 import javax.annotation.Nullable;
 
 /**
- * An extension of {@link Pair} that doesn't allow the modification
+ * An implementation of {@link Pair} that doesn't allow the modification
  * of its elements, so it doesn't contain setters as
  * {@link MutablePair} does.
  * 
@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
  * 
  * @see MutablePair
  */
-public class ImmutablePair<F, S> extends Pair<F, S> {
+public class ImmutablePair<F, S> implements Pair<F, S> {
 
 	private final F first;
 	private final S second;

@@ -1,9 +1,9 @@
-package net.codersky.mcutils.java.tuple;
+package net.codersky.mcutils.java.tuple.triple;
 
 import javax.annotation.Nullable;
 
 /**
- * An extension of {@link Triple} that doesn't allow the modification
+ * An implementation of {@link Triple} that doesn't allow the modification
  * of its elements, so it doesn't contain setters as
  * {@link MutableTriple} does.
  * 
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
  * 
  * @see MutableTriple
  */
-public class ImmutableTriple<F, S, T> extends Triple<F, S, T> {
+public class ImmutableTriple<F, S, T> implements Triple<F, S, T> {
 
 	private final F first;
 	private final S second;

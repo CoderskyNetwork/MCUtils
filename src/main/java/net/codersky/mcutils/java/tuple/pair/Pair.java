@@ -1,6 +1,4 @@
-package net.codersky.mcutils.java.tuple;
-
-import java.util.Objects;
+package net.codersky.mcutils.java.tuple.pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,32 +15,36 @@ import javax.annotation.Nullable;
  * @param <S> The type of the second element to store.
  * 
  * @since MCUtils 1.0.0
+ *
+ * @see SafePair
+ * @see MutablePair
+ * @see ImmutablePair
  */
-public abstract class Pair<F, S> {
+public interface Pair<F, S> {
 
 	/**
 	 * Gets the first element stored in this {@link Pair},
-	 * which may be {@code null}.
+	 * which may be allowed to be {@code null} or not depending
+	 * on the implementation used.
 	 * 
-	 * @return The first element stored in this {@link Pair},
-	 * possibly {@code null}
+	 * @return The first element stored in this {@link Pair}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public abstract F getFirst();
+	F getFirst();
 
 	/**
 	 * Gets the second element stored in this {@link Pair},
-	 * which may be {@code null}.
+	 * which may be allowed to be {@code null} or not depending
+	 * on the implementation used.
 	 * 
-	 * @return The second element stored in this {@link Pair},
-	 * possibly {@code null}
+	 * @return The second element stored in this {@link Pair}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public abstract S getSecond();
+	S getSecond();
 
 	/**
 	 * Compares the first element of <b>other</b> with the first
@@ -60,7 +62,7 @@ public abstract class Pair<F, S> {
 	 * 
 	 * @see #getFirst()
 	 */
-	public boolean isFirstEqual(@Nonnull Pair<F, ?> other) {
+	default boolean isFirstEqual(@Nonnull Pair<F, ?> other) {
 		return getFirst() == null ? other.getFirst() == null : getFirst().equals(other.getFirst());
 	}
 
@@ -78,33 +80,9 @@ public abstract class Pair<F, S> {
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #geSecond()
+	 * @see #getSecond()
 	 */
-	public boolean isSecondEqual(@Nonnull Pair<?, S> other) {
+	default boolean isSecondEqual(@Nonnull Pair<?, S> other) {
 		return getSecond() == null ? other.getSecond() == null : getSecond().equals(other.getSecond());
-	}
-
-	/*
-	 * Java
-	 */
-
-	@Override
-	public String toString() {
-		return "Pair[" + getFirst() + ", " + getSecond() + "]";
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof Pair))
-			return false;
-		final Pair<?, ?> other = (Pair<?, ?>)obj;
-		boolean first = getFirst() == null ? other.getFirst() == null : getFirst().equals(other.getFirst());
-		boolean second = getSecond() == null ? other.getSecond() == null : getSecond().equals(other.getSecond());
-		return first && second;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(getFirst(), getSecond());
 	}
 }

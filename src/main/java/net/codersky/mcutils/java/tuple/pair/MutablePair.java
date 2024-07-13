@@ -1,10 +1,11 @@
-package net.codersky.mcutils.java.tuple;
+package net.codersky.mcutils.java.tuple.pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * An extension of {@link Pair} that allows changing the
- * values of the stored elements, if you need this elements
+ * An implementation of {@link Pair} that allows changing the
+ * values of the stored elements, if you need these elements
  * to be final, use {@link ImmutablePair}.
  * 
  * @author xDec0de_
@@ -16,7 +17,7 @@ import javax.annotation.Nullable;
  * 
  * @see ImmutablePair
  */
-public class MutablePair<F, S> extends Pair<F, S> {
+public class MutablePair<F, S> implements Pair<F, S> {
 
 	private F first;
 	private S second;
@@ -35,8 +36,8 @@ public class MutablePair<F, S> extends Pair<F, S> {
 		this.second = second;
 	}
 
+	@Nonnull
 	@Override
-	@Nullable
 	public F getFirst() {
 		return first;
 	}
@@ -56,8 +57,8 @@ public class MutablePair<F, S> extends Pair<F, S> {
 		return (this.first = first);
 	}
 
+	@Nonnull
 	@Override
-	@Nullable
 	public S getSecond() {
 		return second;
 	}
