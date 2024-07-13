@@ -363,6 +363,12 @@ public class MCCollections {
 		return target;
 	}
 
+	// Mapping - Collection //
+
+	public static <S, R> Collection<R> map(@Nonnull Collection<S> collection, @Nonnull Function<S, R> mapper) {
+		return map(collection, new ArrayList<>(collection.size()), mapper);
+	}
+
 	// Mapping - Lists //
 
 	@Nonnull
