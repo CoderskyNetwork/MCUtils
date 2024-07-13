@@ -35,7 +35,7 @@ public class InventoryBuilder implements Cloneable {
 	/**
 	 * Tests true if an {@link ItemStack} is null or its type is {@link Material#AIR}
 	 * 
-	 * @see {@link Predicate#negate()} for non empty items.
+	 * @see Predicate#negate() for non-empty items.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */

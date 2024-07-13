@@ -346,7 +346,7 @@ public class ItemBuilder implements Cloneable {
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #removeEnchantment(Enchantment)
+	 * @see #removeEnchantment(Enchantment...)
 	 */
 	@Nonnull
 	public ItemBuilder clearEnchants() {

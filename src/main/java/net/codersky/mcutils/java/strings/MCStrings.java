@@ -13,6 +13,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
 import net.codersky.mcutils.java.MCLists;
@@ -860,7 +861,7 @@ public abstract class MCStrings {
 	 * the specified pattern removed from it, otherwise, a exact copy
 	 * of <b>src</b>.
 	 * 
-	 * @throws NulPointerException if any parameter is null.
+	 * @throws NullPointerException if any parameter is null.
 	 * 
 	 * @see #substring(String, String, String)
 	 * @see #match(String, String, String, Consumer)
@@ -897,7 +898,7 @@ public abstract class MCStrings {
 	 * 
 	 * @return <b>src</b> with any match from the specified pattern removed from it.
 	 * 
-	 * @throws NulPointerException if any parameter is null.
+	 * @throws NullPointerException if any parameter is null.
 	 * 
 	 * @see #substring(String, String, String)
 	 * @see #match(String, String, String, Consumer, boolean)
@@ -928,7 +929,7 @@ public abstract class MCStrings {
 	 * 
 	 * @return <b>src</b> with any match from the specified pattern removed from it.
 	 * 
-	 * @throws NulPointerException if any parameter is null.
+	 * @throws NullPointerException if any parameter is null.
 	 * 
 	 * @see #substring(String, String, String)
 	 * @see #matchAndAccept(String, String, String, Consumer, boolean)
