@@ -8,12 +8,12 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
+import net.codersky.mcutils.java.tuple.pair.ImmutablePair;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import net.codersky.mcutils.java.math.MCNumbers;
-import net.codersky.mcutils.java.tuple.ImmutablePair;
-import net.codersky.mcutils.java.tuple.Pair;
+import net.codersky.mcutils.java.tuple.pair.Pair;
 
 /**
  * A {@link ChanceGenerator} made for {@link ItemStack ItemStacks},
