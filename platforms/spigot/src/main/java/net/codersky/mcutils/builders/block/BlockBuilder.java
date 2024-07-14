@@ -411,3 +411,128 @@ public class BlockBuilder {
 		block.setBlockData(rotatable);
 		return this;
 	}
+
+	/*
+	 * Signs
+	 */
+
+	/**
+	 * Checks if this block is a sign of any type.
+	 * 
+	 * @return True if this block is a sign, false otherwise.
+	 */
+	public boolean isSign() {
+		return block.getState() instanceof org.bukkit.block.Sign;
+	}
+
+	/**
+	 * Checks if this block is a wall sign.
+	 * 
+	 * @return True if this block is a wall sign, false otherwise.
+	 */
+	public boolean isWallSign() {
+		return block.getBlockData() instanceof org.bukkit.block.data.type.WallSign;
+	}
+
+	/**
+	 * Checks if this block is a post sign (Also known as a sign with a stick, attached to the ground).
+	 * 
+	 * @return True if this block is a post sign, false otherwise.
+	 */
+	public boolean isSignPost() {
+		return isSign() && !isWallSign();
+	}
+
+	/**
+	 * <b>Note</b>: This is a Sign specific method, it requires {@link #isSign()} to return true.
+	 * <p>
+	 * Gets all the lines of this sign, note that as of 1.20, signs have two writable sides,
+	 * this method will return the lines of both sides on 1.20+ servers and the front side on older servers.
+	 * 
+	 * @return The lines of this sign, null if {@link #isSign()} returns false.
+	 */
+	@Nullable
+	@SuppressWarnings("deprecation")
+	public List<String> getLines() {
+		if (!isSign())
+			return null;
+		final org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState();
+		if (!MCPlugin.serverSupports("1.20"))
+			return MCLists.asList(sign.getLines());
+		return MCLists.asList(sign.getSide(Side.FRONT).getLines(), sign.getSide(Side.BACK).getLines());
+	}
+
+	/**
+	 * <b>Note</b>: This is a Sign specific method, it requires {@link #isSign()} to return true.
+	 * <p>
+	 * Gets the list of lines at the specified <b>side</b> of this sign, note that this method will
+	 * only return the front side of the sign if the server is on a version older than 1.20, as
+	 * writing on both sides of a sign wasn't a thing back then.
+	 * 
+	 * @param side the {@link SignSide} of the sign to use.
+	 * 
+	 * @return The lines at the specified side, null if {@link #isSign()} returns false.
+	 */
+	@Nullable
+	@SuppressWarnings("deprecation")
+	public List<String> getLines(SignSide side) {
+		if (!isSign())
+			return null;
+		final org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState();
+		return MCLists.asList(MCPlugin.serverSupports("1.20") ? sign.getLines() : sign.getSide(side.bukkit()).getLines());
+	}
+
+	/**
+	 * <b>Note</b>: This is a Sign specific method, it requires {@link #isSign()} to return true.
+	 * <p>
+	 * Gets a specific line at the specified <b>side</b> and <b>index</b> of this sign, note that
+	 * this method will only return lines from the front side of the sign if the server is on a
+	 * version older than 1.20, as writing on both sides of a sign wasn't a thing back then.
+	 * 
+	 * @param index the number of the line to get, starting at 0.
+	 * @param side the {@link SignSide} of the sign to use, irrelevant on servers older than 1.20.
+	 * 
+	 * @throws IndexOutOfBoundsException If the line doesn't exist.
+	 */
+	@Nullable
+	@SuppressWarnings("deprecation")
+	public String getLine(int index, SignSide side) {
+		if (!isSign())
+			return null;
+		if (!MCPlugin.serverSupports("1.20"))
+			return ((org.bukkit.block.Sign) block.getState()).getLine(index);
+		return ((org.bukkit.block.Sign) block.getState()).getSide(side.bukkit()).getLine(index);
+	}
+
+	/**
+	 * <b>Note</b>: This is a Sign specific method, it requires {@link #isSign()} to return true.
+	 * <p>
+	 * Sets the line of text at the specified index on the specified <b>side</b> of the sign,
+	 * will do nothing if this block isn't a Sign.
+	 * <p>
+	 * For example, setLine(0, Side.FRONT, "Line One") will set the first line of the front side
+	 * of the sign to "Line One".
+	 * 
+	 * @param index line number to set the text at, starting from 0.
+	 * @param side the {@link SignSide} of the sign to change.
+	 * @param text the new text of the line.
+	 * 
+	 * @return This {@link BlockBuilder}
+	 * 
+	 * @throws IndexOutOfBoundsException If the index is out of the range 0-3.
+	 */
+	@Nonnull
+	@SuppressWarnings("deprecation")
+	public BlockBuilder setLine(int index, SignSide side, String text) {
+		if (!isSign())
+			return this;
+		org.bukkit.block.Sign sign = ((org.bukkit.block.Sign) block.getState());
+		if (!MCPlugin.serverSupports("1.20"))
+			sign.setLine(index, text);
+		else {
+			sign.getSide(side.bukkit()).setLine(index, text);
+			sign.update();
+		}
+		return this;
+	}
+}
