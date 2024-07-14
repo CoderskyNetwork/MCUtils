@@ -1,0 +1,7 @@
+[versions]
+spigot = "1.20-R0.1-SNAPSHOT"
+jetbrains-annotations = "24.0.0"
+
+[libraries]
+spigot = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
+jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations" }

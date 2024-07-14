@@ -3,7 +3,6 @@ group = "net.codersky"
 version = "1.0.0"
 description = "An open source collection of utilities for Spigot plugins designed to make your life easier"
 
-
 plugins {
 	`java-library`
 }
@@ -12,6 +11,10 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
 	mavenCentral()
+}
+
+dependencies {
+	implementation(libs.jetbrains-annotations)
 }
 
 java {
