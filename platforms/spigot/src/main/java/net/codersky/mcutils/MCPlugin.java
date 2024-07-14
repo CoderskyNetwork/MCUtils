@@ -543,6 +543,28 @@ public abstract class MCPlugin extends JavaPlugin {
 	}
 
 	/**
+	 * Unregisters a command by {@code name}. In order to unregister
+	 * a command, the command must have been registered by this
+	 * plugin, as {@link #getCommand(String)} is used in order to
+	 * get the command to unregister.
+	 * <p>
+	 * <b>Note</b>: This method uses reflection and may be considered
+	 * unsafe by some developers as it breaks the encapsulation principle
+	 * by accessing the internal {@link SimpleCommandMap}
+	 * 
+	 * @param name the name of the command to unregister, using
+	 * aliases won't work.
+	 * 
+	 * @return {@code true} if the command exists, was registered and
+	 * has been unregistered successfully, {@code false} otherwise.
+	 */
+	public boolean unregisterCommand(@Nonnull String name) {
+		final PluginCommand plCommand = getCommand(name);
+		final SimpleCommandMap commandMap = getCommandMap();
+		return plCommand == null || commandMap == null ? false : plCommand.unregister(commandMap);
+	}
+
+	/**
 	 * Gets the {@link GUIHandler} used by this {@link MCPlugin}. Note
 	 * that you don't need to register the events of the handler, this
 	 * method will do that for you the first time you call it.
