@@ -1,6 +1,7 @@
 package net.codersky.mcutils.java;
 
 import net.codersky.mcutils.java.math.MCNumbers;
+import org.checkerframework.checker.index.qual.Positive;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -9,6 +10,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -37,6 +39,7 @@ import java.util.function.Predicate;
  *     <li>{@link HashSet} - Default for {@link Set}</li>
  *     <li>{@link LinkedHashSet}</li>
  *     <li>{@link TreeSet}</li>
+ *     <li>{@link EnumSet}</li>
  * </ul>
  *
  * @since MCUtils 1.0.0
@@ -145,6 +148,30 @@ public class MCCollections {
 	@Nonnull
 	public static <E extends Comparable<C>, C> TreeSet<E> asTreeSet(@Nonnull Iterable<E> elements) {
 		return add(new TreeSet<>(), elements);
+	}
+
+	// Set creation - EnumSet //
+
+	@Nonnull
+	public static <E extends Enum<E>> EnumSet<E> asEnumSet(@Nonnull Class<E> enumClass) {
+		return EnumSet.noneOf(enumClass);
+	}
+
+	@Nonnull
+	public static <E extends Enum<E>> EnumSet<E> asEnumSet(@Nonnull E element) {
+		return EnumSet.of(element);
+	}
+
+	@Nonnull
+	@SafeVarargs
+	public static <E extends Enum<E>> EnumSet<E> asEnumSet(@Nonnull E first, @Nonnull E... rest) {
+		return EnumSet.of(first, rest);
+	}
+
+	@Nullable
+	public static <E extends Enum<E>> EnumSet<E> asEnumSet(@Nonnull Collection<E> elements) {
+		final E first = elements.stream().findFirst().orElse(null);
+		return first == null ? null : add(asEnumSet(first.getDeclaringClass()), elements);
 	}
 
 	/*
