@@ -445,11 +445,36 @@ public class MCCollections {
 
 	// Element getters - Random //
 
-	public static <E> E getRandom(@Nonnull Collection<E> collection) {
-		return get(collection, MCNumbers.random(0, collection.size()));
+	@Nullable
+	public static <E> E getRandom(@Nonnull E[] array) {
+		return array[MCNumbers.random().nextInt(0, array.length)];
 	}
 
+	@Nullable
+	public static <E> E getRandom(@Nonnull Collection<E> collection) {
+		return get(collection, MCNumbers.random().nextInt(0, collection.size()));
+	}
+
+	@Nullable
 	public static <E> E getRandom(@Nonnull List<E> list) {
-		return list.get(MCNumbers.random(0, list.size()));
+		return list.get(MCNumbers.random().nextInt(0, list.size()));
+	}
+
+	@Nonnull
+	public static <E> List<E> getRandom(@Nonnull Collection<E> collection, @Positive int amount, boolean allowDuplicates) {
+		if (amount >= collection.size())
+			return new ArrayList<>(collection);
+		final List<E> res = new ArrayList<>(amount);
+		while (res.size() != amount) {
+			final E element = getRandom(collection);
+			if (allowDuplicates || !res.contains(element))
+				res.add(element);
+		}
+		return res;
+	}
+
+	@Nonnull
+	public static <E> List<E> getRandom(@Nonnull Collection<E> collection, @Positive int amount) {
+		return getRandom(collection, amount, false);
 	}
 }
