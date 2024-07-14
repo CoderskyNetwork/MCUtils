@@ -8,10 +8,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.codersky.mcutils.regions.RegionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -872,5 +875,58 @@ public abstract class MCPlugin extends JavaPlugin {
 		info.setValue(status);
 		features.put(feature, info);
 		return result;
+	}
+
+	/**
+	 * Utility method to check if the current {@link Thread} is the
+	 * {@link Bukkit#isPrimaryThread() primary thread}. This can be
+	 * used to fix accidental calls of blocking methods that should
+	 * be called asynchronously in order to improve performance.
+	 * 
+	 * @param warning the warning message to send when this method
+	 * is executed outside the primary thread. If {@code null},
+	 * "PERFORMANCE ISSUE: Blocking method called on the primary thread"
+	 * will be used as the warning message.
+	 * @param consumer a {@link Consumer} that will {@link Consumer#accept(Object)
+	 * accept} the {@link StackTraceElement} array of the primary thread
+	 * if this method is called on it.
+	 * 
+	 * @return {@code true} if this method is called from the primary
+	 * thread and warns about it, {@code false} otherwise.
+	 * 
+	 * @since MCUtils 1.0.0
+	 * 
+	 * @see #warnOnPrimaryThread(String, Predicate, Consumer)
+	 * @see #warnOnPrimaryThread(String)
+	 */
+	public static boolean warnOnPrimaryThread(@Nullable String warning, @Nonnull Consumer<StackTraceElement[]> consumer) {
+		if (!Bukkit.isPrimaryThread())
+			return false;
+		Bukkit.getLogger().warning(warning == null ? "PERFORMANCE ISSUE: Blocking method called on the primary thread" : warning);
+		try {
+			consumer.accept(Thread.currentThread().getStackTrace());
+		} catch (SecurityException ex) {
+			// Could be thrown by Thread#getStackTrace
+		}
+		return true;
+	}
+
+	public static boolean warnOnPrimaryThread(@Nullable String warning, @Nonnull Predicate<StackTraceElement> condition, @Nonnull Consumer<StackTraceElement> action) {
+		return warnOnPrimaryThread(warning, elements -> {
+			final int len = elements.length - 1;
+			for (int i = 0; i < len; i++) {
+				if (condition.test(elements[i])) {
+					action.accept(elements[i + 1]);
+					break;
+				}
+			}
+		});
+	}
+
+	public static boolean warnOnPrimaryThread(@Nullable String warning) {
+		return warnOnPrimaryThread(warning, elements -> {
+			final StackTraceElement e = elements[elements.length >= 4 ? 4 : elements.length];
+			Bukkit.getLogger().warning("- At: " + e.getClassName() + "#" + e.getMethodName() + " line " + e.getLineNumber());
+		});
 	}
 }
