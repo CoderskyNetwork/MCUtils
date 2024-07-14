@@ -65,14 +65,10 @@ public class HexColorPattern implements ColorPattern {
 	private int getHexSize(String str, int start, int len, boolean simple) {
 		int size = 0;
 		for (int i = start; i < len && size <= 6; i++, size++)
-			if (!isHex(str.charAt(i)))
+			if (!isHexChar(str.charAt(i)))
 				break;
 		if (size == 6 || (simple && size == 3))
 			return size;
 		return size > 3 ? 3 : 0;
-	}
-
-	private boolean isHex(char ch) {
-		return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
 	}
 }

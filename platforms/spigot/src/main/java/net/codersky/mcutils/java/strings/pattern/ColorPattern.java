@@ -34,5 +34,9 @@ public interface ColorPattern {
 	 * @return A new string with the pattern applied to it.
 	 */
 	@Nullable
-	String process(@Nullable final String string, boolean simple);
+	public String process(@Nullable final String string, final boolean simple);
+
+	default boolean isHexChar(char ch) {
+		return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
+	}
 }
