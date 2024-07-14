@@ -1,3 +1,4 @@
+
 plugins {
 	mcutils.`library-conventions`
 }
@@ -7,6 +8,7 @@ repositories {
 }
 
 dependencies {
-	compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
 	api(project(":api"))
+	compileOnly(libs.spigot)
+	implementation(libs.jetbrains.annotations)
 }

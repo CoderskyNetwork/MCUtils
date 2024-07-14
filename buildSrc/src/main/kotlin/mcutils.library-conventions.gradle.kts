@@ -13,10 +13,6 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	implementation(libs.jetbrains-annotations)
-}
-
 java {
 	withSourcesJar()
 	withJavadocJar()
