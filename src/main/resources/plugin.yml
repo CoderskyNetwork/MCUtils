@@ -1,5 +1,5 @@
 name: ${project.name}
-main: ${project.groupId}.mcutils.${project.name}
+main: ${project.group}.mcutils.${project.name}
 author: xDec0de_
 api-version: 1.13
 version: ${project.version}
