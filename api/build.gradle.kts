@@ -1,0 +1,3 @@
+plugins {
+	mcutils.`library-conventions`
+}
