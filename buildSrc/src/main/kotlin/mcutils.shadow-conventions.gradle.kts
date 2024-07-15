@@ -12,6 +12,7 @@ tasks {
         relocate("org.intellij.lang.annotations", "net.codersky.mcutils.shaded.intellij.annotations")
 
         mergeServiceFiles()
+        minimize()
     }
 
     assemble {
