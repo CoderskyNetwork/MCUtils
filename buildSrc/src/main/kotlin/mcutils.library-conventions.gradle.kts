@@ -10,7 +10,7 @@ repositories {
 java {
 	toolchain.languageVersion = JavaLanguageVersion.of(21)
 	withSourcesJar()
-	withJavadocJar()
+	// TODO Fix this: withJavadocJar()
 	disableAutoTargetJvm()
 }
 
