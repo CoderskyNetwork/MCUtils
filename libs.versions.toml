@@ -1,10 +1,12 @@
 [versions]
 spigot = "1.20-R0.1-SNAPSHOT"
+velocity = "3.3.0-SNAPSHOT"
 jetbrains-annotations = "24.0.0"
 run-paper = "2.3.0"
 
 [libraries]
 spigot = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
+velocity = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
 jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations" }
 
 [plugins]

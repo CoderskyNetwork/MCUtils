@@ -20,3 +20,4 @@ dependencyResolutionManagement {
 rootProject.name = "MCUtils"
 include(":api")
 include(":platforms:spigot")
+include(":platforms:velocity")
