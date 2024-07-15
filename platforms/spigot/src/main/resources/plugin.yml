@@ -1,5 +1,5 @@
 name: MCUtils
-main: net.codersky.mcutils.MCUtils
+main: net.codersky.mcutils.spigot.MCUtils
 author: xDec0de_
 api-version: 1.13
 version: ${version}
