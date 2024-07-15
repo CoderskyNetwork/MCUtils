@@ -1,28 +1,22 @@
-
-group = "net.codersky"
-version = "1.0.0"
-description = "An open source collection of utilities for Spigot plugins designed to make your life easier"
-
 plugins {
 	`java-library`
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_21
-
 repositories {
+	mavenLocal()
 	mavenCentral()
 }
 
 java {
+	toolchain.languageVersion = JavaLanguageVersion.of(21)
 	withSourcesJar()
 	withJavadocJar()
+	disableAutoTargetJvm()
 }
 
 tasks {
-
 	jar {
-		// Set jar file name to "MCUtils-platform [version].jar"
-		archiveFileName.set("MCUtils-${project.name} [$version].jar")
+		archiveClassifier = "default"
 	}
 
 	processResources {
@@ -31,7 +25,10 @@ tasks {
 		}
 	}
 
-	compileJava { // Encode project with UTF-8
-		options.encoding = "UTF-8"
+	withType<JavaCompile> {
+		options.encoding = Charsets.UTF_8.name()
+		options.release = 21
 	}
+
+	defaultTasks("build")
 }

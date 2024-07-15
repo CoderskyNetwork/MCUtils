@@ -1,7 +1,13 @@
-rootProject.name = "MCUtils"
+pluginManagement {
+	repositories {
+		mavenCentral()
+		gradlePluginPortal()
+	}
+}
 
-include("api")
-include("platforms:spigot")
+plugins {
+	id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
 
 dependencyResolutionManagement {
 	versionCatalogs {
@@ -10,3 +16,7 @@ dependencyResolutionManagement {
 		}
 	}
 }
+
+rootProject.name = "MCUtils"
+include(":api")
+include(":platforms:spigot")

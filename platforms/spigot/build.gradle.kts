@@ -1,5 +1,5 @@
-
 plugins {
+	mcutils.`shadow-conventions`
 	mcutils.`library-conventions`
 }
 
@@ -9,6 +9,6 @@ repositories {
 
 dependencies {
 	api(project(":api"))
+	compileOnly(libs.jetbrains.annotations)
 	compileOnly(libs.spigot)
-	implementation(libs.jetbrains.annotations)
 }
