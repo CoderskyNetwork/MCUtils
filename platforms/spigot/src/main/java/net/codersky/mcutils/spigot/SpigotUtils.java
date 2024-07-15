@@ -31,7 +31,6 @@ import java.util.function.Predicate;
 public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 
 	private final P plugin;
-	private GUIHandler guiHandler = null;
 
 	public SpigotUtils(@NotNull P plugin) {
 		this.plugin = Objects.requireNonNull(plugin);

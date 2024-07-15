@@ -7,7 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * used as it provides nothing, just an empty {@link #onEnable()}
  * method, this class is here to make testing easier so MCUtils can
  * run as a plugin instead of a shaded library (Used to test MCUtils
- * changes locally).
+ * changes locally as an alternative to maven local).
  * 
  * @author xDec0de_
  *
