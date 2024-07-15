@@ -9,6 +9,5 @@ repositories {
 
 dependencies {
 	api(project(":api"))
-	compileOnly(libs.jetbrains.annotations)
 	compileOnly(libs.spigot)
 }

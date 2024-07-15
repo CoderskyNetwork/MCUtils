@@ -4,5 +4,5 @@ plugins {
 }
 
 dependencies {
-	implementation(libs.jetbrains.annotations)
+	compileOnlyApi(libs.jetbrains.annotations)
 }

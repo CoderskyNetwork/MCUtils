@@ -5,7 +5,7 @@ plugins {
 
 tasks {
     shadowJar {
-        archiveFileName = "MCUtils-${project.name}-${project.version}.jar"
+        archiveFileName = "MCUtils-${project.name}-${rootProject.version}.jar"
         archiveClassifier = null
 
         mergeServiceFiles()
