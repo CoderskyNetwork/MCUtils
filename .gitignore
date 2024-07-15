@@ -25,7 +25,6 @@ hs_err_pid*
 # Gradle
 build
 .gradle
-gradle
 
 # IntelliJ
 .idea/
