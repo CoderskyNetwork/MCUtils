@@ -1,10 +1,8 @@
 package net.codersky.mcutils.spigot;
 
 import net.codersky.mcutils.MCUtils;
-import net.codersky.mcutils.files.FileHolder;
-import net.codersky.mcutils.java.MCCollections;
-import net.codersky.mcutils.spigot.files.PluginFile;
-import net.codersky.mcutils.spigot.general.MCCommand;
+import net.codersky.mcutils.cmd.MCCommand;
+import net.codersky.mcutils.spigot.cmd.SpigotCommand;
 import net.codersky.mcutils.spigot.gui.GUIHandler;
 import net.codersky.mcutils.spigot.java.reflection.RefObject;
 import net.codersky.mcutils.spigot.java.strings.MCStrings;
@@ -104,65 +102,6 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 	}
 
 	/**
-	 * Gets the configuration file of this {@link SpigotPlugin} only if
-	 * a file with the name <b>"config.yml"</b> that extends {@link PluginFile}
-	 * has been registered. {@link SpigotPlugin MCPlugins} may override this
-	 * method to return their config file if it uses another name.
-	 * <p>
-	 * <b>Performance note</b>: Even though this is <b>very</b> insignificant, this
-	 * method does iterate through all the registered {@link FileHolder FileHolders}
-	 * of this {@link SpigotPlugin} and checks if they are an instance of
-	 * {@link PluginFile} and are named "config.yml", so you may want to store the file instead of
-	 * calling this method more than once on a listener or something like that.
-	 *
-	 * @return The <b>config.yml</b> file being used by this {@link SpigotPlugin} as a {@link PluginFile}.
-	 *
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	public PluginFile getConfig() {
-		for (FileHolder holder : super.files)
-			if (holder instanceof final PluginFile pFile && pFile.getName().equals("config.yml"))
-				return pFile;
-		return null;
-	}
-
-	@Deprecated(forRemoval = true)
-	public boolean log(@Nullable String... stings) {
-		Bukkit.getConsoleSender().sendMessage(stings);
-		return true;
-	}
-
-	@Deprecated(forRemoval = true)
-	public boolean logCol(@Nullable String... strings) {
-		for (String str : strings)
-			Bukkit.getConsoleSender().sendMessage(MCStrings.applyColor(str));
-		return true;
-	}
-
-	@Deprecated(forRemoval = true)
-	public void logException(@Nullable Throwable throwable, @Nullable String header) {
-		if (throwable == null)
-			return;
-		log(" ");
-		if (header != null)
-			logCol(header);
-		logCol("&4"+throwable.getClass().getSimpleName()+"&8: &c" + throwable.getMessage());
-		for(StackTraceElement element : throwable.getStackTrace()) {
-			String error = element.toString().trim();
-			if (error.contains(".jar")) {
-				error = error.substring(error.lastIndexOf(".jar")+6);
-				String path = error.substring(0, error.lastIndexOf('('));
-				int lastPoint = path.lastIndexOf('.');
-				path = "&cAt&8: &c"+path.substring(0, lastPoint) + "&6#&e" + path.substring(lastPoint + 1);
-				final String line = error.substring(error.lastIndexOf(':')+1, error.length()-1);
-				logCol(path+"&8 - &bline "+line);
-			}
-		}
-		log(" ");
-	}
-
-	/**
 	 * A shortcut to register all the events of a {@link Listener}.
 	 *
 	 * @param <T> must implement {@link Listener}
@@ -227,46 +166,6 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 	}
 
 	/**
-	 * Registers the specified {@code command}, allowing it to be executed.
-	 * <p>
-	 * <b>Important note</b>: MCUtils registers commands in a pretty unusual
-	 * way. If the name of the command you are trying to register is present
-	 * on your <b>plugin.yml</b>, MCUtils will just register it the "traditional"
-	 * way, if not, it will use some reflection to register it through CraftBukkit's
-	 * getCommandMap (Respecting encapsulation!), meaning that you can register commands without adding them
-	 * to your <b>plugin.yml</b>. <i>However</i>, this may break on future versions
-	 * of the game (Read below) so still, if it fails for some reason, it will attempt to register
-	 * commands via <b>plugin.yml</b>, if both fail, well... Nothing we can do about it.
-	 * <p>
-	 * About our reflection way of registering commands breaking... Pretty unlikely for Spigot at least,
-	 * we are using a <b>public</b> method present on <b>CraftServer</b>, not the private commandMap field that
-	 * many plugins use. Paper has deprecated SimpleCommandMap for removal as of 1.20 though, so we may need
-	 * to make a check there if they were to change it, but we are aware of it, so no worries, just
-	 * make sure to update MCUtils if that ever happens (This will be notified as an important update).
-	 *
-	 * @param <P> must extend {@link JavaPlugin}
-	 * @param command the {@link MCCommand command} to register.
-	 *
-	 * @return The specified {@code command}.
-	 *
-	 * @since MCUtils 1.0.0
-	 */
-	public <P extends JavaPlugin> MCCommand<P> registerCommand(@Nullable MCCommand<P> command) {
-		if (command == null)
-			return null;
-		final PluginCommand plCommand = plugin.getCommand(command.getName());
-		if (plCommand == null) { // Not in plugin.yml, attempt to register via SimpleCommandMap...
-			final SimpleCommandMap commandMap = getCommandMap();
-			if (commandMap == null)
-				Bukkit.getPluginManager().disablePlugin(plugin);
-			else
-				commandMap.register(plugin.getName(), command);
-		} else
-			plCommand.setExecutor(command);
-		return command;
-	}
-
-	/**
 	 * Registers the specified {@code commands}, allowing them to be executed.
 	 * <p>
 	 * <b>Important note</b>: MCUtils registers commands in a pretty unusual
@@ -275,40 +174,41 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 	 * way, if not, it will use some reflection to register it through CraftBukkit's
 	 * getCommandMap (Respecting encapsulation!), meaning that you can register commands without adding them
 	 * to your <b>plugin.yml</b>. <i>However</i>, this may break on future versions
-	 * of the game (Read below) so still, if it fails for some reason, it will attempt to register
-	 * commands via <b>plugin.yml</b>, if both fail, well... Nothing we can do about it.
+	 * of the game
 	 * <p>
-	 * About our reflection way of registering commands breaking... Pretty unlikely for Spigot at least,
+	 * The reflection approach may break on future versions, even though this is pretty unlikely (For Spigot at least),
 	 * we are using a <b>public</b> method present on <b>CraftServer</b>, not the private commandMap field that
-	 * many plugins use. Paper has deprecated SimpleCommandMap for removal as of 1.20 though, so we may need
-	 * to make a check there if they were to change it, but we are aware of it, so no worries, just
+	 * some plugins use. Paper has deprecated SimpleCommandMap for removal as of 1.20 though, so we may need
+	 * to make a check there if they were to change it, but we are aware of it, so no worries. Just
 	 * make sure to update MCUtils if that ever happens (This will be notified as an important update).
 	 *
 	 * @param commands the list of {@link MCCommand commands} to register.
+	 *
+	 * @throws ClassCastException if any of the passed {@code commands} isn't an instance of {@link SpigotCommand}.
 	 *
 	 * @return This {@link SpigotUtils}.
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	public SpigotUtils<P> registerCommands(@Nullable MCCommand<?>... commands) {
+	public void registerCommands(@Nullable MCCommand<?>... commands) {
 		if (commands == null || commands.length == 0)
-			return this;
+			return;
 		final List<Command> remaining = new ArrayList<>();
 		for (MCCommand<?> command : commands) {
+			final SpigotCommand spigotCommand = (SpigotCommand) command;
 			final PluginCommand plCommand = plugin.getCommand(command.getName());
 			if (plCommand != null)
-				plCommand.setExecutor(command);
+				plCommand.setExecutor(spigotCommand);
 			else
-				remaining.add(command);
+				remaining.add(spigotCommand);
 		}
 		if (remaining.size() == 0)
-			return this;
+			return;
 		final SimpleCommandMap commandMap = getCommandMap();
 		if (commandMap == null)
 			Bukkit.getPluginManager().disablePlugin(plugin);
 		else
 			commandMap.registerAll(plugin.getName(), remaining);
-		return this;
 	}
 
 	/**
@@ -474,5 +374,44 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 			final StackTraceElement e = elements[elements.length >= 4 ? 4 : elements.length];
 			Bukkit.getLogger().warning("- At: " + e.getClassName() + "#" + e.getMethodName() + " line " + e.getLineNumber());
 		});
+	}
+
+	/*
+	 * For removal (Legacy) methods
+	 */
+
+	@Deprecated(forRemoval = true)
+	public boolean log(@Nullable String... stings) {
+		Bukkit.getConsoleSender().sendMessage(stings);
+		return true;
+	}
+
+	@Deprecated(forRemoval = true)
+	public boolean logCol(@Nullable String... strings) {
+		for (String str : strings)
+			Bukkit.getConsoleSender().sendMessage(MCStrings.applyColor(str));
+		return true;
+	}
+
+	@Deprecated(forRemoval = true)
+	public void logException(@Nullable Throwable throwable, @Nullable String header) {
+		if (throwable == null)
+			return;
+		log(" ");
+		if (header != null)
+			logCol(header);
+		logCol("&4"+throwable.getClass().getSimpleName()+"&8: &c" + throwable.getMessage());
+		for(StackTraceElement element : throwable.getStackTrace()) {
+			String error = element.toString().trim();
+			if (error.contains(".jar")) {
+				error = error.substring(error.lastIndexOf(".jar")+6);
+				String path = error.substring(0, error.lastIndexOf('('));
+				int lastPoint = path.lastIndexOf('.');
+				path = "&cAt&8: &c"+path.substring(0, lastPoint) + "&6#&e" + path.substring(lastPoint + 1);
+				final String line = error.substring(error.lastIndexOf(':')+1, error.length()-1);
+				logCol(path+"&8 - &bline "+line);
+			}
+		}
+		log(" ");
 	}
 }

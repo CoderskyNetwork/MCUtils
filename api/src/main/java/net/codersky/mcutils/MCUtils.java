@@ -1,24 +1,17 @@
 package net.codersky.mcutils;
 
-import com.sun.security.auth.login.ConfigFile;
+import net.codersky.mcutils.cmd.MCCommand;
 import net.codersky.mcutils.files.ConfigFileHolder;
 import net.codersky.mcutils.files.FileHolder;
 import net.codersky.mcutils.files.FileUpdater;
 import net.codersky.mcutils.files.MessagesFileHolder;
-import net.codersky.mcutils.general.Feature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
 
-public class MCUtils {
+public abstract class MCUtils {
 
 	protected final LinkedList<FileHolder> files = new LinkedList<>();
 
@@ -54,6 +47,8 @@ public class MCUtils {
 		files.add(file);
 		return file;
 	}
+
+	public abstract void registerCommands(MCCommand<?>... commands);
 
 	/**
 	 * Gets the files currently being handled by this {@link MCUtils} instance. The list returned

@@ -1,50 +1,29 @@
-package net.codersky.mcutils.command;
+package net.codersky.mcutils.cmd;
 
-import net.codersky.mcutils.MCUtils;
-import net.codersky.mcutils.java.MCCollections;
 import net.codersky.mcutils.java.math.MCNumbers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 
-public abstract class MCCommand<T, U extends MCUtils> {
-
-	private final U utils;
-	private final HashMap<Integer, HashSet<MCCommand<?, ?>>> subCommands = new HashMap<>();
-
-	public MCCommand(@NotNull U utils) {
-		this.utils = Objects.requireNonNull(utils);
-	}
-
-	public U getUtils() {
-		return this.utils;
-	}
-
-	public abstract boolean onCommand(@NotNull T sender, @NotNull String[] args);
+public interface MCCommand<S extends MCCommandSender<?>> {
 
 	@NotNull
-	public abstract List<String> onTab(@NotNull T sender, @NotNull String[] args);
+	String getName();
 
-	protected abstract boolean isAllowed(@NotNull T sender);
-
-	public MCCommand<T, U> inject(int pos, @NotNull MCCommand<?, ?>... commands) {
-		if (pos < 0)
-			return this;
-		final HashSet<MCCommand<?, ?>> existing = subCommands.computeIfAbsent(pos, k -> new HashSet<>());
-		for (MCCommand<?, ?> command : commands)
-			existing.add(command);
-		return this;
-	}
+	boolean onCommand(@NotNull S sender, @NotNull String[] args);
 
 	@NotNull
-	protected String cleanArgument(@NotNull String arg) {
+	List<String> onTab(@NotNull S sender, @NotNull String[] args);
+
+	boolean hasAccess(@NotNull S sender, boolean message);
+
+	MCCommand<S> inject(@NotNull MCCommand<S>... commands);
+
+	@NotNull
+	default String cleanArgument(@NotNull String arg) {
 		return arg;
 	}
 
@@ -76,7 +55,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public <T> T asGeneric(int arg, @NotNull String[] args, @Nullable T def, @NotNull Function<String, T> converter) {
+	default <T> T asGeneric(int arg, @NotNull String[] args, @Nullable T def, @NotNull Function<String, T> converter) {
 		if (args.length <= arg)
 			return def;
 		final T converted = converter.apply(args[arg]);
@@ -103,7 +82,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public <T> T asGeneric(int arg, @NotNull String[] args, @NotNull Function<String, T> converter) {
+	default <T> T asGeneric(int arg, @NotNull String[] args, @NotNull Function<String, T> converter) {
 		return args.length > arg ? converter.apply(args[arg]) : null;
 	}
 
@@ -126,7 +105,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asString(int arg, @NotNull String[] args, @Nullable String def) {
+	default String asString(int arg, @NotNull String[] args, @Nullable String def) {
 		final String result = args.length > arg ? args[arg] : def;
 		return result != null ? cleanArgument(result) : null;
 	}
@@ -150,7 +129,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asString(@NotNull Function<String, String> modifier, int arg, @NotNull String[] args, @Nullable String def) {
+	default String asString(@NotNull Function<String, String> modifier, int arg, @NotNull String[] args, @Nullable String def) {
 		final String result = asString(arg, args, def);
 		return result == null ? null : modifier.apply(result);
 	}
@@ -167,7 +146,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asString(int arg, @NotNull String[] args) {
+	default String asString(int arg, @NotNull String[] args) {
 		return asString(arg, args, null);
 	}
 
@@ -188,7 +167,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asString(@NotNull Function<String, String> modifier, int arg, @NotNull String[] args) {
+	default String asString(@NotNull Function<String, String> modifier, int arg, @NotNull String[] args) {
 		final String result = asString(arg, args);
 		return result == null ? null : modifier.apply(result);
 	}
@@ -213,7 +192,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asStringRange(int fromArg, @NotNull String[] args, @Nullable String def) {
+	default String asStringRange(int fromArg, @NotNull String[] args, @Nullable String def) {
 		String str = asString(fromArg, args, null);
 		if (str == null)
 			return def;
@@ -238,7 +217,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asStringRange(int fromArg, @NotNull String[] args) {
+	default String asStringRange(int fromArg, @NotNull String[] args) {
 		return asStringRange(fromArg, args, null);
 	}
 
@@ -261,7 +240,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asStringRange(@NotNull Function<String, String> modifier, int fromArg, @NotNull String[] args, @Nullable String def) {
+	default String asStringRange(@NotNull Function<String, String> modifier, int fromArg, @NotNull String[] args, @Nullable String def) {
 		final String range = asStringRange(fromArg, args, def);
 		return range == null ? def : modifier.apply(range);
 	}
@@ -283,7 +262,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String asStringRange(@NotNull Function<String, String> modifier, int fromArg, @NotNull String[] args) {
+	default String asStringRange(@NotNull Function<String, String> modifier, int fromArg, @NotNull String[] args) {
 		return asStringRange(modifier, fromArg, args, null);
 	}
 
@@ -292,7 +271,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 */
 
 	@Nullable
-	public <T> List<T> asListRange(@NotNull Function<String, T> modifier, int fromArg, @NotNull String[] args, @Nullable List<T> def) {
+	default <T> List<T> asListRange(@NotNull Function<String, T> modifier, int fromArg, @NotNull String[] args, @Nullable List<T> def) {
 		if (fromArg > args.length)
 			return def;
 		final List<T> lst = new ArrayList<>(args.length - fromArg);
@@ -302,12 +281,12 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	}
 
 	@Nullable
-	public <T> List<T> asListRange(@NotNull Function<String, T> modifier, int fromArg, @NotNull String[] args) {
+	default <T> List<T> asListRange(@NotNull Function<String, T> modifier, int fromArg, @NotNull String[] args) {
 		return asListRange(modifier, fromArg, args, null);
 	}
 
 	@Nullable
-	public List<String> asStringListRange(int fromArg, @NotNull String[] args, @Nullable List<String> def) {
+	default List<String> asStringListRange(int fromArg, @NotNull String[] args, @Nullable List<String> def) {
 		if (fromArg > args.length)
 			return def;
 		final List<String> lst = new ArrayList<>(args.length - fromArg);
@@ -317,7 +296,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	}
 
 	@Nullable
-	public List<String> asStringListRange(int fromArg, @NotNull String[] args) {
+	default List<String> asStringListRange(int fromArg, @NotNull String[] args) {
 		return asStringListRange(fromArg, args, null);
 	}
 
@@ -341,7 +320,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @see MCNumbers#asNumber(CharSequence, Number)
 	 */
 	@Nullable
-	public <T extends Number> T asNumber(int arg, @NotNull String[] args, @Nullable T def) {
+	default <T extends Number> T asNumber(int arg, @NotNull String[] args, @Nullable T def) {
 		return asGeneric(arg, args, def, str -> MCNumbers.asNumber(str, def));
 	}
 
@@ -359,7 +338,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 *
 	 * @see MCNumbers#asNumber(CharSequence, Class)
 	 */
-	public <T extends Number> T asNumber(int arg, @NotNull String[] args, Class<T> type) {
+	default <T extends Number> T asNumber(int arg, @NotNull String[] args, Class<T> type) {
 		return asGeneric(arg, args, str -> MCNumbers.asNumber(str, type));
 	}
 
@@ -385,7 +364,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public <T extends Enum<T>> T asEnum(int arg, @NotNull String[] args, @NotNull Class<T> enumClass) {
+	default <T extends Enum<T>> T asEnum(int arg, @NotNull String[] args, @NotNull Class<T> enumClass) {
 		// TODO Maybe find a better way to do this...
 		return asGeneric(arg, args, str -> {
 			try {
@@ -415,7 +394,7 @@ public abstract class MCCommand<T, U extends MCUtils> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public <T extends Enum<T>> T asEnum(int arg, @NotNull String[] args, @NotNull T def) {
+	default <T extends Enum<T>> T asEnum(int arg, @NotNull String[] args, @NotNull T def) {
 		return asGeneric(arg, args, str -> {
 			final String name = str.toUpperCase();
 			for (T constant : def.getDeclaringClass().getEnumConstants())

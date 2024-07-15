@@ -42,7 +42,7 @@ public class Items {
 	}
 
 	public static boolean isNetheriteTool(@Nonnull Material material, boolean includeSword) {
-		if (!SpigotPlugin.serverSupports("1.16"))
+		if (!SpigotUtils.serverSupports("1.16"))
 			return false;
 		return material == Material.NETHERITE_AXE || material == Material.NETHERITE_HOE ||
 				material == Material.NETHERITE_PICKAXE || material == Material.NETHERITE_SHOVEL ||
