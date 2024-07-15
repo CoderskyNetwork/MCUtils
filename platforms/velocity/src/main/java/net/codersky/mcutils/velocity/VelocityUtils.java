@@ -5,6 +5,7 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
+import net.codersky.mcutils.java.MCCollections;
 import net.codersky.mcutils.velocity.cmd.VelocityCommand;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +36,10 @@ public class VelocityUtils<P> extends MCUtils {
 		final CommandManager manager = getProxy().getCommandManager();
 		for (MCCommand<?> mcCommand : commands) {
 			final VelocityCommand velocityCommand = (VelocityCommand) mcCommand;
-			final CommandMeta meta = manager.metaBuilder(velocityCommand.getName()).plugin(plugin).build();
+			final CommandMeta meta = manager.metaBuilder(velocityCommand.getName())
+					.plugin(plugin)
+					.aliases(velocityCommand.getAliasesArray())
+					.build();
 			manager.register(meta, velocityCommand);
 		}
 	}

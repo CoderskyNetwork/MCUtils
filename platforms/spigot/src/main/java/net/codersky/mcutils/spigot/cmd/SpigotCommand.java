@@ -3,6 +3,7 @@ package net.codersky.mcutils.spigot.cmd;
 import net.codersky.mcutils.cmd.MCCommand;
 import net.codersky.mcutils.cmd.MCCommandSender;
 import net.codersky.mcutils.cmd.SubCommandHandler;
+import net.codersky.mcutils.java.MCCollections;
 import net.codersky.mcutils.spigot.java.strings.MCStrings;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -15,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class SpigotCommand<P extends JavaPlugin> extends Command implements MCCommand<SpigotCommandSender>, PluginIdentifiableCommand, TabExecutor {
@@ -26,6 +28,11 @@ public abstract class SpigotCommand<P extends JavaPlugin> extends Command implem
 	public SpigotCommand(@NotNull P plugin, @NotNull String name) {
 		super(name);
 		this.plugin = plugin;
+	}
+
+	public SpigotCommand(@NotNull P plugin, @NotNull String name, @NotNull String... aliases) {
+		this(plugin, name);
+		super.setAliases(Arrays.asList(aliases));
 	}
 
 	@NotNull

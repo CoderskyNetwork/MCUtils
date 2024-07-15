@@ -13,6 +13,9 @@ public interface MCCommand<S extends MCCommandSender<?>> {
 	@NotNull
 	String getName();
 
+	@NotNull
+	List<String> getAliases();
+
 	boolean onCommand(@NotNull S sender, @NotNull String[] args);
 
 	@NotNull
