@@ -2,5 +2,5 @@ name: MCUtils
 main: net.codersky.mcutils.MCUtils
 author: xDec0de_
 api-version: 1.13
-version: ${project.version}
+version: ${version}
 description: ${project.description}
