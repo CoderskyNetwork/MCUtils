@@ -9,13 +9,12 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.codersky.mcutils.spigot.updaters.UpdaterSource;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.index.qual.Positive;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-
-import net.codersky.mcutils.spigot.updaters.UpdaterSource;
 
 /**
  * {@link UpdaterSource} implementation for

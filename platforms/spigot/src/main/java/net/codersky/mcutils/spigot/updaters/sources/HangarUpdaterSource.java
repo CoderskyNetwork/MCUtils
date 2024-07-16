@@ -11,12 +11,11 @@ import java.util.Scanner;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.codersky.mcutils.spigot.updaters.UpdaterSource;
 import org.bukkit.Bukkit;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-
-import net.codersky.mcutils.spigot.updaters.UpdaterSource;
 
 /**
  * {@link UpdaterSource} implementation for

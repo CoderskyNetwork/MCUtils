@@ -10,12 +10,12 @@ import javax.annotation.Nonnull;
 
 import net.codersky.mcutils.java.math.chance.ChanceGenerator;
 import net.codersky.mcutils.java.math.chance.GenericChanceGenerator;
-import net.codersky.mcutils.spigot.java.tuple.pair.ImmutablePair;
+import net.codersky.mcutils.java.tuple.pair.ImmutablePair;
 import net.codersky.mcutils.java.math.MCNumbers;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import net.codersky.mcutils.spigot.java.tuple.pair.Pair;
+import net.codersky.mcutils.java.tuple.pair.Pair;
 
 /**
  * A {@link ChanceGenerator} made for {@link ItemStack ItemStacks},
