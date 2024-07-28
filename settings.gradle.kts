@@ -18,6 +18,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "MCUtils"
-include(":api")
+include(":shared")
 include(":platforms:spigot")
 include(":platforms:velocity")

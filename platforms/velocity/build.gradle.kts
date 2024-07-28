@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-	api(project(":api"))
+	api(project(":shared"))
 	compileOnly(libs.velocity)
 }
 
