@@ -5,4 +5,5 @@ plugins {
 
 dependencies {
 	api(libs.jetbrains.annotations)
+	api(libs.adventure)
 }
