@@ -1,352 +1,128 @@
-package net.codersky.mcutils.spigot.java.strings;
+package net.codersky.mcutils.java.strings;
 
-import java.util.ArrayList;
+import net.codersky.mcutils.java.MCCollections;
+import net.codersky.mcutils.java.strings.pattern.ColorPattern;
+import net.codersky.mcutils.java.strings.pattern.color.GradientColorPattern;
+import net.codersky.mcutils.java.strings.pattern.color.HexColorPattern;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+public class MCStrings {
 
-import net.codersky.mcutils.spigot.java.MCLists;
-import org.bukkit.command.CommandSender;
+	/** The color character used for Minecraft color codes. */
+	public static char COLOR_CHAR = '§';
 
-import net.codersky.mcutils.spigot.java.strings.pattern.TargetPattern;
-import net.codersky.mcutils.spigot.java.strings.pattern.color.GradientColorPattern;
-import net.codersky.mcutils.spigot.java.strings.pattern.color.HexColorPattern;
-import net.codersky.mcutils.spigot.java.strings.pattern.target.ActionBarTargetPattern;
-import net.codersky.mcutils.spigot.java.strings.pattern.target.PlayerConsoleTargetPattern;
-import net.codersky.mcutils.java.strings.Replacer;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
-
-/**
- * A string utility class, also contains
- * methods for string lists.
- * 
- * @since MCUtils 1.0.0
- * 
- * @author xDec0de_
- * 
- * @see #applyColor(String)
- */
-public abstract class MCStrings {
-
-	/** {@code static} instance of {@link GradientColorPattern}, used to apply gradients only. */
-	public static final GradientColorPattern GRADIENT_COLOR_PATTERN = new GradientColorPattern();
-
-	/** {@code static} instance of {@link HexColorPattern}, used to apply hexadecimal colors only. */
-	public static final HexColorPattern HEX_COLOR_PATTERN = new HexColorPattern();
-
-	protected static final LinkedList<TargetPattern> receiverPatterns = new LinkedList<>();
+	private static final List<ColorPattern> colorPatterns = new LinkedList<>();
 
 	static {
-		receiverPatterns.add(new ActionBarTargetPattern());
-		receiverPatterns.add(new PlayerConsoleTargetPattern());
+		addColorPatterns(
+				new GradientColorPattern(),
+				new HexColorPattern(),
+				(str, simple) -> applyColorChar('&', str));
 	}
 
 	/*
-	 * Receiver patterns
+	 * Color patterns
 	 */
 
 	/**
-	 * Sends <b>str</b> to <b>target</b> using the dynamic message format. This feature
-	 * allows administrators to choose how and where a message will be sent, player specific
-	 * message types such as {@link ActionBarTargetPattern} will be sent as a raw message to the console.
-	 * <p>
-	 * Here is the documentation of every format pattern:
-	 * <ul>
-	 * <li><a href=https://mcutils.codersky.net/for-server-admins/target-patterns>Target patterns</a>.</li>
-	 * <li><a href=https://mcutils.codersky.net/for-server-admins/event-patterns>Event patterns</a>.</li>
-	 * </ul>
-	 * 
-	 * @param target the {@link CommandSender} that will receive the message, if null, nothing will be done.
-	 * @param str the message to send, if null or empty, nothing will be done.
-	 * 
-	 * @return Always true, to make sending messages on commands easier.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	public static boolean sendMessage(@Nullable CommandSender target, @Nullable String str) {
-		if (target == null || str == null || str.isEmpty())
-			return true;
-		String toChat = str;
-		for (TargetPattern pattern : receiverPatterns)
-			toChat = pattern.process(target, toChat);
-		return true;
-	}
-
-	/*
-	 * Event patterns
-	 */
-
-	// Remove //
-
-	/**
-	 * Removes all <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
-	 * from the specified {@link String}. This can be used to prevent users from using event patterns
-	 * on unintended places, this is recommended to be used when getting user input that may be sent on
-	 * a chat message later on. This method will just return {@code str} if the '<' character
-	 * isn't found on {@code str}.
-	 * <p>
-	 * Strict mode is disabled on this method, see {@link #removeEventPatterns(String, boolean)}.
-	 * 
-	 * @param str the {@link String} to remove
-	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a> from.
-	 * 
-	 * @return The specified {@link String} with all
-	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a> removed from it.
-	 * 
-	 * @throws NullPointerException if {@code str} is {@code null}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #removeEventPatterns(String, boolean)
-	 */
-	@Nonnull
-	public static String removeEventPatterns(@Nonnull String str) {
-		return removeEventPatterns(str, false);
-	}
-
-	/**
-	 * Removes all <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
-	 * from the specified {@link String}. This can be used to prevent users from using event patterns
-	 * on unintended places, this is recommended to be used when getting user input that may be sent on
-	 * a chat message later on. This method will just return {@code str} if the '<' character
-	 * isn't found on {@code str}.
-	 * 
-	 * @param str the {@link String} to remove
-	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a> from.
-	 * @param strict whether to enable strict mode or not. Strict mode checks if valid event patterns
-	 * are actually present on {@code str}, not using strict mode will skip this check so "&#60random text>text\>"
-	 * would be replaced with "text"
-	 * 
-	 * @return The specified {@link String} with all
-	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a> removed from it.
-	 * 
-	 * @throws NullPointerException if {@code str} is {@code null}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #removeEventPatterns(String)
-	 */
-	@Nonnull
-	public static String removeEventPatterns(@Nonnull String str, boolean strict) {
-		final StringBuilder builder = new StringBuilder();
-		if (!strict)
-			return searchEventPatterns(str, txt -> builder.append(txt), (event, txt) -> builder.append(txt)) ? builder.toString() : str;
-		return searchEventPatterns(str, txt -> builder.append(txt), (event, txt) -> {
-			final List<String> ids = Arrays.asList("url", "open_url", "file", "open_file", "run", "run_cmd",
-					"run_command", "suggest", "suggest_cmd","suggest_command", "copy", "copy_to_clipboard");
-			final List<String> eventList = splitEvents(event);
-			final int safeLen = eventList.size() - 1;
-			for (int i = 0; i < safeLen; i += 2) {
-				if (ids.contains(eventList.get(i).toLowerCase())) {
-					builder.append(txt);
-					return;
-				}
-			}
-			builder.append("<" + event + ">" + txt + "\\>");
-		}) ? builder.toString() : str;
-	}
-
-	// Apply //
-
-	/**
-	 * Applies <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
-	 * to the specified {@link String}. Note that this method won't apply
-	 * <a href=https://mcutils.codersky.net/for-server-admins/target-patterns>target patterns</a> as
-	 * those patterns require a target to filter the messages, same happens with
-	 * <a href=https://mcutils.codersky.net/for-server-admins/color-patterns>color patterns</a>, except
-	 * this time it is because you may want to send messages without colors or you may already have
-	 * {@link #applyColor(String) applied} color to the {@link String}.
-	 * 
-	 * @param str the {@link String} that will have the events applied, if the {@link String} doesn't
-	 * contain the '<' character, the method will just convert the {@link String} to a {@link BaseComponent}
-	 * array using {@link TextComponent#fromLegacyText(String)}.
-	 * 
-	 * @return A {@link BaseComponent} array with all found
-	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
-	 * applied to it.
-	 * 
-	 * @throws NullPointerException if {@code str} is {@code null}.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nonnull
-	public static BaseComponent[] applyEventPatterns(@Nonnull String str) {
-		final FormatRetention ret = FormatRetention.FORMATTING;
-		final ComponentBuilder builder = new ComponentBuilder();
-		return searchEventPatterns(str, txt -> builder.append(txt, ret), (event, txt) -> applyEvents(builder, event, txt)) ?
-				builder.create() : TextComponent.fromLegacyText(str);
-	}
-
-	private static void applyEvents(ComponentBuilder builder, String eventData, String text) {
-		final List<String> eventList = splitEvents(eventData);
-		final int safeLen = eventList.size() - 1;
-		builder.append(text, FormatRetention.FORMATTING);
-		for (int i = 0; i < safeLen; i += 2) {
-			switch (eventList.get(i).toLowerCase()) {
-			case "text", "show_text" -> builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(eventList.get(i + 1))));
-			case "url", "open_url" -> builder.event(new ClickEvent(ClickEvent.Action.OPEN_URL, eventList.get(i + 1)));
-			case "file", "open_file" -> builder.event(new ClickEvent(ClickEvent.Action.OPEN_FILE, eventList.get(i + 1)));
-			case "run", "run_cmd", "run_command" -> builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, eventList.get(i + 1)));
-			case "suggest", "suggest_cmd", "suggest_command" -> builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, eventList.get(i + 1)));
-			case "copy", "copy_to_clipboard" -> builder.event(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, eventList.get(i + 1)));
-			};
-		}
-	}
-
-	// Utility method to split events ignoring string literals, for example
-	// text;"x;y;z" will be split as ["text", "x;y;z"]
-	private static List<String> splitEvents(String eventData) {
-		final List<String> eventList = new ArrayList<>();
-		boolean literal = false;
-		StringBuilder current = new StringBuilder();
-		for (int i = 0; i < eventData.length(); i++) {
-			final char ch = eventData.charAt(i);
-			if (ch == '"')
-				literal = !literal;
-			else if (ch == ';' && !literal) {
-				eventList.add(current.toString());
-				current = new StringBuilder();
-			} else
-				current.append(ch);
-		}
-		if (!current.isEmpty())
-			eventList.add(current.toString());
-		return eventList;
-	}
-
-	// Search utility //
-
-	private static boolean searchEventPatterns(String str, Consumer<String> append, BiConsumer<String, String> replace) {
-		final int first = str.indexOf('<');
-		if (first == -1)
-			return false;
-		int lastAppend = 0;
-		for (int start = first; start != -1; start = str.indexOf('<', start + 1)) {
-			final int eventEnd = str.indexOf('>', start);
-			if (eventEnd == -1)
-				continue;
-			final int textEnd = str.indexOf("\\>", eventEnd);
-			if (textEnd == -1)
-				continue;
-			append.accept(str.substring(lastAppend, start));
-			replace.accept(str.substring(start + 1, eventEnd), str.substring(eventEnd + 1, textEnd));
-			lastAppend = textEnd + 2;
-		}
-		if (lastAppend != str.length())
-			append.accept(str.substring(lastAppend));
-		return true;
-	}
-
-	/*
-	 * String color methods
-	 */
-
-	/**
-	 * Applies all color patterns to a <b>string</b>.
-	 * MCUtils has an up to date <a href=https://mcutils.codersky.net/for-server-admins/color-patterns>documentation</a>
-	 * about color patterns supported, please make sure that the version you are using corresponds with the
-	 * mentioned minimum version of the patterns that you want to use, even though
-	 * most patterns will be available since 1.0.0.
-	 * 
+	 * Applies all {@link #addColorPatterns(ColorPattern...) added}
+	 * {@link ColorPattern color patterns} to the provided {@code string}
+	 *
 	 * @param string the {@link String} to apply colors to.
-	 * 
-	 * @return The <b>string</b>, colored, {@code null} of the <b>string</b> itself was {@code null}.
-	 * 
+	 * @param simple whether to use simple mode or not, read
+	 * {@link ColorPattern#applyColor(String, boolean)} for more information.
+	 *
+	 * @throws NullPointerException if {@code string} is {@code null}.
+	 *
+	 * @return A new {@link String} with all {@link ColorPattern color patterns}
+	 * applied to it.
+	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nullable
-	public static String applyColor(@Nullable String string) {
-		if (string == null)
-			return null;
-		String colored = applyColorChar('&', string);
-		colored = GRADIENT_COLOR_PATTERN.process(colored, true);
-		return HEX_COLOR_PATTERN.process(colored, true);
+	@NotNull
+	public static String applyColor(@NotNull String string, boolean simple) {
+		String colored = Objects.requireNonNull(string, "The string to color cannot be null");
+		for (ColorPattern pattern : colorPatterns)
+			colored = pattern.applyColor(string, simple);
+		return colored;
 	}
 
-	/**
-	 * Applies colors to every string of <b>lst</b>
-	 * using {@link #applyColor(String)}. If <b>lst</b>
-	 * is {@code null}, {@code null} will be returned.
-	 * {@code null} elements on the list will be kept as {@code null}.
-	 * 
-	 * @param lst the list to apply colors.
-	 * 
-	 * @return The list, colored, {@code null} if the list itself was {@code null}.
-	 * 
-	 * @since MCUtils 1.0.0
+	@NotNull
+	public static String applyColor(@NotNull String str) {
+		return applyColor(str, true);
+	}
+
+	@NotNull
+	public static List<ColorPattern> getColorPatterns() {
+		return colorPatterns;
+	}
+
+	@NotNull
+	public static void addColorPatterns(@NotNull ColorPattern... patterns) {
+		MCCollections.add(colorPatterns, patterns);
+	}
+
+	/*
+	 * Color utility methods
 	 */
-	@Nullable
-	public static List<String> applyColor(@Nullable List<String> lst) {
-		return lst == null ? null : MCLists.map(str -> applyColor(str), lst);
-	}
 
 	/**
-	 * Similar to {@link ChatColor#translateAlternateColorCodes(char, String)},
-	 * replaces every occurrence of <b>ch</b> with {@link ChatColor#COLOR_CHAR} if
-	 * followed by a valid color character ({@link #isColorChar(char)}),
-	 * performance differences aren't noticeable, this method exists for accessibility
-	 * purposes, to support {@link CharSequence CharSequences}... And to have a shorter name.
-	 * 
-	 * @param ch the character to replace, normally '&'.
+	 * Replaces every occurrence of <b>ch</b> with {@link MCStrings#COLOR_CHAR} if
+	 * followed by a valid color character ({@link #isColorChar(char)}).
+	 *
+	 * @param ch the character to replace, normally '&', as this is the standard.
 	 * @param str the {@link CharSequence} to apply color characters to.
-	 * 
-	 * @return A {@link String} from the specified {@link CharSequence} with translated color characters,
-	 * {@code null} if <b>str</b> is {@code null}.
-	 * 
+	 *
+	 * @return A {@link String} from the specified {@link CharSequence} with translated color characters.
+	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nullable
-	public static String applyColorChar(@Nonnull char ch, @Nullable CharSequence str) {
-		if (str == null)
-			return null;
+	@NotNull
+	public static String applyColorChar(char ch, @NotNull CharSequence str) {
 		final int length = str.length() - 1;
 		final char[] arr = str.toString().toCharArray();
 		for (int i = 0; i < length; i++)
 			if (str.charAt(i) == ch && isColorChar(str.charAt(i + 1)))
-				arr[i++] = ChatColor.COLOR_CHAR;
+				arr[i++] = COLOR_CHAR;
 		return new String(arr);
 	}
 
 	/**
 	 * Strips all <b>vanilla</b> chat formatting from the specified {@link CharSequence}.
 	 * that is, color and text formatting, for example, assuming that
-	 * <b>colorChar</b> is '&', this method will remove all occurrences
+	 * {@code colorChar} is '&', this method will remove all occurrences
 	 * of &[a-f], &[0-9], &[k-o] and &r, leaving the string as an uncolored,
-	 * unformatted, simple string, doing the same with {@link ChatColor#COLOR_CHAR}
-	 * <p>
-	 * This method has been tested to be quite faster than {@link ChatColor#stripColor(String)}
-	 * as {@link ChatColor}'s method uses regex, however, this difference isn't
-	 * really noticeable unless millions of strings are stripped.
-	 * 
-	 * @param str the string to strip colors.
-	 * 
-	 * @return The string with stripped colors, {@code null} if <b>str</b> is {@code null}.
-	 * 
+	 * unformatted, simple string, doing the same with {@link MCStrings#COLOR_CHAR}
+	 *
+	 * @param sequence the {@link CharSequence} to strip colors from.
+	 * @param colorChar an additional color character to use besides {@link MCStrings#COLOR_CHAR},
+	 * generally '&'.
+	 *
+	 * @return A new {@code String} with all the contents of the specified char
+	 * {@code sequence} except valid chat colors.
+	 *
+	 * @throws NullPointerException if {@code str} is {@code null}.
+	 *
 	 * @since MCUtils 1.0.0
 	 */
-	public static String stripColor(CharSequence str, char colorChar) {
-		if (str == null)
+	public static String stripColor(@NotNull CharSequence sequence, char colorChar) {
+		if (sequence == null)
 			return null;
-		final int length = str.length();
+		final int length = sequence.length();
 		final StringBuilder result = new StringBuilder();
 		for (int i = 0; i < length; i++) {
-			char ch = str.charAt(i);
-			if ((ch == colorChar || ch == ChatColor.COLOR_CHAR) && (i + 1 < length) && isColorChar(str.charAt(i + 1)))
+			char ch = sequence.charAt(i);
+			if ((ch == colorChar || ch == COLOR_CHAR) && (i + 1 < length) && isColorChar(sequence.charAt(i + 1)))
 				i++;
 			else
 				result.append(ch);
@@ -355,14 +131,14 @@ public abstract class MCStrings {
 	}
 
 	/**
-	 * A simple convenience method that checks if <b>ch</b> is a character
+	 * A simple convenience method that checks if {@code c} is a character
 	 * that can be used to apply color or formatting to a string, that is,
-	 * r, R, x, X, or a character between this ranges: [a-f], [A-F], [k-o], [K-O] and [0-9].
-	 * 
-	 * @param ch the character to check.
-	 * 
-	 * @return true if the character is a color character, false otherwise.
-	 * 
+	 * r, R, x, X, or a character between these ranges: [a-f], [A-F], [k-o], [K-O] and [0-9].
+	 *
+	 * @param c the character to check.
+	 *
+	 * @return {@code true} if the character is a color character, {@code false} otherwise.
+	 *
 	 * @since MCUtils 1.0.0
 	 */
 	public static boolean isColorChar(char c) {
@@ -378,27 +154,35 @@ public abstract class MCStrings {
 	 * Checks if a string has any content on it. If
 	 * {@link String#isBlank()} returns {@code true} or the
 	 * string is {@code null}, {@code false} will be returned.
-	 * 
+	 *
 	 * @param str the string to check.
-	 * 
+	 *
 	 * @return {@code true} if the string has content, {@code false} otherwise.
-	 * 
+	 *
 	 * @since MCUtils 1.0.0
 	 */
 	public static boolean hasContent(@Nullable String str) {
 		return str != null && !str.isBlank();
 	}
 
+
+
+
+	// TODO Update all methods below this line.
+
+
+
+
 	/**
 	 * Checks if a {@link CharSequence} has any content on it. This will
 	 * return {@code false} if the <b>seq</b>uence is {@code null}, empty
 	 * or contains only {@link Character#isWhitespace(char) whitespace}
 	 * characters, {@code true} otherwise.
-	 * 
+	 *
 	 * @param seq the {@link CharSequence} to check.
-	 * 
+	 *
 	 * @return {@code true} if the <b>seq</b>uence has content, {@code false} otherwise.
-	 * 
+	 *
 	 * @since MCUtils 1.0.0
 	 */
 	public static boolean hasContent(@Nullable CharSequence seq) {
@@ -429,13 +213,13 @@ public abstract class MCStrings {
 	 * List: [" ", "a", null, "b", "c"]<br>
 	 * Separator: ", "<br>
 	 * Returns: " a, b, c"
-	 * 
+	 *
 	 * @param list the list to use.
 	 * @param separator the separator to use.
-	 * 
+	 *
 	 * @return A {@link String} {@link Iterator list} as a {@link String} with all elements
 	 * separated by the specified <b>separator</b>.
-	 * 
+	 *
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
@@ -463,13 +247,13 @@ public abstract class MCStrings {
 	 * List: [" ", "a", null, "b", "c"]<br>
 	 * Separator: ", "<br>
 	 * Returns: " a, b, c"
-	 * 
+	 *
 	 * @param array the array of {@link String strings} to use.
 	 * @param separator the separator to use.
-	 * 
+	 *
 	 * @return A {@link String} array as a {@link String} with all elements separated by
 	 * the specified <b>separator</b>.
-	 * 
+	 *
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
@@ -483,18 +267,18 @@ public abstract class MCStrings {
 
 	/**
 	 * Gets a substring of <b>src</b>, starting at <b>from</b> and ending at <b>to</b>.
-	 * 
+	 *
 	 * @param src the source string to cut.
 	 * @param from the string to match at the beginning of the new substring.
 	 * @param to the string to match at the end of the new substring.
 	 * @param inclusive if true, <b>from</b> and <b>to</b> will be included in the
 	 * resulting substring, if false, they won't.
-	 * 
+	 *
 	 * @return A substring of <b>src</b> starting at <b>from</b> and ending at <b>to</b>,
 	 * <code>null</code> if no match is found.
-	 * 
+	 *
 	 * @since MCUtils 1.0.0
-	 * 
+	 *
 	 * @see #substring(String, String, String)
 	 */
 	public static String substring(String src, String from, String to, boolean inclusive) {
@@ -513,16 +297,16 @@ public abstract class MCStrings {
 	 * <code>MCStrings.substring("From one to two", "one", "two")</code>
 	 * will return "one to two", if any parameter is <code>null</code>, <b>src</b> will
 	 * be returned, if no substring is found, <code>null</code> will be returned.
-	 * 
+	 *
 	 * @param src the source string to cut.
 	 * @param from the string to match at the beginning of the new substring.
 	 * @param to the string to match at the end of the new substring.
-	 * 
+	 *
 	 * @return A substring of <b>src</b> starting at <b>from</b> and ending at <b>to</b>,
 	 * <code>null</code> if no match is found.
-	 * 
+	 *
 	 * @since MCUtils 1.0.0
-	 * 
+	 *
 	 * @see #substring(String, String, String, boolean)
 	 */
 	public static String substring(String src, String from, String to) {
@@ -552,7 +336,7 @@ public abstract class MCStrings {
 	 * <li>{@link ActionBarTargetPattern#process(CommandSender, String)}</li>
 	 * <li>{@link PlayerReceiverPattern#process(CommandSender, String)}</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param src the source string to use.
 	 * @param from the String to match at the beginning of the pattern.
 	 * @param to the String to match at the end of the pattern.
@@ -561,13 +345,13 @@ public abstract class MCStrings {
 	 * @param remove if true, the matching content will be removed
 	 * from the resulting String, if false, the resulting string
 	 * will be an exact copy of <b>src</b>.
-	 * 
+	 *
 	 * @return If <b>remove</b> is true, <b>src</b> with any match from
 	 * the specified pattern removed from it, otherwise, a exact copy
 	 * of <b>src</b>.
-	 * 
+	 *
 	 * @throws NullPointerException if any parameter is null.
-	 * 
+	 *
 	 * @see #substring(String, String, String)
 	 * @see #match(String, String, String, Consumer)
 	 */
@@ -594,17 +378,17 @@ public abstract class MCStrings {
 	 * <li>{@link ActionBarTargetPattern#process(CommandSender, String)}</li>
 	 * <li>{@link PlayerReceiverPattern#process(CommandSender, String)}</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param src the source string to use.
 	 * @param from the String to match at the beginning of the pattern.
 	 * @param to the String to match at the end of the pattern.
 	 * @param action a {@link Consumer} that may accept any matching
 	 * substrings of <b>src</b> between <b>from</b> and <b>to</b>.
-	 * 
+	 *
 	 * @return <b>src</b> with any match from the specified pattern removed from it.
-	 * 
+	 *
 	 * @throws NullPointerException if any parameter is null.
-	 * 
+	 *
 	 * @see #substring(String, String, String)
 	 * @see #match(String, String, String, Consumer, boolean)
 	 */
@@ -624,18 +408,18 @@ public abstract class MCStrings {
 	 * <p>
 	 * The returning String of this will be "Match done". <b>from</b>
 	 * and <b>to</b> aren't considered a part of <b>match</b> here.
-	 * 
+	 *
 	 * @param src the source string to use.
 	 * @param from the String to match at the beginning of the pattern.
 	 * @param to the String to match at the end of the pattern.
 	 * @param function a {@link Function} that may accept any matching
 	 * substrings of <b>src</b> between <b>from</b> and <b>to</b>, returning
 	 * the String that will be used to replace the mathing substring.
-	 * 
+	 *
 	 * @return <b>src</b> with any match from the specified pattern removed from it.
-	 * 
+	 *
 	 * @throws NullPointerException if any parameter is null.
-	 * 
+	 *
 	 * @see #substring(String, String, String)
 	 * @see #matchAndAccept(String, String, String, Consumer, boolean)
 	 */
@@ -670,9 +454,9 @@ public abstract class MCStrings {
 	 * strings which length is either 36 or 36. {@link UUID#fromString(String)}
 	 * accepts, for example 1-1-1-1-1" as "00000001-0001-0001-0001-000000000001",
 	 * this method doesn't, as it is designed for player {@link UUID}s.
-	 * 
+	 *
 	 * @param uuid the {@link String} to be converted to {@link UUID}
-	 * 
+	 *
 	 * @return A {@link UUID} by the specified {@code uuid} String,
 	 * null if the string doesn't have a valid {@link UUID} format.
 	 */

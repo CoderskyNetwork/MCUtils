@@ -1,15 +1,12 @@
-package net.codersky.mcutils.spigot.java.strings.pattern.color;
+package net.codersky.mcutils.java.strings.pattern.color;
+
+import net.codersky.mcutils.java.strings.pattern.ColorPattern;
+import net.codersky.mcutils.java.strings.MCStrings;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.codersky.mcutils.spigot.java.strings.MCStrings;
-import net.codersky.mcutils.spigot.java.strings.pattern.ColorPattern;
-import net.md_5.bungee.api.ChatColor;
 
 /**
  * Represents a gradient color pattern which can be applied to a String.
@@ -25,29 +22,14 @@ import net.md_5.bungee.api.ChatColor;
  */
 public class GradientColorPattern implements ColorPattern {
 
+	// TODO This pattern needs to be optimized, specially we should stop using regex.
+
 	private final Pattern pattern = Pattern.compile("<#([0-9A-Fa-f]{6})(.*?)#([0-9A-Fa-f]{6})>");
 	private final Pattern simplePattern = Pattern.compile("<#([0-9A-Fa-f]{3})(.*?)#([0-9A-Fa-f]{3})>");
 
-	/**
-	 * Applies gradients to the provided <b>string</b>.
-	 * Output might me the same as the input if this pattern is not present.
-	 * If the <b>string</b> is null, null will be returned.
-	 * <p>
-	 * The gradient color pattern supports a "simple" mode, that also applies
-	 * a three-character pattern <i>(See {@link GradientColorPattern})</i> useful when string length matters..
-	 *
-	 * @param string the string to which gradients should be applied to.
-	 * @param simple whether to apply the simple pattern or not.
-	 * 
-	 * @return The new string with applied gradient.
-	 * 
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
+	@NotNull
 	@Override
-	public String process(@Nullable String string, boolean simple) {
-		if (string == null)
-			return null;
+	public String applyColor(@NotNull final String string, boolean simple) {
 		String res = string;
 		for (int i = simple ? 2 : 1; i > 0; i--) { // i will be 1 for simplePattern, 2 for pattern.
 			final Matcher matcher = i == 1 ? simplePattern.matcher(res) : pattern.matcher(res);
@@ -63,13 +45,15 @@ public class GradientColorPattern implements ColorPattern {
 	}
 
 	private Color getSimpleColor(String group) {
-		StringBuffer buff = new StringBuffer(22); // 22 is the capacity of a 6 character string buffer.
+		StringBuilder builder = new StringBuilder(22); // 22 is the capacity of a 6 character string buffer.
 		for (int i = 0; i < 3; i++) {
-			buff.append(group.charAt(i));
-			buff.append(group.charAt(i));
+			builder.append(group.charAt(i));
+			builder.append(group.charAt(i));
 		}
-		return new Color(Integer.parseInt(buff.toString(), 16));
+		return new Color(Integer.parseInt(builder.toString(), 16));
 	}
+
+	// TODO I'm pretty sure the two methods below this comment can be simplified.
 
 	/**
 	 * Returns a gradient array of chat colors.
@@ -80,11 +64,11 @@ public class GradientColorPattern implements ColorPattern {
 	 * 
 	 * @author TheViperShow
 	 */
-	@Nonnull
-	private ChatColor[] createGradient(@Nonnull Color start, @Nonnull Color end, int step) {
-		ChatColor[] colors = new ChatColor[step];
+	@NotNull
+	private String[] createGradient(@NotNull Color start, @NotNull Color end, int step) {
+		String[] colors = new String[step];
 		if (step == 1) {
-			colors[0] = ChatColor.of(start);
+			colors[0] = toHexString(start);
 			return colors;
 		}
 		int stepR = Math.abs(start.getRed() - end.getRed()) / (step - 1);
@@ -98,10 +82,16 @@ public class GradientColorPattern implements ColorPattern {
 
 		for (int i = 0; i < step; i++) {
 			Color color = new Color(start.getRed() + ((stepR * i) * direction[0]), start.getGreen() + ((stepG * i) * direction[1]), start.getBlue() + ((stepB * i) * direction[2]));
-			colors[i] = ChatColor.of(color);
+			colors[i] = toHexString(color);
 			//colors[i] = plugin.getServerVersion().supports(MCVersion.V1_16) ? ChatColor.of(color) : getClosestColor(color);
 		}
 		return colors;
+	}
+
+	private String toHexString(@NotNull Color color) {
+		return String.format("%02X", color.getRed()) +
+				String.format("%02X", color.getGreen()) +
+				String.format("%02X", color.getBlue());
 	}
 
 	/**
@@ -113,18 +103,18 @@ public class GradientColorPattern implements ColorPattern {
 	 * 
 	 * @return <b>Source</b> with <b>colors</b> applied to it.
 	 */
-	@Nonnull
-	String apply(@Nonnull String source, @Nonnull ChatColor[] colors) {
-		StringBuilder res = new StringBuilder();
+	@NotNull
+	String apply(@NotNull String source, @NotNull String[] colors) {
+		final StringBuilder res = new StringBuilder();
 		StringBuilder formatting = new StringBuilder();
 		final char[] characters = source.toCharArray();
 		int colorIndex = 0;
 		for (int strIndex = 0; strIndex < characters.length; strIndex++) {
 			char current = characters[strIndex];
-			if (current == '&' || current == ChatColor.COLOR_CHAR) {
+			if (current == '&' || current == MCStrings.COLOR_CHAR) {
 				char next = characters[++strIndex];
 				if (next >= 'k' && next <= 'o') {// if next == k, l, m, n or o
-					formatting.append(ChatColor.COLOR_CHAR);
+					formatting.append(MCStrings.COLOR_CHAR);
 					formatting.append(next);
 					continue;
 				} else if (next == 'r') {
@@ -135,7 +125,7 @@ public class GradientColorPattern implements ColorPattern {
 					strIndex--;
 			}
 			res.append(colors[colorIndex++]);
-			res.append(formatting.toString());
+			res.append(formatting);
 			res.append(current);
 		}
 		return res.toString();
