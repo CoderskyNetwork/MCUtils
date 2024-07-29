@@ -1,18 +1,16 @@
-package net.codersky.mcutils.spigot.time;
+package net.codersky.mcutils.time;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nonnull;
-
-import org.bukkit.scheduler.BukkitTask;
-import org.checkerframework.checker.index.qual.NonNegative;
+import net.codersky.mcutils.time.timer.Timer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A similar {@code enum} to {@link TimeUnit}, except it
  * handles time units that can be converted to in-game
  * ticks only. Note that this {@code enum} is not intended
  * to be used to calculate dates but rather to create
- * {@link BukkitTask tasks} or {@link Timer timers}.
+ * {@link Task tasks} or {@link Timer timers}.
  * 
  * @since MCUtils 1.0.0
  * 
@@ -42,7 +40,7 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public long toTicks(@NonNegative long amount) {
+	public long toTicks(long amount) {
 		if (amount <= 0)
 			return 0;
 		return switch (this) {
@@ -66,7 +64,7 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public long toSeconds(@NonNegative long amount) {
+	public long toSeconds(long amount) {
 		if (amount <= 0)
 			return 0;
 		return switch (this) {
@@ -90,7 +88,7 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public long toMinutes(@NonNegative long amount) {
+	public long toMinutes(long amount) {
 		if (amount <= 0)
 			return 0;
 		return switch (this) {
@@ -114,7 +112,7 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public long toHours(@NonNegative long amount) {
+	public long toHours(long amount) {
 		if (amount <= 0)
 			return 0;
 		return switch (this) {
@@ -139,7 +137,7 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public long toUnit(@NonNegative long amount, @Nonnull MCTimeUnit unit) {
+	public long toUnit(long amount, MCTimeUnit unit) {
 		if (amount <= 0)
 			return 0;
 		return switch (unit) {
@@ -160,8 +158,8 @@ public enum MCTimeUnit {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
-	public Timer asTimer(@NonNegative int amount) {
+	@NotNull
+	public Timer asTimer(int amount) {
 		return new Timer(this, amount);
 	}
 }

@@ -2,9 +2,9 @@ package net.codersky.mcutils.spigot;
 
 import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
+import net.codersky.mcutils.java.strings.MCStrings;
 import net.codersky.mcutils.spigot.cmd.SpigotCommand;
 import net.codersky.mcutils.java.reflection.RefObject;
-import net.codersky.mcutils.spigot.java.strings.MCStrings;
 import net.codersky.mcutils.spigot.worldgen.SingleBiomeProvider;
 import net.codersky.mcutils.spigot.worldgen.VoidGenerator;
 import org.bukkit.Bukkit;
@@ -135,7 +135,7 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 	}
 
 	/**
-	 * Gets the {@link SimpleCommandMap} instance stored on the {@link #getServer() server}.
+	 * Gets the {@link SimpleCommandMap} instance stored on the {@link Bukkit#getServer() server}.
 	 * <b>Reflection is used</b> in order to get this instance by accessing the
 	 * {@code public} getCommandMap method found on CraftServer, this means that this method
 	 * will stop working if said method is removed or changed, even though using it should be
@@ -145,7 +145,7 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 	 * the console to notify administrators that the command map could not be obtained, specifying
 	 * that this error is caused by MCUtils and not by your plugin.
 	 *
-	 * @return The {@link SimpleCommandMap} instance stored on the {@link #getServer() server},
+	 * @return The {@link SimpleCommandMap} instance stored on the {@link Bukkit#getServer() server},
 	 * {@code null} if any error occurs.
 	 *
 	 * @since MCUtils 1.0.0

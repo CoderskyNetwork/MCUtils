@@ -1,15 +1,14 @@
-package net.codersky.mcutils.spigot.time;
+package net.codersky.mcutils.time.timer;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
-
+import com.sun.source.util.Plugin;
+import net.codersky.mcutils.time.Task;
+import net.codersky.mcutils.time.TaskScheduler;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a task created and linked to a {@link Timer}, which can be obtained
@@ -26,10 +25,10 @@ public class TimerTask {
 
 	private final Timer timer;
 	private boolean paused = false;
-	private BukkitTask task = null;
+	private Task task = null;
 
 	@ApiStatus.Internal
-	TimerTask(@Nonnull Timer timer) {
+	TimerTask(@NotNull Timer timer) {
 		this.timer = timer;
 	}
 
@@ -40,7 +39,7 @@ public class TimerTask {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	public Timer getTimer() {
 		return timer;
 	}
@@ -90,21 +89,21 @@ public class TimerTask {
 	 * Scheduler internals
 	 */
 
-	@Nonnull
+	@NotNull
 	@ApiStatus.Internal
-	TimerTask schedule(@Nonnull Plugin plugin, @Nonnull Runnable runnable) {
-		task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+	TimerTask schedule(@NotNull TaskScheduler scheduler, @NotNull Runnable runnable) {
+		task = scheduler.repeatSync(() -> {
 			if (paused || !timer.removeOne().hasEnded())
 				return;
 			runnable.run();
 			cancel();
-		}, 20, 20);
+		}, TimeUnit.SECONDS, 1, 1);
 		return this;
 	}
 
-	@Nonnull
+	@NotNull
 	@ApiStatus.Internal
-	<T> TimerTask schedule(@Nonnull Plugin plugin, @Nonnull Consumer<T> consumer, @Nullable T obj) {
-		return schedule(plugin, () -> consumer.accept(obj));
+	<T> TimerTask schedule(@NotNull TaskScheduler scheduler, @NotNull Consumer<T> consumer, @Nullable T obj) {
+		return schedule(scheduler, () -> consumer.accept(obj));
 	}
 }

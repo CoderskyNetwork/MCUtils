@@ -5,7 +5,6 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
-import net.codersky.mcutils.java.MCCollections;
 import net.codersky.mcutils.velocity.cmd.VelocityCommand;
 import org.jetbrains.annotations.NotNull;
 
