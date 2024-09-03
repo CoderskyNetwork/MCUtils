@@ -1,6 +1,5 @@
 package net.codersky.mcutils.java;
 
-import jdk.jfr.Unsigned;
 import net.codersky.mcutils.java.math.MCNumbers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,6 +85,72 @@ public class MCCollections {
 	@NotNull
 	public static <E> LinkedList<E> asLinkedList(@NotNull Iterable<E> elements) {
 		return add(new LinkedList<>(), elements);
+	}
+
+	// List creation - Primitives (ArrayList) //
+
+	@NotNull
+	public static List<Character> asCharList(char... chars) {
+		final ArrayList<Character> list = new ArrayList<>(chars.length);
+		for (char c : chars)
+			list.add(c);
+		return list;
+	}
+
+	@NotNull
+	public static List<Boolean> asBooleanList(boolean... booleans) {
+		final ArrayList<Boolean> list = new ArrayList<>(booleans.length);
+		for (boolean b : booleans)
+			list.add(b);
+		return list;
+	}
+
+	@NotNull
+	public static List<Double> asDoubleList(double... doubles) {
+		final ArrayList<Double> list = new ArrayList<>(doubles.length);
+		for (double d : doubles)
+			list.add(d);
+		return list;
+	}
+
+	@NotNull
+	public static List<Float> asFloatList(float... floats) {
+		final ArrayList<Float> list = new ArrayList<>(floats.length);
+		for (float f : floats)
+			list.add(f);
+		return list;
+	}
+
+	@NotNull
+	public static List<Long> asLongList(long... longs) {
+		final ArrayList<Long> list = new ArrayList<>(longs.length);
+		for (long l : longs)
+			list.add(l);
+		return list;
+	}
+
+	@NotNull
+	public static List<Integer> asIntList(int... ints) {
+		final ArrayList<Integer> list = new ArrayList<>(ints.length);
+		for (int i : ints)
+			list.add(i);
+		return list;
+	}
+
+	@NotNull
+	public static List<Short> asShortList(short... shorts) {
+		final ArrayList<Short> list = new ArrayList<>(shorts.length);
+		for (short s : shorts)
+			list.add(s);
+		return list;
+	}
+
+	@NotNull
+	public static List<Byte> asByteList(byte... bytes) {
+		final ArrayList<Byte> list = new ArrayList<>(bytes.length);
+		for (byte b : bytes)
+			list.add(b);
+		return list;
 	}
 
 	// Set creation - HashSet //
