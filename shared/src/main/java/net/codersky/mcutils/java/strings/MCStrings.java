@@ -243,14 +243,6 @@ public class MCStrings {
 		return asString(iterable, separator, MCStrings::hasContent);
 	}
 
-
-
-
-	// TODO Update all methods below this line.
-
-
-
-
 	/*
 	 * CharSequence utility
 	 */
@@ -302,50 +294,61 @@ public class MCStrings {
 	 */
 
 	/**
-	 * Gets a substring of <b>src</b>, starting at <b>from</b> and ending at <b>to</b>.
+	 * Gets a substring of {@code src}, starting at {@code from} and ending at {@code to}.
 	 *
-	 * @param src the source string to cut.
-	 * @param from the string to match at the beginning of the new substring.
-	 * @param to the string to match at the end of the new substring.
-	 * @param inclusive if true, <b>from</b> and <b>to</b> will be included in the
-	 * resulting substring, if false, they won't.
+	 * @param src the source {@link String} to cut.
+	 * @param from the {@link String} to match at the beginning of the new substring.
+	 * @param to the {@link String} to match at the end of the new substring.
+	 * @param inclusive if {@code true}, {@code from} and {@code to} will be included in the
+	 * resulting substring, if {@code false}, they won't.
 	 *
-	 * @return A substring of <b>src</b> starting at <b>from</b> and ending at <b>to</b>,
-	 * <code>null</code> if no match is found.
+	 * @return A substring of {@code src} starting at {@code from} and ending at {@code to},
+	 * {@code null} if no match is found. Keep in mind that both {@code from} and {@code to}
+	 * need to be found in order to return a substring.
 	 *
 	 * @since MCUtils 1.0.0
 	 *
-	 * @see #substring(String, String, String)
+	 * @see #substring(String, CharSequence, CharSequence)
 	 */
-	public static <T extends CharSequence> T subSequence(T src, CharSequence from, CharSequence to, boolean inclusive) {
+	public static String substring(@NotNull String src, @NotNull CharSequence from, @NotNull CharSequence to, boolean inclusive) {
 		final int start = indexOf(src, from, 0);
 		final int end = indexOf(src, to, start + 1);
 		if (start == -1 || end == -1)
 			return null;
-		return (T) (inclusive ? src.subSequence(start, end + to.length()) : src.subSequence(start + from.length(), end));
+		return inclusive ? src.substring(start, end + to.length()) : src.substring(start + from.length(), end);
 	}
 
 	/**
-	 * Gets a substring of <b>src</b>, starting at <b>from</b> and ending
-	 * at <b>to</b>, both inclusive, meaning that
-	 * <code>MCStrings.substring("From one to two", "one", "two")</code>
-	 * will return "one to two", if any parameter is <code>null</code>, <b>src</b> will
-	 * be returned, if no substring is found, <code>null</code> will be returned.
+	 * Gets a substring of {@code src}, starting at {@code from} and ending at {@code to}.
+	 * This is equivalent to calling {@link #substring(String, CharSequence, CharSequence, boolean)}
+	 * with {@code inclusive} set to {@code true}, meaning that both {@code from} and {@code to} will
+	 * be included in the resulting substring.
 	 *
-	 * @param src the source string to cut.
-	 * @param from the string to match at the beginning of the new substring.
-	 * @param to the string to match at the end of the new substring.
+	 * @param src the source {@link String} to cut.
+	 * @param from the {@link String} to match at the beginning of the new substring.
+	 * @param to the {@link String} to match at the end of the new substring.
 	 *
-	 * @return A substring of <b>src</b> starting at <b>from</b> and ending at <b>to</b>,
-	 * <code>null</code> if no match is found.
+	 * @return A substring of {@code src} starting at {@code from} and ending at {@code to},
+	 * {@code null} if no match is found. Keep in mind that both {@code from} and {@code to}
+	 * need to be found in order to return a substring.
 	 *
 	 * @since MCUtils 1.0.0
 	 *
-	 * @see #substring(String, String, String, boolean)
+	 * @see #substring(String, CharSequence, CharSequence, boolean)
 	 */
-	public static String substring(String src, String from, String to) {
+	public static String substring(@NotNull String src, @NotNull CharSequence from, @NotNull CharSequence to) {
 		return substring(src, from, to, true);
 	}
+
+
+
+
+
+	// TODO Update all methods below this line.
+
+
+
+
 
 	/*
 	 * Match
