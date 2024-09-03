@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.function.Function;
 
-import net.codersky.mcutils.spigot.java.strings.MCStrings;
+import net.codersky.mcutils.java.strings.MCStrings;
 import org.jetbrains.annotations.NotNull;
 
 /**

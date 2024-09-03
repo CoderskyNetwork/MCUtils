@@ -9,12 +9,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.primitives.Bytes;
-
-import net.codersky.mcutils.spigot.java.MCLists;
+import net.codersky.mcutils.java.MCCollections;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Abstract class for any type of storage that
@@ -102,7 +99,7 @@ public abstract class StorageHandler {
 	 * @see #removeKey(String)
 	 * @see #containsKey(String)
 	 */
-	@Nonnull
+	@NotNull
 	public Set<String> getKeys() {
 		return keys.keySet();
 	}
@@ -121,7 +118,7 @@ public abstract class StorageHandler {
 	 * @see #getKeys()
 	 * @see #removeKey(String)
 	 */
-	public boolean containsKey(@Nonnull String key) {
+	public boolean containsKey(@NotNull String key) {
 		return keys.containsKey(Objects.requireNonNull(key));
 	}
 
@@ -139,7 +136,7 @@ public abstract class StorageHandler {
 	 * @see #getKeys()
 	 * @see #removeKey(String)
 	 */
-	public boolean containsKeys(@Nonnull String... keys) {
+	public boolean containsKeys(@NotNull String... keys) {
 		for (String key : keys)
 			if (!this.keys.containsKey(key))
 				return false;
@@ -162,7 +159,7 @@ public abstract class StorageHandler {
 	 * @see #getKeys()
 	 * @see #containsKey(String)
 	 */
-	public boolean removeKey(@Nonnull String key) {
+	public boolean removeKey(@NotNull String key) {
 		if (containsKey(key))
 			return false;
 		keys.remove(key);
@@ -187,7 +184,7 @@ public abstract class StorageHandler {
 	// Utility //
 
 	@Nullable
-	protected <T extends Object> T set(@Nonnull String key, @Nullable T value) {
+	protected <T> T set(@NotNull String key, @Nullable T value) {
 		if (value == null)
 			keys.remove(Objects.requireNonNull(key));
 		else
@@ -196,11 +193,11 @@ public abstract class StorageHandler {
 	}
 
 	@Nullable
-	protected <T extends Object> List<T> setList(@Nonnull String key, @Nullable List<T> list) {
+	protected <T> List<T> setList(@NotNull String key, @Nullable List<T> list) {
 		if (list == null || list.isEmpty())
 			keys.remove(Objects.requireNonNull(key));
 		else {
-			final ArrayList<T> lst = list instanceof ArrayList ? (ArrayList<T>) list : new ArrayList<T>(list);
+			final ArrayList<T> lst = list instanceof ArrayList ? (ArrayList<T>) list : new ArrayList<>(list);
 			keys.put(Objects.requireNonNull(key), lst);
 		}
 		return list;
@@ -222,7 +219,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public String setString(@Nonnull String key, @Nullable String value) {
+	public String setString(@NotNull String key, @Nullable String value) {
 		return set(key, value);
 	}
 
@@ -241,7 +238,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<String> setStrings(@Nonnull String key, @Nullable List<String> value) {
+	public List<String> setStrings(@NotNull String key, @Nullable List<String> value) {
 		return setList(key, value);
 	}
 
@@ -261,7 +258,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public Character setChar(@Nonnull String key, @Nullable Character value) {
+	public Character setChar(@NotNull String key, @Nullable Character value) {
 		return set(key, value);
 	}
 
@@ -280,7 +277,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<Character> setChars(@Nonnull String key, @Nullable List<Character> value) {
+	public List<Character> setChars(@NotNull String key, @Nullable List<Character> value) {
 		return setList(key, value);
 	}
 
@@ -300,7 +297,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public Boolean setBoolean(@Nonnull String key, @Nullable Boolean value) {
+	public Boolean setBoolean(@NotNull String key, @Nullable Boolean value) {
 		return set(key, value);
 	}
 
@@ -319,7 +316,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<Boolean> setBooleans(@Nonnull String key, @Nullable List<Boolean> value) {
+	public List<Boolean> setBooleans(@NotNull String key, @Nullable List<Boolean> value) {
 		return setList(key, value);
 	}
 
@@ -339,7 +336,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public UUID setUUID(@Nonnull String key, @Nullable UUID value) {
+	public UUID setUUID(@NotNull String key, @Nullable UUID value) {
 		return set(key, value);
 	}
 
@@ -358,7 +355,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<UUID> setUUIDs(@Nonnull String key, @Nullable List<UUID> value) {
+	public List<UUID> setUUIDs(@NotNull String key, @Nullable List<UUID> value) {
 		return setList(key, value);
 	}
 
@@ -378,7 +375,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public Byte setByte(@Nonnull String key, @Nullable Byte value) {
+	public Byte setByte(@NotNull String key, @Nullable Byte value) {
 		return set(key, value);
 	}
 
@@ -397,13 +394,13 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<Byte> setBytes(@Nonnull String key, List<Byte> value) {
+	public List<Byte> setBytes(@NotNull String key, List<Byte> value) {
 		return setList(key, value);
 	}
 
 	@Nullable
-	public List<Byte> setBytes(@Nonnull String key, byte[] value) {
-		return setList(key, Bytes.asList(value));
+	public List<Byte> setBytes(@NotNull String key, byte[] value) {
+		return setList(key, MCCollections.asByteList(value));
 	}
 
 	// Shorts //
@@ -422,7 +419,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public Short setShort(@Nonnull String key, @Nullable Short value) {
+	public Short setShort(@NotNull String key, @Nullable Short value) {
 		return set(key, value);
 	}
 
@@ -441,7 +438,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<Short> setShorts(@Nonnull String key, @Nullable List<Short> value) {
+	public List<Short> setShorts(@NotNull String key, @Nullable List<Short> value) {
 		return setList(key, value);
 	}
 
@@ -461,7 +458,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public Integer setInt(@Nonnull String key, @Nullable Integer value) {
+	public Integer setInt(@NotNull String key, @Nullable Integer value) {
 		return set(key, value);
 	}
 
@@ -480,7 +477,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<Integer> setInts(@Nonnull String key, @Nullable List<Integer> value) {
+	public List<Integer> setInts(@NotNull String key, @Nullable List<Integer> value) {
 		return setList(key, value);
 	}
 
@@ -500,7 +497,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public Long setLong(@Nonnull String key, @Nullable Long value) {
+	public Long setLong(@NotNull String key, @Nullable Long value) {
 		return set(key, value);
 	}
 
@@ -519,7 +516,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<Long> setLongs(@Nonnull String key, @Nullable List<Long> value) {
+	public List<Long> setLongs(@NotNull String key, @Nullable List<Long> value) {
 		return setList(key, value);
 	}
 
@@ -539,7 +536,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public Float setFloat(@Nonnull String key, @Nullable Float value) {
+	public Float setFloat(@NotNull String key, @Nullable Float value) {
 		return set(key, value);
 	}
 
@@ -558,7 +555,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<Float> setFloats(@Nonnull String key, @Nullable List<Float> value) {
+	public List<Float> setFloats(@NotNull String key, @Nullable List<Float> value) {
 		return setList(key, value);
 	}
 
@@ -578,7 +575,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public Double setDouble(@Nonnull String key, @Nullable Double value) {
+	public Double setDouble(@NotNull String key, @Nullable Double value) {
 		return set(key, value);
 	}
 
@@ -597,7 +594,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<Double> setDoubles(@Nonnull String key, @Nullable List<Double> value) {
+	public List<Double> setDoubles(@NotNull String key, @Nullable List<Double> value) {
 		return setList(key, value);
 	}
 
@@ -626,7 +623,7 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public Date setDate(@Nonnull String key, @Nullable Date value) {
+	public Date setDate(@NotNull String key, @Nullable Date value) {
 		set(key, value == null ? null : value.toInstant().toEpochMilli());
 		return value;
 	}
@@ -651,8 +648,8 @@ public abstract class StorageHandler {
 	 * was {@code null}.
 	 */
 	@Nullable
-	public List<Date> setDates(@Nonnull String key, @Nullable List<Date> value) {
-		setList(key, value == null ? null : MCLists.map(date -> date.toInstant().toEpochMilli(), value));
+	public List<Date> setDates(@NotNull String key, @Nullable List<Date> value) {
+		setLongs(key, value == null ? null : MCCollections.map(value, date -> date.toInstant().toEpochMilli()));
 		return value;
 	}
 
@@ -663,12 +660,12 @@ public abstract class StorageHandler {
 	// Utility //
 
 	@SuppressWarnings("unchecked")
-	protected <T extends Object> T get(@Nonnull String key, @Nonnull Class<?> type, @Nullable T def) {
+	protected <T> T get(@NotNull String key, @NotNull Class<?> type, @Nullable T def) {
 		final Object obj = keys.get(key);
 		return (obj != null && obj.getClass().equals(type)) ? (T) obj : def;
 	}
 
-	protected <T> List<T> getList(@Nonnull String key, @Nullable List<T> def) {
+	protected <T> List<T> getList(@NotNull String key, @Nullable List<T> def) {
 		return get(key, ArrayList.class, def);
 	}
 
@@ -689,7 +686,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String getString(@Nonnull String key, @Nullable String def) {
+	public String getString(@NotNull String key, @Nullable String def) {
 		return get(key, String.class, def);
 	}
 
@@ -706,7 +703,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public String getString(@Nonnull String key) {
+	public String getString(@NotNull String key) {
 		return getString(key, null);
 	}
 
@@ -731,7 +728,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getStrings(@Nonnull String key, @Nullable List<String> def) {
+	public List<String> getStrings(@NotNull String key, @Nullable List<String> def) {
 		return getList(key, def);
 	}
 
@@ -754,7 +751,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<String> getStrings(@Nonnull String key) {
+	public List<String> getStrings(@NotNull String key) {
 		return getStrings(key, null);
 	}
 
@@ -947,7 +944,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public UUID getUUID(@Nonnull String key, @Nullable UUID def) {
+	public UUID getUUID(@NotNull String key, @Nullable UUID def) {
 		return get(key, UUID.class, def);
 	}
 
@@ -964,7 +961,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public UUID getUUID(@Nonnull String key) {
+	public UUID getUUID(@NotNull String key) {
 		return getUUID(key, null);
 	}
 
@@ -989,7 +986,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<UUID> getUUIDs(@Nonnull String key, @Nullable List<UUID> def) {
+	public List<UUID> getUUIDs(@NotNull String key, @Nullable List<UUID> def) {
 		return getList(key, def);
 	}
 
@@ -1012,7 +1009,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<UUID> getUUIDs(@Nonnull String key) {
+	public List<UUID> getUUIDs(@NotNull String key) {
 		return getUUIDs(key, null);
 	}
 
@@ -1033,7 +1030,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Byte getByte(@Nonnull String key, @Nullable Byte def) {
+	public Byte getByte(@NotNull String key, @Nullable Byte def) {
 		return get(key, Byte.class, def);
 	}
 
@@ -1050,7 +1047,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Byte getByte(@Nonnull String key) {
+	public Byte getByte(@NotNull String key) {
 		return getByte(key, null);
 	}
 
@@ -1075,7 +1072,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Byte> getBytes(@Nonnull String key, @Nullable List<Byte> def) {
+	public List<Byte> getBytes(@NotNull String key, @Nullable List<Byte> def) {
 		return getList(key, def);
 	}
 
@@ -1088,9 +1085,7 @@ public abstract class StorageHandler {
 	 * constructor, of course checking for {@code null} first.
 	 * 
 	 * @param key the key to get the{@link List} of {@link Byte Bytes} from.
-	 * @param def the default value to return if the <b>key</b>
-	 * doesn't exist or contains a different type of value.
-	 * 
+	 *
 	 * @return The stored {@link List} of {@link Byte Bytes}
 	 * or {@code null} if <b>key</b> didn't exist or contains
 	 * a different type of value.
@@ -1100,7 +1095,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Byte> getBytes(@Nonnull String key) {
+	public List<Byte> getBytes(@NotNull String key) {
 		return getBytes(key, null);
 	}
 
@@ -1121,7 +1116,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Short getShort(@Nonnull String key, @Nullable Short def) {
+	public Short getShort(@NotNull String key, @Nullable Short def) {
 		return get(key, Short.class, def);
 	}
 
@@ -1138,7 +1133,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Short getShort(@Nonnull String key) {
+	public Short getShort(@NotNull String key) {
 		return getShort(key, null);
 	}
 
@@ -1163,7 +1158,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Short> getShorts(@Nonnull String key, @Nullable List<Short> def) {
+	public List<Short> getShorts(@NotNull String key, @Nullable List<Short> def) {
 		return getList(key, def);
 	}
 
@@ -1186,7 +1181,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Short> getShorts(@Nonnull String key) {
+	public List<Short> getShorts(@NotNull String key) {
 		return getShorts(key, null);
 	}
 
@@ -1207,7 +1202,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Integer getInt(@Nonnull String key, @Nullable Integer def) {
+	public Integer getInt(@NotNull String key, @Nullable Integer def) {
 		return get(key, Integer.class, def);
 	}
 
@@ -1224,7 +1219,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Integer getInt(@Nonnull String key) {
+	public Integer getInt(@NotNull String key) {
 		return getInt(key, null);
 	}
 
@@ -1249,7 +1244,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Integer> getInts(@Nonnull String key, @Nullable List<Integer> def) {
+	public List<Integer> getInts(@NotNull String key, @Nullable List<Integer> def) {
 		return getList(key, def);
 	}
 
@@ -1272,7 +1267,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Integer> getInts(@Nonnull String key) {
+	public List<Integer> getInts(@NotNull String key) {
 		return getInts(key, null);
 	}
 
@@ -1293,7 +1288,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Long getLong(@Nonnull String key, @Nullable Long def) {
+	public Long getLong(@NotNull String key, @Nullable Long def) {
 		return get(key, Long.class, def);
 	}
 
@@ -1310,7 +1305,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Long getLong(@Nonnull String key) {
+	public Long getLong(@NotNull String key) {
 		return getLong(key, null);
 	}
 
@@ -1335,7 +1330,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Long> getLongs(@Nonnull String key, @Nullable List<Long> def) {
+	public List<Long> getLongs(@NotNull String key, @Nullable List<Long> def) {
 		return getList(key, def);
 	}
 
@@ -1358,7 +1353,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Long> getLongs(@Nonnull String key) {
+	public List<Long> getLongs(@NotNull String key) {
 		return getLongs(key, null);
 	}
 
@@ -1379,7 +1374,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Float getFloat(@Nonnull String key, @Nullable Float def) {
+	public Float getFloat(@NotNull String key, @Nullable Float def) {
 		return get(key, Float.class, def);
 	}
 
@@ -1396,7 +1391,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Float getFloat(@Nonnull String key) {
+	public Float getFloat(@NotNull String key) {
 		return getFloat(key, null);
 	}
 
@@ -1421,7 +1416,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Float> getFloats(@Nonnull String key, @Nullable List<Float> def) {
+	public List<Float> getFloats(@NotNull String key, @Nullable List<Float> def) {
 		return getList(key, def);
 	}
 
@@ -1444,7 +1439,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Float> getFloats(@Nonnull String key) {
+	public List<Float> getFloats(@NotNull String key) {
 		return getFloats(key, null);
 	}
 
@@ -1465,7 +1460,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Double getDouble(@Nonnull String key, @Nullable Double def) {
+	public Double getDouble(@NotNull String key, @Nullable Double def) {
 		return get(key, Double.class, def);
 	}
 
@@ -1482,7 +1477,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Double getDouble(@Nonnull String key) {
+	public Double getDouble(@NotNull String key) {
 		return getDouble(key, null);
 	}
 
@@ -1507,7 +1502,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Double> getDoubles(@Nonnull String key, @Nullable List<Double> def) {
+	public List<Double> getDoubles(@NotNull String key, @Nullable List<Double> def) {
 		return getList(key, def);
 	}
 
@@ -1530,7 +1525,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Double> getDoubles(@Nonnull String key) {
+	public List<Double> getDoubles(@NotNull String key) {
 		return getDoubles(key, null);
 	}
 
@@ -1560,7 +1555,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Date getDate(@Nonnull String key, @Nullable Date def) {
+	public Date getDate(@NotNull String key, @Nullable Date def) {
 		final Long millis = getLong(key);
 		return millis == null ? def : new Date(millis);
 	}
@@ -1583,7 +1578,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public Date getDate(@Nonnull String key) {
+	public Date getDate(@NotNull String key) {
 		return getDate(key, null);
 	}
 
@@ -1613,9 +1608,9 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Date> getDates(@Nonnull String key, @Nullable List<Date> def) {
+	public List<Date> getDates(@NotNull String key, @Nullable List<Date> def) {
 		final List<Long> longs = getLongs(key);
-		return longs == null ? def : MCLists.map(millis -> new Date(millis), longs);
+		return longs == null ? def : MCCollections.map(longs, Date::new);
 	}
 
 	/**
@@ -1642,7 +1637,7 @@ public abstract class StorageHandler {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public List<Date> getDates(@Nonnull String key) {
+	public List<Date> getDates(@NotNull String key) {
 		return getDates(key, null);
 	}
 
@@ -1664,6 +1659,6 @@ public abstract class StorageHandler {
 
 	@Override
 	public String toString() {
-		return "StorageHandler" + keys.toString();
+		return "StorageHandler" + keys;
 	}
 }
