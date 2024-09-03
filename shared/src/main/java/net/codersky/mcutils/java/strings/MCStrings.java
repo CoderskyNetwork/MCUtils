@@ -7,7 +7,6 @@ import net.codersky.mcutils.java.strings.pattern.color.HexColorPattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class MCStrings {
 
@@ -67,7 +67,6 @@ public class MCStrings {
 		return colorPatterns;
 	}
 
-	@NotNull
 	public static void addColorPatterns(@NotNull ColorPattern... patterns) {
 		MCCollections.add(colorPatterns, patterns);
 	}
@@ -111,13 +110,12 @@ public class MCStrings {
 	 * @return A new {@code String} with all the contents of the specified char
 	 * {@code sequence} except valid chat colors.
 	 *
-	 * @throws NullPointerException if {@code str} is {@code null}.
+	 * @throws NullPointerException if {@code sequence} is {@code null}.
 	 *
 	 * @since MCUtils 1.0.0
 	 */
+	@NotNull
 	public static String stripColor(@NotNull CharSequence sequence, char colorChar) {
-		if (sequence == null)
-			return null;
 		final int length = sequence.length();
 		final StringBuilder result = new StringBuilder();
 		for (int i = 0; i < length; i++) {
@@ -151,37 +149,14 @@ public class MCStrings {
 	 */
 
 	/**
-	 * Checks if a string has any content on it. If
-	 * {@link String#isBlank()} returns {@code true} or the
-	 * string is {@code null}, {@code false} will be returned.
-	 *
-	 * @param str the string to check.
-	 *
-	 * @return {@code true} if the string has content, {@code false} otherwise.
-	 *
-	 * @since MCUtils 1.0.0
-	 */
-	public static boolean hasContent(@Nullable String str) {
-		return str != null && !str.isBlank();
-	}
-
-
-
-
-	// TODO Update all methods below this line.
-
-
-
-
-	/**
 	 * Checks if a {@link CharSequence} has any content on it. This will
-	 * return {@code false} if the <b>seq</b>uence is {@code null}, empty
+	 * return {@code false} if {@code seq} is {@code null}, empty
 	 * or contains only {@link Character#isWhitespace(char) whitespace}
 	 * characters, {@code true} otherwise.
 	 *
 	 * @param seq the {@link CharSequence} to check.
 	 *
-	 * @return {@code true} if the <b>seq</b>uence has content, {@code false} otherwise.
+	 * @return {@code true} if {@code seq} has content, {@code false} otherwise.
 	 *
 	 * @since MCUtils 1.0.0
 	 */
@@ -200,65 +175,81 @@ public class MCStrings {
 	 */
 
 	/**
-	 * Gets a {@link String} {@link Iterator list} as a {@link String} with all
-	 * elements separated by the specified <b>separator</b>, null elements will be ignored.
-	 * If <b>lst</b> is null, null will be returned, if <b>separator</b>
-	 * is null, "null" will be used as a separator.
-	 * <p>
-	 * This method doesn't treat strings without content as elements, meaning
-	 * no separator will be added to them (See {@link #hasContent(String)})
+	 * Gets a {@link CharSequence} {@link Iterable} as a {@link String} with all
+	 * elements separated by the specified {@code separator}, Elements that
+	 * don't match the specified {@code filter} will be ignored, meaning that they won't
+	 * be included on the resulting {@code String}.
 	 * <p>
 	 * Example:
 	 * <p>
-	 * List: [" ", "a", null, "b", "c"]<br>
+	 * Iterable: [" ", "a", null, "b", "c"]<br>
 	 * Separator: ", "<br>
+	 * Filter: {@link #hasContent(CharSequence)}<br>
 	 * Returns: " a, b, c"
 	 *
-	 * @param list the list to use.
-	 * @param separator the separator to use.
+	 * @param iterable the {@link Iterable} to use, for arrays, just use {@link List#of(Object[])}.
+	 * @param separator the separator to use, if {@code null} is used then <i>null</i> will be
+	 * 	 * used as a separator as specified by {@link StringBuilder#append(CharSequence)}.
+	 * @param filter the {@link Predicate} to use in order to filter {@link CharSequence CharSequences}.
+	 * using a {@code null} filter means that every {@link CharSequence} present on the {@code iterator}
+	 * will be included. If the {@link Predicate} returns {@code true} for a {@link CharSequence},
+	 * said {@link CharSequence} will be included, if {@code false} is returned, it will be ignored.
 	 *
-	 * @return A {@link String} {@link Iterator list} as a {@link String} with all elements
-	 * separated by the specified <b>separator</b>.
+	 * @return A {@link CharSequence} {@link Iterator} as a {@link String} with all elements that match
+	 * {@code filter} separated by {@code separator}.
+	 *
+	 * @throws NullPointerException if {@code iterable} is {@code null}.
 	 *
 	 * @since MCUtils 1.0.0
+	 *
+	 * @see #asString(Iterable, CharSequence)
 	 */
-	@Nullable
-	public static String asString(@Nullable Iterable<String> list, @Nullable CharSequence separator) {
+	@NotNull
+	public static String asString(@NotNull Iterable<CharSequence> iterable, @Nullable CharSequence separator, @Nullable Predicate<CharSequence> filter) {
 		final StringBuilder builder = new StringBuilder();
-		if (list == null)
-			return null;
-		for (String str : list)
-			if (hasContent(str))
-				(builder.isEmpty() ? builder : builder.append(separator)).append(str);
+		for (CharSequence seq : iterable)
+			if (filter == null || filter.test(seq))
+				(builder.isEmpty() ? builder : builder.append(separator)).append(seq);
 		return builder.toString();
 	}
 
 	/**
-	 * Gets a {@link String} array as a {@link String} with all elements separated by
-	 * the specified <b>separator</b>, null elements will be ignored.
-	 * If <b>lst</b> is null, null will be returned, if <b>separator</b>
-	 * is null, "null" will be used as a separator.
-	 * <p>
-	 * This method doesn't treat strings without content as elements, meaning
-	 * no separator will be added to them (See {@link #hasContent(String)})
+	 * Gets a {@link CharSequence} {@link Iterable} as a {@link String} with all
+	 * elements separated by the specified {@code separator}, Elements that
+	 * don't have content (See {@link #hasContent(CharSequence)}) will be ignored,
+	 * if you want to specify your own filter, use {@link #asString(Iterable, CharSequence, Predicate)}.
 	 * <p>
 	 * Example:
 	 * <p>
-	 * List: [" ", "a", null, "b", "c"]<br>
+	 * Iterable: [" ", "a", null, "b", "c"]<br>
 	 * Separator: ", "<br>
 	 * Returns: " a, b, c"
 	 *
-	 * @param array the array of {@link String strings} to use.
-	 * @param separator the separator to use.
+	 * @param iterable the {@link Iterable} to use, for arrays, just use {@link List#of(Object[])}.
+	 * @param separator the separator to use, if {@code null} is used then <i>null</i> will be
+	 * used as a separator as specified by {@link StringBuilder#append(CharSequence)}.
 	 *
-	 * @return A {@link String} array as a {@link String} with all elements separated by
-	 * the specified <b>separator</b>.
+	 * @return A {@link CharSequence} {@link Iterator} as a {@link String} with all elements that
+	 * have content (See {@link #hasContent(CharSequence)}) separated by {@code separator}.
+	 *
+	 * @throws NullPointerException if {@code iterable} is {@code null}.
 	 *
 	 * @since MCUtils 1.0.0
+	 *
+	 * @see #asString(Iterable, CharSequence)
 	 */
-	@Nullable
-	public static String asString(@Nullable String[] array, @Nullable CharSequence separator) {
-		return asString(Arrays.asList(array), separator);
+	@NotNull
+	public static String asString(@NotNull Iterable<CharSequence> iterable, @Nullable CharSequence separator) {
+		return asString(iterable, separator, MCStrings::hasContent);
+
+
+
+
+	// TODO Update all methods below this line.
+
+
+
+
 	}
 
 	/*
@@ -281,14 +272,12 @@ public class MCStrings {
 	 *
 	 * @see #substring(String, String, String)
 	 */
-	public static String substring(String src, String from, String to, boolean inclusive) {
-		if (src == null || from == null || to == null)
-			return src;
-		final int start = src.indexOf(from);
-		final int end = src.indexOf(to);
+	public static <T extends CharSequence> T subSequence(T src, CharSequence from, CharSequence to, boolean inclusive) {
+		final int start = indexOf(src, from, 0);
+		final int end = indexOf(src, to, start + 1);
 		if (start == -1 || end == -1)
 			return null;
-		return inclusive ? src.substring(start, end + to.length()) : src.substring(start + from.length(), end);
+		return (T) (inclusive ? src.subSequence(start, end + to.length()) : src.subSequence(start + from.length(), end));
 	}
 
 	/**
