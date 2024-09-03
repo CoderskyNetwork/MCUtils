@@ -340,138 +340,121 @@ public class MCStrings {
 		return substring(src, from, to, true);
 	}
 
-
-
-
-
-	// TODO Update all methods below this line.
-
-
-
-
-
 	/*
 	 * Match
 	 */
 
 	/**
-	 * This method is mostly designed for patterns. It will attempt to
-	 * get a substring of <b>src</b> between <b>from</b> and <b>to</b>.
-	 * If a substring is found, <b>action</b> will {@link Consumer#accept(Object) accept}
-	 * it, removing said substring from the returning string only if <b>remove</b> is true.
-	 * Let's see an example where "print" stands for System.out.println:
-	 * <p>
-	 * <code>match("Match (this)", "(", ")", match -> print("Match: " + match), true);</code>
-	 * <p>
-	 * The output of this one line program will be "Match: this", the returning string of
-	 * the method will be "Match ", if <b>remove</b> was false, the output would stay the
-	 * same, but the returning string would be "Match (this)", without any change.
-	 * as you can see, <b>from</b> and <b>to</b> will never be sent to the {@link Consumer}.
-	 * <p>
-	 * You can see an example of this method being used on MCUtils here:
-	 * <ul>
-	 * <li>{@link ActionBarTargetPattern#process(CommandSender, String)}</li>
-	 * <li>{@link PlayerReceiverPattern#process(CommandSender, String)}</li>
-	 * </ul>
-	 *
-	 * @param src the source string to use.
-	 * @param from the String to match at the beginning of the pattern.
-	 * @param to the String to match at the end of the pattern.
-	 * @param action a {@link Consumer} that may accept any matching
-	 * substrings of <b>src</b> between <b>from</b> and <b>to</b>.
-	 * @param remove if true, the matching content will be removed
-	 * from the resulting String, if false, the resulting string
-	 * will be an exact copy of <b>src</b>.
-	 *
-	 * @return If <b>remove</b> is true, <b>src</b> with any match from
-	 * the specified pattern removed from it, otherwise, a exact copy
-	 * of <b>src</b>.
-	 *
-	 * @throws NullPointerException if any parameter is null.
-	 *
-	 * @see #substring(String, String, String)
-	 * @see #match(String, String, String, Consumer)
-	 */
-	@Nonnull
-	public static String match(@Nonnull String src, @Nonnull String from, @Nonnull String to, @Nonnull Consumer<String> action, boolean remove) {
-		return match(src, from, to, remove ? match -> "" : match -> match);
-	}
-
-	/**
-	 * This method is mostly designed for patterns. It will attempt to
-	 * get a substring of <b>src</b> between <b>from</b> and <b>to</b>.
-	 * If a substring is found, <b>action</b> will {@link Consumer#accept(Object) accept}
-	 * it, removing said substring from the returning string.
-	 * Let's see an example where "print" stands for System.out.println:
-	 * <p>
-	 * <code>match("Match (this)", "(", ")", match -> print("Match: " + match));</code>
-	 * <p>
-	 * The output of this one line program will be "Match: this", the returning string of
-	 * the method will be "Match ", as you can see, <b>from</b> and <b>to</b> will never
-	 * be sent to the {@link Consumer}.
-	 * <p>
-	 * You can see an example of this method being used on MCUtils here:
-	 * <ul>
-	 * <li>{@link ActionBarTargetPattern#process(CommandSender, String)}</li>
-	 * <li>{@link PlayerReceiverPattern#process(CommandSender, String)}</li>
-	 * </ul>
-	 *
-	 * @param src the source string to use.
-	 * @param from the String to match at the beginning of the pattern.
-	 * @param to the String to match at the end of the pattern.
-	 * @param action a {@link Consumer} that may accept any matching
-	 * substrings of <b>src</b> between <b>from</b> and <b>to</b>.
-	 *
-	 * @return <b>src</b> with any match from the specified pattern removed from it.
-	 *
-	 * @throws NullPointerException if any parameter is null.
-	 *
-	 * @see #substring(String, String, String)
-	 * @see #match(String, String, String, Consumer, boolean)
-	 */
-	public static String match(@Nonnull String src, @Nonnull String from, @Nonnull String to, @Nonnull Consumer<String> action) {
-		return match(src, from, to, action, true);
-	}
-
-	/**
-	 * This method can be used like a {@link Replacer} but it allows for more
-	 * flexibility on what to do with the matching substrings. It will attempt to
-	 * get any number of substrings of <b>src</b> between <b>from</b> and <b>to</b>.
-	 * If a substring is found, <b>function</b> will {@link Function#apply(Object) apply}
-	 * it, replacing the matched substring with the return value of <b>function</b>.
+	 * This method will attempt to get any number of substrings of {@code src} between {@code from}
+	 * and {@code to}. If a substring is found, {@code function} will be {@link Function#apply(Object) applied}
+	 * on it, replacing the matched substring with the return value of {@code function}.
 	 * Let's see an example:
 	 * <p>
 	 * <code>match("Match (this)", "(", ")", match -> "done";</code>
 	 * <p>
-	 * The returning String of this will be "Match done". <b>from</b>
-	 * and <b>to</b> aren't considered a part of <b>match</b> here.
+	 * The returning String of this will be "Match done". {@code from}
+	 * and {@code to} won't be included on {@code match}, as only the content
+	 * between {@code from} and {@code to} is considered to be relevant.
 	 *
-	 * @param src the source string to use.
-	 * @param from the String to match at the beginning of the pattern.
-	 * @param to the String to match at the end of the pattern.
+	 * @param src the source {@link CharSequence} to use.
+	 * @param from the {@link CharSequence} to match at the beginning of the pattern.
+	 * @param to the {@link CharSequence} to match at the end of the pattern.
 	 * @param function a {@link Function} that may accept any matching
-	 * substrings of <b>src</b> between <b>from</b> and <b>to</b>, returning
-	 * the String that will be used to replace the mathing substring.
+	 * substrings of {@code src} between {@code from} and {@code to}, returning
+	 * the {@link String} that will be used to replace the matching substring.
 	 *
-	 * @return <b>src</b> with any match from the specified pattern removed from it.
+	 * @return {@code src} with any match from the specified pattern removed from it.
 	 *
-	 * @throws NullPointerException if any parameter is null.
+	 * @throws NullPointerException if any parameter is {@code null}.
 	 *
-	 * @see #substring(String, String, String)
-	 * @see #matchAndAccept(String, String, String, Consumer, boolean)
+	 * @since MCUtils 1.0.0
+	 *
+	 * @see #match(CharSequence, CharSequence, CharSequence, Consumer)
+	 * @see #match(CharSequence, CharSequence, CharSequence, Consumer, boolean)
 	 */
-	public static String match(@Nonnull CharSequence src, @Nonnull String from, @Nonnull String to, @Nonnull Function<String, String> function) {
+	@NotNull
+	public static String match(@NotNull CharSequence src, @NotNull CharSequence from, @NotNull CharSequence to, @NotNull Function<String, String> function) {
 		final StringBuilder res = new StringBuilder(src);
 		final int toLen = to.length();
 		final int fromLen = from.length();
-		int start = res.indexOf(from, 0);
+		int start = indexOf(res, from, 0);
 		while (start != -1) {
-			final int end = res.indexOf(to, start);
+			final int end = indexOf(res, to, start);
 			if (end != -1)
 				res.replace(start, end + toLen, function.apply(res.substring(start + fromLen, end)));
-			start = res.indexOf(from, start + 1);
+			start = indexOf(res, from, start + 1);
 		}
 		return res.toString();
+	}
+
+	/**
+	 * This method will attempt to get any amount of substrings of {@code src} between {@code from} and {@code to}.
+	 * If a substring is found, {@code action} will {@link Consumer#accept(Object) accept}
+	 * it, removing said substring as well as {@code from} and {@code to} from the
+	 * returning {@code String} only if {@code remove} is set to {@code true}.
+	 * Let's see an example where {@code print} stands for {@code System.out.println}:
+	 * <p>
+	 * <code>match("Match (this)", "(", ")", match -> print("Match: " + match), true);</code>
+	 * <p>
+	 * The output of this line will be "Match: this", the returning {@link String} of
+	 * the method will be "Match ". If {@code remove} is set to {@code false}, the output will stay the
+	 * same, but the returning string will be "Match (this)", without any change.
+	 * As you can see, {@code from} and {@code to} will never be sent to the {@link Consumer}.
+	 *
+	 * @param src the source {@link CharSequence} to use.
+	 * @param from the {@link CharSequence} to match at the beginning of the pattern.
+	 * @param to the {@link CharSequence} to match at the end of the pattern.
+	 * @param action a {@link Consumer} that may accept any matching
+	 * substrings of {@code src} between {@code from} and {@code to}.
+	 * @param remove if {@code true}, the matching content will be removed
+	 * from the resulting {@link String}, if {@code false}, the resulting {@link String}
+	 * will be an exact copy of {@code src}.
+	 *
+	 * @return If {@code remove} is {@code true}, {@code src} as a {@link String} with
+	 * any match from the specified pattern removed from it, otherwise, an exact copy
+	 * of {@code src} as a {@link String}.
+	 *
+	 * @throws NullPointerException if any parameter is {@code null}.
+	 *
+	 * @since MCUtils 1.0.0
+	 *
+	 * @see #match(CharSequence, CharSequence, CharSequence, Consumer)
+	 * @see #match(CharSequence, CharSequence, CharSequence, Function)
+	 */
+	@NotNull
+	public static String match(@NotNull CharSequence src, @NotNull CharSequence from, @NotNull CharSequence to, @NotNull Consumer<String> action, boolean remove) {
+		return match(src, from, to, remove ? match -> "" : match -> match);
+	}
+
+	/**
+	 * This method will attempt to get any amount of substrings of {@code src} between {@code from} and {@code to}.
+	 * If a substring is found, {@code action} will {@link Consumer#accept(Object) accept}
+	 * it, removing said substring as well as {@code from} and {@code to} from the returning {@code String}.
+	 * Let's see an example where {@code print} stands for {@code System.out.println}:
+	 * <p>
+	 * <code>match("Match (this)", "(", ")", match -> print("Match: " + match));</code>
+	 * <p>
+	 * The output of this line will be "Match: this", the returning {@link String} of
+	 * the method will be "Match ". As you can see, {@code from} and {@code to} will
+	 * never be sent to the {@link Consumer}.
+	 *
+	 * @param src the source {@link CharSequence} to use.
+	 * @param from the {@link CharSequence} to match at the beginning of the pattern.
+	 * @param to the {@link CharSequence} to match at the end of the pattern.
+	 * @param action a {@link Consumer} that may accept any matching
+	 * substrings of {@code src} between {@code from} and {@code to}.
+	 *
+	 * @return {@code src} as a {@link String} with any match from the specified pattern removed from it.
+	 *
+	 * @throws NullPointerException if any parameter is {@code null}.
+	 *
+	 * @since MCUtils 1.0.0
+	 *
+	 * @see #match(CharSequence, CharSequence, CharSequence, Consumer, boolean)
+	 * @see #match(CharSequence, CharSequence, CharSequence, Function)
+	 */
+	public static String match(@NotNull CharSequence src, @NotNull CharSequence from, @NotNull CharSequence to, @NotNull Consumer<String> action) {
+		return match(src, from, to, action, true);
 	}
 
 	/*
