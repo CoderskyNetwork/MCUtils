@@ -241,6 +241,7 @@ public class MCStrings {
 	@NotNull
 	public static String asString(@NotNull Iterable<CharSequence> iterable, @Nullable CharSequence separator) {
 		return asString(iterable, separator, MCStrings::hasContent);
+	}
 
 
 
@@ -250,6 +251,50 @@ public class MCStrings {
 
 
 
+	/*
+	 * CharSequence utility
+	 */
+
+	/**
+	 * Gets the index of {@code toFind} on {@code seq}, starting to search at {@code beginIndex}.
+	 * In other words, this method will search for the first occurrence of {@code toFind} inside of
+	 * {@code seq} starting at {@code beginIndex}, then return the index at which {@code toFind} <b>starts</b>.
+	 *
+	 * @param seq the {@link CharSequence} to search on.
+	 * @param toFind the {@link CharSequence} to find inside {@code seq}.
+	 * @param beginIndex the index of {@code seq} to start searching from, negative values
+	 * will make this method <b>always</b> return {@code -1}.
+	 *
+	 * @return the index of {@code seq} at which {@code toFind} is located, if found. {@code -1} if
+	 * {@code toFind} could not be found inside {@code seq}. Another instance where this method returns
+	 * {@code -1} is when {@code beginIndex} is negative or higher than the {@link CharSequence#length()
+	 * length} of {@code seq}. If {@code toFind}'s {@link CharSequence#length() length} is {@code 0},
+	 * then {@code 0} will be returned as an empty string is considered to always match.
+	 *
+	 * @throws NullPointerException if {@code seq} or {@code toFind} are {@code null}.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	public static int indexOf(@NotNull CharSequence seq, @NotNull CharSequence toFind, int beginIndex) {
+		final int seqLen = seq.length();
+		final int toFindLen = toFind.length();
+		if (beginIndex < 0)
+			return -1;
+		if (toFindLen == 0)
+			return 0;
+		for (int i = beginIndex; i < seqLen; i++) {
+			for (int j = 0; j < toFindLen && i + j < seqLen; j++) {
+				if (seq.charAt(i + j) != toFind.charAt(j))
+					break;
+				if (toFindLen == j + 1)
+					return i;
+			}
+		}
+		return -1;
+	}
+
+	public static int indexOf(@NotNull CharSequence seq, @NotNull CharSequence toFind) {
+		return indexOf(seq, toFind, 0);
 	}
 
 	/*
