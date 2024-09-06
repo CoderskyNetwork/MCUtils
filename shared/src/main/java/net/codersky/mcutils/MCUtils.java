@@ -1,19 +1,44 @@
 package net.codersky.mcutils;
 
 import net.codersky.mcutils.cmd.MCCommand;
+import net.codersky.mcutils.crossplatform.player.PlayerProvider;
 import net.codersky.mcutils.files.ConfigFileHolder;
 import net.codersky.mcutils.files.FileHolder;
 import net.codersky.mcutils.files.FileUpdater;
 import net.codersky.mcutils.files.MessagesFileHolder;
+import net.codersky.mcutils.crossplatform.player.MCPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public abstract class MCUtils {
 
+	private PlayerProvider<?> playerProvider;
 	protected final LinkedList<FileHolder> files = new LinkedList<>();
+
+	public MCUtils(@NotNull PlayerProvider<?> playerProvider) {
+		setPlayerProvider(playerProvider);
+	}
+
+	@NotNull
+	public MCUtils setPlayerProvider(@NotNull PlayerProvider<?> playerProvider) {
+		this.playerProvider = Objects.requireNonNull(playerProvider, "Player provider cannot be null.");
+		return this;
+	}
+
+	@NotNull
+	public PlayerProvider<?> getPlayerProvider() {
+		return playerProvider;
+	}
+
+	@Nullable
+	public MCPlayer getPlayer(@NotNull UUID uuid) {
+		return playerProvider.getPlayer(uuid);
+	}
 
 	/**
 	 * Gets the version of MCUtils being used by this utility
