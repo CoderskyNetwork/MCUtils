@@ -5,7 +5,7 @@ import net.codersky.mcutils.java.strings.pattern.color.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Interface used to represent a color pattern that {@link MCStrings}
+ * Functional interface used to represent a color pattern that {@link MCStrings}
  * will then use on its {@link MCStrings#applyColor(String, boolean)}
  * and {@link MCStrings#applyColor(String)} methods.
  *
@@ -25,19 +25,19 @@ public interface ColorPattern {
 	 * <p>
 	 * Simple mode is designed for hexadecimal based color patterns, adding an extra
 	 * step to support a three-character hexadecimal color pattern, for example "#FFF".
-	 * If this color pattern doesn't support simple mode this setting won't have any effect.
+	 * If this {@link ColorPattern} doesn't support simple mode this setting won't have any effect.
 	 *
-	 * @param string the string to which this pattern should be applied to, this string
-	 * must not be modified by the implementation, a new string must be returned with the
-	 * required modifications done to it.
+	 * @param string The {@link String} to which this pattern should be applied to.
 	 * @param simple whether to use the simple color pattern or not, if applicable.
 	 *
 	 * @throws NullPointerException if {@code string} is {@code null}.
 	 *
-	 * @return By convention all color patterns will return a completely new {@link String} with
-	 * this pattern applied to it if and <b>only</b> if the pattern is found on the provided
-	 * {@code string}, if the pattern isn't found, the {@code string} parameter must be returned as
-	 * is without creating a new one.
+	 * @return By convention all {@link ColorPattern color patterns} will return a clone of
+	 * {@code string} with this pattern applied to it if and <b>only</b> if the pattern
+	 * is found on the provided {@code string}. If the pattern isn't found, the {@code string} parameter
+	 * must be returned as is without creating a new {@link String}.
+	 *
+	 * @since MCUtils 1.0.0
 	 */
 	@NotNull
 	String applyColor(@NotNull final String string, boolean simple);

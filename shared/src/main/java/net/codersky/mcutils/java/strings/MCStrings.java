@@ -1,14 +1,17 @@
 package net.codersky.mcutils.java.strings;
 
-import net.codersky.mcutils.java.MCCollections;
+import net.codersky.mcutils.crossplatform.MessageReceiver;
 import net.codersky.mcutils.java.strings.pattern.ColorPattern;
+import net.codersky.mcutils.java.strings.pattern.TargetPattern;
 import net.codersky.mcutils.java.strings.pattern.color.GradientColorPattern;
 import net.codersky.mcutils.java.strings.pattern.color.HexColorPattern;
+import net.codersky.mcutils.java.strings.pattern.target.ActionBarTargetPattern;
+import net.codersky.mcutils.java.strings.pattern.target.ConsoleTargetPattern;
+import net.codersky.mcutils.java.strings.pattern.target.PlayerTargetPattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -22,12 +25,19 @@ public class MCStrings {
 	public static char COLOR_CHAR = '§';
 
 	protected static List<ColorPattern> colorPatterns;
+	protected static List<TargetPattern> targetPatterns;
 
 	static {
 		colorPatterns = List.of(
 				new GradientColorPattern(),
 				new HexColorPattern(),
-				(str, simple) -> applyColorChar('&', str));
+				(str, simple) -> applyColorChar('&', str)
+		);
+		targetPatterns = List.of(
+				new ActionBarTargetPattern(),
+				new ConsoleTargetPattern(),
+				new PlayerTargetPattern()
+		);
 	}
 
 	/*
@@ -147,6 +157,30 @@ public class MCStrings {
 	public static boolean isColorChar(char c) {
 		final char ch = Character.toLowerCase(c);
 		return (ch == 'r' || ch == 'x' || (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'k' && ch <= 'o'));
+	}
+
+	/*
+	 * Target patterns
+	 */
+
+	/**
+	 * Applies all {@link TargetPattern target patterns} to the provided {@code string}
+	 *
+	 * @param str the {@link String} to process.
+	 *
+	 * @throws NullPointerException if {@code string} is {@code null}.
+	 *
+	 * @return A new {@link String} with all {@link TargetPattern target patterns}
+	 * removed from it.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	@NotNull
+	public static String applyTargetPatterns(@NotNull MessageReceiver target, @NotNull String str) {
+		String result = Objects.requireNonNull(str, "The string to process cannot be null");
+		for (TargetPattern pattern : targetPatterns)
+			result = pattern.process(target, result);
+		return result;
 	}
 
 	/*
