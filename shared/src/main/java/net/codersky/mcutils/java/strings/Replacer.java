@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import net.codersky.mcutils.java.MCCollections;
 import net.codersky.mcutils.java.math.MCNumbers;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextReplacementConfig;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a replacer to replace parts of a string with other objects, if you want to use the same replacements for multiple strings, you should 
- * create a replacer variable and apply it to as many strings as you want to <b>avoid creating multiple instances of the same replacements</b>, also,
- * make sure that the amount of strings added to the replacer are <b>even</b>, otherwise, an {@link IllegalArgumentException} will be thrown.
+ * Represents a replacer to replace parts of a {@link String} or {@link Component} with other objects.
+ * If you want to use the same replacements for multiple objects, you should create a replacer variable and
+ * apply it to as many objects as you want to <b>avoid creating multiple instances of the same replacements</b>,
+ * also, make sure that the amount of objects added to the replacer are <b>even</b>,
+ * otherwise, an {@link IllegalArgumentException} will be thrown.
  * <p>
  * <b>Numeric support:</b>
  * <p>
@@ -26,13 +31,13 @@ import org.jetbrains.annotations.Nullable;
  * 
  * @since MCUtils 1.0.0
  * 
- * @author xDec0de_
- * 
  * @see #Replacer(Object...)
+ *
+ * @author xDec0de_
  */
 public class Replacer {
 
-	private final ArrayList<String> replaceList = new ArrayList<>();
+	private final ArrayList<Object> replaceList = new ArrayList<>();
 
 	/**
 	 * Creates a replacer to replace parts of a string with other strings,
@@ -42,7 +47,7 @@ public class Replacer {
 	 * also,  make sure that the amount of strings added to the {@link Replacer}
 	 * are <b>even</b>, otherwise, an {@link IllegalArgumentException} will be thrown.
 	 * 
-	 * @param replacements the new strings to be replaced, the format is <i>"str1", "obj1", "str2", "obj2"...</i>
+	 * @param replacements The new strings to be replaced, the format is <i>"str1", "obj1", "str2", "obj2"...</i>
 	 * 
 	 * @throws IllegalArgumentException if {@code replacements} is {@code null} or the amount of
 	 * objects is not even, more technically, if {@code replacements}
@@ -50,100 +55,126 @@ public class Replacer {
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #add(Replacer)
+	 * @see #add(Replacer...)
 	 * @see #add(Object...)
 	 * @see #replaceAt(String)
-	 * @see #replaceAt(List)
+	 * @see #replaceAt(Component) 
 	 */
-	public Replacer(Object... replacements) {
+	public Replacer(@NotNull Object... replacements) {
 		add(Objects.requireNonNull(replacements, "Replacements cannot be null."));
 	}
 
 	/**
 	 * Adds new {@code replacements} to an existing {@link Replacer}. the amount of replacements must also be even
 	 * note that existing replacements will be added to the list but the new replacer won't overwrite them.
-	 * Because of the way replacements work, only the first replacement added for a string will take effect
-	 * if there is another replacement added to said string later on. If {@code replacements} is {@code null},
-	 * nothing will be done.
+	 * Because of the way {@link Replacer Replacers} work, only the first replacement added for a string will take
+	 * effect if there is another replacement added to said string later on.
 	 * <p>
 	 * Example: text is <i>"Replace %test%"</i>, we add <i>"%test%", "Hello"</i> and <i>"%test%", "World"</i>. The
 	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%test%</i> will take effect.
 	 * 
-	 * @param replacements the new strings to be replaced, the format is <i>"str1", "obj1", "str2", "obj2"...</i>
+	 * @param replacements The replacements to add. The format is <i>"str1", "obj1", "str2", "obj2"...</i>
 	 * 
 	 * @return This {@link Replacer} with the new <b>replacements</b> added to it.
-	 * 
-	 * @throws IllegalArgumentException if {@code replacements} is {@code null} or the amount of
-	 * objects is not even, more technically, if {@code replacements}
+	 *
+	 * @throws NullPointerException If {@code replacements} or any of the elements inside of {@code replacements}
+	 * are {@code null}.
+	 * @throws IllegalArgumentException If the amount of objects is not even, more technically, if {@code replacements}
 	 * size % 2 is not equal to 0.
 	 * 
 	 * @since MCUtils 1.0.0
 	 * 
+	 * @see #add(Replacer...)
 	 * @see #replaceAt(String)
-	 * @see #replaceAt(List)
+	 * @see #replaceAt(Component)
 	 */
 	@NotNull
-	public Replacer add(@Nullable Object... replacements) {
-		if (replacements == null)
-			return this;
+	public Replacer add(@NotNull Object... replacements) {
 		if (replacements.length % 2 != 0)
-			throw new IllegalArgumentException(replacements[replacements.length -1] + "does not have a replacer! Add one more element.");
+			throw new IllegalArgumentException(replacements[replacements.length -1] + " does not have a replacement! Add one more element.");
 		for (Object replacement : replacements) {
-			if (replacement instanceof Replacement)
-				replaceList.add(((Replacement)replacement).asReplacement());
+			if (replacement instanceof Replacement iReplacement)
+				replaceList.add(iReplacement.asReplacement());
 			else
-				replaceList.add(replacement.toString());
+				replaceList.add(Objects.requireNonNull(replacement, "Null replacements are not allowed"));
 		}
 		return this;
 	}
 
 	/**
-	 * Adds the replacements of the specified <b>replacer</b> to this {@link Replacer}, joining them, note that existing replacements
-	 * will be added to the list but the new replacer won't overwrite them. Because of the way replacements work, only the first
-	 * replacement added for a string will take effect if there is another replacement added to said string later on.
-	 * If <b>replacements</b> is null, nothing will be done.<br><br>
-	 * 
+	 * Adds the replacements of the specified {@code replacers} to this {@link Replacer}, joining them.
+	 * Note that existing replacements will be added to the list but the new {@link Replacer} won't overwrite them.
+	 * Because of the way {@link Replacer Replacers} work, only the first replacement added for a string will take
+	 * effect if there is another replacement added to said string later on.
+	 * <p>
 	 * Example: text is <i>"Replace %test%"</i>, we add <i>"%test%", "Hello"</i> and <i>"%test%", "World"</i>. The
 	 * result will be <i>"Replace Hello"</i>, as only the first replacement over <i>%test%</i> will take effect.
 	 * 
-	 * @param replacer the {@link Replacer} to join to the existing {@link Replacer}.
+	 * @param replacers The {@link Replacer Replacers} to join to the existing {@link Replacer}.
 	 * 
-	 * @return The old {@link Replacer} with the replacements of <b>replacer</b> added to it.
+	 * @return The old {@link Replacer} with the replacements of {@code replacer} added to it.
 	 * 
 	 * @since MCUtils 1.0.0
-	 * 
+	 *
+	 * @see #add(Object...) 
 	 * @see #replaceAt(String)
-	 * @see #replaceAt(List)
+	 * @see #replaceAt(Component)
 	 */
 	@NotNull
-	public Replacer add(@Nullable Replacer replacer) {
-		if (replacer != null)
+	public Replacer add(@NotNull Replacer... replacers) {
+		for (Replacer replacer : replacers)
 			replaceList.addAll(replacer.replaceList);
 		return this;
 	}
 
 	/**
-	 * Applies this {@link Replacer} to the specified string, it the string is null, null will be returned.
+	 * Clones this {@link Replacer} creating a new one with the same replacements.
+	 *
+	 * @return A copy of this {@link Replacer}.
+	 *
+	 * @since MCUtils 1.0.0
+	 *
+	 * @see #Replacer(Object...)
+	 * @see #add(Replacer...)
+	 */
+	@NotNull
+	@Override
+	public Replacer clone() {
+		return new Replacer().add(this);
+	}
+
+	/*
+	 * String replacements
+	 */
+
+	/**
+	 * Applies this {@link Replacer} to the specified {@link String}.
 	 * 
-	 * @param str the string to apply the replacements to.
+	 * @param str The {@link String} to apply the replacements to.
 	 * 
-	 * @return A new string with the replacements applied to it.
-	 * 
+	 * @return A new {@link String} with all {@link #getReplacements() replacements} applied to it.
+	 *
+	 * @throws NullPointerException if {@code str} is {@code null}.
+	 *
 	 * @since MCUtils 1.0.0
 	 * 
-	 * @see #add(Replacer)
-	 * @see #add(Object...)
+	 * @see #replaceAt(String...)
+	 * @see #replaceAt(Component)
+	 * @see #replaceAt(Component...)
+	 * @see #replaceAtStrings(List)
+	 * @see #replaceAtComponents(List)
 	 */
-	@Nullable
-	public String replaceAt(@Nullable String str) {
-		final int replacelistLen = replaceList.size();
-		if (replacelistLen == 0 || str == null || str.isEmpty())
+	@NotNull
+	public String replaceAt(@NotNull String str) {
+		final int repLstLen = replaceList.size();
+		if (repLstLen == 0 || str.isEmpty())
 			return str;
 		final StringBuilder res = new StringBuilder(str);
-		for (int i = 0; i <= replacelistLen - 1; i += 2) {
-			final String toSearch = replaceList.get(i);
+		for (int i = 0; i <= repLstLen - 1; i += 2) {
+			final String toSearch = replaceList.get(i).toString();
 			final int searchLen = toSearch.length();
-			final String replacement = replaceList.get(i + 1);
+			// TODO Handle components, maybe just by adding the content? #toString is weird here.
+			final String replacement = replaceList.get(i + 1).toString();
 			final int replacementLen = replacement.length();
 			int index = res.indexOf(toSearch);
 			while (index != -1) {
@@ -154,7 +185,142 @@ public class Replacer {
 		return applyNumSupport(res).toString();
 	}
 
-	private static StringBuilder applyNumSupport(StringBuilder res) {
+	/**
+	 * Applies this {@link Replacer} to the specified {@link List} of {@link String strings}.
+	 * 
+	 * @param list The {@link String} {@link List} to apply the replacements to.
+	 * 
+	 * @return A new <b>modifiable</b> {@link String} {@link List} with the replacements applied to it.
+	 *
+	 * @throws NullPointerException if {@code list} or any element of it is {@code null}.
+	 * 
+	 * @since MCUtils 1.0.0
+	 *
+	 * @see #replaceAt(String)
+	 * @see #replaceAt(String...)
+	 * @see #replaceAt(Component)
+	 * @see #replaceAt(Component...)
+	 * @see #replaceAtComponents(List)
+	 */
+	@NotNull
+	public List<String> replaceAtStrings(@NotNull List<String> list) {
+		return MCCollections.map(list, this::replaceAt);
+	}
+
+	/**
+	 * Applies this {@link Replacer} to the specified {@link String strings}.
+	 *
+	 * @param strings The {@link String strings} to apply the replacements to.
+	 *
+	 * @return A new <b>modifiable</b> {@link String} {@link List} with the replacements applied to it.
+	 *
+	 *
+	 * @throws NullPointerException if {@code strings} or any {@link String} is {@code null}.
+	 *
+	 * @since MCUtils 1.0.0
+	 *
+	 * @see #replaceAt(String)
+	 * @see #replaceAt(Component)
+	 * @see #replaceAt(Component...)
+	 * @see #replaceAtStrings(List)
+	 * @see #replaceAtComponents(List)
+	 */
+	@NotNull
+	public List<String> replaceAt(@NotNull String... strings) {
+		return replaceAtStrings(List.of(strings));
+	}
+
+	/*
+	 * Adventure component replacements
+	 */
+
+	/**
+	 * Applies this {@link Replacer} to the specified {@link Component}.
+	 *
+	 * @param component The {@link Component} to apply the replacements to.
+	 *
+	 * @return A new {@link Component} with all {@link #getReplacements() replacements} applied to it.
+	 *
+	 * @throws NullPointerException if {@code component} is {@code null}.
+	 *
+	 * @since MCUtils 1.0.0
+	 *
+	 * @see #replaceAt(String)
+	 * @see #replaceAt(String...)
+	 * @see #replaceAt(Component...)
+	 * @see #replaceAtStrings(List)
+	 * @see #replaceAtComponents(List)
+	 */
+	@NotNull
+	public Component replaceAt(@NotNull Component component) {
+		final int repLstLen = replaceList.size();
+		if (repLstLen == 0)
+			return component;
+		Component result = component;
+		for (int i = 0; i <= repLstLen - 1; i += 2) {
+			final String match = replaceList.get(i).toString();
+			final Object value = replaceList.get(i + 1);
+			if (value instanceof ComponentLike componentLike)
+				result = result.replaceText(b -> b.matchLiteral(match).replacement(componentLike));
+			else
+				result = result.replaceText(b -> b.matchLiteral(match).replacement(value.toString()));
+		}
+		return result;
+	}
+
+	/**
+	 * Applies this {@link Replacer} to the specified {@link List} of {@link Component components}.
+	 *
+	 * @param list The {@link Component} {@link List} to apply the replacements to.
+	 *
+	 * @return A new <b>modifiable</b> {@link Component} {@link List} with the replacements applied to it.
+	 *
+	 * @throws NullPointerException if {@code list} or any element of it is {@code null}.
+	 *
+	 * @since MCUtils 1.0.0
+	 *
+	 * @see #replaceAt(String)
+	 * @see #replaceAt(String...)
+	 * @see #replaceAt(Component)
+	 * @see #replaceAt(Component...)
+	 * @see #replaceAtComponents(List)
+	 */
+	@NotNull
+	public List<Component> replaceAtComponents(@NotNull List<Component> list) {
+		return MCCollections.map(list, this::replaceAt);
+	}
+
+	/**
+	 * Applies this {@link Replacer} to the specified {@link Component components}.
+	 *
+	 * @param components The {@link Component components} to apply the replacements to.
+	 *
+	 * @return A new <b>modifiable</b> {@link Component} {@link List} with the replacements applied to it.
+	 *
+	 * @throws NullPointerException if {@code components} or any {@link Component} is {@code null}.
+	 *
+	 * @since MCUtils 1.0.0
+	 *
+	 * @see #replaceAt(String)
+	 * @see #replaceAt(String...)
+	 * @see #replaceAt(Component)
+	 * @see #replaceAtStrings(List)
+	 * @see #replaceAtComponents(List)
+	 */
+	@NotNull
+	public List<Component> replaceAt(@NotNull Component... components) {
+		return replaceAtComponents(List.of(components));
+	}
+
+	/*
+	 * Numeric support
+	 */
+
+	// TODO Redo this method to work with Components, maybe a new MCStrings pattern?
+	// TODO Seems weird to have a pattern on the Replacer class at this point...
+
+	@Deprecated(forRemoval = true)
+	private StringBuilder applyNumSupport(StringBuilder res) {
 		int start = 0;
 		while (start < res.length()) {
 			final int open = res.indexOf("<", start);
@@ -178,60 +344,24 @@ public class Replacer {
 	}
 
 	/**
-	 * Applies this {@link Replacer} to the specified list of {@link String strings},
-	 * if the <b>list</b> is null, null will be returned.
-	 * 
-	 * @param list the {@link String} {@link List} to apply the replacements to.
-	 * 
-	 * @return A new {@link String} {@link List} with the replacements applied to it.
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #add(Replacer)
-	 * @see #add(Object...)
-	 */
-	@Nullable
-	public List<String> replaceAt(@Nullable List<String> list) {
-		if (replaceList.isEmpty() || list == null || list.isEmpty())
-			return list;
-		List<String> res = new ArrayList<>();
-		list.forEach(str -> res.add(replaceAt(str)));
-		return res;
-	}
-
-	/**
-	 * Clones this {@link Replacer} creating a new one with the same replacements.
-	 * 
-	 * @return A copy of this {@link Replacer}
-	 * 
-	 * @since MCUtils 1.0.0
-	 * 
-	 * @see #Replacer(Object...)
-	 */
-	@Override
-	@NotNull
-	public Replacer clone() {
-		Replacer copy = new Replacer();
-		copy.replaceList.addAll(replaceList);
-		return copy;
-	}
-
-	/**
 	 * Gets the replacements being used by this {@link Replacer}.
 	 * Modifying this list will have no effect, it can be used
 	 * for debugging or to create your own {@link Replacer} type
 	 * while being able to {@link #clone()} it. This can be done
-	 * by calling the {@link #Replacer(Object...)} constructor
-	 * with {@link #getReplacements()}.
+	 * by calling the {@link #Replacer(Object...)} constructor.
 	 * 
 	 * @return The replacements being used by this {@link Replacer}.
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
 	@NotNull
-	public List<String> getReplacements() {
+	public List<Object> getReplacements() {
 		return new ArrayList<>(replaceList);
 	}
+
+	/*
+	 * Object override
+	 */
 
 	@NotNull
 	@Override
