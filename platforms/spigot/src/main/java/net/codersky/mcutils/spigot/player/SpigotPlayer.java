@@ -3,7 +3,9 @@ package net.codersky.mcutils.spigot.player;
 import net.codersky.mcutils.crossplatform.player.MCPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +23,8 @@ public class SpigotPlayer implements MCPlayer<Player> {
 	 * MCPlayer implementation
 	 */
 
+	// Player identification //
+
 	@NotNull
 	@Override
 	public Player getHandle() {
@@ -37,6 +41,20 @@ public class SpigotPlayer implements MCPlayer<Player> {
 	@Override
 	public String getName() {
 		return handle.getName();
+	}
+
+	// Messages //
+
+	@Override
+	public boolean sendActionBar(@NotNull String message) {
+		handle.spigot().sendMessage(ChatMessageType.ACTION_BAR, toBase(message));
+		return true;
+	}
+
+	@Override
+	public boolean sendActionBar(@NotNull Component message) {
+		handle.spigot().sendMessage(ChatMessageType.ACTION_BAR, toBase(message));
+		return true;
 	}
 
 	/*
@@ -58,6 +76,10 @@ public class SpigotPlayer implements MCPlayer<Player> {
 	/*
 	 * BaseComponent array conversion
 	 */
+
+	private BaseComponent[] toBase(@NotNull String legacyStr) {
+		return TextComponent.fromLegacyText(legacyStr);
+	}
 
 	private BaseComponent[] toBase(@NotNull Component component) {
 		return BungeeComponentSerializer.get().serialize(component);

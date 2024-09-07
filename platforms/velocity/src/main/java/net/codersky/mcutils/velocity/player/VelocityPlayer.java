@@ -4,7 +4,6 @@ import com.velocitypowered.api.proxy.Player;
 import net.codersky.mcutils.crossplatform.player.MCPlayer;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -19,6 +18,8 @@ public class VelocityPlayer implements MCPlayer<Player> {
 	/*
 	 * MCPlayer implementation
 	 */
+
+	// Player identification //
 
 	@NotNull
 	@Override
@@ -36,6 +37,19 @@ public class VelocityPlayer implements MCPlayer<Player> {
 	@Override
 	public String getName() {
 		return handle.getUsername();
+	}
+
+	// Messages //
+
+	@Override
+	public boolean sendActionBar(@NotNull String message) {
+		return sendActionBar(Component.text(message));
+	}
+
+	@Override
+	public boolean sendActionBar(@NotNull Component message) {
+		handle.sendActionBar(message);
+		return true;
 	}
 
 	/*

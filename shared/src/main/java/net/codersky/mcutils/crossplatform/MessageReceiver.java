@@ -56,7 +56,7 @@ public interface MessageReceiver {
 
 	/**
 	 * Sends a {@code message} to this {@link MessageReceiver}, applying a {@link Replacer} made
-	 * with the specified {@code replacements} to {@code message}.
+	 * with the specified {@code replacements} to {@code message} before sending it.
 	 *
 	 * @param message The message to send to this {@link MessageReceiver}.
 	 * @param replacements The replacements used to build a {@link Replacer} that will then be
@@ -78,7 +78,7 @@ public interface MessageReceiver {
 	 */
 
 	/**
-	 * Sends an Adventure {@link Component} to this {@link MessageReceiver}.
+	 * Sends a {@link Component} {@code message} to this {@link MessageReceiver}.
 	 *
 	 * @param message The Adventure {@link Component} to send to this {@link MessageReceiver}.
 	 *
@@ -91,8 +91,8 @@ public interface MessageReceiver {
 	boolean sendMessage(@NotNull Component message);
 
 	/**
-	 * Sends an Adventure {@link Component} to this {@link MessageReceiver}, applying {@code replacer}
-	 * to it before sending it.
+	 * Sends a {@link Component} {@code message} to this {@link MessageReceiver}, applying {@code replacer}
+	 * to {@code message} before sending it.
 	 *
 	 * @param message The Adventure {@link Component} to send to this {@link MessageReceiver}.
 	 * @param replacer The {@link Replacer} to apply to the {@code message} before sending it.
@@ -108,8 +108,8 @@ public interface MessageReceiver {
 	}
 
 	/**
-	 * Sends an Adventure {@link Component} to this {@link MessageReceiver}, applying a {@link Replacer} made
-	 * with the specified {@code replacements} to it before sending it.
+	 * Sends a {@link Component} {@code message} to this {@link MessageReceiver}, applying
+	 * a {@link Replacer} made with the specified {@code replacements} to {@code message} before sending it.
 	 *
 	 * @param message The Adventure {@link Component} to send to this {@link MessageReceiver}.
 	 * @param replacements The replacements used to build a {@link Replacer} that will then be
