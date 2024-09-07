@@ -361,28 +361,32 @@ public class MCStrings {
 	 * and {@code to} won't be included on {@code match}, as only the content
 	 * between {@code from} and {@code to} is considered to be relevant.
 	 *
-	 * @param src the source {@link CharSequence} to use.
+	 * @param src the source {@link String} to use.
 	 * @param from the {@link CharSequence} to match at the beginning of the pattern.
 	 * @param to the {@link CharSequence} to match at the end of the pattern.
 	 * @param function a {@link Function} that may accept any matching
 	 * substrings of {@code src} between {@code from} and {@code to}, returning
 	 * the {@link String} that will be used to replace the matching substring.
 	 *
-	 * @return {@code src} with any match from the specified pattern removed from it.
+	 * @return A clone of {@code src} with any match from the specified pattern replaced with
+	 * the return value of the provided {@code function} only if the pattern is found.
+	 * If not, {@code src} will be returned as is without creating a new {@link String}.
 	 *
 	 * @throws NullPointerException if any parameter is {@code null}.
 	 *
 	 * @since MCUtils 1.0.0
 	 *
-	 * @see #match(CharSequence, CharSequence, CharSequence, Consumer)
-	 * @see #match(CharSequence, CharSequence, CharSequence, Consumer, boolean)
+	 * @see #match(String, CharSequence, CharSequence, Consumer)
+	 * @see #match(String, CharSequence, CharSequence, Consumer, boolean)
 	 */
 	@NotNull
-	public static String match(@NotNull CharSequence src, @NotNull CharSequence from, @NotNull CharSequence to, @NotNull Function<String, String> function) {
+	public static String match(@NotNull String src, @NotNull CharSequence from, @NotNull CharSequence to, @NotNull Function<String, String> function) {
+		int start = indexOf(src, from, 0);
+		if (start == -1)
+			return src;
 		final StringBuilder res = new StringBuilder(src);
 		final int toLen = to.length();
 		final int fromLen = from.length();
-		int start = indexOf(res, from, 0);
 		while (start != -1) {
 			final int end = indexOf(res, to, start);
 			if (end != -1)
@@ -415,19 +419,19 @@ public class MCStrings {
 	 * from the resulting {@link String}, if {@code false}, the resulting {@link String}
 	 * will be an exact copy of {@code src}.
 	 *
-	 * @return If {@code remove} is {@code true}, {@code src} as a {@link String} with
-	 * any match from the specified pattern removed from it, otherwise, an exact copy
-	 * of {@code src} as a {@link String}.
+	 * @return A clone of {@code src} with any match from the specified pattern removed from it only if
+	 * {@code remove} is set to {@code true}, if set to {@code false}, a clone of {@code src} will be returned.
+	 * If the pattern isn't found, {@code src} will be returned as is without creating a new {@link String}.
 	 *
 	 * @throws NullPointerException if any parameter is {@code null}.
 	 *
 	 * @since MCUtils 1.0.0
 	 *
-	 * @see #match(CharSequence, CharSequence, CharSequence, Consumer)
-	 * @see #match(CharSequence, CharSequence, CharSequence, Function)
+	 * @see #match(String, CharSequence, CharSequence, Consumer)
+	 * @see #match(String, CharSequence, CharSequence, Function)
 	 */
 	@NotNull
-	public static String match(@NotNull CharSequence src, @NotNull CharSequence from, @NotNull CharSequence to, @NotNull Consumer<String> action, boolean remove) {
+	public static String match(@NotNull String src, @NotNull CharSequence from, @NotNull CharSequence to, @NotNull Consumer<String> action, boolean remove) {
 		return match(src, from, to, remove ? match -> "" : match -> match);
 	}
 
@@ -443,22 +447,23 @@ public class MCStrings {
 	 * the method will be "Match ". As you can see, {@code from} and {@code to} will
 	 * never be sent to the {@link Consumer}.
 	 *
-	 * @param src the source {@link CharSequence} to use.
+	 * @param src the source {@link String} to use.
 	 * @param from the {@link CharSequence} to match at the beginning of the pattern.
 	 * @param to the {@link CharSequence} to match at the end of the pattern.
 	 * @param action a {@link Consumer} that may accept any matching
 	 * substrings of {@code src} between {@code from} and {@code to}.
 	 *
-	 * @return {@code src} as a {@link String} with any match from the specified pattern removed from it.
+	 * @return A clone of {@code src} with any match from the specified pattern removed from it.
+	 * If the pattern isn't found, {@code src} will be returned as is without creating a new {@link String}.
 	 *
 	 * @throws NullPointerException if any parameter is {@code null}.
 	 *
 	 * @since MCUtils 1.0.0
 	 *
-	 * @see #match(CharSequence, CharSequence, CharSequence, Consumer, boolean)
-	 * @see #match(CharSequence, CharSequence, CharSequence, Function)
+	 * @see #match(String, CharSequence, CharSequence, Consumer, boolean)
+	 * @see #match(String, CharSequence, CharSequence, Function)
 	 */
-	public static String match(@NotNull CharSequence src, @NotNull CharSequence from, @NotNull CharSequence to, @NotNull Consumer<String> action) {
+	public static String match(@NotNull String src, @NotNull CharSequence from, @NotNull CharSequence to, @NotNull Consumer<String> action) {
 		return match(src, from, to, action, true);
 	}
 
