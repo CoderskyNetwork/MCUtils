@@ -6,6 +6,8 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class VelocityPlayer implements MCPlayer<Player> {
 
 	private final Player handle;
@@ -22,6 +24,12 @@ public class VelocityPlayer implements MCPlayer<Player> {
 	@Override
 	public Player getHandle() {
 		return handle;
+	}
+
+	@NotNull
+	@Override
+	public UUID getUniqueId() {
+		return handle.getUniqueId();
 	}
 
 	/*
