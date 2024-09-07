@@ -2,6 +2,7 @@ package net.codersky.mcutils.spigot;
 
 import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
+import net.codersky.mcutils.crossplatform.MCConsole;
 import net.codersky.mcutils.java.strings.MCStrings;
 import net.codersky.mcutils.spigot.cmd.SpigotCommand;
 import net.codersky.mcutils.java.reflection.RefObject;
@@ -31,15 +32,23 @@ import java.util.function.Predicate;
 public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 
 	private final P plugin;
+	private final SpigotConsole console;
 
 	public SpigotUtils(@NotNull P plugin) {
 		super(new SpigotPlayerProvider());
 		this.plugin = Objects.requireNonNull(plugin);
+		this.console = new SpigotConsole(Bukkit.getConsoleSender());
 	}
 
 	@NotNull
 	public P getPlugin() {
 		return plugin;
+	}
+
+	@NotNull
+	@Override
+	public SpigotConsole getConsole() {
+		return console;
 	}
 
 	/**

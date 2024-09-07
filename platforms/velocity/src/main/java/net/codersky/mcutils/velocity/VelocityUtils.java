@@ -15,11 +15,13 @@ public class VelocityUtils<P> extends MCUtils {
 
 	private final P plugin;
 	private final ProxyServer proxy;
+	private final VelocityConsole console;
 
 	public VelocityUtils(@NotNull P plugin, @NotNull ProxyServer proxy) {
 		super(new VelocityPlayerProvider(proxy));
 		this.plugin = Objects.requireNonNull(plugin);
 		this.proxy = Objects.requireNonNull(proxy);
+		this.console = new VelocityConsole(proxy.getConsoleCommandSource());
 	}
 
 	@NotNull
@@ -30,6 +32,11 @@ public class VelocityUtils<P> extends MCUtils {
 	@NotNull
 	public final ProxyServer getProxy() {
 		return this.proxy;
+	}
+
+	@Override
+	public @NotNull VelocityConsole getConsole() {
+		return console;
 	}
 
 	@Override
