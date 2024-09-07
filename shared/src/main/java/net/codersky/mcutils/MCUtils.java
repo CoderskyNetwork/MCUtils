@@ -1,6 +1,7 @@
 package net.codersky.mcutils;
 
 import net.codersky.mcutils.cmd.MCCommand;
+import net.codersky.mcutils.crossplatform.MCConsole;
 import net.codersky.mcutils.crossplatform.player.PlayerProvider;
 import net.codersky.mcutils.files.ConfigFileHolder;
 import net.codersky.mcutils.files.FileHolder;
@@ -36,9 +37,19 @@ public abstract class MCUtils {
 	}
 
 	@Nullable
-	public MCPlayer getPlayer(@NotNull UUID uuid) {
+	public MCPlayer<?> getPlayer(@NotNull UUID uuid) {
 		return playerProvider.getPlayer(uuid);
 	}
+
+	/**
+	 * Provides a cross-platform {@link MCConsole} instance.
+	 *
+	 * @return A cross-platform {@link MCConsole} instance.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	@NotNull
+	public abstract MCConsole<?> getConsole();
 
 	/**
 	 * Gets the version of MCUtils being used by this utility
