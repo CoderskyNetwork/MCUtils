@@ -1,6 +1,7 @@
 package net.codersky.mcutils.crossplatform.player;
 
 import net.codersky.mcutils.crossplatform.MessageReceiver;
+import net.codersky.mcutils.java.strings.Replacement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -10,12 +11,16 @@ import java.util.UUID;
  * This interface allows developers to use common methods
  * on all platforms without needing to actually use a
  * platform specific player type.
+ * <p>
+ * This interface extends the {@link Replacement} interface. Overriding
+ * {@link Replacement#asReplacement()} with a call to {@link #getName()}
+ * by default.
  *
  * @since MCUtils 1.0.0
  *
  * @author xDec0de_
  */
-public interface MCPlayer<T> extends MessageReceiver {
+public interface MCPlayer<T> extends MessageReceiver, Replacement {
 
 	/**
 	 * Gets the platform-specific object that is being wrapped by
@@ -53,4 +58,14 @@ public interface MCPlayer<T> extends MessageReceiver {
 	 */
 	@NotNull
 	String getName();
+
+	/*
+	 * Replacement
+	 */
+
+	@NotNull
+	@Override
+	default String asReplacement() {
+		return getName();
+	}
 }
