@@ -1,7 +1,21 @@
 package net.codersky.mcutils.java.strings.pattern;
 
+import net.codersky.mcutils.java.strings.MCStrings;
+import net.codersky.mcutils.java.strings.pattern.color.*;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Interface used to represent a color pattern that {@link MCStrings}
+ * will then use on its {@link MCStrings#applyColor(String, boolean)}
+ * and {@link MCStrings#applyColor(String)} methods.
+ *
+ * @see HexColorPattern
+ * @see GradientColorPattern
+ *
+ * @since MCUtils 1.0.0
+ *
+ * @author xDec0de_
+ */
 @FunctionalInterface
 public interface ColorPattern {
 

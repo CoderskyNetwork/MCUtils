@@ -21,10 +21,10 @@ public class MCStrings {
 	/** The color character used for Minecraft color codes. */
 	public static char COLOR_CHAR = '§';
 
-	private static final List<ColorPattern> colorPatterns = new LinkedList<>();
+	protected static List<ColorPattern> colorPatterns;
 
 	static {
-		addColorPatterns(
+		colorPatterns = List.of(
 				new GradientColorPattern(),
 				new HexColorPattern(),
 				(str, simple) -> applyColorChar('&', str));
@@ -35,14 +35,13 @@ public class MCStrings {
 	 */
 
 	/**
-	 * Applies all {@link #addColorPatterns(ColorPattern...) added}
-	 * {@link ColorPattern color patterns} to the provided {@code string}
+	 * Applies all {@link ColorPattern color patterns} to the provided {@code string}
 	 *
-	 * @param string the {@link String} to apply colors to.
+	 * @param str the {@link String} to apply colors to.
 	 * @param simple whether to use simple mode or not, read
 	 * {@link ColorPattern#applyColor(String, boolean)} for more information.
 	 *
-	 * @throws NullPointerException if {@code string} is {@code null}.
+	 * @throws NullPointerException if {@code str} is {@code null}.
 	 *
 	 * @return A new {@link String} with all {@link ColorPattern color patterns}
 	 * applied to it.
@@ -50,29 +49,35 @@ public class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@NotNull
-	public static String applyColor(@NotNull String string, boolean simple) {
-		String colored = Objects.requireNonNull(string, "The string to color cannot be null");
+	public static String applyColor(@NotNull String str, boolean simple) {
+		String colored = Objects.requireNonNull(str, "The string to process cannot be null");
 		for (ColorPattern pattern : colorPatterns)
-			colored = pattern.applyColor(string, simple);
+			colored = pattern.applyColor(str, simple);
 		return colored;
 	}
 
+	/**
+	 * Applies all {@link ColorPattern color patterns} to the provided {@code string}
+	 * <p>
+	 * Simple mode is enabled on this method, read {@link ColorPattern#applyColor(String, boolean)}
+	 * for more information.
+	 *
+	 * @param str the {@link String} to apply colors to.
+	 *
+	 * @throws NullPointerException if {@code str} is {@code null}.
+	 *
+	 * @return A new {@link String} with all {@link ColorPattern color patterns}
+	 * applied to it.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
 	@NotNull
 	public static String applyColor(@NotNull String str) {
 		return applyColor(str, true);
 	}
 
-	@NotNull
-	public static List<ColorPattern> getColorPatterns() {
-		return colorPatterns;
-	}
-
-	public static void addColorPatterns(@NotNull ColorPattern... patterns) {
-		MCCollections.add(colorPatterns, patterns);
-	}
-
 	/*
-	 * Color utility methods
+	 * Color utilities
 	 */
 
 	/**
