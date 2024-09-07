@@ -1,6 +1,8 @@
 package net.codersky.mcutils.spigot.player;
 
 import net.codersky.mcutils.crossplatform.player.MCPlayer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,16 +15,31 @@ public class SpigotPlayer implements MCPlayer<Player> {
 		this.handle = handle;
 	}
 
+	/*
+	 * MCPlayer implementation
+	 */
+
 	@NotNull
 	@Override
 	public Player getHandle() {
 		return handle;
 	}
 
+	/*
+	 * MessageReceiver implementation
+	 */
+
 	@Override
 	public boolean sendMessage(@Nullable String message) {
-		if (message != null && !message.isBlank())
+		if (message != null)
 			handle.sendMessage(message);
 		return true;
+	}
+
+	@Override
+	public boolean sendMessage(@Nullable Component message) {
+		if (message != null)
+			handle.spigot().sendMessage(BungeeComponentSerializer.get().serialize(message));
+		return false;
 	}
 }

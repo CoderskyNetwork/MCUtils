@@ -1,6 +1,7 @@
 [versions]
 jetbrains-annotations = "24.0.0"
 adventure = "4.17.0"
+adventure-bukkit = "4.3.4"
 spigot = "1.20-R0.1-SNAPSHOT"
 velocity = "3.3.0-SNAPSHOT"
 run-paper = "2.3.0"
@@ -8,6 +9,7 @@ run-paper = "2.3.0"
 [libraries]
 jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations" }
 adventure = { group = "net.kyori", name = "adventure-api", version.ref = "adventure" }
+adventure-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-bukkit" }
 spigot = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
 velocity = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
 

@@ -14,16 +14,31 @@ public class VelocityPlayer implements MCPlayer<Player> {
 		this.handle = handle;
 	}
 
+	/*
+	 * MCPlayer implementation
+	 */
+
 	@NotNull
 	@Override
 	public Player getHandle() {
 		return handle;
 	}
 
+	/*
+	 * MessageReceiver implementation
+	 */
+
 	@Override
 	public boolean sendMessage(@Nullable String message) {
-		if (message != null && !message.isBlank())
+		if (message != null)
 			handle.sendMessage(Component.text(message));
 		return true;
+	}
+
+	@Override
+	public boolean sendMessage(@Nullable Component message) {
+		if (message != null)
+			handle.sendMessage(message);
+		return false;
 	}
 }

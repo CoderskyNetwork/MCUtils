@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
 	api(project(":shared"))
+	api(libs.adventure.bukkit)
 	compileOnly(libs.spigot)
 }
 
