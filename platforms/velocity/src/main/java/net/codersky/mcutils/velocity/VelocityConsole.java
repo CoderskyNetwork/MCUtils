@@ -4,7 +4,6 @@ import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import net.codersky.mcutils.crossplatform.MCConsole;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class VelocityConsole implements MCConsole<ConsoleCommandSource> {
 
@@ -21,16 +20,13 @@ public class VelocityConsole implements MCConsole<ConsoleCommandSource> {
 	}
 
 	@Override
-	public boolean sendMessage(@Nullable String message) {
-		if (message != null)
-			handle.sendMessage(Component.text(message));
-		return true;
+	public boolean sendMessage(@NotNull String message) {
+		return sendMessage(Component.text(message));
 	}
 
 	@Override
-	public boolean sendMessage(@Nullable Component message) {
-		if (message != null)
-			handle.sendMessage(message);
+	public boolean sendMessage(@NotNull Component message) {
+		handle.sendMessage(message);
 		return true;
 	}
 }

@@ -5,7 +5,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class SpigotConsole implements MCConsole<ConsoleCommandSender> {
 
@@ -22,16 +21,14 @@ public class SpigotConsole implements MCConsole<ConsoleCommandSender> {
 	}
 
 	@Override
-	public boolean sendMessage(@Nullable String message) {
-		if (message != null)
-			handle.sendMessage(message);
+	public boolean sendMessage(@NotNull String message) {
+		handle.sendMessage(message);
 		return true;
 	}
 
 	@Override
-	public boolean sendMessage(@Nullable Component message) {
-		if (message != null)
-			handle.sendMessage(LegacyComponentSerializer.legacySection().serialize(message));
+	public boolean sendMessage(@NotNull Component message) {
+		handle.sendMessage(LegacyComponentSerializer.legacySection().serialize(message));
 		return true;
 	}
 }

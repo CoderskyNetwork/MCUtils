@@ -43,16 +43,13 @@ public class VelocityPlayer implements MCPlayer<Player> {
 	 */
 
 	@Override
-	public boolean sendMessage(@Nullable String message) {
-		if (message != null)
-			handle.sendMessage(Component.text(message));
-		return true;
+	public boolean sendMessage(@NotNull String message) {
+		return sendMessage(Component.text(message));
 	}
 
 	@Override
-	public boolean sendMessage(@Nullable Component message) {
-		if (message != null)
-			handle.sendMessage(message);
-		return false;
+	public boolean sendMessage(@NotNull Component message) {
+		handle.sendMessage(message);
+		return true;
 	}
 }
