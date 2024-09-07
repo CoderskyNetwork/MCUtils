@@ -32,6 +32,12 @@ public class VelocityPlayer implements MCPlayer<Player> {
 		return handle.getUniqueId();
 	}
 
+	@NotNull
+	@Override
+	public String getName() {
+		return handle.getUsername();
+	}
+
 	/*
 	 * MessageReceiver implementation
 	 */

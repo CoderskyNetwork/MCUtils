@@ -39,4 +39,18 @@ public interface MCPlayer<T> extends MessageReceiver {
 	 */
 	@NotNull
 	UUID getUniqueId();
+
+	/**
+	 * Gets the name of this {@link MCPlayer}. Keep in mind that player
+	 * names may change at any given time and should not be used
+	 * for storage. {@link #getUniqueId() UUIDs} can be used for that purpose
+	 * instead, names are only guaranteed to remain unchanged for a single session
+	 * (Until the player logs out).
+	 *
+	 * @return The name of this {@link MCPlayer}.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	@NotNull
+	String getName();
 }

@@ -33,6 +33,12 @@ public class SpigotPlayer implements MCPlayer<Player> {
 		return handle.getUniqueId();
 	}
 
+	@NotNull
+	@Override
+	public String getName() {
+		return handle.getName();
+	}
+
 	/*
 	 * MessageReceiver implementation
 	 */
