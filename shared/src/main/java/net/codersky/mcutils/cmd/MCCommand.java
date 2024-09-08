@@ -1,6 +1,7 @@
 package net.codersky.mcutils.cmd;
 
 import net.codersky.mcutils.java.math.MCNumbers;
+import net.codersky.mcutils.java.strings.MCStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,9 +26,25 @@ public interface MCCommand<S extends MCCommandSender<?>> {
 
 	MCCommand<S> inject(@NotNull MCCommand<S>... commands);
 
-	@NotNull
-	default String cleanArgument(@NotNull String arg) {
-		return arg;
+	/**
+	 * Returns whether this {@link MCCommand} removes
+	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
+	 * from string getters or not. This is enabled by default and it is recommended.
+	 * <p>
+	 * Keep in mind that this doesn't modify the {@code args} {@link String} array from the
+	 * {@link #onCommand(MCCommandSender, String[])} and {@link #onTab(MCCommandSender, String[])}
+	 * methods but instead affects string getter methods such as {@link #asString(int, String[])},
+	 * methods that convert arguments to other objects such as {@link #asNumber(int, String[], Class)}
+	 * remain unaffected because they don't have this issue.
+	 *
+	 * @return {@code true} if this {@link MCCommand} removes
+	 * <a href=https://mcutils.codersky.net/for-server-admins/event-patterns>event patterns</a>
+	 * from string getters, {@code false} otherwise.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	default boolean removesEventPatterns() {
+		return true;
 	}
 
 	// ARGUMENT CONVERSION //
@@ -110,7 +127,9 @@ public interface MCCommand<S extends MCCommandSender<?>> {
 	@Nullable
 	default String asString(int arg, @NotNull String[] args, @Nullable String def) {
 		final String result = args.length > arg ? args[arg] : def;
-		return result != null ? cleanArgument(result) : null;
+		if (result == null)
+			return null;
+		return removesEventPatterns() ? MCStrings.stripEventPatterns(result) : result;
 	}
 
 	/**
@@ -201,7 +220,7 @@ public interface MCCommand<S extends MCCommandSender<?>> {
 			return def;
 		final StringBuilder builder = new StringBuilder().append(str);
 		for (int i = fromArg + 1; i < args.length; i++)
-			builder.append(' ').append(cleanArgument(args[i]));
+			builder.append(' ').append(MCStrings.stripEventPatterns(args[i]));
 		return builder.toString();
 	}
 
@@ -294,7 +313,7 @@ public interface MCCommand<S extends MCCommandSender<?>> {
 			return def;
 		final List<String> lst = new ArrayList<>(args.length - fromArg);
 		for (int i = fromArg + 1; i < args.length; i++)
-			lst.add(cleanArgument(args[i]));
+			lst.add(MCStrings.stripEventPatterns(args[i]));
 		return lst;
 	}
 
