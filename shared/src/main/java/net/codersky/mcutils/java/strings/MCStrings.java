@@ -8,13 +8,19 @@ import net.codersky.mcutils.java.strings.pattern.color.HexColorPattern;
 import net.codersky.mcutils.java.strings.pattern.target.ActionBarTargetPattern;
 import net.codersky.mcutils.java.strings.pattern.target.ConsoleTargetPattern;
 import net.codersky.mcutils.java.strings.pattern.target.PlayerTargetPattern;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -181,6 +187,115 @@ public class MCStrings {
 		for (TargetPattern pattern : targetPatterns)
 			result = pattern.process(target, result);
 		return result;
+	}
+
+	/*
+	 * Event patterns
+	 */
+
+	/**
+	 * Removes all event patterns from the provided {@code string}.
+	 * This can be used to control user input when necessary, as event
+	 * patterns can be used in malicious ways, such as making other
+	 * users execute dangerous commands.
+	 *
+	 * @param string The {@link String} to remove event patterns from.
+	 *
+	 * @return A new {@link String} with all event patterns removed from it.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	@NotNull
+	public static String stripEventPatterns(@NotNull String string) {
+		final StringBuilder builder = new StringBuilder();
+		searchEventPatterns(string,
+				builder::append,
+				(event, txt) -> builder.append(txt));
+		return builder.toString();
+	}
+
+	/**
+	 * Applies event patterns to the provided {@code string}.
+	 *
+	 * @param string The {@link String} to apply event patterns to.
+	 *
+	 * @return A {@link Component} with all event patterns applied to it.
+	 * This {@link Component} can then be sent to any {@link MessageReceiver}.
+	 *
+	 * @since MCUtils 1.0.0
+	 *
+	 * @see MessageReceiver
+	 */
+	@NotNull
+	public static Component applyEventPatterns(@NotNull String string) {
+		final TextComponent.Builder builder = Component.text();
+		searchEventPatterns(string,
+				txt -> builder.append(Component.text(txt)),
+				(event, txt) -> applyEvents(builder, event, txt));
+		return builder.build();
+	}
+
+	private static void applyEvents(TextComponent.Builder builder, String eventData, String text) {
+		final List<String> eventList = splitEvents(eventData);
+		final int safeLen = eventList.size() - 1;
+		final Component toAppend = Component.text(text);
+		for (int i = 0; i < safeLen; i += 2) {
+			final String content = eventList.get(i + 1);
+			switch (eventList.get(i).toLowerCase()) {
+				case "text", "show_text" -> toAppend.hoverEvent(HoverEvent.showText(Component.text(content)));
+				case "url", "open_url" -> toAppend.clickEvent(ClickEvent.openUrl(content));
+				case "file", "open_file" -> toAppend.clickEvent(ClickEvent.openFile(content));
+				case "run", "run_cmd", "run_command" -> toAppend.clickEvent(ClickEvent.runCommand(content));
+				case "suggest", "suggest_cmd", "suggest_command" -> toAppend.clickEvent(ClickEvent.suggestCommand(content));
+				case "copy", "copy_to_clipboard" -> toAppend.clickEvent(ClickEvent.copyToClipboard(content));
+			};
+		}
+		builder.append(toAppend);
+	}
+
+	// Utility method to split events ignoring string literals, for example
+	// text;"x;y;z" will be split as ["text", "x;y;z"]
+	private static List<String> splitEvents(String eventData) {
+		final List<String> eventList = new ArrayList<>();
+		boolean literal = false;
+		StringBuilder current = new StringBuilder();
+		for (int i = 0; i < eventData.length(); i++) {
+			final char ch = eventData.charAt(i);
+			if (ch == '"')
+				literal = !literal;
+			else if (ch == ';' && !literal) {
+				eventList.add(current.toString());
+				current = new StringBuilder();
+			} else
+				current.append(ch);
+		}
+		if (!current.isEmpty())
+			eventList.add(current.toString());
+		return eventList;
+	}
+
+	// Search utility //
+
+	private static void searchEventPatterns(String str, Consumer<String> append, BiConsumer<String, String> replace) {
+		final int first = str.indexOf('<');
+		if (first == -1) {
+			append.accept(str);
+			return;
+		}
+		int lastAppend = 0;
+		for (int start = first; start != -1; start = str.indexOf('<', start + 1)) {
+			final int eventEnd = str.indexOf('>', start);
+			if (eventEnd == -1)
+				continue;
+			final int textEnd = str.indexOf("\\>", eventEnd);
+			if (textEnd == -1)
+				continue;
+			append.accept(str.substring(lastAppend, start));
+			replace.accept(str.substring(start + 1, eventEnd), str.substring(eventEnd + 1, textEnd));
+			lastAppend = textEnd + 2;
+		}
+		if (lastAppend != str.length())
+			append.accept(str.substring(lastAppend));
 	}
 
 	/*

@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
  * @see #sendMessage(String)
  * @see #sendMessage(String, Replacer)
  * @see #sendMessage(String, Object...)
+ * @see MCConsole
+ * @see MCPlayer
  *
  * @author xDec0de_
  */
