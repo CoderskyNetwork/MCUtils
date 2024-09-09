@@ -2,7 +2,7 @@ package net.codersky.mcutils.spigot.cmd;
 
 import net.codersky.mcutils.cmd.MCCommand;
 import net.codersky.mcutils.cmd.SubCommandHandler;
-import net.codersky.mcutils.java.strings.MCStrings;
+import net.codersky.mcutils.spigot.SpigotUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -19,41 +19,47 @@ import java.util.List;
 
 public abstract class SpigotCommand<P extends JavaPlugin> extends Command implements MCCommand<SpigotCommandSender>, PluginIdentifiableCommand, TabExecutor {
 
-	private final P plugin;
-	private final SubCommandHandler<SpigotCommandSender> subCommandHandler = new SubCommandHandler();
+	private final SpigotUtils<P> utils;
+	private final SubCommandHandler<SpigotCommandSender> subCommandHandler = new SubCommandHandler<>();
 
-	public SpigotCommand(@NotNull P plugin, @NotNull String name) {
+	public SpigotCommand(@NotNull SpigotUtils<P> utils, @NotNull String name) {
 		super(name);
-		this.plugin = plugin;
+		this.utils = utils;
 	}
 
-	public SpigotCommand(@NotNull P plugin, @NotNull String name, @NotNull String... aliases) {
-		this(plugin, name);
+	public SpigotCommand(@NotNull SpigotUtils<P> utils, @NotNull String name, @NotNull String... aliases) {
+		this(utils, name);
 		super.setAliases(Arrays.asList(aliases));
 	}
 
 	@NotNull
 	@Override
+	public SpigotUtils<P> getUtils() {
+		return utils;
+	}
+
+	@NotNull
+	@Override
 	public final P getPlugin() {
-		return this.plugin;
+		return utils.getPlugin();
 	}
 
 	// Command logic //
 
 	@Override
 	public final boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-		return subCommandHandler.onCommand(this, new SpigotCommandSender(sender), args);
+		return subCommandHandler.onCommand(this, new SpigotCommandSender(sender, getUtils()), args);
 	}
 
 	@Override
 	public final boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
-		return subCommandHandler.onCommand(this, new SpigotCommandSender(sender), args);
+		return subCommandHandler.onCommand(this, new SpigotCommandSender(sender, getUtils()), args);
 	}
 
 	@Override
 	@Nullable
 	public final List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-		return subCommandHandler.onTab(this, new SpigotCommandSender(sender), args);
+		return subCommandHandler.onTab(this, new SpigotCommandSender(sender, getUtils()), args);
 	}
 
 	// ARGUMENT CONVERSION //

@@ -1,5 +1,6 @@
 package net.codersky.mcutils.cmd;
 
+import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.java.math.MCNumbers;
 import net.codersky.mcutils.java.strings.MCStrings;
 import org.jetbrains.annotations.NotNull;
@@ -9,10 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public interface MCCommand<S extends MCCommandSender<?>> {
+public interface MCCommand<S extends MCCommandSender<?, ?>> {
 
 	@NotNull
 	String getName();
+
+	@NotNull
+	MCUtils getUtils();
 
 	@NotNull
 	List<String> getAliases();

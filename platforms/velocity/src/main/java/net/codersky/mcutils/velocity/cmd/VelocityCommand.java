@@ -8,24 +8,35 @@ import net.codersky.mcutils.velocity.VelocityUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class VelocityCommand<U extends VelocityUtils<?>> implements SimpleCommand, MCCommand<VelocityCommandSender> {
+public abstract class VelocityCommand<P> implements SimpleCommand, MCCommand<VelocityCommandSender> {
 
+	private final VelocityUtils<P> utils;
 	private final String name;
 	private final String[] aliases;
 	private final SubCommandHandler<VelocityCommandSender> subCmdHandler = new SubCommandHandler<>();
 
-	public VelocityCommand(@NotNull String name, @NotNull String... aliases) {
+	public VelocityCommand(@NotNull VelocityUtils<P> utils, @NotNull String name, @NotNull String... aliases) {
+		this.utils = utils;
 		this.name = Objects.requireNonNull(name).toLowerCase();
 		this.aliases = Objects.requireNonNull(aliases);
 	}
 
-	public VelocityCommand(@NotNull String name) {
-		this(name, new String[0]);
+	public VelocityCommand(@NotNull VelocityUtils<P> utils, @NotNull String name) {
+		this(utils, name, new String[0]);
+	}
+
+	@NotNull
+	public VelocityUtils<P> getUtils() {
+		return utils;
+	}
+
+	@NotNull
+	public P getPlugin() {
+		return utils.getPlugin();
 	}
 
 	@NotNull
@@ -56,13 +67,14 @@ public abstract class VelocityCommand<U extends VelocityUtils<?>> implements Sim
 	@Override
 	@ApiStatus.Internal
 	public final void execute(@NotNull final Invocation invocation) {
-		subCmdHandler.onCommand(this, new VelocityCommandSender(invocation.source()), invocation.arguments());
+		final VelocityCommandSender sender = new VelocityCommandSender(invocation.source(), getUtils());
+		subCmdHandler.onCommand(this, sender, invocation.arguments());
 	}
 
 	@Override
 	@ApiStatus.Internal
 	public final CompletableFuture<List<String>> suggestAsync(final Invocation invocation) {
-		final VelocityCommandSender sender = new VelocityCommandSender(invocation.source());
+		final VelocityCommandSender sender = new VelocityCommandSender(invocation.source(), getUtils());
 		return CompletableFuture.supplyAsync(() -> subCmdHandler.onTab(this, sender, invocation.arguments()));
 	}
 }
