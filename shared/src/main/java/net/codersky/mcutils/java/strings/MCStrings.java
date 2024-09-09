@@ -1,6 +1,7 @@
 package net.codersky.mcutils.java.strings;
 
 import net.codersky.mcutils.crossplatform.MessageReceiver;
+import net.codersky.mcutils.crossplatform.player.MCPlayer;
 import net.codersky.mcutils.java.strings.pattern.ColorPattern;
 import net.codersky.mcutils.java.strings.pattern.TargetPattern;
 import net.codersky.mcutils.java.strings.pattern.color.GradientColorPattern;
@@ -172,7 +173,11 @@ public class MCStrings {
 	/**
 	 * Applies all {@link TargetPattern target patterns} to the provided {@code string}
 	 *
+	 * @param target The {@link MessageReceiver} that will receive any matching message.
 	 * @param str the {@link String} to process.
+	 * @param applyEventPatterns Whether to {@link MCStrings#applyEventPatterns(String) apply} event patterns
+	 * to the content matched by {@link TargetPattern target patterns}. Details about this can be found
+	 * {@link TargetPattern here}, under the "<b>ABOUT EVENT PATTERNS</b>" section.
 	 *
 	 * @throws NullPointerException if {@code string} is {@code null}.
 	 *
@@ -182,10 +187,10 @@ public class MCStrings {
 	 * @since MCUtils 1.0.0
 	 */
 	@NotNull
-	public static String applyTargetPatterns(@NotNull MessageReceiver target, @NotNull String str) {
+	public static String applyTargetPatterns(@NotNull MessageReceiver target, @NotNull String str, boolean applyEventPatterns) {
 		String result = Objects.requireNonNull(str, "The string to process cannot be null");
 		for (TargetPattern pattern : targetPatterns)
-			result = pattern.process(target, result);
+			result = pattern.process(target, result, applyEventPatterns);
 		return result;
 	}
 
