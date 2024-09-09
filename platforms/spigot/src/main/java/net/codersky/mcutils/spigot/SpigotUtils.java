@@ -2,7 +2,8 @@ package net.codersky.mcutils.spigot;
 
 import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
-import net.codersky.mcutils.crossplatform.MCConsole;
+import net.codersky.mcutils.crossplatform.player.MCPlayer;
+import net.codersky.mcutils.crossplatform.player.PlayerProvider;
 import net.codersky.mcutils.java.strings.MCStrings;
 import net.codersky.mcutils.spigot.cmd.SpigotCommand;
 import net.codersky.mcutils.java.reflection.RefObject;
@@ -16,6 +17,7 @@ import org.bukkit.WorldType;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -33,9 +36,9 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 
 	private final P plugin;
 	private final SpigotConsole console;
+	private PlayerProvider<Player> playerProvider;
 
 	public SpigotUtils(@NotNull P plugin) {
-		super(new SpigotPlayerProvider());
 		this.plugin = Objects.requireNonNull(plugin);
 		this.console = new SpigotConsole(Bukkit.getConsoleSender());
 	}
@@ -43,6 +46,23 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 	@NotNull
 	public P getPlugin() {
 		return plugin;
+	}
+
+	@NotNull
+	public SpigotUtils<P> setPlayerProvider(@NotNull PlayerProvider<Player> playerProvider) {
+		this.playerProvider = Objects.requireNonNull(playerProvider, "Player provider cannot be null");
+		return this;
+	}
+
+	@NotNull
+	public PlayerProvider<Player> getPlayerProvider() {
+		return playerProvider;
+	}
+
+	@Nullable
+	@Override
+	public MCPlayer<Player> getPlayer(@NotNull UUID uuid) {
+		return playerProvider.getPlayer(uuid);
 	}
 
 	@NotNull

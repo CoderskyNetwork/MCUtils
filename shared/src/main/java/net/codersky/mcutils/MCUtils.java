@@ -18,28 +18,10 @@ import java.util.UUID;
 
 public abstract class MCUtils {
 
-	private PlayerProvider<?> playerProvider;
 	protected final LinkedList<FileHolder> files = new LinkedList<>();
 
-	public MCUtils(@NotNull PlayerProvider<?> playerProvider) {
-		setPlayerProvider(playerProvider);
-	}
-
-	@NotNull
-	public MCUtils setPlayerProvider(@NotNull PlayerProvider<?> playerProvider) {
-		this.playerProvider = Objects.requireNonNull(playerProvider, "Player provider cannot be null.");
-		return this;
-	}
-
-	@NotNull
-	public PlayerProvider<?> getPlayerProvider() {
-		return playerProvider;
-	}
-
 	@Nullable
-	public MCPlayer<?> getPlayer(@NotNull UUID uuid) {
-		return playerProvider.getPlayer(uuid);
-	}
+	public abstract MCPlayer<?> getPlayer(@NotNull UUID uuid);
 
 	/**
 	 * Provides a cross-platform {@link MCConsole} instance.
