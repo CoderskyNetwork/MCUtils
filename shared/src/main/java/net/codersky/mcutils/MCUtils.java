@@ -16,9 +16,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public abstract class MCUtils {
+public abstract class MCUtils<P> {
 
+	private final P plugin;
 	protected final LinkedList<FileHolder> files = new LinkedList<>();
+
+	public MCUtils(@NotNull P plugin) {
+		this.plugin = Objects.requireNonNull(plugin);
+	}
+
+	@NotNull
+	public final P getPlugin() {
+		return plugin;
+	}
 
 	@Nullable
 	public abstract MCPlayer<?> getPlayer(@NotNull UUID uuid);
@@ -66,7 +76,7 @@ public abstract class MCUtils {
 		return file;
 	}
 
-	public abstract void registerCommands(MCCommand<?>... commands);
+	public abstract void registerCommands(MCCommand<?, P>... commands);
 
 	/**
 	 * Gets the files currently being handled by this {@link MCUtils} instance. The list returned

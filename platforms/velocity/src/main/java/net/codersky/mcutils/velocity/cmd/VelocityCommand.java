@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class VelocityCommand<P> implements SimpleCommand, MCCommand<VelocityCommandSender> {
+public abstract class VelocityCommand<P> implements SimpleCommand, MCCommand<VelocityCommandSender, P> {
 
 	private final VelocityUtils<P> utils;
 	private final String name;
@@ -59,7 +59,7 @@ public abstract class VelocityCommand<P> implements SimpleCommand, MCCommand<Vel
 	// Command logic //
 
 	@SafeVarargs
-	public final VelocityCommand<U> inject(VelocityCommand<U>... commands) {
+	public final VelocityCommand<P> inject(VelocityCommand<P>... commands) {
 		subCmdHandler.inject(commands);
 		return this;
 	}

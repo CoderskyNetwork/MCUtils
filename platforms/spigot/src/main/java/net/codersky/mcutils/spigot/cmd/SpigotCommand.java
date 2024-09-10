@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class SpigotCommand<P extends JavaPlugin> extends Command implements MCCommand<SpigotCommandSender>, PluginIdentifiableCommand, TabExecutor {
+public abstract class SpigotCommand<P extends JavaPlugin> extends Command implements MCCommand<SpigotCommandSender, P>, PluginIdentifiableCommand, TabExecutor {
 
 	private final SpigotUtils<P> utils;
 	private final SubCommandHandler<SpigotCommandSender> subCommandHandler = new SubCommandHandler<>();

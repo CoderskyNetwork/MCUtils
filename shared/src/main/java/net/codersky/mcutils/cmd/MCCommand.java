@@ -10,13 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public interface MCCommand<S extends MCCommandSender<?, ?>> {
+public interface MCCommand<S extends MCCommandSender<?, ?>, P> {
 
 	@NotNull
 	String getName();
 
 	@NotNull
-	MCUtils getUtils();
+	MCUtils<P> getUtils();
+
+	@NotNull
+	default P getPlugin() {
+		return getUtils().getPlugin();
+	}
 
 	@NotNull
 	List<String> getAliases();
@@ -28,7 +33,7 @@ public interface MCCommand<S extends MCCommandSender<?, ?>> {
 
 	boolean hasAccess(@NotNull S sender, boolean message);
 
-	MCCommand<S> inject(@NotNull MCCommand<S>... commands);
+	MCCommand<S, P> inject(@NotNull MCCommand<S, P>... commands);
 
 	/**
 	 * Returns whether this {@link MCCommand} removes

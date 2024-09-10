@@ -15,22 +15,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class VelocityUtils<P> extends MCUtils {
+public class VelocityUtils<P> extends MCUtils<P> {
 
-	private final P plugin;
 	private final ProxyServer proxy;
 	private final VelocityConsole console;
 	private PlayerProvider<Player> playerProvider;
 
 	public VelocityUtils(@NotNull P plugin, @NotNull ProxyServer proxy) {
-		this.plugin = Objects.requireNonNull(plugin);
+		super(plugin);
 		this.proxy = Objects.requireNonNull(proxy);
 		this.console = new VelocityConsole(proxy.getConsoleCommandSource());
-	}
-
-	@NotNull
-	public final P getPlugin() {
-		return plugin;
 	}
 
 	@NotNull
@@ -60,12 +54,12 @@ public class VelocityUtils<P> extends MCUtils {
 	}
 
 	@Override
-	public void registerCommands(MCCommand<?>... commands) {
+	public void registerCommands(MCCommand<?, P>... commands) {
 		final CommandManager manager = getProxy().getCommandManager();
-		for (MCCommand<?> mcCommand : commands) {
-			final VelocityCommand velocityCommand = (VelocityCommand) mcCommand;
+		for (MCCommand<?, P> mcCommand : commands) {
+			final VelocityCommand<P> velocityCommand = (VelocityCommand<P>) mcCommand;
 			final CommandMeta meta = manager.metaBuilder(velocityCommand.getName())
-					.plugin(plugin)
+					.plugin(getPlugin())
 					.aliases(velocityCommand.getAliasesArray())
 					.build();
 			manager.register(meta, velocityCommand);

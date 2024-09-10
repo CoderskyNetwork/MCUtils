@@ -32,20 +32,14 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
+public class SpigotUtils<P extends JavaPlugin> extends MCUtils<P> {
 
-	private final P plugin;
 	private final SpigotConsole console;
 	private PlayerProvider<Player> playerProvider;
 
 	public SpigotUtils(@NotNull P plugin) {
-		this.plugin = Objects.requireNonNull(plugin);
+		super(plugin);
 		this.console = new SpigotConsole(Bukkit.getConsoleSender());
-	}
-
-	@NotNull
-	public P getPlugin() {
-		return plugin;
 	}
 
 	@NotNull
@@ -144,7 +138,7 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 	 */
 	@NotNull
 	public <T extends Listener> T registerEvents(@NotNull T listener) {
-		Bukkit.getPluginManager().registerEvents(listener, plugin);
+		Bukkit.getPluginManager().registerEvents(listener, getPlugin());
 		return listener;
 	}
 
@@ -186,8 +180,8 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 		final RefObject map = new RefObject(Bukkit.getServer()).invoke("getCommandMap");
 		if (map != null)
 			return (SimpleCommandMap) map.getInstance();
-		logCol(	"&8[&6" + plugin.getName() + "&8] &cCould get the command map, please inform about this&8.",
-				" &8- &7MCUtils is at fault here, do not contact &e" + plugin.getName() + "&7's author(s)&8.",
+		logCol(	"&8[&6" + getPlugin().getName() + "&8] &cCould get the command map, please inform about this&8.",
+				" &8- &7MCUtils is at fault here, do not contact &e" + getPlugin().getName() + "&7's author(s)&8.",
 				" &8- &7Contact&8: &espigotmc.org/members/xdec0de_.178174/ &7or Discord &9@xdec0de_",
 				" &8- &7Server info&8: &b" + Bukkit.getServer().getName() + " " + getServerVersion(),
 				" &8- &7Using MCUtils version &bv" + getMCUtilsVersion());
@@ -215,29 +209,27 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 	 *
 	 * @throws ClassCastException if any of the passed {@code commands} isn't an instance of {@link SpigotCommand}.
 	 *
-	 * @return This {@link SpigotUtils}.
-	 *
 	 * @since MCUtils 1.0.0
 	 */
-	public void registerCommands(@Nullable MCCommand<?>... commands) {
+	public void registerCommands(@Nullable MCCommand<?, P>... commands) {
 		if (commands == null || commands.length == 0)
 			return;
 		final List<Command> remaining = new ArrayList<>();
-		for (MCCommand<?> command : commands) {
-			final SpigotCommand spigotCommand = (SpigotCommand) command;
-			final PluginCommand plCommand = plugin.getCommand(command.getName());
+		for (MCCommand<?, P> command : commands) {
+			final SpigotCommand<P> spigotCommand = (SpigotCommand<P>) command;
+			final PluginCommand plCommand = getPlugin().getCommand(command.getName());
 			if (plCommand != null)
 				plCommand.setExecutor(spigotCommand);
 			else
 				remaining.add(spigotCommand);
 		}
-		if (remaining.size() == 0)
+		if (remaining.isEmpty())
 			return;
 		final SimpleCommandMap commandMap = getCommandMap();
 		if (commandMap == null)
-			Bukkit.getPluginManager().disablePlugin(plugin);
+			Bukkit.getPluginManager().disablePlugin(getPlugin());
 		else
-			commandMap.registerAll(plugin.getName(), remaining);
+			commandMap.registerAll(getPlugin().getName(), remaining);
 	}
 
 	/**
@@ -257,7 +249,7 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils {
 	 * has been unregistered successfully, {@code false} otherwise.
 	 */
 	public boolean unregisterCommand(@NotNull String name) {
-		final PluginCommand plCommand = plugin.getCommand(name);
+		final PluginCommand plCommand = getPlugin().getCommand(name);
 		final SimpleCommandMap commandMap = getCommandMap();
 		return plCommand == null || commandMap == null ? false : plCommand.unregister(commandMap);
 	}
