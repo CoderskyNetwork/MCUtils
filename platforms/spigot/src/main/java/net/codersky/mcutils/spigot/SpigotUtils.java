@@ -2,9 +2,11 @@ package net.codersky.mcutils.spigot;
 
 import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
+import net.codersky.mcutils.cmd.MCCommandSender;
 import net.codersky.mcutils.crossplatform.player.MCPlayer;
 import net.codersky.mcutils.crossplatform.player.PlayerProvider;
 import net.codersky.mcutils.java.strings.MCStrings;
+import net.codersky.mcutils.spigot.cmd.AdaptedSpigotCommand;
 import net.codersky.mcutils.spigot.cmd.SpigotCommand;
 import net.codersky.mcutils.java.reflection.RefObject;
 import net.codersky.mcutils.spigot.player.SpigotPlayerProvider;
@@ -211,12 +213,16 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils<P> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	public void registerCommands(@Nullable MCCommand<?, P>... commands) {
+	public void registerCommands(MCCommand<P, MCCommandSender<?, ?>>... commands) {
 		if (commands == null || commands.length == 0)
 			return;
 		final List<Command> remaining = new ArrayList<>();
-		for (MCCommand<?, P> command : commands) {
-			final SpigotCommand<P> spigotCommand = (SpigotCommand<P>) command;
+		for (MCCommand<P, MCCommandSender<?, ?>> command : commands) {
+			final SpigotCommand<P> spigotCommand;
+			if (command instanceof SpigotCommand)
+				spigotCommand = (SpigotCommand) command;
+			else
+				spigotCommand = new AdaptedSpigotCommand<>(this, command);
 			final PluginCommand plCommand = getPlugin().getCommand(command.getName());
 			if (plCommand != null)
 				plCommand.setExecutor(spigotCommand);

@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class VelocityCommand<P> implements SimpleCommand, MCCommand<VelocityCommandSender, P> {
+public abstract class VelocityCommand<P> implements SimpleCommand, MCCommand<P, VelocityCommandSender> {
 
 	private final VelocityUtils<P> utils;
 	private final String name;
 	private final String[] aliases;
-	private final SubCommandHandler<VelocityCommandSender> subCmdHandler = new SubCommandHandler<>();
+	private final SubCommandHandler<P, VelocityCommandSender> subCmdHandler = new SubCommandHandler<>();
 
 	public VelocityCommand(@NotNull VelocityUtils<P> utils, @NotNull String name, @NotNull String... aliases) {
 		this.utils = utils;

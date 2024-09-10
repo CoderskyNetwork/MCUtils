@@ -6,8 +6,10 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
+import net.codersky.mcutils.cmd.MCCommandSender;
 import net.codersky.mcutils.crossplatform.player.MCPlayer;
 import net.codersky.mcutils.crossplatform.player.PlayerProvider;
+import net.codersky.mcutils.velocity.cmd.AdaptedVelocityCommand;
 import net.codersky.mcutils.velocity.cmd.VelocityCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,10 +56,14 @@ public class VelocityUtils<P> extends MCUtils<P> {
 	}
 
 	@Override
-	public void registerCommands(MCCommand<?, P>... commands) {
+	public void registerCommands(MCCommand<P, MCCommandSender<?, ?>>... commands) {
 		final CommandManager manager = getProxy().getCommandManager();
-		for (MCCommand<?, P> mcCommand : commands) {
-			final VelocityCommand<P> velocityCommand = (VelocityCommand<P>) mcCommand;
+		for (MCCommand<P, MCCommandSender<?, ?>> mcCommand : commands) {
+			final VelocityCommand<P> velocityCommand;
+			if (mcCommand instanceof VelocityCommand)
+				velocityCommand = (VelocityCommand) mcCommand;
+			else
+				velocityCommand = new AdaptedVelocityCommand<>(this, mcCommand);
 			final CommandMeta meta = manager.metaBuilder(velocityCommand.getName())
 					.plugin(getPlugin())
 					.aliases(velocityCommand.getAliasesArray())

@@ -7,9 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class SubCommandHandler<S extends MCCommandSender<?>> {
+public class SubCommandHandler<P, S extends MCCommandSender<?, ?>> {
 
-	private final HashSet<MCCommand<S>> subCommands = new HashSet<>();
+	private final HashSet<MCCommand<P, S>> subCommands = new HashSet<>();
 
 	@NotNull
 	private String[] removeFirstArgument(@NotNull String[] args) {
@@ -21,28 +21,28 @@ public class SubCommandHandler<S extends MCCommandSender<?>> {
 		return newArgs;
 	}
 
-	private <T> T onUsedCommand(@NotNull MCCommand<S> mainCmd, @NotNull S sender, @NotNull String[] args,
-	                            @NotNull BiFunction<MCCommand<S>, String[], T> action, @NotNull T def, boolean message) {
+	private <T> T onUsedCommand(@NotNull MCCommand<P, S> mainCmd, @NotNull S sender, @NotNull String[] args,
+	                            @NotNull BiFunction<MCCommand<P, S>, String[], T> action, @NotNull T def, boolean message) {
 		if (mainCmd.hasAccess(sender, message))
 			return def;
 		if (args.length == 0)
 			return action.apply(mainCmd, args);
-		for (MCCommand<S> subCommand : subCommands)
+		for (MCCommand<P, S> subCommand : subCommands)
 			if (subCommand.getName().toLowerCase().equals(args[0]))
 				return subCommand.hasAccess(sender, message) ? action.apply(subCommand, removeFirstArgument(args)) : def;
 		return action.apply(mainCmd, args);
 	}
 
-	public boolean onCommand(@NotNull MCCommand<S> mainCmd, @NotNull S sender, @NotNull String[] args) {
+	public boolean onCommand(@NotNull MCCommand<P, S> mainCmd, @NotNull S sender, @NotNull String[] args) {
 		return onUsedCommand(mainCmd, sender, args, (cmd, newArgs) -> cmd.onCommand(sender, newArgs), true, true);
 	}
 
-	public List<String> onTab(@NotNull MCCommand<S> mainCommand, @NotNull S sender, @NotNull String[] args) {
+	public List<String> onTab(@NotNull MCCommand<P, S> mainCommand, @NotNull S sender, @NotNull String[] args) {
 		return onUsedCommand(mainCommand, sender, args, (cmd, newArgs) -> cmd.onTab(sender, newArgs), List.of(), false);
 	}
 
 	@SafeVarargs
-	public final void inject(@NotNull MCCommand<S>... commands) {
+	public final void inject(@NotNull MCCommand<P, S>... commands) {
 		Collections.addAll(subCommands, commands);
 	}
 }

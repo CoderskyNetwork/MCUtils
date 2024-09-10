@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public interface MCCommand<S extends MCCommandSender<?, ?>, P> {
+public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 
 	@NotNull
 	String getName();
@@ -33,7 +33,7 @@ public interface MCCommand<S extends MCCommandSender<?, ?>, P> {
 
 	boolean hasAccess(@NotNull S sender, boolean message);
 
-	MCCommand<S, P> inject(@NotNull MCCommand<S, P>... commands);
+	MCCommand<P, S> inject(@NotNull MCCommand<P, S>... commands);
 
 	/**
 	 * Returns whether this {@link MCCommand} removes

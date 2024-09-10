@@ -17,10 +17,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class SpigotCommand<P extends JavaPlugin> extends Command implements MCCommand<SpigotCommandSender, P>, PluginIdentifiableCommand, TabExecutor {
+public abstract class SpigotCommand<P extends JavaPlugin> extends Command implements MCCommand<P, SpigotCommandSender>, PluginIdentifiableCommand, TabExecutor {
 
 	private final SpigotUtils<P> utils;
-	private final SubCommandHandler<SpigotCommandSender> subCommandHandler = new SubCommandHandler<>();
+	private final SubCommandHandler<P, SpigotCommandSender> subCommandHandler = new SubCommandHandler<>();
 
 	public SpigotCommand(@NotNull SpigotUtils<P> utils, @NotNull String name) {
 		super(name);
@@ -45,6 +45,12 @@ public abstract class SpigotCommand<P extends JavaPlugin> extends Command implem
 	}
 
 	// Command logic //
+
+	@SafeVarargs
+	public final SpigotCommand<P> inject(SpigotCommand<P>... commands) {
+		subCommandHandler.inject(commands);
+		return this;
+	}
 
 	@Override
 	public final boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {

@@ -1,6 +1,7 @@
 package net.codersky.mcutils;
 
 import net.codersky.mcutils.cmd.MCCommand;
+import net.codersky.mcutils.cmd.MCCommandSender;
 import net.codersky.mcutils.crossplatform.MCConsole;
 import net.codersky.mcutils.crossplatform.player.PlayerProvider;
 import net.codersky.mcutils.files.ConfigFileHolder;
@@ -76,7 +77,7 @@ public abstract class MCUtils<P> {
 		return file;
 	}
 
-	public abstract void registerCommands(MCCommand<?, P>... commands);
+	public abstract void registerCommands(MCCommand<P, MCCommandSender<?, ?>>... commands);
 
 	/**
 	 * Gets the files currently being handled by this {@link MCUtils} instance. The list returned
