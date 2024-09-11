@@ -1,5 +1,6 @@
 package net.codersky.mcutils.spigot;
 
+import net.codersky.mcutils.MCPlatform;
 import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
 import net.codersky.mcutils.cmd.MCCommandSender;
@@ -65,6 +66,11 @@ public class SpigotUtils<P extends JavaPlugin> extends MCUtils<P> {
 	@Override
 	public SpigotConsole getConsole() {
 		return console;
+	}
+
+	@Override
+	public @NotNull MCPlatform getPlatform() {
+		return MCPlatform.SPIGOT;
 	}
 
 	/**

@@ -4,6 +4,7 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.codersky.mcutils.MCPlatform;
 import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
 import net.codersky.mcutils.cmd.MCCommandSender;
@@ -53,6 +54,11 @@ public class VelocityUtils<P> extends MCUtils<P> {
 	@Override
 	public @NotNull VelocityConsole getConsole() {
 		return console;
+	}
+
+	@Override
+	public @NotNull MCPlatform getPlatform() {
+		return MCPlatform.VELOCITY;
 	}
 
 	@Override

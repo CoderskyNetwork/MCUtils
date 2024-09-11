@@ -45,6 +45,20 @@ public abstract class MCUtils<P> {
 	public abstract MCConsole<?> getConsole();
 
 	/**
+	 * Gets the {@link MCPlatform} this {@link MCUtils} class
+	 * is designed for. This can be useful when you are using
+	 * a generic {@link MCUtils} instance, to let you know which
+	 * platform you are in without casting.
+	 *
+	 * @return The {@link MCPlatform} this {@link MCUtils} class
+	 * is designed for.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	@NotNull
+	public abstract MCPlatform getPlatform();
+
+	/**
 	 * Gets the version of MCUtils being used by this utility
 	 * class.
 	 *
