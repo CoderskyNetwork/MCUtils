@@ -17,6 +17,28 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Platform independent class that provides access to
+ * most of the features that MCUtils has to offer, just
+ * check the "See Also" section here.
+ *
+ * @since MCUtils 1.0.0
+ *
+ * @see #getPlugin()
+ * @see #getPlayer(UUID)
+ * @see #getConsole()
+ * @see #registerFile(FileHolder)
+ * @see #getConfig()
+ * @see #getMessages()
+ * @see #reload()
+ * @see #update()
+ *
+ * @author xDec0de_
+ *
+ * @param <P> The class that holds an instance of this
+ * utils, meant to be the main class of your plugin as
+ * it can be accessed via {@link #getPlugin()}.
+ */
 public abstract class MCUtils<P> {
 
 	private final P plugin;
@@ -152,9 +174,9 @@ public abstract class MCUtils<P> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public MessagesFileHolder getMessages() {
+	public MessagesFileHolder<?> getMessages() {
 		for (FileHolder holder : files)
-			if (holder instanceof final MessagesFileHolder messages)
+			if (holder instanceof final MessagesFileHolder<?> messages)
 				return messages;
 		return null;
 	}

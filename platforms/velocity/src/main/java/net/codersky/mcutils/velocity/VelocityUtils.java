@@ -5,11 +5,11 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.codersky.mcutils.MCPlatform;
-import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
 import net.codersky.mcutils.cmd.MCCommandSender;
 import net.codersky.mcutils.crossplatform.player.MCPlayer;
 import net.codersky.mcutils.crossplatform.player.PlayerProvider;
+import net.codersky.mcutils.crossplatform.proxy.ProxyUtils;
 import net.codersky.mcutils.velocity.cmd.AdaptedVelocityCommand;
 import net.codersky.mcutils.velocity.cmd.VelocityCommand;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class VelocityUtils<P> extends MCUtils<P> {
+public class VelocityUtils<P> extends ProxyUtils<P> {
 
 	private final ProxyServer proxy;
 	private final VelocityConsole console;

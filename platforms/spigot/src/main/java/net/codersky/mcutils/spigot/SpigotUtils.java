@@ -1,16 +1,15 @@
 package net.codersky.mcutils.spigot;
 
 import net.codersky.mcutils.MCPlatform;
-import net.codersky.mcutils.MCUtils;
 import net.codersky.mcutils.cmd.MCCommand;
 import net.codersky.mcutils.cmd.MCCommandSender;
 import net.codersky.mcutils.crossplatform.player.MCPlayer;
 import net.codersky.mcutils.crossplatform.player.PlayerProvider;
+import net.codersky.mcutils.crossplatform.server.ServerUtils;
 import net.codersky.mcutils.java.strings.MCStrings;
 import net.codersky.mcutils.spigot.cmd.AdaptedSpigotCommand;
 import net.codersky.mcutils.spigot.cmd.SpigotCommand;
 import net.codersky.mcutils.java.reflection.RefObject;
-import net.codersky.mcutils.spigot.player.SpigotPlayerProvider;
 import net.codersky.mcutils.spigot.worldgen.SingleBiomeProvider;
 import net.codersky.mcutils.spigot.worldgen.VoidGenerator;
 import org.bukkit.Bukkit;
@@ -35,7 +34,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class SpigotUtils<P extends JavaPlugin> extends MCUtils<P> {
+public class SpigotUtils<P extends JavaPlugin> extends ServerUtils<P> {
 
 	private final SpigotConsole console;
 	private PlayerProvider<Player> playerProvider;
