@@ -22,5 +22,5 @@ public interface FileUpdater extends FileHolder {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public abstract boolean update(List<String> ignored);
+	boolean update(List<String> ignored);
 }

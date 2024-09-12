@@ -174,9 +174,9 @@ public abstract class MCUtils<P> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public MessagesFileHolder<?> getMessages() {
+	public MessagesFileHolder getMessages() {
 		for (FileHolder holder : files)
-			if (holder instanceof final MessagesFileHolder<?> messages)
+			if (holder instanceof final MessagesFileHolder messages)
 				return messages;
 		return null;
 	}

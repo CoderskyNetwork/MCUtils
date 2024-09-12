@@ -18,7 +18,7 @@ public interface FileHolder {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public abstract boolean create();
+	boolean create();
 
 	/**
 	 * Reloads any files handled by this {@link FileHolder}.
@@ -27,7 +27,7 @@ public interface FileHolder {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public abstract boolean reload();
+	boolean reload();
 
 	/**
 	 * Saves any files handled by this {@link FileHolder}.
@@ -36,6 +36,6 @@ public interface FileHolder {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	public abstract boolean save();
+	boolean save();
 
 }

@@ -6,14 +6,13 @@ import java.nio.charset.StandardCharsets;
 import javax.annotation.Nullable;
 
 import net.codersky.mcutils.files.MessagesFileHolder;
-import org.bukkit.command.CommandSender;
+import net.codersky.mcutils.java.strings.MCStrings;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.codersky.mcutils.spigot.java.strings.MCStrings;
 import net.codersky.mcutils.java.strings.Replacer;
 import org.jetbrains.annotations.NotNull;
 
-public class MessagesFile extends PluginFile implements MessagesFileHolder<CommandSender> {
+public class MessagesFile extends PluginFile implements MessagesFileHolder {
 
 	@Nullable
 	private Replacer defReplacer = null;
@@ -128,29 +127,30 @@ public class MessagesFile extends PluginFile implements MessagesFileHolder<Comma
 
 	@Nullable
 	@Override
-	public String getString(@NotNull String path) {
+	public String getMessage(@NotNull String path) {
 		final String str = super.getString(path);
+		if (str == null)
+			return null;
 		return MCStrings.applyColor(defReplacer == null ? str : defReplacer.replaceAt(str));
 	}
 
 	@Nullable
 	@Override
-	public String getString(@NotNull String path, @NotNull Replacer rep) {
+	public String getMessage(@NotNull String path, @NotNull Replacer rep) {
 		final String str = super.getString(path);
+		if (str == null)
+			return null;
 		final Replacer finalRep = defReplacer == null ? rep : getDefaultReplacer().add(rep);
 		return MCStrings.applyColor(finalRep.replaceAt(str));
 	}
 
 	@Nullable
 	@Override
-	public String getString(@NotNull String path, @NotNull Object... replacements) {
+	public String getMessage(@NotNull String path, @NotNull Object... replacements) {
 		final String str = super.getString(path);
+		if (str == null)
+			return null;
 		final Replacer finalRep = defReplacer == null ? new Replacer(replacements) : getDefaultReplacer().add(replacements);
 		return MCStrings.applyColor(finalRep.replaceAt(str));
-	}
-
-	@Override
-	public void sendMessage(@NotNull CommandSender target, @NotNull String message) {
-		target.sendMessage(message);
 	}
 }
