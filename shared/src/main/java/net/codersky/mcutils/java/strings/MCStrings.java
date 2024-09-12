@@ -1,5 +1,6 @@
 package net.codersky.mcutils.java.strings;
 
+import net.codersky.mcutils.cmd.MCCommand;
 import net.codersky.mcutils.crossplatform.MessageReceiver;
 import net.codersky.mcutils.crossplatform.player.MCPlayer;
 import net.codersky.mcutils.java.strings.pattern.ColorPattern;
@@ -45,6 +46,24 @@ public class MCStrings {
 				new ConsoleTargetPattern(),
 				new PlayerTargetPattern()
 		);
+	}
+
+	/**
+	 * Applies all known patterns to the provided {@link String} in order to send it
+	 * to the specified {@code target}. That is, all color patterns, target patterns
+	 * and event patterns, in that order.
+	 *
+	 * @param target the {@link MessageReceiver} that will receive the message.
+	 * @param str the {@link String} to process.
+	 *
+	 * @return Always {@code true} to make it easier to create {@link MCCommand MCCommands}.
+	 *
+	 * @throws NullPointerException if any parameter is {@code null}.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	public static boolean sendMessage(@NotNull MessageReceiver target, @NotNull String str) {
+		return target.sendMessage(applyEventPatterns(applyTargetPatterns(target, applyColor(str), true)));
 	}
 
 	/*
