@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
@@ -68,13 +69,13 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 * {@code arg} position or if {@code converter} returns {@code null}.
 	 *
 	 * @param <T> the type of the result of the {@code converter} {@link Function}.
+	 * @param converter the {@link Function} that will convert the {@link String}
+	 * found at the specified {@code arg} position. The {@link String} passed
+	 * to the {@link Function} will <b>never</b> be {@code null}.
 	 * @param arg the array position of the argument to get, can be out of bounds.
 	 * @param args the array of arguments to use.
 	 * @param def the default value to return if {@code arg} is out of bounds or
 	 * {@code converter} returns {@code null}.
-	 * @param converter the {@link Function} that will convert the {@link String}
-	 * found at the specified {@code arg} position. The {@link String} passed
-	 * to the {@link Function} will <b>never</b> be {@code null}.
 	 *
 	 * @return The argument as converted by {@code converter} if found on the {@code args} array
 	 * and {@code converter} doesn't return {@code null}. {@code def} otherwise.
@@ -84,7 +85,7 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	default <T> T asGeneric(int arg, @NotNull String[] args, @Nullable T def, @NotNull Function<String, T> converter) {
+	default <T> T asGeneric(@NotNull Function<String, T> converter, int arg, @NotNull String[] args, @Nullable T def) {
 		if (args.length <= arg)
 			return def;
 		final T converted = converter.apply(args[arg]);
@@ -97,11 +98,11 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 * {@code arg} position or if {@code converter} returns {@code null}.
 	 *
 	 * @param <T> the type of the result of the {@code converter} {@link Function}.
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
 	 * @param converter the {@link Function} that will convert the {@link String}
 	 * found at the specified {@code arg} position. The {@link String} passed
 	 * to the {@link Function} will <b>never</b> be {@code null}.
+	 * @param arg the array position of the argument to get, can be out of bounds.
+	 * @param args the array of arguments to use.
 	 *
 	 * @return The argument as converted by {@code converter} if found
 	 * on the {@code args} array, {@code null} otherwise.
@@ -111,13 +112,15 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	default <T> T asGeneric(int arg, @NotNull String[] args, @NotNull Function<String, T> converter) {
+	default <T> T asGeneric(@NotNull Function<String, T> converter, int arg, @NotNull String[] args) {
 		return args.length > arg ? converter.apply(args[arg]) : null;
 	}
 
 	/*
 	 * Strings
 	 */
+
+	// Regular //
 
 	/**
 	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link String}, this
@@ -133,13 +136,31 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nullable
-	default String asString(int arg, @NotNull String[] args, @Nullable String def) {
+	@NotNull
+	default String asString(int arg, @NotNull String[] args, @NotNull String def) {
+		Objects.requireNonNull(def, "def cannot be null. Remove the parameter instead.");
 		final String result = args.length > arg ? args[arg] : def;
-		if (result == null)
-			return null;
 		return removesEventPatterns() ? MCStrings.stripEventPatterns(result) : result;
 	}
+
+	/**
+	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link String}, this
+	 * method won't do any actual conversion and will just return the argument if found, null if not.
+	 *
+	 * @param arg the array position of the argument to get, can be out of bounds.
+	 * @param args the array of arguments to use.
+	 *
+	 * @return The argument as a {@link String} if found on the <b>args</b> array, null otherwise.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	@Nullable
+	default String asString(int arg, @NotNull String[] args) {
+		final String result = args.length > arg ? args[arg] : null;
+		return result != null && removesEventPatterns() ? MCStrings.stripEventPatterns(result) : result;
+	}
+
+	// With modifier //
 
 	/**
 	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link String}, this
@@ -159,26 +180,9 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nullable
-	default String asString(@NotNull Function<String, String> modifier, int arg, @NotNull String[] args, @Nullable String def) {
-		final String result = asString(arg, args, def);
-		return result == null ? null : modifier.apply(result);
-	}
-
-	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link String}, this
-	 * method won't do any actual conversion and will just return the argument if found, null if not.
-	 *
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 *
-	 * @return The argument as a {@link String} if found on the <b>args</b> array, null otherwise.
-	 *
-	 * @since MCUtils 1.0.0
-	 */
-	@Nullable
-	default String asString(int arg, @NotNull String[] args) {
-		return asString(arg, args, null);
+	@NotNull
+	default String asString(@NotNull Function<String, String> modifier, int arg, @NotNull String[] args, @NotNull String def) {
+		return modifier.apply(asString(arg, args, def));
 	}
 
 	/**
@@ -207,6 +211,20 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 * String ranges
 	 */
 
+	@NotNull
+	private String buildRange(@Nullable Function<String, String> modifier, int fromArg, @NotNull String[] args, @NotNull String first) {
+		final StringBuilder builder = new StringBuilder(first);
+		final boolean removeEvents = removesEventPatterns();
+		Function<String, String> finalModifier = null;
+		if (modifier == null && removeEvents)
+			finalModifier = MCStrings::stripEventPatterns;
+		else if (modifier != null)
+			finalModifier = str -> modifier.apply(MCStrings.stripEventPatterns(str));
+		for (int i = fromArg + 1; i < args.length; i++)
+			builder.append(' ').append(finalModifier == null ? args[i] : finalModifier.apply(args[i]));
+		return builder.toString();
+	}
+
 	/**
 	 * Gets a range of arguments starting at <b>fromArg</b> all the way to
 	 * the end of <b>args</b>, then, converts that range of arguments to a
@@ -222,15 +240,10 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nullable
-	default String asStringRange(int fromArg, @NotNull String[] args, @Nullable String def) {
-		String str = asString(fromArg, args, null);
-		if (str == null)
-			return def;
-		final StringBuilder builder = new StringBuilder().append(str);
-		for (int i = fromArg + 1; i < args.length; i++)
-			builder.append(' ').append(MCStrings.stripEventPatterns(args[i]));
-		return builder.toString();
+	@NotNull
+	default String asStringRange(int fromArg, @NotNull String[] args, @NotNull String def) {
+		final String first = asString(fromArg, args);
+		return first == null ? def : buildRange(null, fromArg, args, first);
 	}
 
 	/**
@@ -249,7 +262,8 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 */
 	@Nullable
 	default String asStringRange(int fromArg, @NotNull String[] args) {
-		return asStringRange(fromArg, args, null);
+		final String first = asString(fromArg, args);
+		return first == null ? null : buildRange(null, fromArg, args, first);
 	}
 
 	/**
@@ -270,10 +284,10 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nullable
-	default String asStringRange(@NotNull Function<String, String> modifier, int fromArg, @NotNull String[] args, @Nullable String def) {
-		final String range = asStringRange(fromArg, args, def);
-		return range == null ? def : modifier.apply(range);
+	@NotNull
+	default String asStringRange(@NotNull Function<String, String> modifier, int fromArg, @NotNull String[] args, @NotNull String def) {
+		final String first = asString(fromArg, args);
+		return first == null ? def : buildRange(modifier, fromArg, args, first);
 	}
 
 	/**
@@ -294,7 +308,8 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 */
 	@Nullable
 	default String asStringRange(@NotNull Function<String, String> modifier, int fromArg, @NotNull String[] args) {
-		return asStringRange(modifier, fromArg, args, null);
+		final String first = asString(fromArg, args);
+		return first == null ? null : buildRange(modifier, fromArg, args, first);
 	}
 
 	/*
