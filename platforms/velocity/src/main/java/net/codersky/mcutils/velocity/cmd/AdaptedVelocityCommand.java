@@ -31,6 +31,7 @@ public class AdaptedVelocityCommand<P> extends VelocityCommand<P> {
 		return command.hasAccess(sender, message);
 	}
 
+	@NotNull
 	@Override
 	public MCCommand<P, VelocityCommandSender> inject(@NotNull MCCommand<P, VelocityCommandSender>... commands) {
 		throw new UnsupportedOperationException("Adapted commands cannot inject new commands.");

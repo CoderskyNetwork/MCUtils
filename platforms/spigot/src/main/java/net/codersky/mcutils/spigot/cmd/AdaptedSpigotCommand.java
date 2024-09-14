@@ -22,8 +22,9 @@ public class AdaptedSpigotCommand<P extends JavaPlugin> extends SpigotCommand<P>
 		return command.onCommand(sender, args);
 	}
 
+	@NotNull
 	@Override
-	public @NotNull List<String> onTab(@NotNull SpigotCommandSender sender, @NotNull String[] args) {
+	public List<String> onTab(@NotNull SpigotCommandSender sender, @NotNull String[] args) {
 		return command.onTab(sender, args);
 	}
 
@@ -32,6 +33,7 @@ public class AdaptedSpigotCommand<P extends JavaPlugin> extends SpigotCommand<P>
 		return command.hasAccess(sender, message);
 	}
 
+	@NotNull
 	@Override
 	public MCCommand<P, SpigotCommandSender> inject(@NotNull MCCommand<P, SpigotCommandSender>... commands) {
 		throw new UnsupportedOperationException("Adapted commands cannot inject new commands.");

@@ -11,10 +11,34 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * Interface used to represent a cross-platform command.
+ * Commands can directly be made and implemented with this interface,
+ * though the {@link GlobalCommand} class is easier to use if you
+ * intend to make cross-platform commands.
+ *
+ * @since MCUtils 1.0.0
+ *
+ * @author xDec0de_
+ *
+ * @param <P> The plugin class that owns this {@link MCCommand}.
+ * @param <S> The {@link MCCommandSender} type of this {@link MCCommand}.
+ */
 public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 
+	/**
+	 * Gets the name of this  {@link MCCommand}, which is used in order
+	 * to execute it as "/name".
+	 *
+	 * @return The name of this  {@link MCCommand}.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
 	@NotNull
 	String getName();
+
+	@NotNull
+	List<String> getAliases();
 
 	@NotNull
 	MCUtils<P> getUtils();
@@ -24,9 +48,6 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 		return getUtils().getPlugin();
 	}
 
-	@NotNull
-	List<String> getAliases();
-
 	boolean onCommand(@NotNull S sender, @NotNull String[] args);
 
 	@NotNull
@@ -34,6 +55,7 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 
 	boolean hasAccess(@NotNull S sender, boolean message);
 
+	@NotNull
 	MCCommand<P, S> inject(@NotNull MCCommand<P, S>... commands);
 
 	/**
@@ -64,28 +86,29 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 */
 
 	/**
-	 * Converts the specified {@code arg} of the {@code args} array to a any object by using the
+	 * Converts the specified {@code arg} of the {@code args} array to any object by using the
 	 * {@code converter} {@link Function}. Returning {@code def} if no argument is found at the
 	 * {@code arg} position or if {@code converter} returns {@code null}.
 	 *
-	 * @param <T> the type of the result of the {@code converter} {@link Function}.
+	 * @param <T> The return type of the {@code converter} {@link Function}.
 	 * @param converter the {@link Function} that will convert the {@link String}
 	 * found at the specified {@code arg} position. The {@link String} passed
 	 * to the {@link Function} will <b>never</b> be {@code null}.
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * @param def the default value to return if {@code arg} is out of bounds or
+	 * @param arg The array position of the argument to get, can be out of bounds.
+	 * @param args The array of arguments to use.
+	 * @param def The default value to return if {@code arg} is out of bounds or
 	 * {@code converter} returns {@code null}.
 	 *
-	 * @return The argument as converted by {@code converter} if found on the {@code args} array
+	 * @return The argument converted by {@code converter} if found on the {@code args} array
 	 * and {@code converter} doesn't return {@code null}. {@code def} otherwise.
 	 *
-	 * @throws NullPointerException if {@code args} or {@code converter} are {@code null}.
+	 * @throws NullPointerException if {@code args}, {@code converter} or {@code def} are {@code null}.
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nullable
-	default <T> T asGeneric(@NotNull Function<String, T> converter, int arg, @NotNull String[] args, @Nullable T def) {
+	@NotNull
+	default <T> T asGeneric(@NotNull Function<String, T> converter, int arg, @NotNull String[] args, @NotNull T def) {
+		Objects.requireNonNull(def, "def cannot be null. Remove the parameter instead.");
 		if (args.length <= arg)
 			return def;
 		final T converted = converter.apply(args[arg]);
@@ -93,21 +116,21 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	}
 
 	/**
-	 * Converts the specified {@code arg} of the {@code args} array to a any object by using the
+	 * Converts the specified {@code arg} of the {@code args} array to any object by using the
 	 * {@code converter} {@link Function}. Returning {@code null} if no argument is found at the
 	 * {@code arg} position or if {@code converter} returns {@code null}.
 	 *
-	 * @param <T> the type of the result of the {@code converter} {@link Function}.
-	 * @param converter the {@link Function} that will convert the {@link String}
+	 * @param <T> The return type of the {@code converter} {@link Function}.
+	 * @param converter The {@link Function} that will convert the {@link String}
 	 * found at the specified {@code arg} position. The {@link String} passed
 	 * to the {@link Function} will <b>never</b> be {@code null}.
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
+	 * @param arg The array position of the argument to get, can be out of bounds.
+	 * @param args The array of arguments to use.
 	 *
 	 * @return The argument as converted by {@code converter} if found
 	 * on the {@code args} array, {@code null} otherwise.
 	 *
-	 * @throws NullPointerException if {@code args} or {@code converter} are {@code null}.
+	 * @throws NullPointerException If {@code args} or {@code converter} are {@code null}.
 	 *
 	 * @since MCUtils 1.0.0
 	 */
@@ -174,7 +197,7 @@ public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
 	 * @param args the array of arguments to use.
 	 * @param def the default value to return if <b>arg</b> is out of bounds.
 	 *
-	 * @return The argument as a {@link String} if found on the <b>args</b> array, null otherwise.
+	 * @return The argument as a {@link String} if found on the <b>args</b> array, {@code def} otherwise.
 	 *
 	 * @throws NullPointerException if <b>modifier</b> is {@code null}.
 	 *
