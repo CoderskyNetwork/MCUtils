@@ -9,9 +9,9 @@ import java.util.List;
 
 public class AdaptedVelocityCommand<P> extends VelocityCommand<P> {
 
-	private final MCCommand<P, MCCommandSender<?, ?>> command;
+	private final MCCommand<P, MCCommandSender> command;
 
-	public AdaptedVelocityCommand(@NotNull VelocityUtils<P> utils, @NotNull MCCommand<P, MCCommandSender<?, ?>> command) {
+	public AdaptedVelocityCommand(@NotNull VelocityUtils<P> utils, @NotNull MCCommand<P, MCCommandSender> command) {
 		super(utils, command.getName(), command.getAliases().toArray(new String[0]));
 		this.command = command;
 	}

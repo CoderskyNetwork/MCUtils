@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author xDec0de_
  */
-public interface MCConsole<T> extends MessageReceiver {
+public interface MCConsole extends MessageReceiver {
 
 	/**
 	 * Gets the platform-specific object that is being wrapped by
@@ -24,5 +24,5 @@ public interface MCConsole<T> extends MessageReceiver {
 	 * @since MCUtils 1.0.0
 	 */
 	@NotNull
-	T getHandle();
+	Object getHandle();
 }

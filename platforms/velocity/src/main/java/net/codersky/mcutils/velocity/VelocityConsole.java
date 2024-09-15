@@ -5,7 +5,7 @@ import net.codersky.mcutils.crossplatform.MCConsole;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-public class VelocityConsole implements MCConsole<ConsoleCommandSource> {
+public class VelocityConsole implements MCConsole {
 
 	private final ConsoleCommandSource handle;
 

@@ -11,7 +11,7 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class VelocityCommandSender implements MCCommandSender<Player, ConsoleCommandSource> {
+public class VelocityCommandSender implements MCCommandSender {
 
 	private final CommandSource source;
 	private final VelocityUtils<?> utils;
@@ -30,9 +30,16 @@ public class VelocityCommandSender implements MCCommandSender<Player, ConsoleCom
 		return source instanceof Player;
 	}
 
+	@Nullable
 	@Override
-	public @Nullable MCPlayer<Player> asPlayer() {
+	public MCPlayer asPlayer() {
 		return source instanceof Player player ? utils.getPlayer(player.getUniqueId()) : null;
+	}
+
+	@Nullable
+	@Override
+	public Player asPlayerHandle() {
+		return source instanceof Player player ? player : null;
 	}
 
 	/*
@@ -43,6 +50,12 @@ public class VelocityCommandSender implements MCCommandSender<Player, ConsoleCom
 	@Override
 	public VelocityConsole asConsole() {
 		return isConsole() ? utils.getConsole() : null;
+	}
+
+	@Nullable
+	@Override
+	public ConsoleCommandSource asConsoleHandle() {
+		return source instanceof ConsoleCommandSource console ? console : null;
 	}
 
 	/*

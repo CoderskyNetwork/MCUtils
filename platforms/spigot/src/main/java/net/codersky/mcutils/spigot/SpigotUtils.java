@@ -57,7 +57,7 @@ public class SpigotUtils<P extends JavaPlugin> extends ServerUtils<P> {
 
 	@Nullable
 	@Override
-	public MCPlayer<Player> getPlayer(@NotNull UUID uuid) {
+	public MCPlayer getPlayer(@NotNull UUID uuid) {
 		return playerProvider.getPlayer(uuid);
 	}
 
@@ -218,11 +218,11 @@ public class SpigotUtils<P extends JavaPlugin> extends ServerUtils<P> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	public void registerCommands(MCCommand<P, MCCommandSender<?, ?>>... commands) {
+	public void registerCommands(MCCommand<P, MCCommandSender>... commands) {
 		if (commands == null || commands.length == 0)
 			return;
 		final List<Command> remaining = new ArrayList<>();
-		for (MCCommand<P, MCCommandSender<?, ?>> command : commands) {
+		for (MCCommand<P, MCCommandSender> command : commands) {
 			final SpigotCommand<P> spigotCommand;
 			if (command instanceof SpigotCommand)
 				spigotCommand = (SpigotCommand) command;

@@ -12,7 +12,7 @@ import java.util.UUID;
 public class SpigotPlayerProvider extends PlayerProvider<Player> {
 
 	@Override
-	protected @Nullable MCPlayer<Player> fetchPlayer(@NotNull UUID uuid) {
+	protected @Nullable MCPlayer fetchPlayer(@NotNull UUID uuid) {
 		final Player bukkit = Bukkit.getPlayer(uuid);
 		return bukkit == null ? null : new SpigotPlayer(bukkit);
 	}

@@ -33,7 +33,7 @@ public class SpigotCommandSender implements MCCommandSender<Player, ConsoleComma
 
 	@Nullable
 	@Override
-	public MCPlayer<Player> asPlayer() {
+	public MCPlayer asPlayer() {
 		return sender instanceof Player player ? utils.getPlayer(player.getUniqueId()) : null;
 	}
 
@@ -59,10 +59,10 @@ public class SpigotCommandSender implements MCCommandSender<Player, ConsoleComma
 
 	@Override
 	public boolean sendMessage(@NotNull Component message) {
-		final MCPlayer<Player> player = asPlayer();
+		final MCPlayer player = asPlayer();
 		if (player != null)
 			return player.sendMessage(message);
-		final MCConsole<ConsoleCommandSender> console = asConsole();
+		final MCConsole console = asConsole();
 		if (console != null)
 			return console.sendMessage(message);
 		return true;

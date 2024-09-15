@@ -10,9 +10,9 @@ import java.util.List;
 
 public class AdaptedSpigotCommand<P extends JavaPlugin> extends SpigotCommand<P> {
 
-	private final MCCommand<?, MCCommandSender<?, ?>> command;
+	private final MCCommand<?, MCCommandSender> command;
 
-	public AdaptedSpigotCommand(@NotNull SpigotUtils<P> utils, @NotNull MCCommand<?, MCCommandSender<?, ?>> command) {
+	public AdaptedSpigotCommand(@NotNull SpigotUtils<P> utils, @NotNull MCCommand<?, MCCommandSender> command) {
 		super(utils, command.getName(), command.getAliases().toArray(new String[0]));
 		this.command = command;
 	}

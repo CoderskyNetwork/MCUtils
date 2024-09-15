@@ -24,7 +24,7 @@ import java.util.function.Function;
  * @param <P> The plugin class that owns this {@link MCCommand}.
  * @param <S> The {@link MCCommandSender} type of this {@link MCCommand}.
  */
-public interface MCCommand<P, S extends MCCommandSender<?, ?>> {
+public interface MCCommand<P, S extends MCCommandSender> {
 
 	/**
 	 * Gets the name of this  {@link MCCommand}, which is used in order

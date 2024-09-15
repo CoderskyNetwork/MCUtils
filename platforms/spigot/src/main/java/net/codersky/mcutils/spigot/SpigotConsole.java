@@ -6,7 +6,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class SpigotConsole implements MCConsole<ConsoleCommandSender> {
+public class SpigotConsole implements MCConsole {
 
 	private final ConsoleCommandSender handle;
 

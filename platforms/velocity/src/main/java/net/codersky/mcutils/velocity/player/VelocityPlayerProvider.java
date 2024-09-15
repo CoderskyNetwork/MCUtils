@@ -20,7 +20,7 @@ public class VelocityPlayerProvider extends PlayerProvider<Player> {
 
 	@Nullable
 	@Override
-	protected MCPlayer<Player> fetchPlayer(@NotNull UUID uuid) {
+	protected MCPlayer fetchPlayer(@NotNull UUID uuid) {
 		final Optional<Player> player = server.getPlayer(uuid);
 		return player.map(VelocityPlayer::new).orElse(null);
 	}

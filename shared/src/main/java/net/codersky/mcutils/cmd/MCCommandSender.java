@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-public interface MCCommandSender<P, C> extends MessageReceiver {
+public interface MCCommandSender extends MessageReceiver {
 
 	/*
 	 * Player related
@@ -19,11 +19,11 @@ public interface MCCommandSender<P, C> extends MessageReceiver {
 	boolean isPlayer();
 
 	@Nullable
-	MCPlayer<P> asPlayer();
+	MCPlayer asPlayer();
 
 	@Nullable
-	default P asPlayerHandle() {
-		final MCPlayer<P> player = asPlayer();
+	default Object asPlayerHandle() {
+		final MCPlayer player = asPlayer();
 		return player == null ? null : player.getHandle();
 	}
 
@@ -36,11 +36,11 @@ public interface MCCommandSender<P, C> extends MessageReceiver {
 	}
 
 	@Nullable
-	MCConsole<C> asConsole();
+	MCConsole asConsole();
 
 	@Nullable
-	default C asConsoleHandle() {
-		final MCConsole<C> console = asConsole();
+	default Object asConsoleHandle() {
+		final MCConsole console = asConsole();
 		return console == null ? null : console.getHandle();
 	}
 
@@ -51,5 +51,5 @@ public interface MCCommandSender<P, C> extends MessageReceiver {
 	boolean hasPermission(@NotNull String permission);
 
 	@NotNull
-	MCUtils getUtils();
+	MCUtils<?> getUtils();
 }

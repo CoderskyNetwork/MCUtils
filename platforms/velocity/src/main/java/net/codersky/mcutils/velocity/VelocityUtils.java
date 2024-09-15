@@ -47,7 +47,7 @@ public class VelocityUtils<P> extends ProxyUtils<P> {
 	}
 
 	@Nullable
-	public MCPlayer<Player> getPlayer(@NotNull UUID uuid) {
+	public MCPlayer getPlayer(@NotNull UUID uuid) {
 		return playerProvider.getPlayer(uuid);
 	}
 
@@ -62,9 +62,9 @@ public class VelocityUtils<P> extends ProxyUtils<P> {
 	}
 
 	@Override
-	public void registerCommands(MCCommand<P, MCCommandSender<?, ?>>... commands) {
+	public void registerCommands(MCCommand<P, MCCommandSender>... commands) {
 		final CommandManager manager = getProxy().getCommandManager();
-		for (MCCommand<P, MCCommandSender<?, ?>> mcCommand : commands) {
+		for (MCCommand<P, MCCommandSender> mcCommand : commands) {
 			final VelocityCommand<P> velocityCommand;
 			if (mcCommand instanceof VelocityCommand)
 				velocityCommand = (VelocityCommand) mcCommand;

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class SpigotPlayer implements MCPlayer<Player> {
+public class SpigotPlayer implements MCPlayer {
 
 	private final Player handle;
 

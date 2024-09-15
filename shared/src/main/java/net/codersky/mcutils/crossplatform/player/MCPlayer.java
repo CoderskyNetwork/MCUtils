@@ -23,7 +23,7 @@ import java.util.UUID;
  *
  * @author xDec0de_
  */
-public interface MCPlayer<T> extends MessageReceiver, Replacement {
+public interface MCPlayer extends MessageReceiver, Replacement {
 
 	/**
 	 * Gets the platform-specific object that is being wrapped by
@@ -36,7 +36,7 @@ public interface MCPlayer<T> extends MessageReceiver, Replacement {
 	 * @since MCUtils 1.0.0
 	 */
 	@NotNull
-	T getHandle();
+	Object getHandle();
 
 	/**
 	 * Gets the {@link UUID} that belongs to this {@link MCPlayer}.
