@@ -90,7 +90,7 @@ public abstract class SpigotCommand<P extends JavaPlugin> extends Command implem
 	 */
 	@Nullable
 	public Player asPlayer(int arg, @NotNull String[] args, @Nullable Player def) {
-		return asGeneric(arg, args, def, Bukkit::getPlayerExact);
+		return asGeneric(Bukkit::getPlayerExact, arg, args, def);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public abstract class SpigotCommand<P extends JavaPlugin> extends Command implem
 	 */
 	@Nullable
 	public Player asPlayer(int arg, @NotNull String[] args) {
-		return asGeneric(arg, args, Bukkit::getPlayerExact);
+		return asGeneric(Bukkit::getPlayerExact, arg, args);
 	}
 
 	/**
