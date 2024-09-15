@@ -218,6 +218,7 @@ public class SpigotUtils<P extends JavaPlugin> extends ServerUtils<P> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void registerCommands(MCCommand<P, MCCommandSender>... commands) {
 		if (commands == null || commands.length == 0)
 			return;

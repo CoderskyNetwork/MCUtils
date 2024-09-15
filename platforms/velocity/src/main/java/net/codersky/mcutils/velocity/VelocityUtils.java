@@ -62,6 +62,7 @@ public class VelocityUtils<P> extends ProxyUtils<P> {
 	}
 
 	@Override
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void registerCommands(MCCommand<P, MCCommandSender>... commands) {
 		final CommandManager manager = getProxy().getCommandManager();
 		for (MCCommand<P, MCCommandSender> mcCommand : commands) {
