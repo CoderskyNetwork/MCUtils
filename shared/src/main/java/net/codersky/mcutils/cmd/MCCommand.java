@@ -374,23 +374,25 @@ public interface MCCommand<P, S extends MCCommandSender> {
 	 */
 
 	/**
-	 * Converts the specified <b>arg</b> of the <b>args</b> array to a {@link Number}
+	 * Converts the specified {@code arg} of the {@code args} array to a {@link Number}
 	 * (See {@link MCNumbers#asNumber(CharSequence, Number)} for more details).
 	 *
-	 * @param <T> the type of {@link Number} to return.
-	 * @param arg the array position of the argument to get, can be out of bounds.
-	 * @param args the array of arguments to use.
-	 * @param def the default value to return if <b>arg</b> is out of bounds or the argument isn't a valid number.
+	 * @param <T> The type of {@link Number} to return.
+	 * @param arg The array position of the argument to get, can be out of bounds.
+	 * @param args The array of arguments to use.
+	 * @param def The default value to return if {@code arg} is out of bounds or the argument isn't a valid number.
 	 *
-	 * @return The argument as a {@link Number} if found on the <b>args</b> array, <b>def</b> otherwise.
+	 * @return The argument as a {@link Number} if found on the {@code args} array, {@code def} otherwise.
+	 *
+	 * @throws NullPointerException If {@code args} or {@code def} is {@code null}.
 	 *
 	 * @since MCUtils 1.0.0
 	 *
 	 * @see MCNumbers#asNumber(CharSequence, Number)
 	 */
-	@Nullable
-	default <T extends Number> T asNumber(int arg, @NotNull String[] args, @Nullable T def) {
-		return asGeneric(arg, args, def, str -> MCNumbers.asNumber(str, def));
+	@NotNull
+	default <T extends Number> T asNumber(int arg, @NotNull String[] args, @NotNull T def) {
+		return asGeneric(str -> MCNumbers.asNumber(str, def), arg, args, def);
 	}
 
 	/**
@@ -403,12 +405,15 @@ public interface MCCommand<P, S extends MCCommandSender> {
 	 *
 	 * @return The argument as an {@link Number} if found on the <b>args</b> array, null otherwise.
 	 *
+	 * @throws NullPointerException If {@code args} or {@code type} is {@code null}.
+	 *
 	 * @since MCUtils 1.0.0
 	 *
 	 * @see MCNumbers#asNumber(CharSequence, Class)
 	 */
-	default <T extends Number> T asNumber(int arg, @NotNull String[] args, Class<T> type) {
-		return asGeneric(arg, args, str -> MCNumbers.asNumber(str, type));
+	@Nullable
+	default <T extends Number> T asNumber(int arg, @NotNull String[] args, @NotNull Class<T> type) {
+		return asGeneric(str -> MCNumbers.asNumber(str, type), arg, args);
 	}
 
 	/*
@@ -435,13 +440,13 @@ public interface MCCommand<P, S extends MCCommandSender> {
 	@Nullable
 	default <T extends Enum<T>> T asEnum(int arg, @NotNull String[] args, @NotNull Class<T> enumClass) {
 		// TODO Maybe find a better way to do this...
-		return asGeneric(arg, args, str -> {
+		return asGeneric(str -> {
 			try {
 				return Enum.valueOf(enumClass, str);
 			} catch (IllegalArgumentException ex) {
 				return null;
 			}
-		});
+		}, arg, args);
 	}
 
 	/**
@@ -462,14 +467,14 @@ public interface MCCommand<P, S extends MCCommandSender> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nullable
+	@NotNull
 	default <T extends Enum<T>> T asEnum(int arg, @NotNull String[] args, @NotNull T def) {
-		return asGeneric(arg, args, str -> {
+		return asGeneric(str -> {
 			final String name = str.toUpperCase();
 			for (T constant : def.getDeclaringClass().getEnumConstants())
 				if (name.equals(str))
 					return constant;
 			return null;
-		});
+		}, arg, args, def);
 	}
 }

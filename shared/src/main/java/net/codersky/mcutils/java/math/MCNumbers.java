@@ -647,64 +647,66 @@ public abstract class MCNumbers {
 
 	/**
 	 * Returns a {@link Number} of any (java.lang) number type
-	 * with the value of <b>str</b>. That means that this method can return
+	 * with the value of {@code seq}. That means that this method can return
 	 * {@link Integer integers}, {@link Float floats}, {@link Double doubles},
 	 * {@link Long longs}, {@link Short shorts} and {@link Byte bytes}, this
 	 * method will use their parseX method, so for example for {@link Integer integers},
-	 * {@link Integer#parseInt(String)} will be used, verifying whether <b>str</b>
+	 * {@link Integer#parseInt(String)} will be used, verifying whether {@code seq}
 	 * {@link #isNumeric(CharSequence)} or {@link #isInteger(CharSequence)} if necessary.
-	 * If <b>str</b> can't be parsed for the desired numeric type for whatever reason,
-	 * <b>def</b> will be returned. 
+	 * If {@code seq} can't be parsed for the desired numeric type for whatever reason,
+	 * {@code def} will be returned.
 	 *
-	 * @param <N> the type of {@link Number} to return
-	 * @param str the {@link CharSequence} to convert.
-	 * @param def the default value to return if <b>str</b> could not be parsed.
+	 * @param <N> The type of {@link Number} to return
+	 * @param seq The {@link CharSequence} to convert.
+	 * @param def The default value to return if {@code seq} could not be parsed.
 	 *
 	 * @return Returns a {@link Number} of any (java.lang) number type
-	 * with the value of <b>str</b>, <b>def</b> if <b>str</b> could not be parsed.
+	 * with the value of {@code seq}, {@code def} if {@code seq} could not be parsed.
+	 *
+	 * @throws NullPointerException If {@code seq} or {@code def} are {@code null}.
 	 */
-	@Nullable
-	public static <N extends Number> N asNumber(@Nullable CharSequence str, @Nullable N def) {
-		if (def == null)
-			return null;
+	@NotNull
+	public static <N extends Number> N asNumber(@NotNull CharSequence seq, @NotNull N def) {
 		@SuppressWarnings("unchecked")
-		final N number = asNumber(str, (Class<N>) def.getClass());
+		final N number = asNumber(seq, (Class<N>) def.getClass());
 		return number == null ? def : number;
 	}
 
 	/**
 	 * Returns a {@link Number} of any (java.lang) number type
-	 * with the value of <b>str</b>. That means that this method can return
+	 * with the value of {@code seq}. That means that this method can return
 	 * {@link Integer integers}, {@link Float floats}, {@link Double doubles},
 	 * {@link Long longs}, {@link Short shorts} and {@link Byte bytes}, this
 	 * method will use their parseX method, so for example for {@link Integer integers},
-	 * {@link Integer#parseInt(String)} will be used, verifying whether <b>str</b>
+	 * {@link Integer#parseInt(String)} will be used, verifying whether {@code seq}
 	 * {@link #isNumeric(CharSequence)} or {@link #isInteger(CharSequence)} if necessary.
-	 * If <b>str</b> can't be parsed for the desired numeric type for whatever reason,
-	 * <code>null</code> will be returned. 
+	 * If {@code seq} can't be parsed for the desired numeric type for whatever reason,
+	 * {@code null} will be returned.
 	 *
-	 * @param <N> the type of {@link Number} to return
-	 * @param str the {@link CharSequence} to convert.
-	 * @param type the type of {@link Number} to return.
+	 * @param <N> The type of {@link Number} to return
+	 * @param seq The {@link CharSequence} to convert.
+	 * @param type The type of {@link Number} to return.
 	 *
 	 * @return Returns a {@link Number} of any (java.lang) number type
-	 * with the value of <b>str</b>, <code>null</code> if <b>str</b> could not be parsed.
+	 * with the value of {@code seq}, {@code null} if {@code seq} could not be parsed.
+	 *
+	 * @throws NullPointerException If {@code seq} or {@code type} are {@code null}.
 	 */
 	@Nullable
-	public static <N extends Number> N asNumber(@NotNull CharSequence str, @NotNull Class<N> type) {
+	public static <N extends Number> N asNumber(@NotNull CharSequence seq, @NotNull Class<N> type) {
 		try {
 			if (type.equals(Integer.class))
-				return isInteger(str) ? type.cast(Integer.parseInt(str.toString())) : null;
+				return isInteger(seq) ? type.cast(Integer.parseInt(seq.toString())) : null;
 			else if (type.equals(Float.class))
-				return isNumeric(str) ? type.cast(Float.parseFloat(str.toString())) : null;
+				return isNumeric(seq) ? type.cast(Float.parseFloat(seq.toString())) : null;
 			else if (type.equals(Double.class))
-				return isNumeric(str) ? type.cast(Double.parseDouble(str.toString())) : null;
+				return isNumeric(seq) ? type.cast(Double.parseDouble(seq.toString())) : null;
 			else if (type.equals(Long.class))
-				return isInteger(str) ? type.cast(Long.parseLong(str.toString())) : null;
+				return isInteger(seq) ? type.cast(Long.parseLong(seq.toString())) : null;
 			else if (type.equals(Short.class))
-				return isInteger(str) ? type.cast(Short.parseShort(str.toString())) : null;
+				return isInteger(seq) ? type.cast(Short.parseShort(seq.toString())) : null;
 			else if (type.equals(Byte.class))
-				return isInteger(str) ? type.cast(Byte.parseByte(str.toString())) : null;
+				return isInteger(seq) ? type.cast(Byte.parseByte(seq.toString())) : null;
 			return null;
 		} catch (NumberFormatException outOfRange) {
 			return null;
