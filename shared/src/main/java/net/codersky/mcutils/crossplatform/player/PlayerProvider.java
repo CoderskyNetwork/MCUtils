@@ -8,17 +8,17 @@ import java.util.UUID;
 
 public abstract class PlayerProvider<T> {
 
-	private final HashMap<UUID, MCPlayer<T>> playerCache = new HashMap<>();
+	private final HashMap<UUID, MCPlayer> playerCache = new HashMap<>();
 
 	@Nullable
-	protected abstract MCPlayer<T> fetchPlayer(@NotNull UUID uuid);
+	protected abstract MCPlayer fetchPlayer(@NotNull UUID uuid);
 
 	@Nullable
 	public abstract UUID getUUID(@NotNull T handle);
 
 	@Nullable
-	public MCPlayer<T> getPlayer(@NotNull UUID uuid) {
-		MCPlayer<T> player = playerCache.get(uuid);
+	public MCPlayer getPlayer(@NotNull UUID uuid) {
+		MCPlayer player = playerCache.get(uuid);
 		if (player != null)
 			return player;
 		player = fetchPlayer(uuid);
@@ -28,7 +28,7 @@ public abstract class PlayerProvider<T> {
 	}
 
 	@Nullable
-	public MCPlayer<T> getPlayer(@NotNull T original) {
+	public MCPlayer getPlayer(@NotNull T original) {
 		final UUID uuid = getUUID(original);
 		return uuid == null ? null : getPlayer(uuid);
 	}

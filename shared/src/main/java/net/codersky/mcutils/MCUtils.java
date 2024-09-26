@@ -54,7 +54,7 @@ public abstract class MCUtils<P> {
 	}
 
 	@Nullable
-	public abstract MCPlayer<?> getPlayer(@NotNull UUID uuid);
+	public abstract MCPlayer getPlayer(@NotNull UUID uuid);
 
 	/**
 	 * Provides a cross-platform {@link MCConsole} instance.
@@ -64,7 +64,7 @@ public abstract class MCUtils<P> {
 	 * @since MCUtils 1.0.0
 	 */
 	@NotNull
-	public abstract MCConsole<?> getConsole();
+	public abstract MCConsole getConsole();
 
 	/**
 	 * Gets the {@link MCPlatform} this {@link MCUtils} class
@@ -113,7 +113,7 @@ public abstract class MCUtils<P> {
 		return file;
 	}
 
-	public abstract void registerCommands(MCCommand<P, MCCommandSender<?, ?>>... commands);
+	public abstract void registerCommands(MCCommand<P, MCCommandSender>... commands);
 
 	/**
 	 * Gets the files currently being handled by this {@link MCUtils} instance. The list returned
