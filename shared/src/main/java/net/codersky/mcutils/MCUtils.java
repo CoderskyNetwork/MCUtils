@@ -1,5 +1,7 @@
 package net.codersky.mcutils;
 
+import net.codersky.mcutils.cmd.MCCommand;
+import net.codersky.mcutils.cmd.MCCommandSender;
 import net.codersky.mcutils.crossplatform.MCConsole;
 import net.codersky.mcutils.crossplatform.player.MCPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -81,6 +83,12 @@ public abstract class MCUtils<P> {
 	public final String getMCUtilsVersion() {
 		return "1.0.0"; // Keep it the same as the project version from pom.xml
 	}
+
+	/*
+	 * Commands
+	 */
+
+	public abstract void registerCommands(MCCommand<P, MCCommandSender>... commands);
 
 	/*
 	 * Reloadables
