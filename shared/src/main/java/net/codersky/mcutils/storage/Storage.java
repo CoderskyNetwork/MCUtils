@@ -46,6 +46,19 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class Storage extends Config {
 
+	/**
+	 * Does any necessary tasks in order to set up this {@link Storage}.
+	 * Keep in mind that this does <b>NOT</b> load the storage, this method
+	 * is intended for tasks such as creating any necessary file or connecting
+	 * to the storage database, obviously depending on the {@link Storage} type.
+	 *
+	 * @return {@code true} if the {@link Storage} was set up correctly,
+	 * {@code false} otherwise.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	public abstract boolean setup();
+
 	/*
 	 * Setters
 	 */

@@ -49,7 +49,7 @@ public class FlatStorage extends Storage {
 	 * Utility
 	 */
 
-	public boolean create() {
+	public boolean setup() {
 		return MCFiles.create(file);
 	}
 
@@ -72,7 +72,7 @@ public class FlatStorage extends Storage {
 
 	@Override
 	public boolean save() {
-		if (!create())
+		if (!setup())
 			return false;
 		int errors = 0;
 		try {
@@ -183,7 +183,7 @@ public class FlatStorage extends Storage {
 
 	@Override
 	public boolean reload() {
-		if (!create())
+		if (!setup())
 			return false;
 		try {
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));

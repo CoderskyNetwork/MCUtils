@@ -16,6 +16,19 @@ public abstract class Config implements Reloadable {
 	protected final HashMap<String, Object> keys = new HashMap<>();
 
 	/**
+	 * Does any necessary tasks in order to set up this {@link Config}.
+	 * Keep in mind that this does <b>NOT</b> load the config, this method
+	 * is intended for tasks such as creating any necessary file, obviously
+	 * depending on the {@link Config} type.
+	 *
+	 * @return {@code true} if the {@link Config} was set up correctly,
+	 * {@code false} otherwise.
+	 *
+	 * @since MCUtils 1.0.0
+	 */
+	public abstract boolean setup();
+
+	/**
 	 * Saves the cached data of this {@link Config} to
 	 * the actual config. Some configs may take a long
 	 * time to save, so it is recommended to call this
