@@ -12,7 +12,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.codersky.mcutils.files.ConfigFileHolder;
+import net.codersky.mcutils.storage.files.ConfigFileHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;

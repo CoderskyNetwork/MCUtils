@@ -5,14 +5,13 @@ import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Nullable;
 
-import net.codersky.mcutils.files.MessagesFileHolder;
 import net.codersky.mcutils.java.strings.MCStrings;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.codersky.mcutils.java.strings.Replacer;
 import org.jetbrains.annotations.NotNull;
 
-public class MessagesFile extends PluginFile implements MessagesFileHolder {
+public class MessagesFile extends PluginFile implements net.codersky.mcutils.storage.files.MessagesFile {
 
 	@Nullable
 	private Replacer defReplacer = null;
@@ -122,7 +121,7 @@ public class MessagesFile extends PluginFile implements MessagesFileHolder {
 	}
 
 	/*
-	 * MessagesFileHolder implementation
+	 * MessagesFile implementation
 	 */
 
 	@Nullable

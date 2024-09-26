@@ -1,17 +1,18 @@
-package net.codersky.mcutils.files;
+package net.codersky.mcutils.storage.files;
 
 import net.codersky.mcutils.crossplatform.MessageReceiver;
 import net.codersky.mcutils.java.strings.MCStrings;
 import net.codersky.mcutils.java.strings.Replacer;
 
+import net.codersky.mcutils.Reloadable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * An interface that is designed to get messages from a file that
  * can then be sent to a {@link MessageReceiver}. This interface
- * extends the {@link FileHolder} interface, though it is generally
- * also implemented with {@link FileUpdater}.
+ * extends the {@link Reloadable} interface, though it is generally
+ * also implemented with {@link UpdatableFile}.
  * <p>
  * Messages sent by files that implement this interface must apply
  * all patterns provided by MCUtils. This is default behaviour, and
@@ -23,14 +24,14 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author xDec0de_
  */
-public interface MessagesFileHolder extends FileHolder {
+public interface MessagesFile extends Reloadable {
 
 	/*
 	 * String getters
 	 */
 
 	/**
-	 * Gets a message {@link String} from this {@link MessagesFileHolder}.
+	 * Gets a message {@link String} from this {@link MessagesFile}.
 	 * This {@link String} may be {@code null} if the message isn't found.
 	 *
 	 * @param path The path of the message to get.
@@ -47,7 +48,7 @@ public interface MessagesFileHolder extends FileHolder {
 	String getMessage(@NotNull String path);
 
 	/**
-	 * Gets a message {@link String} from this {@link MessagesFileHolder},
+	 * Gets a message {@link String} from this {@link MessagesFile},
 	 * applying a {@link Replacer} to it. This {@link String} may be
 	 * {@code null} if the message isn't found.
 	 *
@@ -72,7 +73,7 @@ public interface MessagesFileHolder extends FileHolder {
 	}
 
 	/**
-	 * Gets a message {@link String} from this {@link MessagesFileHolder},
+	 * Gets a message {@link String} from this {@link MessagesFile},
 	 * applying a {@link Replacer} built from the specified {@code replacements} to it.
 	 * This {@link String} may be {@code null} if the message isn't found.
 	 *

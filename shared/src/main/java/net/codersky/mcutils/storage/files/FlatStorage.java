@@ -1,4 +1,4 @@
-package net.codersky.mcutils.storage;
+package net.codersky.mcutils.storage.files;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,11 +13,13 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.function.Function;
 
+import net.codersky.mcutils.java.MCFiles;
 import net.codersky.mcutils.java.strings.MCStrings;
+import net.codersky.mcutils.storage.Storage;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * {@link StorageHandler} class used to store data on
+ * {@link Storage} class used to store data on
  * simple flat files while trying to keep the size of
  * said file to a minimum. The data is stored as text
  * without spaces nor indentation, supporting basic
@@ -29,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @since MCUtils 1.0.0
  */
-public class FlatStorage extends StorageHandler {
+public class FlatStorage extends Storage {
 
 	private final File file;
 
@@ -47,17 +49,8 @@ public class FlatStorage extends StorageHandler {
 	 * Utility
 	 */
 
-	private boolean create() {
-		if (file.exists())
-			return true;
-		try {
-			file.getParentFile().mkdirs();
-			file.createNewFile();
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean create() {
+		return MCFiles.create(file);
 	}
 
 	@NotNull
@@ -86,8 +79,7 @@ public class FlatStorage extends StorageHandler {
 			final FileWriter writer = new FileWriter(file);
 			for (Entry<String, Object> entry : keys.entrySet()) {
 				final String toWrite;
-				if (entry.getValue() instanceof List) {
-					final List<?> lst = (List<?>) entry.getValue();
+				if (entry.getValue() instanceof final List<?> lst) {
 					if (lst.isEmpty())
 						continue;
 					toWrite = toWrite(entry.getKey(), lst);
@@ -136,7 +128,7 @@ public class FlatStorage extends StorageHandler {
 	 */
 	@SuppressWarnings("unchecked")
 	private String toWrite(String key, List<?> lst) {
-		final Object first = lst.get(0);
+		final Object first = lst.getFirst();
 		final StringBuilder builder = new StringBuilder("*");
 		if (first instanceof CharSequence)
 			listAppend(key, builder.append('s'), (List<CharSequence>) lst);
@@ -190,7 +182,7 @@ public class FlatStorage extends StorageHandler {
 	 */
 
 	@Override
-	public boolean load() {
+	public boolean reload() {
 		if (!create())
 			return false;
 		try {
@@ -243,13 +235,13 @@ public class FlatStorage extends StorageHandler {
 		case 's' -> loadStringList(key, value);
 		case 'c' -> loadCharList(key, value);
 		case 'b' -> loadBoolList(key, value);
-		case 'u' -> loadList(key, value, s -> MCStrings.toUUID(s));
-		case 'B' -> loadList(key, value, s -> Byte.parseByte(s));
-		case 'S' -> loadList(key, value, s -> Short.parseShort(s));
-		case 'I' -> loadList(key, value, s -> Integer.parseInt(s));
-		case 'L' -> loadList(key, value, s -> Long.parseLong(s));
-		case 'F' -> loadList(key, value, s -> Float.parseFloat(s));
-		case 'D' -> loadList(key, value, s -> Double.parseDouble(s));
+		case 'u' -> loadList(key, value, MCStrings::toUUID);
+		case 'B' -> loadList(key, value, Byte::parseByte);
+		case 'S' -> loadList(key, value, Short::parseShort);
+		case 'I' -> loadList(key, value, Integer::parseInt);
+		case 'L' -> loadList(key, value, Long::parseLong);
+		case 'F' -> loadList(key, value, Float::parseFloat);
+		case 'D' -> loadList(key, value, Double::parseDouble);
 		default -> false;
 		};
 	}

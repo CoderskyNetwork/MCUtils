@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.codersky.mcutils.files.FileHolder;
+import net.codersky.mcutils.Reloadable;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 
  * @author xDec0de_
  */
-public class YmlFile extends CharsetYamlConfiguration implements FileHolder {
+public class YmlFile extends CharsetYamlConfiguration implements Reloadable {
 
 	private final String path;
 	final File file;
