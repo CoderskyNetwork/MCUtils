@@ -1,15 +1,18 @@
 package net.codersky.mcutils.storage;
 
 import net.codersky.mcutils.Reloadable;
+import net.codersky.mcutils.java.MCCollections;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public abstract class Config implements Reloadable {
 
@@ -60,6 +63,26 @@ public abstract class Config implements Reloadable {
 	 * Key access
 	 */
 
+	@NotNull
+	public HashMap<String, Object> getMap() {
+		return new HashMap<>(keys);
+	}
+
+	public Set<Map.Entry<String, Object>> getEntries() {
+		return keys.entrySet();
+	}
+
+	public Set<Map.Entry<String, Object>> getEntries(@NotNull Predicate<String> filter) {
+		return MCCollections.clone(getEntries(), entry -> filter.test(entry.getKey()));
+	}
+
+	@NotNull
+	public Config removeEntries(@NotNull String... keys) {
+		for (String key : keys)
+			this.keys.remove(key);
+		return this;
+	}
+
 	/**
 	 * Gets the {@link Set} of keys that are currently
 	 * cached on this {@link Storage}. This set
@@ -74,25 +97,23 @@ public abstract class Config implements Reloadable {
 	 *
 	 * @since MCUtils 1.0.0
 	 *
-	 * @see #remove(String...)
-	 * @see #contains(String...)
+	 * @see #removeEntries(String...)
+	 * @see #containsKey(String...)
 	 */
 	public Set<String> getKeys() {
 		return keys.keySet();
 	}
 
-	public boolean contains(@NotNull String... keys) {
+	@NotNull
+	public Set<String> getKeys(@NotNull Predicate<String> filter) {
+		return MCCollections.clone(keys.keySet(), filter);
+	}
+
+	public boolean containsKey(@NotNull String... keys) {
 		for (String key : keys)
 			if (!this.keys.containsKey(key))
 				return false;
 		return true;
-	}
-
-	@NotNull
-	public Config remove(@NotNull String... keys) {
-		for (String key : keys)
-			this.keys.remove(key);
-		return this;
 	}
 
 	@NotNull
