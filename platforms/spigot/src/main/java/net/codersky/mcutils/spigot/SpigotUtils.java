@@ -111,7 +111,6 @@ public class SpigotUtils<P extends JavaPlugin> extends ServerUtils<P> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@NotNull
 	public static boolean serverSupports(@NotNull String version) {
 		if (version == null || version.isBlank())
 			return false;
@@ -263,7 +262,7 @@ public class SpigotUtils<P extends JavaPlugin> extends ServerUtils<P> {
 	public boolean unregisterCommand(@NotNull String name) {
 		final PluginCommand plCommand = getPlugin().getCommand(name);
 		final SimpleCommandMap commandMap = getCommandMap();
-		return plCommand == null || commandMap == null ? false : plCommand.unregister(commandMap);
+		return plCommand != null && commandMap != null && plCommand.unregister(commandMap);
 	}
 
 	/*
@@ -279,13 +278,13 @@ public class SpigotUtils<P extends JavaPlugin> extends ServerUtils<P> {
 	 * for the new {@link World}.
 	 *
 	 * @return The newly created or loaded {@link World}, {@code null}
-	 * if <b>creator</b> is {@code null}.
+	 * if {@code creator} is {@code null}.
 	 *
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public World createWorld(@Nullable WorldCreator creator) {
-		return creator != null ? Bukkit.createWorld(creator) : null;
+	public World createWorld(@NotNull WorldCreator creator) {
+		return Bukkit.createWorld(creator);
 	}
 
 	/**
@@ -302,30 +301,27 @@ public class SpigotUtils<P extends JavaPlugin> extends ServerUtils<P> {
 	 * @since MCUtils 1.0.0
 	 */
 	@Nullable
-	public World createWorld(@Nullable String name, @Nullable WorldType type) {
-		if (name == null)
-			return null;
+	public World createWorld(@NotNull String name, @Nullable WorldType type) {
 		return createWorld(WorldCreator.name(name).type(type == null ? WorldType.NORMAL : type));
 	}
 
 	/**
 	 * Creates or loads a new {@link World} with the specified
-	 * <b>name</b> and world <b>generator</b>.
+	 * {@code name} and world {@code generator}.
 	 *
 	 * @param name the name of the new {@link World}.
 	 * @param generator the {@link ChunkGenerator} of the new {@link World}.
 	 *
-	 * @return The newly created or loaded {@link World}, {@code null}
-	 * if <b>name</b> is {@code null}.
+	 * @return The newly created or loaded {@link World}.
 	 *
 	 * @since MCUtils 1.0.0
+	 *
+	 * @throws NullPointerException If {@code name} is {@code null}.
 	 *
 	 * @see VoidGenerator
 	 */
 	@Nullable
 	public World createWorld(@NotNull String name, @Nullable ChunkGenerator generator) {
-		if (name == null)
-			return null;
 		return createWorld(WorldCreator.name(name).generator(generator));
 	}
 
@@ -349,10 +345,8 @@ public class SpigotUtils<P extends JavaPlugin> extends ServerUtils<P> {
 	 * @see VoidGenerator
 	 * @see SingleBiomeProvider
 	 */
-	@NotNull
-	public World createWorld(@Nullable String name, @Nullable ChunkGenerator generator, @Nullable BiomeProvider biomeProvider) {
-		if (name == null)
-			return null;
+	@Nullable
+	public World createWorld(@NotNull String name, @Nullable ChunkGenerator generator, @Nullable BiomeProvider biomeProvider) {
 		return createWorld(WorldCreator.name(name).generator(generator).biomeProvider(biomeProvider));
 	}
 
