@@ -1,7 +1,7 @@
 package net.codersky.mcutils.java.tuple.pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An implementation of {@link Pair} that allows changing the
@@ -36,7 +36,7 @@ public class MutablePair<F, S> implements Pair<F, S> {
 		this.second = second;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public F getFirst() {
 		return first;
@@ -57,7 +57,7 @@ public class MutablePair<F, S> implements Pair<F, S> {
 		return (this.first = first);
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public S getSecond() {
 		return second;

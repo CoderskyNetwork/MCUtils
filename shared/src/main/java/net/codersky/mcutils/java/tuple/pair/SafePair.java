@@ -1,6 +1,6 @@
 package net.codersky.mcutils.java.tuple.pair;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An extension of the {@link Pair} interface that requires
@@ -28,7 +28,7 @@ public interface SafePair<F, S> extends Pair<F, S> {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	F getFirst();
 
 	/**
@@ -40,6 +40,6 @@ public interface SafePair<F, S> extends Pair<F, S> {
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	S getSecond();
 }

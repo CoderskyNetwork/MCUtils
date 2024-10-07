@@ -1,6 +1,6 @@
 package net.codersky.mcutils.java.tuple.pair;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -32,7 +32,7 @@ public class SafeImmutablePair<F, S> extends ImmutablePair<F, S> implements Safe
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	public SafeImmutablePair(@Nonnull F first, @Nonnull S second) {
+	public SafeImmutablePair(@NotNull F first, @NotNull S second) {
 		super(Objects.requireNonNull(first), Objects.requireNonNull(second));
 	}
 
@@ -47,7 +47,7 @@ public class SafeImmutablePair<F, S> extends ImmutablePair<F, S> implements Safe
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	@Override
 	@SuppressWarnings("DataFlowIssue")
 	public F getFirst() {
@@ -63,7 +63,7 @@ public class SafeImmutablePair<F, S> extends ImmutablePair<F, S> implements Safe
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	@Override
 	@SuppressWarnings("DataFlowIssue")
 	public S getSecond() {

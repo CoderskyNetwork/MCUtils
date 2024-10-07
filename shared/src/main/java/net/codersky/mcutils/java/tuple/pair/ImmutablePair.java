@@ -1,6 +1,6 @@
 package net.codersky.mcutils.java.tuple.pair;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An implementation of {@link Pair} that doesn't allow the modification

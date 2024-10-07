@@ -1,7 +1,7 @@
 package net.codersky.mcutils.java.tuple.pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A class capable of storing two instance of generic
@@ -62,7 +62,7 @@ public interface Pair<F, S> {
 	 * 
 	 * @see #getFirst()
 	 */
-	default boolean isFirstEqual(@Nonnull Pair<F, ?> other) {
+	default boolean isFirstEqual(@NotNull Pair<F, ?> other) {
 		return getFirst() == null ? other.getFirst() == null : getFirst().equals(other.getFirst());
 	}
 
@@ -82,7 +82,7 @@ public interface Pair<F, S> {
 	 * 
 	 * @see #getSecond()
 	 */
-	default boolean isSecondEqual(@Nonnull Pair<?, S> other) {
+	default boolean isSecondEqual(@NotNull Pair<?, S> other) {
 		return getSecond() == null ? other.getSecond() == null : getSecond().equals(other.getSecond());
 	}
 }
