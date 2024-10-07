@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SpigotCommandSender implements MCCommandSender<Player, ConsoleCommandSender> {
+public class SpigotCommandSender implements MCCommandSender {
 
 	private final CommandSender sender;
 	private final SpigotUtils<?> utils;

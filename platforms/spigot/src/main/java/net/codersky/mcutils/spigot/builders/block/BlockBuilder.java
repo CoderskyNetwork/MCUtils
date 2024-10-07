@@ -26,8 +26,6 @@ import org.bukkit.block.sign.Side;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 
-import net.codersky.mcutils.spigot.java.MCLists;
-
 public class BlockBuilder {
 
 	private final Block block;
@@ -460,7 +458,8 @@ public class BlockBuilder {
 		final org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState();
 		if (!SpigotUtils.serverSupports("1.20"))
 			return MCCollections.asArrayList(sign.getLines());
-		return MCLists.asList(sign.getSide(Side.FRONT).getLines(), sign.getSide(Side.BACK).getLines());
+		final List<String> lines = MCCollections.asArrayList(sign.getSide(Side.FRONT).getLines());
+		return MCCollections.add(lines, sign.getSide(Side.BACK).getLines());
 	}
 
 	/**

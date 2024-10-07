@@ -12,6 +12,8 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.codersky.mcutils.java.MCCollections;
+import net.codersky.mcutils.java.strings.MCStrings;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -29,8 +31,6 @@ import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 
 import com.google.common.collect.Multimap;
-
-import net.codersky.mcutils.spigot.java.strings.MCStrings;
 
 /**
  * A class made to provide easy and fast
@@ -409,7 +409,7 @@ public class ItemBuilder implements Cloneable {
 	 */
 	@Nonnull
 	public ItemBuilder setLore(@Nullable List<String> lore) {
-		meta.setLore(MCStrings.applyColor(lore));
+		meta.setLore(MCCollections.map(lore, MCStrings::applyColor));
 		return this;
 	}
 

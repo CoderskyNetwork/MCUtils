@@ -12,7 +12,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.codersky.mcutils.storage.files.ConfigFileHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -24,7 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 
  * @author xDec0de_
  */
-public class PluginFile extends YmlFile implements ConfigFileHolder {
+public class PluginFile extends YmlFile {
 
 	final JavaPlugin plugin;
 

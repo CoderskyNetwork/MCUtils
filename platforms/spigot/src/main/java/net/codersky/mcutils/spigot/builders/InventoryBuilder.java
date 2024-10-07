@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.codersky.mcutils.java.strings.MCStrings;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
@@ -17,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.codersky.mcutils.java.math.MCNumbers;
-import net.codersky.mcutils.spigot.java.strings.MCStrings;
 
 /**
  * A class made to provide easy an fast
