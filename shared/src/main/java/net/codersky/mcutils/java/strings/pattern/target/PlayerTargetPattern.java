@@ -28,7 +28,7 @@ public class PlayerTargetPattern implements TargetPattern {
 	@Override
 	public String process(@NotNull MessageReceiver target, @NotNull String string, boolean applyEventPatterns) {
 		return MCStrings.match(string, "<p:", "/p>", message -> {
-			if (target instanceof MCPlayer<?> player) {
+			if (target instanceof MCPlayer player) {
 				if (applyEventPatterns)
 					player.sendMessage(MCStrings.applyEventPatterns(message));
 				else

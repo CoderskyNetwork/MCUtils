@@ -13,7 +13,7 @@ public class ConsoleTargetPattern implements TargetPattern {
 	@Override
 	public String process(@NotNull MessageReceiver target, @NotNull String string, boolean applyEventPatterns) {
 		return MCStrings.match(string, "<c:", "/c>", message -> {
-			if (target instanceof MCConsole<?> console)
+			if (target instanceof MCConsole console)
 				console.sendMessage(message);
 		});
 	}

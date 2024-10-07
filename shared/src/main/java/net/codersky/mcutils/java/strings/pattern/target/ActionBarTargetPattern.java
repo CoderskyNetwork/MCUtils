@@ -12,7 +12,7 @@ public class ActionBarTargetPattern implements TargetPattern {
 	@Override
 	public String process(@NotNull MessageReceiver target, @NotNull String string, boolean applyEventPatterns) {
 		return MCStrings.match(string, "<ab:", "/ab>", message -> {
-			if (target instanceof MCPlayer<?> player)
+			if (target instanceof MCPlayer player)
 				player.sendActionBar(message);
 		});
 	}
