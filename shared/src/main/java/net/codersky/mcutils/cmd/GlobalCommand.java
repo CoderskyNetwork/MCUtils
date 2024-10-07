@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class GlobalCommand<P> implements MCCommand<P, MCCommandSender<MCPlayer<?>, MCConsole<?>>> {
+public abstract class GlobalCommand<P> implements MCCommand<P, MCCommandSender> {
 
 	private final MCUtils<P> utils;
 	private final String name;
 	private final List<String> aliases;
-	private final SubCommandHandler<P, MCCommandSender<MCPlayer<?>, MCConsole<?>>> subCmdHandler = new SubCommandHandler<>();
+	private final SubCommandHandler<P, MCCommandSender> subCmdHandler = new SubCommandHandler<>();
 
 	public GlobalCommand(MCUtils<P> utils, @NotNull String name, List<String> aliases) {
 		this.utils = utils;
@@ -46,7 +46,7 @@ public abstract class GlobalCommand<P> implements MCCommand<P, MCCommandSender<M
 	}
 
 	@Override
-	public @NotNull MCCommand<P, MCCommandSender<MCPlayer<?>, MCConsole<?>>> inject(@NotNull MCCommand<P, MCCommandSender<MCPlayer<?>, MCConsole<?>>>... commands) {
+	public @NotNull MCCommand<P, MCCommandSender> inject(@NotNull MCCommand<P, MCCommandSender>... commands) {
 		subCmdHandler.inject(commands);
 		return this;
 	}
