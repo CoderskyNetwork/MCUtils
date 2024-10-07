@@ -1,9 +1,8 @@
 package net.codersky.mcutils.java.tuple.triple;
 
 import net.codersky.mcutils.java.tuple.pair.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A class capable of storing three instance of generic
@@ -49,7 +48,7 @@ public interface Triple<F, S, T> extends Pair<F, S> {
 	 * 
 	 * @see #getThird()
 	 */
-	default boolean isThirdEqual(@Nonnull Triple<?, ?, T> other) {
+	default boolean isThirdEqual(@NotNull Triple<?, ?, T> other) {
 		return getThird() == null ? other.getThird() == null : getThird().equals(other.getThird());
 	}
 }

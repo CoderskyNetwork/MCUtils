@@ -1,6 +1,6 @@
 package net.codersky.mcutils.java.tuple.triple;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -34,7 +34,7 @@ public class SafeImmutableTriple<F, S, T> extends ImmutableTriple<F, S, T> imple
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	public SafeImmutableTriple(@Nonnull F first, @Nonnull S second, @Nonnull T third) {
+	public SafeImmutableTriple(@NotNull F first, @NotNull S second, @NotNull T third) {
 		super(Objects.requireNonNull(first), Objects.requireNonNull(second), Objects.requireNonNull(third));
 	}
 
@@ -49,7 +49,7 @@ public class SafeImmutableTriple<F, S, T> extends ImmutableTriple<F, S, T> imple
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	@Override
 	@SuppressWarnings("DataFlowIssue")
 	public F getFirst() {
@@ -65,7 +65,7 @@ public class SafeImmutableTriple<F, S, T> extends ImmutableTriple<F, S, T> imple
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	@Override
 	@SuppressWarnings("DataFlowIssue")
 	public S getSecond() {
@@ -81,7 +81,7 @@ public class SafeImmutableTriple<F, S, T> extends ImmutableTriple<F, S, T> imple
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	@Override
 	@SuppressWarnings("DataFlowIssue")
 	public T getThird() {

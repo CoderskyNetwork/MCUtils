@@ -1,6 +1,6 @@
 package net.codersky.mcutils.java.tuple.triple;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An extension of the {@link Triple} interface that requires
@@ -29,7 +29,7 @@ public interface SafeTriple<F, S, T> extends Triple<F, S, T> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	F getFirst();
 
 	/**
@@ -41,7 +41,7 @@ public interface SafeTriple<F, S, T> extends Triple<F, S, T> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	S getSecond();
 
 	/**
@@ -53,6 +53,6 @@ public interface SafeTriple<F, S, T> extends Triple<F, S, T> {
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	T getThird();
 }

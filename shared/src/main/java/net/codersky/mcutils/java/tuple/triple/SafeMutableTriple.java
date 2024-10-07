@@ -1,7 +1,7 @@
 package net.codersky.mcutils.java.tuple.triple;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -34,7 +34,7 @@ public class SafeMutableTriple<F, S, T> extends MutableTriple<F, S, T> implement
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	public SafeMutableTriple(@Nonnull F first, @Nonnull S second, @Nonnull T third) {
+	public SafeMutableTriple(@NotNull F first, @NotNull S second, @NotNull T third) {
 		super(Objects.requireNonNull(first), Objects.requireNonNull(second), Objects.requireNonNull(third));
 	}
 
@@ -47,7 +47,7 @@ public class SafeMutableTriple<F, S, T> extends MutableTriple<F, S, T> implement
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	@Override
 	@SuppressWarnings("DataFlowIssue")
 	public F getFirst() {
@@ -66,8 +66,8 @@ public class SafeMutableTriple<F, S, T> extends MutableTriple<F, S, T> implement
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
-	public F setFirst(@Nonnull F first) {
+	@NotNull
+	public F setFirst(@NotNull F first) {
 		return super.setFirst(Objects.requireNonNull(first));
 	}
 
@@ -80,7 +80,7 @@ public class SafeMutableTriple<F, S, T> extends MutableTriple<F, S, T> implement
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	@Override
 	@SuppressWarnings("DataFlowIssue")
 	public S getSecond() {
@@ -99,7 +99,7 @@ public class SafeMutableTriple<F, S, T> extends MutableTriple<F, S, T> implement
 	 * 
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	public S setSecond(@Nullable S second) {
 		return super.setSecond(Objects.requireNonNull(second));
 	}
@@ -113,7 +113,7 @@ public class SafeMutableTriple<F, S, T> extends MutableTriple<F, S, T> implement
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	@Override
 	@SuppressWarnings("DataFlowIssue")
 	public T getThird() {
@@ -132,7 +132,7 @@ public class SafeMutableTriple<F, S, T> extends MutableTriple<F, S, T> implement
 	 *
 	 * @since MCUtils 1.0.0
 	 */
-	@Nonnull
+	@NotNull
 	public T setThird(@Nullable T third) {
 		return super.setThird(Objects.requireNonNull(third));
 	}

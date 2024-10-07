@@ -1,6 +1,6 @@
 package net.codersky.mcutils.java.tuple.triple;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An implementation of {@link Triple} that doesn't allow the modification
