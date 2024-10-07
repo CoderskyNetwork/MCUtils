@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class SubCommandHandler<P, S extends MCCommandSender<?, ?>> {
+public class SubCommandHandler<P, S extends MCCommandSender> {
 
 	private final HashSet<MCCommand<P, S>> subCommands = new HashSet<>();
 
