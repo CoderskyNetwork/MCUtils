@@ -1,11 +1,14 @@
 package net.codersky.mcutils.spigot.player;
 
 import net.codersky.mcutils.crossplatform.player.MCPlayer;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,6 +57,12 @@ public class SpigotPlayer implements MCPlayer {
 	@Override
 	public boolean sendActionBar(@NotNull Component message) {
 		handle.spigot().sendMessage(ChatMessageType.ACTION_BAR, toBase(message));
+		return true;
+	}
+
+	@Override
+	public boolean playSound(@NotNull Sound sound) {
+		handle.playSound(handle.getLocation(), sound.name().asString(), sound.volume(), sound.pitch());
 		return true;
 	}
 

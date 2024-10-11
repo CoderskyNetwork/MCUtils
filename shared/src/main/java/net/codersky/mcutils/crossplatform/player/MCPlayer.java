@@ -4,6 +4,9 @@ import net.codersky.mcutils.cmd.MCCommand;
 import net.codersky.mcutils.crossplatform.MessageReceiver;
 import net.codersky.mcutils.java.strings.Replacement;
 import net.codersky.mcutils.java.strings.Replacer;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.KeyPattern;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -168,6 +171,28 @@ public interface MCPlayer extends MessageReceiver, Replacement {
 	 */
 	default boolean sendActionBar(@NotNull Component message, @NotNull Object... replacements) {
 		return sendActionBar(message, new Replacer(replacements));
+	}
+
+	/*
+	 * Sound
+	 */
+
+	boolean playSound(@NotNull Sound sound);
+
+	default boolean playSound(@KeyPattern @NotNull String key, @NotNull Sound.Source source, float volume, float pitch) {
+		return playSound(Sound.sound(Key.key(key), source, volume, pitch));
+	}
+
+	default boolean playSound(@KeyPattern @NotNull String key, float volume, float pitch) {
+		return playSound(key, Sound.Source.AMBIENT, volume, pitch);
+	}
+
+	default boolean playSound(@KeyPattern @NotNull String key, float volume) {
+		return playSound(key, volume, 1.0f);
+	}
+
+	default boolean playSound(@KeyPattern @NotNull String key) {
+		return playSound(key, 1.0f);
 	}
 
 	/*
