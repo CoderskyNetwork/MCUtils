@@ -10,6 +10,7 @@ import net.codersky.mcutils.java.strings.pattern.color.HexColorPattern;
 import net.codersky.mcutils.java.strings.pattern.target.ActionBarTargetPattern;
 import net.codersky.mcutils.java.strings.pattern.target.ConsoleTargetPattern;
 import net.codersky.mcutils.java.strings.pattern.target.PlayerTargetPattern;
+import net.codersky.mcutils.java.strings.pattern.target.SoundTargetPattern;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -44,7 +45,8 @@ public class MCStrings {
 		targetPatterns = List.of(
 				new ActionBarTargetPattern(),
 				new ConsoleTargetPattern(),
-				new PlayerTargetPattern()
+				new PlayerTargetPattern(),
+				new SoundTargetPattern()
 		);
 	}
 
